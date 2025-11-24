@@ -1,0 +1,42 @@
+# IDE / tooling
+.idea/
+.cursor/
+.vscode/
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Logs and runtime files
+*.log
+app.log
+
+# Environment / secrets
+*.env
+*.key
+*.pem
+
+# OS junk
+Thumbs.db
+.DS_Store
+
+# Databases / caches
+*.sqlite
+*.db
+
+# Build outputs
+dist/
+build/
+
+# Node / front-end deps (на всякий случай)
+node_modules/
+

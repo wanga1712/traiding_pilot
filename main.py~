@@ -1,0 +1,72 @@
+# from crypto_trading_bot.trading.spot_trading import SpotTrade
+# from crypto_trading_bot.trading.exchange_connection import HuobiConnector
+#
+# # Создаем экземпляр для работы с spot trading
+# spot_balance = SpotTrade()
+# current_price = HuobiConnector()
+#
+# # Получаем спотовый баланс
+# spot_data = spot_balance.get_balance()
+# price = current_price.get_current_price()
+#
+# ['1min', '5min', '15min', '30m', '60m', '4hour', '1day']
+
+from flask import Flask, render_template, request
+from gui.data_fetcher import DataFetcher
+from gui.visualizer import DataVisualizer
+
+app = Flask(__name__)
+
+# Инициализация объекта для работы с базой данных
+data_fetcher = DataFetcher()
+visualizer = DataVisualizer(data_fetcher)
+
+
+@app.route('/plot', methods=['POST'])
+def plot():
+    instrument_symbol = request.form['instrument']
+    timeframe_name = request.form['timeframe']
+    indicator_name = request.form.get('indicator')  # Получаем выбранный индикатор
+
+    img_base64 = visualizer.plot_graph(instrument_symbol, timeframe_name, indicator_name)
+    return render_template('plot.html', img_base64=img_base64)
+
+
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    instruments = data_fetcher.get_instruments()
+    timeframes = data_fetcher.get_timeframes()
+
+    # Получаем все доступные типы индикаторов
+    indicator_types = data_fetcher.get_indicator_types()
+
+    # Переменная для хранения доступных индикаторов
+    indicators = []
+
+    if request.method == 'POST':
+        selected_instrument = request.form['instrument']
+        selected_timeframe = request.form['timeframe']
+
+        # Получаем ID инструмента и таймфрейма
+        instrument_id = data_fetcher.get_instrument_id(selected_instrument)
+        timeframe_id = data_fetcher.get_timeframe_id(selected_timeframe)
+
+        # Получаем доступные индикаторы для выбранного инструмента и таймфрейма
+        indicator_type = request.form.get('indicator')
+        indicators = data_fetcher.get_indicator_data(instrument_id, timeframe_id, indicator_type)
+
+        # Получаем изображение графика с выбранным индикатором
+        img_base64 = visualizer.plot_graph(selected_instrument, selected_timeframe, indicator_type)
+
+        # Отображаем страницу с результатами
+        return render_template('index.html', instruments=instruments, timeframes=timeframes, indicators=indicators, image=img_base64, indicator_types=indicator_types)
+
+    return render_template('index.html', instruments=instruments, timeframes=timeframes, indicators=indicators, indicator_types=indicator_types)
+
+
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
