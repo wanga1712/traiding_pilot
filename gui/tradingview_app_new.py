@@ -82,9 +82,7 @@ class TradingViewApp(QMainWindow):
         
         right_panel.setLayout(right_layout)
         self.timeframe_panel.setParent(right_panel)
-        # Размещаем панель с небольшим отступом сверху и слева
-        panel_size = self.timeframe_panel.sizeHint()
-        self.timeframe_panel.setGeometry(10, 10, panel_size.width(), panel_size.height())
+        self.timeframe_panel.setGeometry(5, 5, self.timeframe_panel.sizeHint().width(), self.timeframe_panel.sizeHint().height())
         self.timeframe_panel.raise_()
         
         main_splitter.addWidget(right_panel)
@@ -108,7 +106,7 @@ class TradingViewApp(QMainWindow):
         super().resizeEvent(event)
         if hasattr(self, 'timeframe_panel') and hasattr(self, 'right_panel'):
             panel_size = self.timeframe_panel.sizeHint()
-            self.timeframe_panel.setGeometry(10, 10, panel_size.width(), panel_size.height())
+            self.timeframe_panel.setGeometry(5, 5, panel_size.width(), panel_size.height())
     
     def moveEvent(self, event):
         """Обработчик перемещения окна."""

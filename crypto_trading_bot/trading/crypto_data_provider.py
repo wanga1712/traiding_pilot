@@ -147,7 +147,7 @@ class CryptoDataProvider:
             ccxt_symbol = self._convert_symbol(symbol, 'ccxt')
             ccxt_timeframe = self._convert_timeframe(timeframe, 'ccxt')
             
-            logger.info(f"Загрузка данных через CCXT для {symbol} ({ccxt_symbol}) на {timeframe}...")
+            logger.debug(f"Загрузка данных через CCXT для {symbol} ({ccxt_symbol}) на {timeframe}...")
             
             # Преобразуем даты в миллисекунды (timestamp)
             since = int(start_date.timestamp() * 1000)
@@ -167,9 +167,9 @@ class CryptoDataProvider:
                     
                     # Логируем прогресс каждые 10 батчей
                     if batch_count % 10 == 0:
-                        logger.info(f"Загружено батчей: {batch_count}, свечей: {len(all_ohlcv)}")
+                        logger.debug(f"Загружено батчей: {batch_count}, свечей: {len(all_ohlcv)}")
                     elif batch_count == 1:
-                        logger.info(f"Начало загрузки первого батча...")
+                        logger.debug("Начало загрузки первого батча...")
                     
                     # Выполняем запрос с таймаутом
                     try:
@@ -195,7 +195,7 @@ class CryptoDataProvider:
                             break
                     
                     if not ohlcv:
-                        logger.info(f"Нет данных для батча {batch_count}, завершаем загрузку")
+                        logger.debug(f"Нет данных для батча {batch_count}, завершаем загрузку")
                         break
                     
                     all_ohlcv.extend(ohlcv)
@@ -205,7 +205,7 @@ class CryptoDataProvider:
                     
                     # Если получили меньше 1000 свечей, значит достигли конца
                     if len(ohlcv) < 1000:
-                        logger.info(f"Получено меньше 1000 свечей в батче {batch_count}, завершаем загрузку")
+                        logger.debug(f"Получено меньше 1000 свечей в батче {batch_count}, завершаем загрузку")
                         break
                     
                     # Небольшая задержка для соблюдения rate limit
@@ -233,7 +233,7 @@ class CryptoDataProvider:
             else:
                 df['trades'] = 0
             
-            logger.info(f"Загружено {len(df)} свечей через CCXT для {symbol}")
+            logger.debug(f"Загружено {len(df)} свечей через CCXT для {symbol}")
             return df
             
         except Exception as e:
@@ -261,7 +261,7 @@ class CryptoDataProvider:
             binance_symbol = self._convert_symbol(symbol, 'binance')
             binance_interval = self._convert_timeframe(timeframe, 'binance')
             
-            logger.info(f"Загрузка данных через Binance API для {symbol} на {timeframe}...")
+            logger.debug(f"Загрузка данных через Binance API для {symbol} на {timeframe}...")
             
             # Маппинг интервалов для Binance API
             interval_map = {
@@ -334,7 +334,7 @@ class CryptoDataProvider:
             df['volume'] = df['volume'].astype(float)
             df['trades'] = df['trades'].astype(int)
             
-            logger.info(f"Загружено {len(df)} свечей через Binance API для {symbol}")
+            logger.debug(f"Загружено {len(df)} свечей через Binance API для {symbol}")
             return df
             
         except Exception as e:
@@ -362,7 +362,7 @@ class CryptoDataProvider:
             yfinance_symbol = self._convert_symbol(symbol, 'yfinance')
             yfinance_interval = self._convert_timeframe(timeframe, 'yfinance')
             
-            logger.info(f"Загрузка данных через yfinance для {symbol} ({yfinance_symbol}) на {timeframe}...")
+            logger.debug(f"Загрузка данных через yfinance для {symbol} ({yfinance_symbol}) на {timeframe}...")
             
             ticker = yf.Ticker(yfinance_symbol)
             
@@ -399,7 +399,7 @@ class CryptoDataProvider:
             # Добавляем колонку trades (yfinance не предоставляет эту информацию)
             df['trades'] = 0
             
-            logger.info(f"Загружено {len(df)} свечей через yfinance для {symbol}")
+            logger.debug(f"Загружено {len(df)} свечей через yfinance для {symbol}")
             return df
             
         except Exception as e:
@@ -425,7 +425,7 @@ class CryptoDataProvider:
         if sources is None:
             sources = ['ccxt', 'binance', 'yfinance']
         
-        logger.info(f"Загрузка последних {limit} свечей для {symbol} на {timeframe}")
+        logger.debug(f"Загрузка последних {limit} свечей для {symbol} на {timeframe}")
         
         # Пробуем загрузить данные из каждого источника по очереди
         for source in sources:
@@ -464,7 +464,7 @@ class CryptoDataProvider:
             ccxt_symbol = self._convert_symbol(symbol, 'ccxt')
             ccxt_timeframe = self._convert_timeframe(timeframe, 'ccxt')
             
-            logger.info(f"Загрузка последних {limit} свечей через CCXT для {symbol} ({ccxt_symbol}) на {timeframe}...")
+            logger.debug(f"Загрузка последних {limit} свечей через CCXT для {symbol} ({ccxt_symbol}) на {timeframe}...")
             
             # Загружаем последние свечи (без указания since, только limit)
             ohlcv = self.ccxt_exchange.fetch_ohlcv(
@@ -492,7 +492,7 @@ class CryptoDataProvider:
             if len(df) > limit:
                 df = df.tail(limit)
             
-            logger.info(f"Загружено {len(df)} свечей через CCXT для {symbol}")
+            logger.debug(f"Загружено {len(df)} свечей через CCXT для {symbol}")
             return df
             
         except Exception as e:
@@ -510,7 +510,7 @@ class CryptoDataProvider:
             binance_symbol = self._convert_symbol(symbol, 'binance')
             binance_interval = self._convert_timeframe(timeframe, 'binance')
             
-            logger.info(f"Загрузка последних {limit} свечей через Binance API для {symbol} на {timeframe}...")
+            logger.debug(f"Загрузка последних {limit} свечей через Binance API для {symbol} на {timeframe}...")
             
             # Маппинг интервалов для Binance API
             interval_map = {
@@ -558,7 +558,7 @@ class CryptoDataProvider:
             if len(df) > limit:
                 df = df.tail(limit)
             
-            logger.info(f"Загружено {len(df)} свечей через Binance API для {symbol}")
+            logger.debug(f"Загружено {len(df)} свечей через Binance API для {symbol}")
             return df
             
         except Exception as e:
@@ -576,7 +576,7 @@ class CryptoDataProvider:
             yfinance_symbol = self._convert_symbol(symbol, 'yfinance')
             yfinance_interval = self._convert_timeframe(timeframe, 'yfinance')
             
-            logger.info(f"Загрузка последних {limit} свечей через yfinance для {symbol} ({yfinance_symbol}) на {timeframe}...")
+            logger.debug(f"Загрузка последних {limit} свечей через yfinance для {symbol} ({yfinance_symbol}) на {timeframe}...")
             
             ticker = yf.Ticker(yfinance_symbol)
             
@@ -613,7 +613,7 @@ class CryptoDataProvider:
             if len(df) > limit:
                 df = df.tail(limit)
             
-            logger.info(f"Загружено {len(df)} свечей через yfinance для {symbol}")
+            logger.debug(f"Загружено {len(df)} свечей через yfinance для {symbol}")
             return df
             
         except Exception as e:
@@ -649,7 +649,7 @@ class CryptoDataProvider:
         if start_date is None:
             start_date = end_date - timedelta(days=years * 365)
         
-        logger.info(f"Загрузка данных для {symbol} на {timeframe} за период {start_date.date()} - {end_date.date()}")
+        logger.debug(f"Загрузка данных для {symbol} на {timeframe} за период {start_date.date()} - {end_date.date()}")
         
         # Пробуем загрузить данные из каждого источника по очереди
         for source in sources:

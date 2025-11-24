@@ -18,6 +18,7 @@ from crypto_trading_bot.database.data_import import DataImport
 from crypto_trading_bot.database.data_export import DataExporter
 from crypto_trading_bot.trading.crypto_data_provider import CryptoDataProvider
 from crypto_trading_bot.trading.binance_symbol_checker import BinanceSymbolChecker
+from crypto_trading_bot.analytics.dinapoli_dma import DinapoliDMAService
 from gui.data_fetcher import DataFetcher
 
 
@@ -35,6 +36,7 @@ class DataUpdater:
         self.data_export = DataExporter()
         self.data_provider = CryptoDataProvider()
         self.symbol_checker = BinanceSymbolChecker()
+        self.dma_service = DinapoliDMAService()
         
         # Флаг работы фонового потока
         self.is_running = False
@@ -188,7 +190,7 @@ class DataUpdater:
             # Преобразуем таймфрейм для провайдера
             provider_timeframe = self.TIMEFRAME_MAPPING.get(timeframe_code, '1hour')
             
-            logger.info(f"Загрузка недостающих свечей для {instrument_symbol} {timeframe_code} с {start_time} по {end_time}")
+            logger.debug(f"Загрузка недостающих свечей для {instrument_symbol} {timeframe_code} с {start_time} по {end_time}")
             
             # Загружаем данные через провайдера за конкретный период
             # Используем get_historical_data с указанием start_date и end_date
@@ -211,7 +213,7 @@ class DataUpdater:
                     start_time = end_time - timedelta(days=max_days)
                     logger.warning(f"Период загрузки ограничен до {max_days} дней для {instrument_symbol} {timeframe_code}")
                 
-                logger.info(f"Загрузка данных за период {start_time} - {end_time} для {instrument_symbol} {timeframe_code}")
+                logger.debug(f"Загрузка данных за период {start_time} - {end_time} для {instrument_symbol} {timeframe_code}")
                 df = self.data_provider.get_historical_data(
                     instrument_symbol, 
                     provider_timeframe,
@@ -221,7 +223,7 @@ class DataUpdater:
             else:
                 # Если данных нет, загружаем последние 100 свечей для быстрого старта
                 # Потом при следующем обновлении догрузим остальное
-                logger.info(f"Нет данных для {instrument_symbol} {timeframe_code}, загружаем последние 100 свечей для старта")
+                logger.debug(f"Нет данных для {instrument_symbol} {timeframe_code}, загружаем последние 100 свечей для старта")
                 df = self.data_provider.get_recent_data(instrument_symbol, provider_timeframe, limit=100)
             
             if df is None or df.empty:
@@ -257,6 +259,41 @@ class DataUpdater:
             
             if success:
                 logger.info(f"Загружено {len(df)} новых свечей для {instrument_symbol} {timeframe_code}")
+                
+                # Пересчитываем DMA для ВСЕГО набора данных из БД (не только новых)
+                # Это необходимо, так как новые данные могут влиять на значения DMA для предыдущих точек
+                try:
+                    # Загружаем все данные из БД для пересчета DMA
+                    price_data_all = self.data_import.get_price_data(instrument.id, timeframe.id)
+                    if price_data_all:
+                        # Конвертируем в DataFrame для расчета
+                        from gui.chart_data_converter import ChartDataConverter
+                        from gui.chart_data_validator import ChartDataValidator
+                        
+                        converter = ChartDataConverter()
+                        validator = ChartDataValidator()
+                        
+                        df_all = converter.process_price_data(
+                            price_data_all, instrument_symbol, timeframe_code
+                        )
+                        if df_all is not None and not df_all.empty:
+                            df_all = validator.prepare_columns(df_all)
+                            if df_all is not None:
+                                df_all = converter.convert_timezone(df_all)
+                                df_all = validator.validate_data(df_all, instrument_symbol, timeframe_code)
+                                
+                                if df_all is not None and not df_all.empty:
+                                    # Рассчитываем DMA для всего набора данных
+                                    self.dma_service.calculate_all_dma_from_dataframe(
+                                        df_all, instrument_symbol, timeframe_code
+                                    )
+                                    logger.debug(
+                                        f"DMA пересчитаны для {instrument_symbol} {timeframe_code} "
+                                        f"({len(df_all)} свечей)"
+                                    )
+                except Exception as e:
+                    logger.error(f"Ошибка при расчете DMA для {instrument_symbol} {timeframe_code}: {e}")
+                
                 return True
             else:
                 logger.error(f"Не удалось сохранить данные для {instrument_symbol} {timeframe_code}")

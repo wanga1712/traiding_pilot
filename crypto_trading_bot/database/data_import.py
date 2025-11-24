@@ -52,7 +52,7 @@ class DataImport:
                 logger.warning("Таблица timeframes не найдена или пуста")
                 return []
             
-            logger.info(f"Структура таблицы timeframes: {columns}")
+            logger.debug(f"Структура таблицы timeframes: {columns}")
             
             # Определяем названия колонок
             id_col = columns[0]  # Первая колонка - обычно id
@@ -77,7 +77,7 @@ class DataImport:
             self.db_manager.cursor.execute(query)
             timeframes = self.db_manager.cursor.fetchall()
             
-            logger.info(f"Получены таймфреймы: {timeframes}")
+            logger.debug(f"Получены таймфреймы: {timeframes}")
             return timeframes
             
         except Exception as e:
