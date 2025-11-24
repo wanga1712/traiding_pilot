@@ -19,11 +19,9 @@ from PyQt5.QtGui import QFont, QColor, QPalette
 from PyQt5.QtWidgets import QDesktopWidget
 from loguru import logger
 import pandas as pd
-import mplfinance as mpf
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 
 from gui.ui_config import UIConfig
@@ -87,6 +85,198 @@ class CandlestickChartWidget(QWidget):
                 return f"{value:,.2f}".replace(",", " ")
 
             axis.yaxis.set_major_formatter(FuncFormatter(price_formatter))
+
+        def apply_time_axis_formatting(axis):
+            """
+            Применяет форматирование оси X в зависимости от таймфрейма.
+            """
+            import matplotlib.dates as mdates
+            from matplotlib.dates import DateFormatter, AutoDateLocator, num2date, date2num
+
+            if '1d' in timeframe_code or '1D' in timeframe_code:
+                date_format = DateFormatter('%d %b')
+                locator = AutoDateLocator(maxticks=12)
+            elif '1w' in timeframe_code or '1mo' in timeframe_code:
+                date_format = DateFormatter('%d.%m')
+                locator = AutoDateLocator(maxticks=15)
+            elif ('1h' in timeframe_code or '2h' in timeframe_code or '4h' in timeframe_code or
+                  '6h' in timeframe_code or '12h' in timeframe_code):
+                date_format = DateFormatter('%d.%m %H:%M')
+                locator = AutoDateLocator(maxticks=15)
+            else:
+                date_format = DateFormatter('%H:%M')
+                locator = AutoDateLocator(maxticks=20)
+
+            axis.xaxis.set_major_locator(locator)
+            axis.xaxis.set_major_formatter(date_format)
+
+            x_min, x_max = axis.get_xlim()
+            try:
+                date_min = num2date(x_min)
+                date_max = num2date(x_max)
+                logger.info(f"Пределы оси X (даты): {date_min} - {date_max}")
+                logger.info(f"Год минимальной даты: {date_min.year}, максимальной: {date_max.year}")
+
+                if date_min.year < 2020 or date_max.year < 2020:
+                    logger.warning("Даты на оси X неправильные, исправляем...")
+                    x_min_correct = date2num(df.index[0])
+                    x_max_correct = date2num(df.index[-1])
+
+                    if len(df) > 1:
+                        time_diffs = df.index.to_series().diff().dropna()
+                        if len(time_diffs) > 0:
+                            avg_time_diff = time_diffs.mean()
+                            width_days = avg_time_diff.total_seconds() / 86400.0
+                        else:
+                            width_days = (x_max_correct - x_min_correct) / len(df) if len(df) > 0 else 1.0
+                    else:
+                        width_days = (x_max_correct - x_min_correct) if (x_max_correct - x_min_correct) > 0 else 1.0
+
+                    future_space = width_days * 10
+                    axis.set_xlim(x_min_correct, x_max_correct + future_space)
+                    logger.info(
+                        f"Установлены правильные пределы: {df.index[0]} - {df.index[-1]} + {future_space:.2f} дней"
+                    )
+            except Exception as date_err:
+                logger.error(f"Ошибка преобразования числовых значений в даты: {date_err}")
+                import traceback
+                logger.error(traceback.format_exc())
+
+        def calculate_candle_width():
+            """
+            Рассчитывает ширину свечи в днях для корректного отображения.
+            """
+            if len(df) > 1:
+                time_diffs = df.index.to_series().diff().dropna()
+                if len(time_diffs) > 0:
+                    avg_time_diff = time_diffs.mean()
+                    return avg_time_diff.total_seconds() / 86400.0 * 0.7
+
+            if '1m' in timeframe_code:
+                return 1.0 / 60.0 / 24.0 * 0.7
+            if '3m' in timeframe_code:
+                return 3.0 / 60.0 / 24.0 * 0.7
+            if '5m' in timeframe_code:
+                return 5.0 / 60.0 / 24.0 * 0.7
+            if '15m' in timeframe_code:
+                return 15.0 / 60.0 / 24.0 * 0.7
+            if '30m' in timeframe_code:
+                return 30.0 / 60.0 / 24.0 * 0.7
+            if '1h' in timeframe_code:
+                return 1.0 / 24.0 * 0.7
+            if '1d' in timeframe_code or '1D' in timeframe_code:
+                return 0.7
+            if '1w' in timeframe_code:
+                return 7.0 * 0.7
+            if '1mo' in timeframe_code:
+                return 30.0 * 0.7
+            return 0.6
+
+        def prepare_plot_payload():
+            """
+            Готовит массивы данных для отрисовки свечей и объемов.
+            """
+            from matplotlib.dates import date2num
+            import numpy as np
+
+            width_days = calculate_candle_width()
+            timestamps = np.array([date2num(ts) for ts in df.index])
+            opens = df['Open'].astype(float).values
+            closes = df['Close'].astype(float).values
+            highs = df['High'].astype(float).values
+            lows = df['Low'].astype(float).values
+            volumes = df['Volume'].astype(float).values
+
+            colors = np.where(closes >= opens, UIConfig.CANDLE_BULLISH_COLOR, UIConfig.CANDLE_BEARISH_COLOR)
+
+            max_draw = 500
+            if len(timestamps) > max_draw:
+                step = len(timestamps) // max_draw
+                indices = list(range(0, len(timestamps), step))[:max_draw]
+                timestamps = timestamps[indices]
+                opens = opens[indices]
+                closes = closes[indices]
+                highs = highs[indices]
+                lows = lows[indices]
+                volumes = volumes[indices]
+                colors = colors[indices]
+
+            return {
+                'timestamps': timestamps,
+                'opens': opens,
+                'closes': closes,
+                'highs': highs,
+                'lows': lows,
+                'volumes': volumes,
+                'colors': colors,
+                'width_days': width_days
+            }
+
+        def draw_price(ax_price, payload):
+            """
+            Отрисовывает свечной график вручную.
+            """
+            from matplotlib.patches import Rectangle
+
+            timestamps = payload['timestamps']
+            opens = payload['opens']
+            closes = payload['closes']
+            highs = payload['highs']
+            lows = payload['lows']
+            colors = payload['colors']
+            width_days = payload['width_days']
+
+            for idx, ts in enumerate(timestamps):
+                ax_price.plot(
+                    [ts, ts],
+                    [lows[idx], highs[idx]],
+                    color=colors[idx],
+                    linewidth=0.5,
+                    alpha=0.8
+                )
+
+            for idx, ts in enumerate(timestamps):
+                body_bottom = min(opens[idx], closes[idx])
+                body_height = abs(closes[idx] - opens[idx])
+                if body_height == 0:
+                    body_height = (highs[idx] - lows[idx]) * 0.1
+                    if body_height == 0:
+                        body_height = (highs.max() - lows.min()) * 0.001
+                x_pos = ts - width_days / 2
+                candle = Rectangle(
+                    (x_pos, body_bottom),
+                    width_days,
+                    body_height,
+                    facecolor=colors[idx],
+                    edgecolor=colors[idx],
+                    linewidth=0.5
+                )
+                ax_price.add_patch(candle)
+
+            future_space = width_days * 10
+            ax_price.set_xlim(timestamps[0] - width_days, timestamps[-1] + future_space)
+            ax_price.set_ylim(lows.min() * 0.99, highs.max() * 1.01)
+
+        def draw_volume(ax_volume, payload):
+            """
+            Отрисовывает гистограмму объемов.
+            """
+            timestamps = payload['timestamps']
+            volumes = payload['volumes']
+            colors = payload['colors']
+            width_days = payload['width_days']
+
+            ax_volume.bar(
+                timestamps,
+                volumes,
+                width=width_days,
+                color=colors,
+                align='center',
+                alpha=0.5
+            )
+            if volumes.max() > 0:
+                ax_volume.set_ylim(0, volumes.max() * 1.2)
+            ax_volume.set_xlim(timestamps[0] - width_days, timestamps[-1] + width_days * 10)
 
         try:
             logger.info(f"Отрисовка графика для {instrument_symbol} на таймфрейме {timeframe_code}")
@@ -349,399 +539,52 @@ class CandlestickChartWidget(QWidget):
                 logger.error("В данных есть неположительные значения!")
                 return
             
-            # Очищаем предыдущий график
+            payload = prepare_plot_payload()
             self.figure.clear()
-            
-            # Создаем стиль для свечей (TradingView стиль)
-            mc = mpf.make_marketcolors(
-                up=UIConfig.CANDLE_BULLISH_COLOR,
-                down=UIConfig.CANDLE_BEARISH_COLOR,
-                edge='inherit',
-                wick='inherit',
-                volume='in'
-            )
-            
-            style = mpf.make_mpf_style(
-                marketcolors=mc,
-                gridstyle='-',
-                gridcolor=UIConfig.CHART_GRID_COLOR,
-                facecolor=UIConfig.CHART_BACKGROUND_COLOR,
-                edgecolor=UIConfig.CHART_GRID_COLOR,
-                figcolor=UIConfig.CHART_BACKGROUND_COLOR,
-                y_on_right=True,  # Цена справа
-                rc={'axes.labelcolor': UIConfig.CHART_TEXT_COLOR,
-                    'xtick.color': UIConfig.CHART_TEXT_COLOR,
-                    'ytick.color': UIConfig.CHART_TEXT_COLOR,
-                    'text.color': UIConfig.CHART_TEXT_COLOR}
-            )
-            
-            try:
-                # Используем returnfig=True, чтобы получить фигуру и оси обратно
-                # НЕ передаем fig или ax - пусть mplfinance создаст свою фигуру
-                logger.info(f"Вызов mplfinance.plot с {len(df)} строками данных")
-                logger.info(f"Диапазон индекса: {df.index[0]} - {df.index[-1]}")
-                logger.info(f"Диапазон цен: {df['Low'].min():.2f} - {df['High'].max():.2f}")
-                
-                # Логируем данные перед передачей в mplfinance
-                logger.info(f"Вызов mplfinance.plot с {len(df)} строками данных")
-                logger.info(f"Диапазон индекса: {df.index[0]} - {df.index[-1]}")
-                logger.info(f"Диапазон цен: {df['Low'].min():.2f} - {df['High'].max():.2f}")
-                logger.info(f"Первые 3 строки DataFrame:\n{df.head(3)}")
-                
-                fig, axes = mpf.plot(
-                    df,
-                    type='candle',
-                    style=style,
-                    volume=False,  # Без объемов
-                    show_nontrading=False,
-                    warn_too_much_data=1000,
-                    returnfig=True
-                )
-                logger.info("mplfinance.plot выполнен успешно")
-                
-                # Проверяем, что mplfinance отрисовал график
-                if len(axes) == 0:
-                    logger.error("mplfinance не создал осей")
-                    return
-                
-                ax_source = axes[0]
-                
-                # Проверяем, есть ли графические элементы
-                num_lines = len(ax_source.lines)
-                num_patches = len(ax_source.patches)
-                logger.info(f"На оси от mplfinance: {num_lines} линий, {num_patches} патчей")
-                
-                if num_lines == 0 and num_patches == 0:
-                    logger.error("mplfinance не отрисовал график - нет элементов на оси!")
-                    logger.info("Пробуем отрисовать график вручную через matplotlib...")
-                    
-                    # Закрываем временную фигуру
-                    import matplotlib.pyplot as plt
-                    plt.close(fig)
-                    
-                    # Отрисовываем график вручную
-                    self.figure.clear()
-                    ax1 = self.figure.add_subplot(1, 1, 1)
-                    
-                    # Отрисовываем свечи вручную - оптимизированная версия
-                    from matplotlib.patches import Rectangle
-                    from matplotlib.dates import date2num
-                    import numpy as np
-                    
-                    # Вычисляем ширину свечи в зависимости от таймфрейма
-                    if len(df) > 1:
-                        # Вычисляем средний интервал между свечами
-                        time_diffs = df.index.to_series().diff().dropna()
-                        if len(time_diffs) > 0:
-                            avg_time_diff = time_diffs.mean()
-                            # Преобразуем в дни для date2num
-                            width_days = avg_time_diff.total_seconds() / 86400.0 * 0.7  # 70% от среднего интервала
-                        else:
-                            # Fallback: используем разумную ширину в зависимости от таймфрейма
-                            if '1m' in timeframe_code:
-                                width_days = 1.0 / 60.0 / 24.0 * 0.7  # 0.7 минуты в днях
-                            elif '3m' in timeframe_code:
-                                width_days = 3.0 / 60.0 / 24.0 * 0.7
-                            elif '5m' in timeframe_code:
-                                width_days = 5.0 / 60.0 / 24.0 * 0.7
-                            elif '15m' in timeframe_code:
-                                width_days = 15.0 / 60.0 / 24.0 * 0.7
-                            elif '30m' in timeframe_code:
-                                width_days = 30.0 / 60.0 / 24.0 * 0.7
-                            elif '1h' in timeframe_code:
-                                width_days = 1.0 / 24.0 * 0.7
-                            elif '1d' in timeframe_code or '1D' in timeframe_code:
-                                width_days = 0.7  # 0.7 дня
-                            elif '1w' in timeframe_code:
-                                width_days = 7.0 * 0.7
-                            elif '1mo' in timeframe_code:
-                                width_days = 30.0 * 0.7
-                            else:
-                                width_days = 0.6
-                    else:
-                        width_days = 0.6
-                    
-                    # Оптимизация: собираем данные в массивы для пакетной отрисовки
-                    try:
-                        timestamps_num = np.array([date2num(ts) for ts in df.index])
-                        opens = df['Open'].values
-                        closes = df['Close'].values
-                        highs = df['High'].values
-                        lows = df['Low'].values
-                        
-                        # Определяем цвета свечей
-                        colors = np.where(closes >= opens, UIConfig.CANDLE_BULLISH_COLOR, UIConfig.CANDLE_BEARISH_COLOR)
-                        
-                        # Ограничиваем количество свечей для отрисовки, чтобы не перегружать
-                        # Для больших таймфреймов (месячных) может быть слишком много данных
-                        max_draw = 500  # Максимум свечей для ручной отрисовки
-                        if len(df) > max_draw:
-                            logger.warning(f"Слишком много свечей ({len(df)}), ограничиваем до {max_draw} для отрисовки")
-                            step = len(df) // max_draw
-                            indices = list(range(0, len(df), step))[:max_draw]
-                            timestamps_num = timestamps_num[indices]
-                            opens = opens[indices]
-                            closes = closes[indices]
-                            highs = highs[indices]
-                            lows = lows[indices]
-                            colors = colors[indices]
-                        
-                        # Рисуем тени (wicks) пакетно
-                        for i in range(len(timestamps_num)):
-                            ax1.plot([timestamps_num[i], timestamps_num[i]], 
-                                   [lows[i], highs[i]], 
-                                   color=colors[i], linewidth=0.5, alpha=0.8)
-                        
-                        # Рисуем тела свечей
-                        for i in range(len(timestamps_num)):
-                            body_bottom = min(opens[i], closes[i])
-                            body_height = abs(closes[i] - opens[i])
-                            if body_height == 0:
-                                body_height = (highs[i] - lows[i]) * 0.1  # 10% от диапазона, но не меньше минимального
-                                if body_height == 0:
-                                    body_height = (df['High'].max() - df['Low'].min()) * 0.001  # 0.1% от общего диапазона
-                            x_pos = timestamps_num[i] - width_days/2
-                            
-                            body = Rectangle((x_pos, body_bottom), width_days, body_height,
-                                            facecolor=colors[i], edgecolor=colors[i], linewidth=0.5)
-                            ax1.add_patch(body)
-                    except Exception as e:
-                        logger.error(f"Ошибка при ручной отрисовке свечей: {e}")
-                        import traceback
-                        logger.error(traceback.format_exc())
-                        return
-                    
-                    # Устанавливаем пределы
-                    # Добавляем справа пространство для будущих свечей (около 10 свечей)
-                    future_space = width_days * 10  # Пространство для 10 будущих свечей
-                    ax1.set_xlim(date2num(df.index[0]) - width_days, date2num(df.index[-1]) + future_space)
-                    ax1.set_ylim(df['Low'].min() * 0.99, df['High'].max() * 1.01)
-                    
-                    # Настраиваем форматирование дат
-                    import matplotlib.dates as mdates
-                    from matplotlib.dates import DateFormatter, AutoDateLocator
-                    
-                    # Форматирование дат как в TradingView
-                    if '1d' in timeframe_code or '1D' in timeframe_code:
-                        date_format = DateFormatter('%d %b')
-                        locator = AutoDateLocator(maxticks=12)
-                    elif '1w' in timeframe_code or '1mo' in timeframe_code:
-                        # Для недельного и месячного - дата без года
-                        date_format = DateFormatter('%d.%m')
-                        locator = AutoDateLocator(maxticks=15)
-                    elif '1h' in timeframe_code or '2h' in timeframe_code or '4h' in timeframe_code or '6h' in timeframe_code or '12h' in timeframe_code:
-                        # Для часовых таймфреймов - дата и время
-                        date_format = DateFormatter('%d.%m %H:%M')
-                        locator = AutoDateLocator(maxticks=15)
-                    else:
-                        # Для минутных таймфреймов - только время (часы:минуты)
-                        date_format = DateFormatter('%H:%M')
-                        locator = AutoDateLocator(maxticks=20)
-                    
-                    ax1.xaxis.set_major_locator(locator)
-                    ax1.xaxis.set_major_formatter(date_format)
-                    ax1.tick_params(axis='x', rotation=45, colors=UIConfig.CHART_TEXT_COLOR, labelsize=12)
-                    
-                    # Настраиваем цвета
-                    ax1.set_facecolor(UIConfig.CHART_BACKGROUND_COLOR)
-                    ax1.tick_params(axis='y', colors=UIConfig.CHART_TEXT_COLOR, labelsize=14)
-                    ax1.spines['bottom'].set_color(UIConfig.CHART_GRID_COLOR)
-                    ax1.spines['top'].set_color(UIConfig.CHART_GRID_COLOR)
-                    ax1.spines['right'].set_color(UIConfig.CHART_GRID_COLOR)
-                    ax1.spines['left'].set_color(UIConfig.CHART_GRID_COLOR)
-                    
-                    # Размещаем цену справа
-                    ax1.yaxis.tick_right()
-                    ax1.yaxis.set_label_position('right')
-                    apply_price_formatter(ax1)
-                    
-                    self.figure.subplots_adjust(left=0.05, right=0.95, bottom=0.12, top=0.95)
-                    self.canvas.draw()
-                    
-                    logger.info("График отрисован вручную через matplotlib")
-                    return
-                
-                # Копируем содержимое полученной фигуры в нашу фигуру
-                self.figure.clear()
-                ax1 = self.figure.add_subplot(1, 1, 1)
-                
-                # Копируем все линии
-                for line in ax_source.lines:
-                    ax1.plot(line.get_xdata(), line.get_ydata(),
-                           color=line.get_color(),
-                           linewidth=line.get_linewidth(),
-                           linestyle=line.get_linestyle(),
-                           marker=line.get_marker())
-                
-                # Копируем все патчи (свечи)
-                for patch in ax_source.patches:
-                    # Создаем новый патч с теми же свойствами
-                    from matplotlib.patches import Rectangle
-                    if isinstance(patch, Rectangle):
-                        new_patch = Rectangle(
-                            patch.get_xy(),
-                            patch.get_width(),
-                            patch.get_height(),
-                            facecolor=patch.get_facecolor(),
-                            edgecolor=patch.get_edgecolor(),
-                            linewidth=patch.get_linewidth(),
-                            alpha=patch.get_alpha()
-                        )
-                        ax1.add_patch(new_patch)
-                
-                # Копируем настройки
-                x_min_source, x_max_source = ax_source.get_xlim()
-                # Добавляем справа пространство для будущих свечей (около 10 свечей)
-                # Вычисляем ширину одной свечи
-                if len(df) > 1:
-                    time_diffs = df.index.to_series().diff().dropna()
-                    if len(time_diffs) > 0:
-                        avg_time_diff = time_diffs.mean()
-                        width_days = avg_time_diff.total_seconds() / 86400.0
-                    else:
-                        width_days = (x_max_source - x_min_source) / len(df) if len(df) > 0 else 1.0
-                else:
-                    width_days = (x_max_source - x_min_source) if (x_max_source - x_min_source) > 0 else 1.0
-                
-                future_space = width_days * 10  # Пространство для 10 будущих свечей
-                ax1.set_xlim(x_min_source, x_max_source + future_space)
-                ax1.set_ylim(ax_source.get_ylim())
-                ax1.set_facecolor(ax_source.get_facecolor())
-                
-                # Закрываем временную фигуру
-                import matplotlib.pyplot as plt
-                plt.close(fig)
-                
-                logger.info(f"Скопировано в нашу фигуру: {len(ax1.lines)} линий, {len(ax1.patches)} патчей")
-                    
-            except Exception as e:
-                logger.error(f"Ошибка при вызове mplfinance.plot: {e}")
-                import traceback
-                logger.error(traceback.format_exc())
-                return
-            
-            # Получаем ось после отрисовки
-            if len(self.figure.axes) == 0:
-                logger.error("mplfinance не создал ось после отрисовки")
-                return
-            
-            ax1 = self.figure.axes[0]
-            
-            # Настраиваем форматирование дат на оси X (как в TradingView)
-            import matplotlib.dates as mdates
-            from matplotlib.dates import DateFormatter, AutoDateLocator
-            
-            # Определяем формат дат в зависимости от таймфрейма
-            num_candles = len(df)
-            
-            # Форматирование дат как в TradingView
-            if '1d' in timeframe_code or '1D' in timeframe_code:
-                date_format = DateFormatter('%d %b')
-                locator = AutoDateLocator(maxticks=12)
-            elif '1w' in timeframe_code or '1mo' in timeframe_code:
-                # Для недельного и месячного - дата без года
-                date_format = DateFormatter('%d.%m')
-                locator = AutoDateLocator(maxticks=15)
-            elif '1h' in timeframe_code or '2h' in timeframe_code or '4h' in timeframe_code or '6h' in timeframe_code or '12h' in timeframe_code:
-                # Для часовых таймфреймов - дата и время
-                date_format = DateFormatter('%d.%m %H:%M')
-                locator = AutoDateLocator(maxticks=15)
-            else:
-                # Для минутных таймфреймов - только время (часы:минуты)
-                date_format = DateFormatter('%H:%M')
-                locator = AutoDateLocator(maxticks=20)
-            
-            # ВАЖНО: Проверяем пределы оси X перед форматированием
-            x_min, x_max = ax1.get_xlim()
-            logger.info(f"Пределы оси X (числовые): {x_min} - {x_max}")
-            
-            # Преобразуем числовые значения обратно в даты для проверки
-            from matplotlib.dates import num2date
-            try:
-                date_min = num2date(x_min)
-                date_max = num2date(x_max)
-                logger.info(f"Пределы оси X (даты): {date_min} - {date_max}")
-                logger.info(f"Год минимальной даты: {date_min.year}, максимальной: {date_max.year}")
-                
-                # Если даты неправильные (1969-1970), исправляем их
-                if date_min.year < 2020 or date_max.year < 2020:
-                    logger.warning("Даты на оси X неправильные, исправляем...")
-                    # Устанавливаем правильные пределы на основе данных DataFrame
-                    # Используем matplotlib.dates.date2num для преобразования дат в числовые значения
-                    from matplotlib.dates import date2num
-                    x_min_correct = date2num(df.index[0])
-                    x_max_correct = date2num(df.index[-1])
-                    
-                    # Вычисляем ширину одной свечи для добавления пространства справа
-                    if len(df) > 1:
-                        time_diffs = df.index.to_series().diff().dropna()
-                        if len(time_diffs) > 0:
-                            avg_time_diff = time_diffs.mean()
-                            width_days = avg_time_diff.total_seconds() / 86400.0
-                        else:
-                            width_days = (x_max_correct - x_min_correct) / len(df) if len(df) > 0 else 1.0
-                    else:
-                        width_days = (x_max_correct - x_min_correct) if (x_max_correct - x_min_correct) > 0 else 1.0
-                    
-                    # Добавляем справа пространство для будущих свечей (около 10 свечей)
-                    future_space = width_days * 10
-                    ax1.set_xlim(x_min_correct, x_max_correct + future_space)
-                    logger.info(f"Установлены правильные пределы: {df.index[0]} - {df.index[-1]} + {future_space:.2f} дней (10 будущих свечей)")
-                    logger.info(f"Числовые значения: {x_min_correct} - {x_max_correct + future_space}")
-                    
-                    # Проверяем пределы после установки
-                    x_min_new, x_max_new = ax1.get_xlim()
-                    logger.info(f"Пределы после установки: {x_min_new} - {x_max_new}")
-                    
-                    # Проверяем, что графические элементы все еще на месте
-                    num_lines_after = len(ax1.lines)
-                    num_patches_after = len(ax1.patches)
-                    logger.info(f"После установки пределов: {num_lines_after} линий, {num_patches_after} патчей")
-                    
-                    # Если элементов нет, возможно проблема в том, что они были отрисованы в неправильных координатах
-                    if num_lines_after == 0 and num_patches_after == 0:
-                        logger.error("Графические элементы исчезли после установки пределов!")
-                        # Пробуем перерисовать график с правильными пределами
-                        # Но сначала нужно понять, почему элементы исчезли
-            except Exception as e:
-                logger.error(f"Ошибка преобразования числовых значений в даты: {e}")
-                import traceback
-                logger.error(traceback.format_exc())
-            
-            ax1.xaxis.set_major_locator(locator)
-            ax1.xaxis.set_major_formatter(date_format)
-            
-            # Поворачиваем метки дат для лучшей читаемости
-            ax1.tick_params(axis='x', rotation=45, colors=UIConfig.CHART_TEXT_COLOR, labelsize=12)
-            
-            # Убеждаемся, что метки видны
-            ax1.xaxis.set_visible(True)
-            
-            # Принудительно обновляем форматирование
-            ax1.xaxis.set_major_formatter(date_format)
-            self.figure.autofmt_xdate()  # Автоматическое форматирование дат
-            
-            # Настраиваем цвета осей для основного графика
-            ax1.set_facecolor(UIConfig.CHART_BACKGROUND_COLOR)
-            ax1.tick_params(axis='y', colors=UIConfig.CHART_TEXT_COLOR, labelsize=14)
-            ax1.spines['bottom'].set_color(UIConfig.CHART_GRID_COLOR)
-            ax1.spines['top'].set_color(UIConfig.CHART_GRID_COLOR)
-            ax1.spines['right'].set_color(UIConfig.CHART_GRID_COLOR)
-            ax1.spines['left'].set_color(UIConfig.CHART_GRID_COLOR)
-            apply_price_formatter(ax1)
-            
-            # Размещаем цену справа от графика (уже установлено через y_on_right=True)
-            
-            # Проверяем, что на оси есть графические элементы
-            num_lines = len(ax1.lines)
-            num_patches = len(ax1.patches)
-            logger.info(f"На оси после отрисовки: {num_lines} линий, {num_patches} патчей")
-            
-            # Если нет элементов, возможно проблема с данными или отрисовкой
+            grid_spec = self.figure.add_gridspec(2, 1, height_ratios=[4, 1], hspace=0.06)
+            ax_price = self.figure.add_subplot(grid_spec[0])
+            ax_volume = self.figure.add_subplot(grid_spec[1], sharex=ax_price)
+
+            draw_price(ax_price, payload)
+            draw_volume(ax_volume, payload)
+
+            apply_time_axis_formatting(ax_price)
+            apply_price_formatter(ax_price)
+            ax_price.tick_params(axis='x', colors=UIConfig.CHART_TEXT_COLOR, labelsize=12, labelbottom=False)
+            ax_price.set_facecolor(UIConfig.CHART_BACKGROUND_COLOR)
+            ax_price.tick_params(axis='y', colors=UIConfig.CHART_TEXT_COLOR, labelsize=14)
+            ax_price.spines['bottom'].set_color(UIConfig.CHART_GRID_COLOR)
+            ax_price.spines['top'].set_color(UIConfig.CHART_GRID_COLOR)
+            ax_price.spines['right'].set_color(UIConfig.CHART_GRID_COLOR)
+            ax_price.spines['left'].set_color(UIConfig.CHART_GRID_COLOR)
+            ax_price.yaxis.tick_right()
+            ax_price.yaxis.set_label_position('right')
+
+            ax_volume.set_facecolor(UIConfig.CHART_BACKGROUND_COLOR)
+            ax_volume.spines['bottom'].set_color(UIConfig.CHART_GRID_COLOR)
+            ax_volume.spines['top'].set_color(UIConfig.CHART_GRID_COLOR)
+            ax_volume.spines['right'].set_color(UIConfig.CHART_GRID_COLOR)
+            ax_volume.spines['left'].set_color(UIConfig.CHART_GRID_COLOR)
+            ax_volume.tick_params(axis='y', colors=UIConfig.CHART_TEXT_COLOR, labelsize=12)
+            ax_volume.yaxis.tick_right()
+            ax_volume.yaxis.set_label_position('right')
+            ax_volume.set_ylabel("Объём", color=UIConfig.CHART_TEXT_COLOR)
+            ax_volume.ticklabel_format(style='plain', axis='y', useOffset=False)
+
+            def volume_formatter(value, _):
+                return f"{value:,.0f}".replace(",", " ")
+
+            ax_volume.yaxis.set_major_formatter(FuncFormatter(volume_formatter))
+            ax_volume.tick_params(axis='x', rotation=45, colors=UIConfig.CHART_TEXT_COLOR, labelsize=12)
+
+            self.figure.autofmt_xdate()
+
+            num_lines = len(ax_price.lines)
+            num_patches = len(ax_price.patches)
+            logger.info(f"На графике после отрисовки: {num_lines} линий, {num_patches} патчей")
+
             if num_lines == 0 and num_patches == 0:
-                logger.warning("На оси нет графических элементов после отрисовки mplfinance!")
-                logger.info(f"Диапазон данных: {df.index[0]} - {df.index[-1]}")
-                logger.info(f"Диапазон цен: {df['Low'].min():.2f} - {df['High'].max():.2f}")
+                logger.warning("После отрисовки график пуст – проверьте входные данные.")
             
             # Настраиваем отступы для максимального использования пространства
             # Увеличиваем нижний отступ для меток дат
