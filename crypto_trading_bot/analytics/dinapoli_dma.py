@@ -47,25 +47,24 @@ class DinapoliDMAService:
     
     def calculate_dma(self, close_prices: pd.Series, period: int, displacement: int) -> pd.Series:
         """
-        Рассчитывает смещенную скользящую среднюю (DMA) по методу ДиНаполи.
+        Рассчитывает простую скользящую среднюю (SMA) с периодом period.
         
-        Формула: DMA_N(t) = SMA_N(t+displacement)
-        Например, для DMA(3×3): DMA_3(t) = среднее от P_{t+3}, P_{t+2}, P_{t+1}
+        Смещение происходит при сохранении в БД (timestamp смещается вперед).
+        Этот метод используется только для внутренних расчетов.
         
         Параметры:
             close_prices: Series с ценами закрытия.
             period: Период скользящей средней (N).
-            displacement: Смещение вперед (M).
+            displacement: Смещение вперед (M) - не используется здесь, только для совместимости.
         
         Возвращает:
-            Series с значениями DMA. Последние displacement значений заполняются
-            последним доступным значением SMA для непрерывности линии на графике.
+            Series с значениями SMA. NaN значения остаются там, где данных недостаточно.
         """
         # Проверяем, достаточно ли данных для расчета
-        min_required = period + displacement
+        min_required = period
         if len(close_prices) < min_required:
             logger.warning(
-                f"Недостаточно данных для DMA({period}x{displacement}): "
+                f"Недостаточно данных для SMA({period}): "
                 f"требуется минимум {min_required}, получено {len(close_prices)}"
             )
             return pd.Series(dtype=float, index=close_prices.index)
@@ -74,45 +73,7 @@ class DinapoliDMAService:
         # SMA(t) = среднее от P_t, P_{t-1}, ..., P_{t-period+1}
         sma = close_prices.rolling(window=period).mean()
         
-        # По формуле ДиНаполи: DMA(t) = SMA(t+displacement)
-        # Это означает, что значение SMA из будущего показывается в текущем моменте
-        # shift(-displacement) сдвигает значения назад (влево) на displacement периодов
-        # То есть SMA(t+displacement) попадает в позицию t
-        dma = sma.shift(-displacement)
-        
-        # Заполняем NaN значения для непрерывности линии
-        if not dma.empty:
-            # Заполняем NaN в начале (из-за shift) значениями из начала SMA
-            nan_mask = dma.isna()
-            if nan_mask.any():
-                first_valid_idx = dma.first_valid_index()
-                if first_valid_idx is not None:
-                    first_valid_pos = dma.index.get_loc(first_valid_idx)
-                    # Заполняем первые NaN значениями из начала SMA
-                    for i in range(first_valid_pos):
-                        if i < len(sma) and not pd.isna(sma.iloc[i]):
-                            dma.iloc[i] = sma.iloc[i]
-            
-            # КРИТИЧЕСКИ ВАЖНО: Заполняем последние displacement NaN значений
-            # текущими значениями SMA, чтобы линия доходила до конца графика
-            last_valid_idx = dma.last_valid_index()
-            if last_valid_idx is not None:
-                last_valid_pos = dma.index.get_loc(last_valid_idx)
-                # Заполняем последние displacement точек текущими значениями SMA
-                for i in range(displacement):
-                    dma_idx = len(dma) - 1 - i
-                    sma_idx = len(sma) - 1 - i
-                    if dma_idx > last_valid_pos and sma_idx >= 0:
-                        if pd.isna(dma.iloc[dma_idx]) and not pd.isna(sma.iloc[sma_idx]):
-                            dma.iloc[dma_idx] = sma.iloc[sma_idx]
-            
-            # Заполняем оставшиеся NaN (из-за rolling window) первым валидным значением
-            dma = dma.bfill()
-            
-            # Заполняем оставшиеся NaN последним валидным значением
-            dma = dma.ffill()
-        
-        return dma
+        return sma
     
     def fetch_price_data(self, symbol: str, timeframe_code: str) -> Optional[pd.DataFrame]:
         """
@@ -187,31 +148,41 @@ class DinapoliDMAService:
                 logger.error(f"Колонка {close_col} не найдена в DataFrame для {symbol}")
                 return False
             
-            # Рассчитываем DMA
-            dma_series = self.calculate_dma(df[close_col], period, displacement)
+            # Рассчитываем SMA (без смещения)
+            sma = df[close_col].rolling(window=period).mean()
             
-            # Удаляем NaN значения (в начале и конце из-за смещения)
-            valid_data = dma_series.dropna()
+            # Удаляем NaN значения (в начале из-за rolling window)
+            valid_sma = sma.dropna()
             
-            if valid_data.empty:
-                logger.debug(f"Нет валидных данных DMA для {symbol} на {timeframe_code}")
+            if valid_sma.empty:
+                logger.debug(f"Нет валидных данных SMA для {symbol} на {timeframe_code}")
                 return False
+            
+            # Определяем период таймфрейма (разница между соседними timestamp'ами)
+            if len(df.index) < 2:
+                logger.warning(f"Недостаточно данных для определения периода таймфрейма для {symbol}")
+                return False
+            
+            timeframe_period = df.index[1] - df.index[0]
             
             # Получаем ID
             instrument_id = self.schema.ensure_instrument(symbol)
             timeframe_id = self.schema.ensure_timeframe(timeframe_code)
             
-            # Сохраняем каждое значение в БД
+            # Сохраняем каждое значение в БД со смещенным timestamp
             metric_type = f"DMA_{period}x{displacement}"
             saved_count = 0
             
-            for timestamp, value in valid_data.items():
+            for original_timestamp, value in valid_sma.items():
                 try:
+                    # Смещаем timestamp вперед на displacement периодов
+                    shifted_timestamp = original_timestamp + (timeframe_period * displacement)
+                    
                     # Убираем timezone из timestamp для сохранения в БД
-                    if hasattr(timestamp, 'tz') and timestamp.tz is not None:
-                        timestamp_naive = timestamp.tz_localize(None)
+                    if hasattr(shifted_timestamp, 'tz') and shifted_timestamp.tz is not None:
+                        timestamp_naive = shifted_timestamp.tz_localize(None)
                     else:
-                        timestamp_naive = timestamp
+                        timestamp_naive = shifted_timestamp
                     
                     # Используем UPSERT для избежания дубликатов
                     query = """
