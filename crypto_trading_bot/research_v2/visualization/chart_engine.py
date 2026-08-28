@@ -7,14 +7,14 @@ from crypto_trading_bot.research_v2.market_data.bars_service import _parse_axis_
 from crypto_trading_bot.research_v2.resampling import TIMEFRAMES
 
 INITIAL_LOAD_BARS = 800
-DEFAULT_VISIBLE_BARS = 120
+DEFAULT_VISIBLE_BARS = 90
 MIN_VISIBLE_BARS = 30
 MAX_VISIBLE_BARS = 500
 ZOOM_STEP_FRACTION = 0.90
 LAZY_CHUNK_BARS = 400
 PAN_EDGE_BARS = 20
-RANGE_SHORTCUTS = (30, 60, 120, 200, 400)
-RIGHT_OFFSET_BARS = 3
+RANGE_SHORTCUTS = (30, 60, 90, 120, 180, 300)
+RIGHT_OFFSET_BARS = 0
 
 
 def _bar_times(candles: list[dict]) -> list[datetime]:
@@ -158,6 +158,24 @@ def load_initial_window(service, chart_state: dict, *, load_bars: int = INITIAL_
     return chart_state
 
 
+def sync_chart_state_from_relayout(chart_state: dict, relayout: dict) -> dict:
+    candles = chart_state.get("candles", [])
+    if not candles or relayout.get("bar_from") is None or relayout.get("bar_to") is None:
+        return chart_state
+    start_idx = int(relayout["bar_from"])
+    end_idx = int(relayout["bar_to"])
+    metrics = build_viewport_metrics(candles, start_idx, end_idx)
+    updated = dict(chart_state)
+    updated["bar_from"] = metrics["bar_from"]
+    updated["bar_to"] = metrics["bar_to"]
+    updated["viewport_start"] = metrics["visible_from_time"]
+    updated["viewport_end"] = metrics["visible_to_time"]
+    audit = dict(updated.get("audit", {}))
+    audit.update(metrics)
+    updated["audit"] = audit
+    return updated
+
+
 def apply_viewport_from_relayout(chart_state: dict, updated_chart: dict, relayout: dict, viewport: dict) -> dict:
     viewport = dict(viewport or {})
     candles = updated_chart.get("candles", [])
@@ -191,6 +209,10 @@ def apply_viewport_from_relayout(chart_state: dict, updated_chart: dict, relayou
         metrics["counted_visible_ohlc_bars"] = relayout["counted_visible_ohlc_bars"]
     if relayout.get("anchor_index") is not None:
         metrics["anchor_index"] = relayout["anchor_index"]
+    if relayout.get("raw_wheel_event_count") is not None:
+        metrics["raw_wheel_event_count"] = relayout["raw_wheel_event_count"]
+    if relayout.get("applied_zoom_gesture_count") is not None:
+        metrics["applied_zoom_gesture_count"] = relayout["applied_zoom_gesture_count"]
     viewport.update(metrics)
     viewport["changed"] = True
     viewport["zoom_event_count"] = int(viewport.get("zoom_event_count", 0)) + (1 if relayout.get("zoom_direction") else 0)
@@ -325,8 +347,9 @@ def candles_to_lwc(candles: list[dict]) -> list[dict]:
 def build_chart_payload(chart_state: dict, session: dict, oos_blind: bool) -> dict:
     candles = chart_state.get("candles", [])
     points = session.get("points", [])
-    show_geometry = session.get("show_geometry", False) and not oos_blind
+    show_geometry = True if oos_blind else bool(session.get("show_geometry", False))
     apply_viewport = bool(chart_state.get("apply_viewport", False))
+    price_y_mode = session.get("price_y_mode", "lock")
     return {
         "engine": "tradingview_lightweight_charts_v4_index_temporal",
         "symbol": chart_state.get("symbol"),
@@ -339,8 +362,14 @@ def build_chart_payload(chart_state: dict, session: dict, oos_blind: bool) -> di
         "visible_end_index": chart_state.get("bar_to"),
         "viewport_count": chart_state.get("viewport_count") if apply_viewport else None,
         "apply_viewport": apply_viewport,
-        "points": points if show_geometry or not oos_blind else [],
+        "points": points,
         "show_geometry": show_geometry,
+        "add_point_armed": session.get("mode") == "ADD",
+        "interaction_mode": session.get("mode"),
+        "snap_mode": session.get("snap_mode", "FREE"),
+        "selected_index": session.get("selected_index"),
+        "fit_window_y": bool(chart_state.get("fit_window_y", False)),
+        "price_y_mode": price_y_mode,
         "min_visible_bars": MIN_VISIBLE_BARS,
         "max_visible_bars": MAX_VISIBLE_BARS,
         "zoom_step_factor": ZOOM_STEP_FRACTION,
@@ -352,22 +381,68 @@ def nearest_candle(candles: list[dict], clicked_x) -> dict:
     return min(candles, key=lambda candle: abs(datetime.fromisoformat(candle["open_time_utc"]) - clicked))
 
 
+def _resolve_candle(candles: list[dict], clicked: dict) -> tuple[dict, int]:
+    if clicked.get("bar_index") is not None:
+        idx = max(0, min(int(clicked["bar_index"]), len(candles) - 1))
+        return candles[idx], idx
+    candle = nearest_candle(candles, clicked["x"])
+    idx = next(i for i, c in enumerate(candles) if c["open_time_utc"] == candle["open_time_utc"])
+    return candle, idx
+
+
+def _price_for_snap(candle: dict, snap_mode: str, clicked_y) -> tuple[str, str]:
+    mode = (snap_mode or "FREE").upper()
+    if mode == "HIGH":
+        return str(candle["high"]), "HIGH"
+    if mode == "LOW":
+        return str(candle["low"]), "LOW"
+    return str(clicked_y), "NONE"
+
+
+def nearest_point_index(points: list[dict], clicked: dict, candles: list[dict]) -> int | None:
+    if not points:
+        return None
+    _, bar_idx = _resolve_candle(candles, clicked)
+    click_price = float(clicked["y"])
+    best_idx = None
+    best_score = float("inf")
+    for i, point in enumerate(points):
+        p_idx = next((j for j, c in enumerate(candles) if c["open_time_utc"] == point["timestamp"]), bar_idx)
+        price_delta = abs(float(point["price"]) - click_price)
+        bar_delta = abs(p_idx - bar_idx)
+        score = price_delta + bar_delta * 25
+        if score < best_score:
+            best_score = score
+            best_idx = i
+    return best_idx
+
+
 def add_or_move_point(session, clicked, candles, annotation_timeframe: str):
     if not clicked or session.get("locked"):
         return session
     mode = session.get("mode")
     if mode not in ("ADD", "MOVE"):
         return session
-    candle = nearest_candle(candles, clicked["x"])
+    candle, _ = _resolve_candle(candles, clicked)
+    price, snap_source = _price_for_snap(candle, session.get("snap_mode", "FREE"), clicked["y"])
+    from copy import deepcopy
+
+    if mode == "MOVE" and session.get("selected_index") is None:
+        picked = nearest_point_index(session["points"], clicked, candles)
+        if picked is None:
+            session["message"] = "MOVE: NO POINT NEAR CLICK"
+            return session
+        session["selected_index"] = picked
+        session["message"] = f"MOVE: P{picked} SELECTED — CLICK NEW LOCATION"
+        return session
+
     point = {
         "point_index": len(session["points"]),
         "timestamp": candle["open_time_utc"],
-        "price": str(clicked["y"]),
-        "snap_source": "NONE",
+        "price": price,
+        "snap_source": snap_source,
         "annotation_timeframe": annotation_timeframe,
     }
-    from copy import deepcopy
-
     session.setdefault("history", []).append(deepcopy(session["points"]))
     if mode == "MOVE" and session.get("selected_index") is not None:
         index = int(session["selected_index"])
@@ -377,19 +452,41 @@ def add_or_move_point(session, clicked, candles, annotation_timeframe: str):
         session["points"].append(point)
         session["selected_index"] = len(session["points"]) - 1
     session["points"] = [{**p, "point_index": i} for i, p in enumerate(session["points"])]
-    session["mode"] = None
+    session["mode"] = "ADD"
     session["debug"] = {
-        "add_point_armed": False,
+        "add_point_armed": True,
         "click_received": True,
         "raw_x": clicked.get("x"),
         "raw_y": clicked.get("y"),
         "resolved_time": candle["open_time_utc"],
-        "resolved_price": str(clicked["y"]),
+        "resolved_price": price,
         "point_created": f"P{point['point_index']}",
         "failure_reason": "NONE",
     }
     session["evaluations"] = []
-    session["message"] = f"P{point['point_index']} PLACED"
+    session["message"] = f"P{point['point_index']} PLACED — ADD NEXT OR CHANGE TOOL"
+    return session
+
+
+def delete_point_at_click(session, clicked, candles):
+    if not clicked or session.get("locked"):
+        return session
+    if session.get("mode") != "DELETE":
+        return session
+    picked = clicked.get("point_index")
+    if picked is None:
+        picked = nearest_point_index(session["points"], clicked, candles)
+    if picked is None:
+        session["message"] = "DELETE: NO POINT NEAR CLICK"
+        return session
+    from copy import deepcopy
+
+    session.setdefault("history", []).append(deepcopy(session["points"]))
+    session["points"].pop(int(picked))
+    session["points"] = [{**p, "point_index": i} for i, p in enumerate(session["points"])]
+    session["selected_index"] = None
+    session["evaluations"] = []
+    session["message"] = f"P{picked} DELETED"
     return session
 
 
