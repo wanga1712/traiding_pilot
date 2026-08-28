@@ -40,3 +40,8 @@ build/
 # Node / front-end deps (на всякий случай)
 node_modules/
 
+*.parquet
+*.feather
+.pytest_cache/
+screenshots/
+acceptance_report*.json

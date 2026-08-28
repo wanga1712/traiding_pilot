@@ -1,0 +1,23 @@
+{
+  "status": "RECORDED_NOT_RUN",
+  "features": {
+    "d1": "P1-P0",
+    "d2": "P2-P1",
+    "d3": "P3-P2",
+    "d4": "P4-P3",
+    "q2": "abs(d2)/abs(d1)",
+    "q3": "abs(d3)/abs(d2)",
+    "q4": "abs(d4)/abs(d3)"
+  },
+  "target": "(P_next-P4)/abs(d4)",
+  "models": {
+    "A": {"COP": "-sign(d4)*0.618", "OP": "-sign(d4)*1.0", "XOP": "-sign(d4)*1.618"},
+    "B": "-sign(d4)*q4",
+    "C": "-sign(d4)*((q3+q4)/2)",
+    "D_v1": "-sign(d4)*(0.20*q2+0.30*q3+0.50*q4)",
+    "E": "Ridge regression -> TARGET",
+    "F": "CatBoost regression -> TARGET"
+  },
+  "training_started": false,
+  "evaluation_started": false
+}
