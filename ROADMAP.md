@@ -540,7 +540,7 @@ S13 `/var/tmp/traiding_pilot_ui_workspace/reversal_event_dataset_v1/`
 `docs/wip/REVERSAL-EVENT-DATASET-1.md`
 
 GIT_COMMIT:  
-9d4d6e53d5602d96750a8a95deb118492ff86af3
+6f9f47ccaf094f74c69ca88c5208b0667040035c
 
 RESULT_SUMMARY:  
 **REVIEW.** REVERSAL_EVENT_DATASET_V1 frozen on S13. 9992 events from WAVE_DATASET_V1 (unchanged). Schema registry + anti-leakage API/tests PASS. Chronological 60/20/20 partitions with outcome-boundary purge (19 purged). Incomplete multi-TF context marked, not dropped. Do **not** activate indicator engine until CLOSED.
