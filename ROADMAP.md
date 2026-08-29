@@ -661,7 +661,7 @@ ARTIFACTS:
 `artifacts/INVERSE-INDICATOR-PREDICTOR-ENGINE-1/` (planned)
 
 GIT_COMMIT:  
-PENDING_COMMIT
+55cf7ae7244bcce19db6c4052c4e9e87d4d8259a
 
 RESULT_SUMMARY:  
 **REVIEW.** INVERSE_PREDICTOR_ENGINE_V1: analytic DMA/RSI/MACD/MA/oscillator solvers; Stochastic point-bar levels + K/D REQUIRES_INTRABAR_ASSUMPTION; Bollinger UNSUPPORTED_V1. Synthetic replay + anti-leakage + streaming PASS. No ranking. Do not start PREDICTOR-CONFLUENCE-FEATURES-1 until CLOSED.
