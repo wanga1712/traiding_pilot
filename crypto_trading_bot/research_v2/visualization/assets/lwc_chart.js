@@ -1,6 +1,6 @@
 (function () {
-  const MIN_VISIBLE_BARS = 30;
-  const MAX_VISIBLE_BARS = 500;
+  const MIN_VISIBLE_BARS = 60;
+  const MAX_VISIBLE_BARS = 800;
   const ZOOM_FACTOR = 0.9;
   const WHEEL_GESTURE_MS = 150;
   const INVARIANT_TOLERANCE = 2;
@@ -23,7 +23,9 @@
     candles: [],
     payload: null,
     chartInstanceId: null,
-    lastDataRevision: null,
+    lastMarketDataRevision: null,
+    lastAppliedPayloadRaw: null,
+    lastSeenPayloadRaw: null,
     initialRangeApplied: false,
     suppressRangeEvent: false,
     relayoutTimer: null,
@@ -42,7 +44,24 @@
     fixedPriceProvider: null,
     lastAnchorIndex: null,
     latestLogicalRange: null,
+    payloadReceivedCount: 0,
+    payloadAppliedCount: 0,
+    candleSetDataCount: 0,
+    panProgrammaticRangeWrites: 0,
+    sessionPointCount: 0,
+    renderedPointCount: 0,
+    lastRenderError: null,
+    lastChartError: null,
   };
+
+  function reportChartError(err) {
+    const message = err && err.message ? err.message : String(err);
+    state.lastChartError = message;
+    window.lastChartError = message;
+    console.error("CHART ERROR:", err);
+    const diag = document.getElementById("chart-error-banner");
+    if (diag) diag.textContent = "CHART ERROR: " + message;
+  }
 
   function isoFromUnix(unix) {
     return new Date(unix * 1000).toISOString();
@@ -82,11 +101,10 @@
 
   function applySeriesPriceScaleOptions(autoScale) {
     if (!state.series) return;
-    const opts = {
+    state.series.priceScale().applyOptions({
       autoScale: !!autoScale,
       scaleMargins: { top: 0.1, bottom: 0.1 },
-    };
-    state.series.priceScale().applyOptions(opts);
+    });
     if (state.chart) {
       state.chart.priceScale("right").applyOptions({ autoScale: !!autoScale });
     }
@@ -109,59 +127,220 @@
     return { min: minP - pad, max: maxP + pad };
   }
 
-  function applyFixedPriceRange(minP, maxP) {
-    state.lockedPriceRange = { min: minP, max: maxP };
-    state.fixedPriceProvider = function () {
-      return { priceRange: { minValue: minP, maxValue: maxP } };
-    };
-    state.series.applyOptions({ autoscaleInfoProvider: state.fixedPriceProvider });
-    applySeriesPriceScaleOptions(false);
-    state.priceYMode = "lock";
-    state.priceScaleInitialized = true;
-  }
-
   function fitWindowY() {
     const bounds = visibleCandlePriceBounds();
-    if (!bounds) return;
-    applyFixedPriceRange(bounds.min, bounds.max);
+    if (!bounds || !state.series) return;
+    const provider = function () {
+      return { priceRange: { minValue: bounds.min, maxValue: bounds.max } };
+    };
+    state.fixedPriceProvider = provider;
+    state.series.applyOptions({ autoscaleInfoProvider: provider });
+    applySeriesPriceScaleOptions(true);
+    window.requestAnimationFrame(function () {
+      applySeriesPriceScaleOptions(false);
+      state.series.applyOptions({ autoscaleInfoProvider: undefined });
+      state.fixedPriceProvider = null;
+      state.lockedPriceRange = capturePriceRange() || bounds;
+      state.priceYMode = "lock";
+      state.priceScaleInitialized = true;
+    });
   }
 
   function lockPriceY() {
-    if (state.fixedPriceProvider) {
-      applySeriesPriceScaleOptions(false);
-      state.priceYMode = "lock";
-      state.lockedPriceRange = capturePriceRange();
-      return;
-    }
     applySeriesPriceScaleOptions(false);
     state.priceYMode = "lock";
     state.lockedPriceRange = capturePriceRange();
+    state.priceScaleInitialized = true;
   }
 
   function autoPriceY() {
     state.fixedPriceProvider = null;
-    state.series.applyOptions({ autoscaleInfoProvider: undefined });
+    if (state.series) state.series.applyOptions({ autoscaleInfoProvider: undefined });
     applySeriesPriceScaleOptions(true);
     state.priceYMode = "auto";
     state.lockedPriceRange = null;
   }
 
-  function finalizeInitialPriceScale() {
-    if (!state.series || state.priceScaleInitialized) return;
-    window.requestAnimationFrame(function () {
-      fitWindowY();
-    });
-  }
-
   function applyPriceScaleMode(mode, initial) {
     if (mode === "auto") {
       autoPriceY();
-    } else if (mode === "fit") {
+      return;
+    }
+    if (mode === "fit" || (initial && !state.priceScaleInitialized)) {
       fitWindowY();
-    } else if (initial && !state.priceScaleInitialized) {
-      finalizeInitialPriceScale();
-    } else {
-      lockPriceY();
+      return;
+    }
+    lockPriceY();
+  }
+
+  function setCandleData(rows) {
+    if (!state.series) return;
+    state.series.setData(rows || []);
+    state.candleSetDataCount += 1;
+  }
+
+  function clampIndexRange(start, end, count) {
+    const maxIdx = Math.max(0, state.candles.length - 1);
+    count = Math.max(MIN_VISIBLE_BARS, Math.min(MAX_VISIBLE_BARS, count, state.candles.length));
+    start = Math.max(0, Math.min(start, maxIdx));
+    end = start + count - 1;
+    if (end > maxIdx) {
+      end = maxIdx;
+      start = Math.max(0, end - count + 1);
+    }
+    return { start: start, end: end, count: end - start + 1 };
+  }
+
+  function resolveAnchor(localX) {
+    const width = chartWidthPx();
+    const cursorFraction = Math.max(0, Math.min(1, localX / width));
+    let anchorIndex = state.visibleStartIndex + Math.round(visibleCount() * cursorFraction);
+    if (state.chart) {
+      const logical = state.chart.timeScale().coordinateToLogical(localX);
+      if (logical != null && Number.isFinite(logical)) {
+        anchorIndex = Math.max(0, Math.min(state.candles.length - 1, Math.round(logical)));
+      }
+    }
+    return { anchorIndex: anchorIndex, cursorFraction: cursorFraction };
+  }
+
+  function applyIndexRange(start, end, meta) {
+    if (!state.chart || !state.candles.length) return;
+    const range = clampIndexRange(start, end, end - start + 1);
+    state.visibleStartIndex = range.start;
+    state.visibleEndIndex = range.end;
+    state.lockedVisibleCount = range.count;
+    state.suppressRangeEvent = true;
+    state.panProgrammaticRangeWrites += 1;
+    state.chart.timeScale().setVisibleLogicalRange({
+      from: range.start - 0.5,
+      to: range.end + 0.5,
+    });
+    window.setTimeout(function () {
+      state.suppressRangeEvent = false;
+      emitViewport(meta || {});
+    }, 40);
+  }
+
+  function setViewportByCount(newCount, anchorIndex, cursorFraction, meta) {
+    newCount = Math.max(MIN_VISIBLE_BARS, Math.min(MAX_VISIBLE_BARS, Math.round(newCount), state.candles.length));
+    const barsBefore = Math.round(newCount * cursorFraction);
+    const start = anchorIndex - barsBefore;
+    const end = start + newCount - 1;
+    const clamped = clampIndexRange(start, end, newCount);
+    state.lastAnchorIndex = anchorIndex;
+    applyIndexRange(clamped.start, clamped.end, meta);
+  }
+
+  function emitViewport(meta) {
+    if (!state.chart || !state.candles.length) return;
+    const start = state.visibleStartIndex;
+    const end = state.visibleEndIndex;
+    const expected = end - start + 1;
+    const fromTime = state.candles[start].time;
+    const toTime = state.candles[end].time;
+    const counted = countBarsBetweenTimes(fromTime, toTime);
+    const invariantOk = Math.abs(counted - expected) <= INVARIANT_TOLERANCE;
+    setBridge(
+      "relayout-bridge",
+      JSON.stringify(
+        Object.assign(
+          {
+            bar_from: start,
+            bar_to: end,
+            visible_start_index: start,
+            visible_end_index: end,
+            visible_from_time: state.candles[start].open_time_utc || isoFromUnix(fromTime),
+            visible_to_time: state.candles[end].open_time_utc || isoFromUnix(toTime),
+            actual_visible_ohlc_bars: expected,
+            counted_visible_ohlc_bars: counted,
+            viewport_invariant: invariantOk ? "PASS" : "FAIL",
+            anchor_index: state.lastAnchorIndex,
+            zoom_step_factor: ZOOM_FACTOR,
+            wheel_direction: state.lastWheelDirection,
+            raw_wheel_event_count: state.rawWheelEventCount,
+            applied_zoom_gesture_count: state.appliedZoomGestureCount,
+            payload_received_count: state.payloadReceivedCount,
+            payload_applied_count: state.payloadAppliedCount,
+            candle_set_data_count: state.candleSetDataCount,
+            pan_programmatic_range_writes: state.panProgrammaticRangeWrites,
+            min_visible_limit: MIN_VISIBLE_BARS,
+            max_visible_limit: MAX_VISIBLE_BARS,
+          },
+          meta || {}
+        )
+      )
+    );
+  }
+
+  function syncFromLogicalPan(logicalRange) {
+    if (!logicalRange || state.suppressRangeEvent || !state.candles.length) return;
+    const maxIdx = state.candles.length - 1;
+    let start = Math.max(0, Math.min(maxIdx, Math.ceil(logicalRange.from)));
+    let end = Math.max(start, Math.min(maxIdx, Math.floor(logicalRange.to)));
+    const count = end - start + 1;
+    state.visibleStartIndex = start;
+    state.visibleEndIndex = end;
+    state.lockedVisibleCount = count;
+    emitViewport({ pan_sync: true });
+  }
+
+  function ensureManualPointSeries() {
+    if (state.manualPointSeries || !state.chart) return;
+    state.manualPointSeries = state.chart.addLineSeries({
+      color: "#2962ff",
+      lineWidth: 2,
+      lineVisible: false,
+      pointMarkersVisible: true,
+      pointMarkersRadius: 5,
+      priceLineVisible: false,
+      lastValueVisible: false,
+    });
+  }
+
+  function renderPoints(points, showGeometry) {
+    state.sessionPointCount = (points || []).length;
+    state.lastRenderError = null;
+    try {
+      if (!state.series) {
+        state.renderedPointCount = 0;
+        return;
+      }
+      ensureManualPointSeries();
+      const sorted = (points || []).slice().sort(function (a, b) {
+        return Date.parse(a.timestamp) - Date.parse(b.timestamp);
+      });
+      const rows = [];
+      let lastTime = null;
+      for (let i = 0; i < sorted.length; i++) {
+        const t = Math.floor(Date.parse(sorted[i].timestamp) / 1000);
+        if (!Number.isFinite(t) || (lastTime != null && t <= lastTime)) {
+          throw new Error("manual point timestamps must be strictly ascending unique values");
+        }
+        lastTime = t;
+        rows.push({ time: t, value: parseFloat(sorted[i].price) });
+      }
+      if (state.manualPointSeries) {
+        state.manualPointSeries.setData(rows);
+        state.manualPointSeries.applyOptions({ lineVisible: !!showGeometry && rows.length > 1 });
+        state.manualPointSeries.setMarkers(
+          sorted.map(function (p, idx) {
+            return {
+              time: Math.floor(Date.parse(p.timestamp) / 1000),
+              position: "inBar",
+              color: "#2962ff",
+              shape: "circle",
+              text: "P" + (p.point_index != null ? p.point_index : idx),
+            };
+          })
+        );
+      }
+      state.series.setMarkers([]);
+      state.renderedPointCount = rows.length;
+    } catch (err) {
+      state.lastRenderError = err && err.message ? err.message : String(err);
+      state.renderedPointCount = 0;
+      reportChartError(err);
     }
   }
 
@@ -178,10 +357,7 @@
       if (barIndex < 0) {
         barIndex = Math.max(
           0,
-          Math.min(
-            state.candles.length - 1,
-            Math.round(state.chart.timeScale().coordinateToLogical(param.point.x))
-          )
+          Math.min(state.candles.length - 1, Math.round(state.chart.timeScale().coordinateToLogical(param.point.x)))
         );
       }
     } else {
@@ -264,15 +440,6 @@
     }
 
     if (mode === "ADD" || mode === "MOVE") {
-      if (mode === "ADD") {
-        const optimistic = (state.payload.points || []).slice();
-        optimistic.push({
-          timestamp: target.timestamp,
-          price: String(target.price),
-          point_index: optimistic.length,
-        });
-        renderPoints(optimistic, state.payload.show_geometry);
-      }
       setBridge(
         "manual-click-bridge",
         JSON.stringify({
@@ -287,26 +454,9 @@
   }
 
   function emitCrosshair(param) {
-    if (!param || !param.point || !state.candles.length) {
-      setBridge("crosshair-bridge", "");
-      return;
-    }
+    if (!param || !param.point || !state.candles.length) return;
     const target = resolveClickTarget(param);
-    if (!target) {
-      setBridge("crosshair-bridge", "");
-      return;
-    }
-    setBridge(
-      "crosshair-bridge",
-      JSON.stringify({
-        time: target.timestamp,
-        open: target.open,
-        high: target.high,
-        low: target.low,
-        close: target.close,
-        cursor_price: target.price,
-      })
-    );
+    if (!target) return;
     window.lastCrosshair = {
       time: target.timestamp,
       open: target.open,
@@ -315,151 +465,6 @@
       close: target.close,
       cursor_price: target.price,
     };
-  }
-
-  function clampIndexRange(start, end, count) {
-    const maxIdx = Math.max(0, state.candles.length - 1);
-    count = Math.max(MIN_VISIBLE_BARS, Math.min(MAX_VISIBLE_BARS, count, state.candles.length));
-    start = Math.max(0, Math.min(start, maxIdx));
-    end = start + count - 1;
-    if (end > maxIdx) {
-      end = maxIdx;
-      start = Math.max(0, end - count + 1);
-    }
-    return { start: start, end: end, count: end - start + 1 };
-  }
-
-  function resolveAnchor(localX) {
-    const width = chartWidthPx();
-    const cursorFraction = Math.max(0, Math.min(1, localX / width));
-    let anchorIndex = state.visibleStartIndex + Math.round(visibleCount() * cursorFraction);
-    if (state.chart) {
-      const logical = state.chart.timeScale().coordinateToLogical(localX);
-      if (logical != null && Number.isFinite(logical)) {
-        anchorIndex = Math.max(0, Math.min(state.candles.length - 1, Math.round(logical)));
-      }
-    }
-    return { anchorIndex: anchorIndex, cursorFraction: cursorFraction };
-  }
-
-  function applyIndexRange(start, end, meta) {
-    if (!state.chart || !state.candles.length) return;
-    const range = clampIndexRange(start, end, end - start + 1);
-    state.visibleStartIndex = range.start;
-    state.visibleEndIndex = range.end;
-    state.lockedVisibleCount = range.count;
-    state.suppressRangeEvent = true;
-    state.chart.timeScale().setVisibleLogicalRange({
-      from: range.start - 0.5,
-      to: range.end + 0.5,
-    });
-    window.setTimeout(function () {
-      state.suppressRangeEvent = false;
-      emitViewport(meta || {});
-    }, 40);
-  }
-
-  function setViewportByCount(newCount, anchorIndex, cursorFraction, meta) {
-    newCount = Math.max(MIN_VISIBLE_BARS, Math.min(MAX_VISIBLE_BARS, Math.round(newCount), state.candles.length));
-    const barsBefore = Math.round(newCount * cursorFraction);
-    const start = anchorIndex - barsBefore;
-    const end = start + newCount - 1;
-    const clamped = clampIndexRange(start, end, newCount);
-    state.lastAnchorIndex = anchorIndex;
-    applyIndexRange(clamped.start, clamped.end, meta);
-  }
-
-  function emitViewport(meta) {
-    if (!state.chart || !state.candles.length) return;
-    const start = state.visibleStartIndex;
-    const end = state.visibleEndIndex;
-    const expected = end - start + 1;
-    const fromTime = state.candles[start].time;
-    const toTime = state.candles[end].time;
-    const counted = countBarsBetweenTimes(fromTime, toTime);
-    const invariantOk = Math.abs(counted - expected) <= INVARIANT_TOLERANCE;
-    setBridge(
-      "relayout-bridge",
-      JSON.stringify(
-        Object.assign(
-          {
-            bar_from: start,
-            bar_to: end,
-            visible_start_index: start,
-            visible_end_index: end,
-            visible_from_time: state.candles[start].open_time_utc || isoFromUnix(fromTime),
-            visible_to_time: state.candles[end].open_time_utc || isoFromUnix(toTime),
-            actual_visible_ohlc_bars: expected,
-            counted_visible_ohlc_bars: counted,
-            viewport_invariant: invariantOk ? "PASS" : "FAIL",
-            anchor_index: state.lastAnchorIndex,
-            zoom_step_factor: ZOOM_FACTOR,
-            wheel_direction: state.lastWheelDirection,
-            raw_wheel_event_count: state.rawWheelEventCount,
-            applied_zoom_gesture_count: state.appliedZoomGestureCount,
-            min_visible_limit: MIN_VISIBLE_BARS,
-            max_visible_limit: MAX_VISIBLE_BARS,
-          },
-          meta || {}
-        )
-      )
-    );
-  }
-
-  function syncFromLogicalPan(logicalRange) {
-    if (!logicalRange || state.suppressRangeEvent || !state.candles.length) return;
-    const count =
-      state.lockedVisibleCount > 0
-        ? state.lockedVisibleCount
-        : visibleCount() > 0
-          ? visibleCount()
-          : Math.max(1, Math.floor(logicalRange.to) - Math.ceil(logicalRange.from) + 1);
-    const mid = (logicalRange.from + logicalRange.to) / 2;
-    let start = Math.round(mid - (count - 1) / 2);
-    let end = start + count - 1;
-    const clamped = clampIndexRange(start, end, count);
-    if (clamped.start !== state.visibleStartIndex || clamped.end !== state.visibleEndIndex) {
-      applyIndexRange(clamped.start, clamped.end, { pan_sync: true });
-      return;
-    }
-    emitViewport({ pan_sync: true });
-  }
-
-  function ensureManualPointSeries() {
-    if (state.manualPointSeries || !state.chart) return;
-    state.manualPointSeries = state.chart.addLineSeries({
-      color: "#2962ff",
-      lineWidth: 2,
-      lineVisible: false,
-      pointMarkersVisible: true,
-      pointMarkersRadius: 5,
-      priceLineVisible: false,
-      lastValueVisible: false,
-    });
-  }
-
-  function renderPoints(points, showGeometry) {
-    if (!state.series) return;
-    ensureManualPointSeries();
-    const rows = (points || []).map(function (p) {
-      return { time: Math.floor(Date.parse(p.timestamp) / 1000), value: parseFloat(p.price) };
-    });
-    if (state.manualPointSeries) {
-      state.manualPointSeries.setData(rows);
-      state.manualPointSeries.applyOptions({ lineVisible: !!showGeometry && rows.length > 1 });
-      state.manualPointSeries.setMarkers(
-        (points || []).map(function (p, idx) {
-          return {
-            time: Math.floor(Date.parse(p.timestamp) / 1000),
-            position: "inBar",
-            color: "#2962ff",
-            shape: "circle",
-            text: "P" + (p.point_index != null ? p.point_index : idx),
-          };
-        })
-      );
-    }
-    state.series.setMarkers([]);
   }
 
   function applyWheelGesture() {
@@ -505,7 +510,9 @@
   function applyInitialViewport(payload) {
     const endIdx = payload.visible_end_index != null ? payload.visible_end_index : state.candles.length - 1;
     const startIdx =
-      payload.visible_start_index != null ? payload.visible_start_index : Math.max(0, endIdx - (payload.initial_visible_bars || 90) + 1);
+      payload.visible_start_index != null
+        ? payload.visible_start_index
+        : Math.max(0, endIdx - (payload.initial_visible_bars || 480) + 1);
     applyIndexRange(startIdx, endIdx, { initial: true });
     state.initialRangeApplied = true;
   }
@@ -539,18 +546,15 @@
     });
     state.chartContainer = container;
     state.candles = payload.candles || [];
-    state.series.setData(state.candles);
-    applySeriesPriceScaleOptions(true);
+    setCandleData(state.candles);
     ensureManualPointSeries();
 
     state.chart.subscribeClick(function (param) {
       handleChartClick(param);
     });
-
     state.chart.subscribeCrosshairMove(function (param) {
       emitCrosshair(param);
     });
-
     state.chart.timeScale().subscribeVisibleLogicalRangeChange(function (logicalRange) {
       if (state.suppressRangeEvent || !logicalRange) return;
       state.latestLogicalRange = logicalRange;
@@ -563,33 +567,15 @@
     bindWheel(container);
 
     state.chartInstanceId = payload.chart_instance_id;
-    state.lastDataRevision = payload.ui_revision;
+    state.lastMarketDataRevision = payload.market_data_revision;
     state.initialRangeApplied = false;
     applyInitialViewport(payload);
-    applyPriceScaleMode(payload.price_y_mode || "lock", true);
     if (payload.fit_window_y) {
       window.requestAnimationFrame(function () {
         fitWindowY();
       });
-    }
-  }
-
-  function updateCandles(payload) {
-    const prevLen = state.candles.length;
-    const prevStart = state.visibleStartIndex;
-    const prevEnd = state.visibleEndIndex;
-    state.candles = payload.candles || [];
-    state.series.setData(state.candles);
-    state.lastDataRevision = payload.ui_revision;
-
-    if (payload.apply_viewport && payload.visible_start_index != null && payload.visible_end_index != null) {
-      applyIndexRange(payload.visible_start_index, payload.visible_end_index, { lazy_load: true });
-      return;
-    }
-
-    if (prevLen > 0 && state.candles.length > prevLen) {
-      const shift = state.candles.length - prevLen;
-      applyIndexRange(prevStart + shift, prevEnd + shift, { lazy_load: true });
+    } else {
+      applyPriceScaleMode(payload.price_y_mode || "lock", true);
     }
   }
 
@@ -607,21 +593,14 @@
       return;
     }
 
-    const dataChanged =
-      payload.ui_revision !== state.lastDataRevision || (payload.candles || []).length !== state.candles.length;
-
-    if (dataChanged) {
+    const candleDataChanged = payload.market_data_revision !== state.lastMarketDataRevision;
+    if (candleDataChanged) {
       const prevLen = state.candles.length;
       const prevStart = state.visibleStartIndex;
       const prevEnd = state.visibleEndIndex;
       state.candles = payload.candles || [];
-      state.series.setData(state.candles);
-      state.lastDataRevision = payload.ui_revision;
-      if (state.priceScaleInitialized) {
-        applyPriceScaleMode(state.priceYMode, false);
-      } else {
-        applyPriceScaleMode(payload.price_y_mode || state.priceYMode, true);
-      }
+      setCandleData(state.candles);
+      state.lastMarketDataRevision = payload.market_data_revision;
       if (!payload.apply_viewport && prevLen > 0 && state.candles.length > prevLen) {
         const shift = state.candles.length - prevLen;
         applyIndexRange(prevStart + shift, prevEnd + shift, { lazy_load: true });
@@ -633,37 +612,51 @@
         const anchor = Math.round((state.visibleStartIndex + state.visibleEndIndex) / 2);
         setViewportByCount(payload.viewport_count, anchor, 0.5, { shortcut_target: payload.viewport_count });
       } else if (payload.visible_start_index != null && payload.visible_end_index != null) {
-        applyIndexRange(payload.visible_start_index, payload.visible_end_index, { shortcut_target: payload.viewport_count });
+        applyIndexRange(payload.visible_start_index, payload.visible_end_index, {
+          shortcut_target: payload.viewport_count,
+        });
       }
     }
 
-    const nextPriceMode = payload.price_y_mode || "lock";
     if (payload.fit_window_y) {
       fitWindowY();
-    } else if (nextPriceMode !== state.priceYMode) {
-      applyPriceScaleMode(nextPriceMode, false);
-    } else if (state.priceYMode === "lock" && state.priceScaleInitialized) {
-      applySeriesPriceScaleOptions(false);
+    } else {
+      const nextPriceMode = payload.price_y_mode || "lock";
+      if (nextPriceMode !== state.priceYMode) {
+        applyPriceScaleMode(nextPriceMode, false);
+      }
     }
 
     renderPoints(payload.points || [], payload.show_geometry);
+  }
+
+  function onPayloadBridgeValue() {
+    const bridge = document.getElementById("chart-payload-bridge");
+    if (!bridge || !bridge.value) return;
+    if (bridge.value === state.lastSeenPayloadRaw) return;
+    state.lastSeenPayloadRaw = bridge.value;
+    state.payloadReceivedCount += 1;
+    try {
+      applyPayload(JSON.parse(bridge.value));
+      state.lastAppliedPayloadRaw = bridge.value;
+      state.payloadAppliedCount += 1;
+    } catch (err) {
+      reportChartError(err);
+    }
   }
 
   function bindPayloadBridge() {
     const bridge = document.getElementById("chart-payload-bridge");
     if (!bridge || bridge.dataset.bound === "1") return;
     bridge.dataset.bound = "1";
-    bridge.addEventListener("input", function () {
-      if (!bridge.value) return;
-      try {
-        applyPayload(JSON.parse(bridge.value));
-      } catch (e) {}
-    });
-    if (bridge.value) {
-      try {
-        applyPayload(JSON.parse(bridge.value));
-      } catch (e) {}
+    bridge.addEventListener("input", onPayloadBridgeValue);
+    bridge.addEventListener("change", onPayloadBridgeValue);
+    const observer = new MutationObserver(onPayloadBridgeValue);
+    observer.observe(bridge, { attributes: true, attributeFilter: ["value"] });
+    if (!window.__lwcPayloadPoll) {
+      window.__lwcPayloadPoll = window.setInterval(onPayloadBridgeValue, 200);
     }
+    if (bridge.value) onPayloadBridgeValue();
   }
 
   function waitForLibrary() {
@@ -675,7 +668,6 @@
   }
 
   new MutationObserver(bindPayloadBridge).observe(document.documentElement, { childList: true, subtree: true });
-  window.applyChartPayload = applyPayload;
   window.lockPriceY = lockPriceY;
   window.autoPriceY = autoPriceY;
   window.fitWindowY = fitWindowY;
@@ -687,6 +679,30 @@
       price_y_locked: state.priceYMode === "lock",
       locked_range: state.lockedPriceRange,
       visible_range: range,
+    };
+  };
+  window.getManualPointDiagnostics = function () {
+    return {
+      session_point_count: state.sessionPointCount,
+      rendered_point_count: state.renderedPointCount,
+      timestamps: ((state.payload && state.payload.points) || []).map(function (p) {
+        return p.timestamp;
+      }),
+      prices: ((state.payload && state.payload.points) || []).map(function (p) {
+        return p.price;
+      }),
+      last_render_error: state.lastRenderError,
+    };
+  };
+  window.getChartStabilityDiagnostics = function () {
+    return {
+      payload_received_count: state.payloadReceivedCount,
+      payload_applied_count: state.payloadAppliedCount,
+      candle_set_data_count: state.candleSetDataCount,
+      pan_programmatic_range_writes: state.panProgrammaticRangeWrites,
+      last_market_data_revision: state.lastMarketDataRevision,
+      visible_count: visibleCount(),
+      last_chart_error: state.lastChartError,
     };
   };
   window.addEventListener("load", waitForLibrary);

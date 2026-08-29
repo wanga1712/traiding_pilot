@@ -6,14 +6,14 @@ from datetime import datetime, timedelta, timezone
 from crypto_trading_bot.research_v2.market_data.bars_service import _parse_axis_time, verify_interval
 from crypto_trading_bot.research_v2.resampling import TIMEFRAMES
 
-INITIAL_LOAD_BARS = 800
-DEFAULT_VISIBLE_BARS = 90
-MIN_VISIBLE_BARS = 30
-MAX_VISIBLE_BARS = 500
+INITIAL_LOAD_BARS = 1200
+DEFAULT_VISIBLE_BARS = 480
+MIN_VISIBLE_BARS = 60
+MAX_VISIBLE_BARS = 800
 ZOOM_STEP_FRACTION = 0.90
 LAZY_CHUNK_BARS = 400
 PAN_EDGE_BARS = 20
-RANGE_SHORTCUTS = (30, 60, 90, 120, 180, 300)
+RANGE_SHORTCUTS = (60, 120, 240, 360, 480, 600, 800)
 RIGHT_OFFSET_BARS = 0
 
 
@@ -115,6 +115,7 @@ def default_chart_state(symbol: str = "ETHUSDT", timeframe: str = "4H", end_at: 
         "bar_to": None,
         "chart_instance_id": 1,
         "ui_revision": 0,
+        "market_data_revision": 0,
         "audit": {},
         "requested_end": end.isoformat(),
     }
@@ -154,6 +155,7 @@ def load_initial_window(service, chart_state: dict, *, load_bars: int = INITIAL_
     chart_state["bar_to"] = viewport["bar_to"]
     chart_state["chart_instance_id"] = chart_state.get("chart_instance_id", 1)
     chart_state["ui_revision"] = chart_state.get("ui_revision", 0) + 1
+    chart_state["market_data_revision"] = chart_state.get("market_data_revision", 0) + 1
     chart_state["audit"] = build_audit(service, chart_state["timeframe"], candles, viewport)
     return chart_state
 
@@ -282,6 +284,7 @@ def maybe_prepend_history(service, chart_state: dict, relayout: dict | None, vie
     chart_state["viewport_start"] = metrics["visible_from_time"]
     chart_state["viewport_end"] = metrics["visible_to_time"]
     chart_state["ui_revision"] = chart_state.get("ui_revision", 0) + 1
+    chart_state["market_data_revision"] = chart_state.get("market_data_revision", 0) + 1
     chart_state["audit"] = build_audit(service, chart_state["timeframe"], merged, metrics)
     viewport.update(metrics)
     viewport["lazy_anchor_preserved"] = merged[new_center]["open_time_utc"] == anchor_time
@@ -356,6 +359,7 @@ def build_chart_payload(chart_state: dict, session: dict, oos_blind: bool) -> di
         "timeframe": chart_state.get("timeframe"),
         "chart_instance_id": chart_state.get("chart_instance_id", 1),
         "ui_revision": chart_state.get("ui_revision", 0),
+        "market_data_revision": chart_state.get("market_data_revision", 0),
         "candles": candles_to_lwc(candles),
         "initial_visible_bars": DEFAULT_VISIBLE_BARS,
         "visible_start_index": chart_state.get("bar_from"),
@@ -417,6 +421,30 @@ def nearest_point_index(points: list[dict], clicked: dict, candles: list[dict]) 
     return best_idx
 
 
+def _validate_chronology(points: list[dict], new_timestamp: str, *, mode: str, index: int | None = None) -> str | None:
+    new_dt = datetime.fromisoformat(new_timestamp)
+    if mode == "ADD":
+        if not points:
+            return None
+        prev_dt = datetime.fromisoformat(points[-1]["timestamp"])
+        if new_dt == prev_dt:
+            return "POINT NOT ADDED: same 4H candle already used"
+        if new_dt < prev_dt:
+            return f"POINT NOT ADDED: new point must be after P{len(points) - 1}"
+        return None
+    if mode == "MOVE" and index is not None:
+        if index > 0:
+            prev_dt = datetime.fromisoformat(points[index - 1]["timestamp"])
+            if new_dt <= prev_dt:
+                return f"POINT NOT MOVED: must be after P{index - 1}"
+        if index < len(points) - 1:
+            next_dt = datetime.fromisoformat(points[index + 1]["timestamp"])
+            if new_dt >= next_dt:
+                return f"POINT NOT MOVED: must be before P{index + 1}"
+        return None
+    return None
+
+
 def add_or_move_point(session, clicked, candles, annotation_timeframe: str):
     if not clicked or session.get("locked"):
         return session
@@ -436,6 +464,19 @@ def add_or_move_point(session, clicked, candles, annotation_timeframe: str):
         session["message"] = f"MOVE: P{picked} SELECTED — CLICK NEW LOCATION"
         return session
 
+    move_index = int(session["selected_index"]) if mode == "MOVE" and session.get("selected_index") is not None else None
+    chrono_error = _validate_chronology(session["points"], candle["open_time_utc"], mode=mode, index=move_index)
+    if chrono_error:
+        session["message"] = chrono_error
+        session["debug"] = {
+            "add_point_armed": mode == "ADD",
+            "click_received": True,
+            "resolved_time": candle["open_time_utc"],
+            "point_created": "—",
+            "failure_reason": chrono_error,
+        }
+        return session
+
     point = {
         "point_index": len(session["points"]),
         "timestamp": candle["open_time_utc"],
@@ -444,17 +485,20 @@ def add_or_move_point(session, clicked, candles, annotation_timeframe: str):
         "annotation_timeframe": annotation_timeframe,
     }
     session.setdefault("history", []).append(deepcopy(session["points"]))
-    if mode == "MOVE" and session.get("selected_index") is not None:
-        index = int(session["selected_index"])
-        point["point_index"] = index
-        session["points"][index] = point
+    if mode == "MOVE" and move_index is not None:
+        point["point_index"] = move_index
+        session["points"][move_index] = point
+        session["selected_index"] = None
+        session["mode"] = "MOVE"
+        session["message"] = f"P{move_index} MOVED"
     else:
         session["points"].append(point)
         session["selected_index"] = len(session["points"]) - 1
+        session["mode"] = "ADD"
+        session["message"] = f"P{point['point_index']} PLACED — ADD NEXT OR CHANGE TOOL"
     session["points"] = [{**p, "point_index": i} for i, p in enumerate(session["points"])]
-    session["mode"] = "ADD"
     session["debug"] = {
-        "add_point_armed": True,
+        "add_point_armed": session["mode"] == "ADD",
         "click_received": True,
         "raw_x": clicked.get("x"),
         "raw_y": clicked.get("y"),
@@ -464,7 +508,6 @@ def add_or_move_point(session, clicked, candles, annotation_timeframe: str):
         "failure_reason": "NONE",
     }
     session["evaluations"] = []
-    session["message"] = f"P{point['point_index']} PLACED — ADD NEXT OR CHANGE TOOL"
     return session
 
 
@@ -509,4 +552,5 @@ def audit_panel_rows(audit: dict) -> list[tuple[str, str]]:
         ("SHORTCUT_TARGET", audit.get("shortcut_target", "NONE")),
         ("INTERVAL_CHECK", audit.get("interval_check", "—")),
         ("DISPLAY_DOWNSAMPLING", audit.get("display_downsampling", "DISABLED")),
+        ("MARKET_DATA_REVISION", audit.get("market_data_revision", "—")),
     ]

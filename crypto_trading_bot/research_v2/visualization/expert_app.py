@@ -248,7 +248,7 @@ def create_app(
                             dcc.Store(id="chart-state", data=chart_state),
                             dcc.Store(id="viewport-store", data=viewport),
                             dcc.Input(id="chart-payload-bridge", type="text", value=json.dumps(initial_payload), style={"display": "none"}),
-                            html.Div(id="chart-payload-applied", style={"display": "none"}),
+                            html.Div(id="chart-error-banner", className="chart-error-banner"),
                             html.Div(id="manual-click-applied", style={"display": "none"}),
                             dcc.Input(id="manual-click-bridge", type="text", style={"display": "none"}),
                             dcc.Input(id="crosshair-bridge", type="text", style={"display": "none"}),
@@ -415,18 +415,15 @@ def create_app(
                     session = delete_point_at_click(session, event, candles)
                 else:
                     session = add_or_move_point(session, event, candles, session.get("annotation_timeframe", chart_state["timeframe"]))
-                chart_state["ui_revision"] = chart_state.get("ui_revision", 0) + 1
             except Exception as exc:
                 session["message"] = f"POINT ACTION FAILED: {exc}"
         elif trigger == "undo" and session["history"]:
             session["points"] = session["history"].pop()
             session["message"] = "UNDO COMPLETE"
-            chart_state["ui_revision"] = chart_state.get("ui_revision", 0) + 1
         elif trigger == "clear":
             session.setdefault("history", []).append(deepcopy(session["points"]))
             session["points"] = []
             session["message"] = "UNSAVED POINTS CLEARED"
-            chart_state["ui_revision"] = chart_state.get("ui_revision", 0) + 1
         elif trigger == "evaluate" and not oos_blind:
             session["evaluations"] = evaluate_rolling_windows(session["points"])
             session["window_index"] = 0 if session["evaluations"] else None
@@ -542,19 +539,6 @@ def create_app(
     @app.callback(Output("debug-panel-wrap", "children"), Input("chart-state", "data"), Input("viewport-store", "data"))
     def render_debug(chart_state, viewport):
         return debug_panel(chart_state, viewport)
-
-    app.clientside_callback(
-        """
-        function(payload) {
-            if (payload && window.applyChartPayload) {
-                try { window.applyChartPayload(JSON.parse(payload)); } catch (e) {}
-            }
-            return payload ? payload.slice(0, 64) : "";
-        }
-        """,
-        Output("chart-payload-applied", "children"),
-        Input("chart-payload-bridge", "value"),
-    )
 
     app.clientside_callback(
         """

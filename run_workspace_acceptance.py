@@ -26,7 +26,7 @@ SERVICE = TimeframeBarService(
     ssh_key=Path("/home/sergey/.ssh/id_to_nyx"),
 )
 END = datetime(2024, 6, 30, tzinfo=timezone.utc)
-TOLS = {30: 2, 60: 2, 90: 2, 120: 2, 180: 2, 300: 2}
+TOLS = {60: 2, 120: 2, 240: 2, 360: 2, 480: 2, 600: 2, 800: 2}
 
 
 def main() -> None:
@@ -34,7 +34,7 @@ def main() -> None:
     candles = chart["candles"]
 
     report = {
-        "wip": "EXPERT-CHART-FINAL-MANUAL-MARKUP-UX-1",
+        "wip": "EXPERT-CHART-POST-AUDIT-STABILITY-FIX-1",
         "chart_engine": "tradingview_lightweight_charts_v4_index_temporal",
         "backend_only": True,
         "browser_acceptance": "NOT_RUN",

@@ -20,7 +20,7 @@ header { height: 48px; display: grid; grid-template-columns: 230px 1fr auto; ali
 .controls .tool-group { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; padding-right: 10px; border-right: 1px solid #2a2e39; margin-right: 4px; }
 .controls .tool-group.secondary { border-right: none; }
 .controls .snap-btn.active { background: #2962ff; color: white; border-color: #5b8cff; }
-.debug-panel { padding: 0 12px 8px; color: #787b86; background: #171b26; border-bottom: 1px solid #2a2e39; }
+.chart-error-banner { min-height: 0; padding: 0 12px; color: #ef5350; background: #171b26; font-size: 12px; font-weight: 700; }
 .debug-panel-body { padding-top: 8px; }
 .debug-panel summary { cursor: pointer; padding: 6px 0; font-weight: 600; }
 .lwc-chart, .tv-chart { height: calc(100vh - 210px); min-height: 460px; width: 100%; }
