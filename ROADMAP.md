@@ -580,7 +580,7 @@ ARTIFACTS:
 `artifacts/REVERSAL-INDICATOR-ENGINE-1/` (planned)
 
 GIT_COMMIT:  
-PENDING_COMMIT
+44749b91ff299e7b3e70251f60bdb80f413238fd
 
 RESULT_SUMMARY:  
 **REVIEW.** INDICATOR_ENGINE_V1 implemented with DMA/Stoch/MACD/RSI/momentum/trend/ADX/volatility/candle/basic-volume. Parameter registry + causal time semantics. All acceptance unit tests PASS. No WHEN tournament. Do not start VOLUME-ACCUMULATION-FEATURES-1 until CLOSED.
