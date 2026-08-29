@@ -1,0 +1,42 @@
+{
+  "WIP": "REVERSAL-SIGNAL-EVENT-STUDY-1",
+  "STUDY_VERSION": "REVERSAL_SIGNAL_EVENT_STUDY_V1",
+  "OOS_OPENED": "NO",
+  "git_commit": "UNKNOWN",
+  "counts": {
+    "CANDIDATE_COUNT": 160,
+    "DIRECTIONAL_CANDIDATE_COUNT": 100,
+    "CONTEXT_CANDIDATE_COUNT": 60,
+    "PREDICTOR_CANDIDATE_COUNT": 36,
+    "PRICE_BASELINE_COUNT": 20
+  },
+  "discovery_events": 5301,
+  "validation_events": 2076,
+  "total_discovery_signals": 1401555,
+  "total_validation_signals": 471180,
+  "PRICE_BASELINE_BEATEN": "NO",
+  "PREDICTOR_BEATS_NORMAL_INDICATOR": "INCONCLUSIVE",
+  "PREDICTOR_CONFLUENCE_USEFUL": "INCONCLUSIVE",
+  "CONTEXT_ENRICHMENT_FOUND": "NO",
+  "RESEARCH_VERDICT": "WHEN_SIGNAL_WEAK",
+  "predictor_note": "Full predictor-trigger continuous scan deferred (compute). Registry retained.",
+  "confluence_note": "Confluence context snapshots deferred (compute). Volume/compression context evaluated.",
+  "CONTINUOUS_FALSE_POSITIVE_SCAN": "PASS",
+  "LABEL_MATCH_SEPARATION": "PASS",
+  "PARETO_CANDIDATES": 26,
+  "BEST_PRICE_BASELINE": "PRICE_ONE_BAR_DIRECTION_CHANGE_4H",
+  "family_best": {
+    "PRICE_ONLY": "PRICE_SHORT_TERM_SLOPE_SIGN_CHANGE_1H",
+    "DMA": "IND_DMA_3X3_V1_PRICE_CROSS_UP_DMA_1H",
+    "STOCHASTIC": "IND_STOCH_14_3_3_V1_K_CROSS_UP_D_1H",
+    "MACD": "IND_MACD_12_26_9_V1_MACD_CROSS_UP_SIGNAL_15m",
+    "RSI": "IND_RSI_14_V1_RSI_CROSS_UP_30_15m",
+    "MA/DMI": "IND_ADX_14_V1_DI_CROSS_UP_15m",
+    "VOLUME_CONTEXT": "NONE",
+    "COMPRESSION_CONTEXT": "NONE",
+    "EXHAUSTION_CONTEXT": "NONE",
+    "REJECTION_CONTEXT": "NONE",
+    "INVERSE_PREDICTOR": "NONE",
+    "PREDICTOR_CONFLUENCE": "NONE"
+  }
+}

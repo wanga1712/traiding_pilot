@@ -15,12 +15,12 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `REVERSAL-EVENT-DATASET-1` |
+| **WIP** | `REVERSAL-SIGNAL-EVENT-STUDY-1` |
 | **STATUS** | **REVIEW** |
-| **PHASE** | 2 — Reversal Event Dataset |
-| **Note** | REVERSAL_EVENT_DATASET_V1 built; awaiting user acceptance before CLOSED |
+| **PHASE** | 7 — WHEN (core) |
+| **Note** | Dual WHEN study complete; RESEARCH_VERDICT=WHEN_SIGNAL_WEAK; OOS locked; awaiting user acceptance |
 
-Previous: `WAVE-DATASET-FREEZE-1` → **CLOSED** (`WAVE_ENGINE_V1` / `WAVE_DATASET_V1`).
+Previous: `PREDICTOR-CONFLUENCE-FEATURES-1` → **CLOSED** (`PREDICTOR_CONFLUENCE_ENGINE_V1`, FEATURE_COUNT=100, `c40cdc3`).
 
 ---
 
@@ -675,7 +675,7 @@ PREDICTOR-CONFLUENCE-FEATURES-1
 
 ### WIP=PREDICTOR-CONFLUENCE-FEATURES-1
 
-STATUS=REVIEW
+STATUS=CLOSED
 
 PHASE=6 — Predictor Confluence
 
@@ -698,16 +698,16 @@ ACCEPTANCE_GATE:
 Association tested without claiming WHEN entry
 
 ARTIFACTS:  
-`artifacts/PREDICTOR-CONFLUENCE-FEATURES-1/` (planned)
+`artifacts/PREDICTOR-CONFLUENCE-FEATURES-1/`
 
 GIT_COMMIT:  
 c40cdc3f60bd09a0278c0018c097b44e9d886fbe
 
 RESULT_SUMMARY:  
-**REVIEW.** PREDICTOR_CONFLUENCE_ENGINE_V1: RAW+FAMILY_NORMALIZED clustering; within-TF + cross-TF; temporal approach/dispersion. 100 features. Anti-leakage/streaming PASS. No WHEN ranking. Do not start REVERSAL-SIGNAL-EVENT-STUDY-1 until CLOSED.
+**CLOSED.** User accepted. ENGINE_VERSION=PREDICTOR_CONFLUENCE_ENGINE_V1; FEATURE_COUNT=100. RAW+FAMILY_NORMALIZED; within-TF+cross-TF; temporal. Batch/streaming + anti-leakage PASS. Freeze confluence semantics. Do not modify during REVERSAL-SIGNAL-EVENT-STUDY-1.
 
 NEXT_WIP:  
-REVERSAL-SIGNAL-EVENT-STUDY-1 (only after CLOSED)
+REVERSAL-SIGNAL-EVENT-STUDY-1
 
 ---
 
@@ -715,40 +715,39 @@ REVERSAL-SIGNAL-EVENT-STUDY-1 (only after CLOSED)
 
 ### WIP=REVERSAL-SIGNAL-EVENT-STUDY-1
 
-STATUS=PLANNED
+STATUS=REVIEW
 
 PHASE=7 — WHEN (core)
 
 GOAL:  
-For every retrospective true pivot C, find earliest causally available reversal signals. Measure delay, price distance, FPR, remaining expected wave, MAE/MFE, target reach. Separate winners: earliest, lowest FPR, lowest MAE, best MFE/MAE, best target reach, most stable, best by TF.
+First real WHEN study: pivot-centered event study + continuous-timeline false-positive scan. Causal directional candidates vs price baselines; context enrichment separate from direction. DISCOVERY explore → freeze → VALIDATION; OOS locked.
 
 WHY:  
-Core WHEN question; must not conflate with WHERE.
+Core WHEN question; must not conflate with WHERE or trading PnL.
 
 DEPENDS_ON:  
-PREDICTOR-CONFLUENCE-FEATURES-1
+PREDICTOR-CONFLUENCE-FEATURES-1 (CLOSED)
 
 INPUTS:  
-Event dataset; indicator + predictor signals
+REVERSAL_EVENT_DATASET_V1; INDICATOR/VOLUME/INVERSE_PREDICTOR/CONFLUENCE engines (frozen V1)
 
 EXPECTED_OUTPUTS:  
-Tournament tables by criterion
+Candidate registry, causal signal ledgers, label matches, multi-criteria leaderboards, Pareto shortlist, validation degradation, RESEARCH_VERDICT
 
 ACCEPTANCE_GATE:  
-Not ranked only by accuracy; multi-criteria winners reported
+Dual analyses complete; OOS_OPENED=NO; no ML/combinations/PnL; frozen engines unchanged; READY_FOR_USER_REVIEW
 
 ARTIFACTS:  
-`artifacts/REVERSAL-SIGNAL-EVENT-STUDY-1/` (planned)
+`artifacts/REVERSAL-SIGNAL-EVENT-STUDY-1/`
 
 GIT_COMMIT:  
 PENDING
 
 RESULT_SUMMARY:  
-PENDING
+**REVIEW.** Dual WHEN study complete on DISCOVERY+VALIDATION. Continuous FP scan PASS. Price baselines competitive; indicators do not clearly beat them on pooled delay/FP tradeoff → RESEARCH_VERDICT=WHEN_SIGNAL_WEAK. Predictor-trigger + confluence context deferred (compute) → INCONCLUSIVE. OOS locked. Awaiting user acceptance.
 
 NEXT_WIP:  
-BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1  
-(or continue if recorder already ACTIVE in parallel)
+Do not auto-activate. After user REVIEW → next roadmap WIP.
 
 ---
 
@@ -1249,8 +1248,8 @@ none (end of planned chain)
 | REVERSAL-INDICATOR-ENGINE-1 | CLOSED | 3 |
 | VOLUME-ACCUMULATION-FEATURES-1 | CLOSED | 4 |
 | INVERSE-INDICATOR-PREDICTOR-ENGINE-1 | CLOSED | 5 |
-| PREDICTOR-CONFLUENCE-FEATURES-1 | REVIEW | 6 |
-| REVERSAL-SIGNAL-EVENT-STUDY-1 | PLANNED | 7 |
+| PREDICTOR-CONFLUENCE-FEATURES-1 | CLOSED | 6 |
+| REVERSAL-SIGNAL-EVENT-STUDY-1 | REVIEW | 7 |
 | BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1 | PLANNED | 8 |
 | HISTORICAL-FUTURES-BACKFILL-1 | PLANNED | 9 |
 | FUTURES-VOLUME-OI-ORDERFLOW-FEATURES-1 | PLANNED | 10 |
