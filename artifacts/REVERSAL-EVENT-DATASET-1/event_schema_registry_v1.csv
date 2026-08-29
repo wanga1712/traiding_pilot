@@ -1,0 +1,58 @@
+table,column,class,note
+reversal_events,event_id,IDENTITY,Stable event identity
+reversal_events,symbol,IDENTITY,Trading symbol
+reversal_events,wave_engine_version,IDENTITY,Immutable wave engine
+reversal_events,wave_dataset_version,IDENTITY,Immutable wave dataset
+reversal_events,event_dataset_version,IDENTITY,This event dataset version
+reversal_events,source_wave_tf,IDENTITY,TF of source ZigZag pivot
+reversal_events,pivot_index,IDENTITY,Pivot index in WAVE_DATASET_V1
+reversal_events,pivot_type,RETROSPECTIVE_LABEL,HIGH|LOW true pivot type
+reversal_events,true_pivot_time,RETROSPECTIVE_LABEL,True pivot timestamp
+reversal_events,true_pivot_price,RETROSPECTIVE_LABEL,True pivot price
+reversal_events,confirmation_time,RETROSPECTIVE_LABEL,ZigZag confirmation time
+reversal_events,confirmation_delay_bars,RETROSPECTIVE_LABEL,Bars from pivot to confirmation
+reversal_events,previous_pivot_time,RETROSPECTIVE_LABEL,Prior pivot time
+reversal_events,previous_pivot_price,RETROSPECTIVE_LABEL,Prior pivot price
+reversal_events,next_pivot_time,OUTCOME,Next pivot time (after C)
+reversal_events,next_pivot_price,OUTCOME,Next pivot price
+reversal_events,NEXT_LEG_DIRECTION,OUTCOME,UP|DOWN of leg C→next
+reversal_events,NEXT_LEG_MOVE_ABS,OUTCOME,Signed price change C→next
+reversal_events,NEXT_LEG_MOVE_PCT,OUTCOME,Percent move C→next
+reversal_events,NEXT_LEG_DURATION_BARS,OUTCOME,Bars C→next on source TF
+reversal_events,NEXT_LEG_DURATION_SECONDS,OUTCOME,Seconds C→next
+reversal_events,R,OUTCOME,Rolling geometry R for window ending at next as D when available
+reversal_events,R_MINUS_1,OUTCOME,R - 1.0 vs LEG_PERSISTENCE_BASELINE
+reversal_events,NEXT_LEG_MAE_FROM_C,OUTCOME,Max adverse excursion from C during next leg
+reversal_events,NEXT_LEG_MFE_FROM_C,OUTCOME,Max favorable excursion from C during next leg
+reversal_events,prev_leg_direction,CAUSAL_RAW_INPUT,Previous completed leg direction (known at C)
+reversal_events,prev_leg_move_pct,CAUSAL_RAW_INPUT,Previous leg move %
+reversal_events,prev_leg_duration_bars,CAUSAL_RAW_INPUT,Previous leg duration bars
+reversal_events,atr_at_pivot_source_tf,CAUSAL_RAW_INPUT,ATR on source TF at pivot bar if available
+reversal_events,calendar_year,CAUSAL_RAW_INPUT,UTC year of true_pivot_time
+reversal_events,calendar_month,CAUSAL_RAW_INPUT,UTC month of true_pivot_time
+reversal_events,partition,DIAGNOSTIC,DISCOVERY|VALIDATION|OOS|PARTITION_CROSS_PURGED
+reversal_events,partition_usable,DIAGNOSTIC,Whether event is usable in its partition for training
+reversal_events,CONTEXT_5M,DIAGNOSTIC,COMPLETE|PARTIAL|MISSING
+reversal_events,CONTEXT_15M,DIAGNOSTIC,COMPLETE|PARTIAL|MISSING
+reversal_events,CONTEXT_1H,DIAGNOSTIC,COMPLETE|PARTIAL|MISSING
+reversal_events,CONTEXT_4H,DIAGNOSTIC,COMPLETE|PARTIAL|MISSING
+reversal_events,CONTEXT_COMPLETE,DIAGNOSTIC,True if all context TFs COMPLETE
+reversal_events,quality_flag_source_tf,DIAGNOSTIC,Wave quality flag from WAVE_ENGINE_V1
+event_bars,event_id,IDENTITY,Parent event
+event_bars,timeframe,IDENTITY,Context TF
+event_bars,bar_index_relative_to_pivot,DIAGNOSTIC,Alignment index; NOT a causal feature
+event_bars,open_time,CAUSAL_RAW_INPUT,Bar open time
+event_bars,close_time,CAUSAL_RAW_INPUT,Bar close time
+event_bars,open,CAUSAL_RAW_INPUT,Open
+event_bars,high,CAUSAL_RAW_INPUT,High
+event_bars,low,CAUSAL_RAW_INPUT,Low
+event_bars,close,CAUSAL_RAW_INPUT,Close
+event_bars,volume,CAUSAL_RAW_INPUT,Volume
+event_bars,is_before_true_pivot,RETROSPECTIVE_LABEL,Evaluation metadata only
+event_bars,is_true_pivot_bar,RETROSPECTIVE_LABEL,Evaluation metadata only
+event_bars,is_after_true_pivot,RETROSPECTIVE_LABEL,Evaluation metadata only
+event_bars,seconds_from_true_pivot,DIAGNOSTIC,Research alignment only
+event_bars,bars_from_true_pivot,DIAGNOSTIC,Research alignment only; NOT causal
+event_bars,price_relative_to_C_pct,DIAGNOSTIC,RETROSPECTIVE_ANALYSIS_ONLY
+event_bars,price_relative_to_C_ATR,DIAGNOSTIC,RETROSPECTIVE_ANALYSIS_ONLY
+event_bars,distance_from_previous_pivot_pct,DIAGNOSTIC,Uses previous pivot; diagnostic

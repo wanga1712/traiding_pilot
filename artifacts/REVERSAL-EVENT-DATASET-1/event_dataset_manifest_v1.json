@@ -1,0 +1,198 @@
+{
+  "dataset_version": "REVERSAL_EVENT_DATASET_V1",
+  "wave_engine_version": "WAVE_ENGINE_V1",
+  "wave_dataset_version": "WAVE_DATASET_V1",
+  "wave_dataset_manifest_sha256": "128e35ea15587b3923708f1c961eb8790fd24da6651d94e2bdc39a7bebc47d56",
+  "wave_dataset_v1_unchanged": true,
+  "created_at": "2026-08-29T13:53:42.166903+00:00",
+  "git_commit": "841ffa24dde1793dc4f98e9b379b6d2a879e32aa",
+  "symbol": "ETHUSDT",
+  "window_spec": {
+    "5m": {
+      "before_hours": 24.0,
+      "after_hours": 24.0
+    },
+    "15m": {
+      "before_hours": 48.0,
+      "after_hours": 48.0
+    },
+    "1H": {
+      "before_hours": 168.0,
+      "after_hours": 168.0
+    },
+    "4H": {
+      "before_hours": 720.0,
+      "after_hours": 720.0
+    }
+  },
+  "partition": {
+    "method": "chronological_time_span_60_20_20",
+    "embargo_method": "purge_if_next_pivot_crosses_partition_boundary",
+    "boundaries": {
+      "t_start": "2019-05-12T00:00:00+00:00",
+      "t60_discovery_end": "2022-06-10T04:36:00+00:00",
+      "t80_validation_end": "2023-06-20T06:08:00+00:00",
+      "t_end": "2024-06-29T07:40:00+00:00"
+    }
+  },
+  "event_counts": {
+    "total": 9992,
+    "by_source_tf": {
+      "12H": 678,
+      "15m": 453,
+      "1D": 339,
+      "1H": 3013,
+      "2H": 1500,
+      "30m": 313,
+      "4H": 752,
+      "5m": 562,
+      "6H": 1348,
+      "8H": 1034
+    },
+    "HIGH": 4997,
+    "LOW": 4995,
+    "DISCOVERY_usable": 5301,
+    "VALIDATION_usable": 2076,
+    "OOS_usable": 2586,
+    "PARTITION_CROSS_PURGED": 19,
+    "NO_OUTCOME": 10,
+    "CONTEXT_COMPLETE_5M": 9970,
+    "CONTEXT_COMPLETE_15M": 9631,
+    "CONTEXT_COMPLETE_1H": 9007,
+    "CONTEXT_COMPLETE_4H": 5519,
+    "CONTEXT_COMPLETE_ALL": 5489
+  },
+  "schema_classes": {
+    "CAUSAL_RAW_INPUT": [
+      "prev_leg_direction",
+      "prev_leg_move_pct",
+      "prev_leg_duration_bars",
+      "atr_at_pivot_source_tf",
+      "calendar_year",
+      "calendar_month",
+      "open_time",
+      "close_time",
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume"
+    ],
+    "RETROSPECTIVE_LABEL": [
+      "pivot_type",
+      "true_pivot_time",
+      "true_pivot_price",
+      "confirmation_time",
+      "confirmation_delay_bars",
+      "previous_pivot_time",
+      "previous_pivot_price",
+      "is_before_true_pivot",
+      "is_true_pivot_bar",
+      "is_after_true_pivot"
+    ],
+    "OUTCOME": [
+      "next_pivot_time",
+      "next_pivot_price",
+      "NEXT_LEG_DIRECTION",
+      "NEXT_LEG_MOVE_ABS",
+      "NEXT_LEG_MOVE_PCT",
+      "NEXT_LEG_DURATION_BARS",
+      "NEXT_LEG_DURATION_SECONDS",
+      "R",
+      "R_MINUS_1",
+      "NEXT_LEG_MAE_FROM_C",
+      "NEXT_LEG_MFE_FROM_C"
+    ],
+    "IDENTITY": [
+      "event_id",
+      "symbol",
+      "wave_engine_version",
+      "wave_dataset_version",
+      "event_dataset_version",
+      "source_wave_tf",
+      "pivot_index",
+      "event_id",
+      "timeframe"
+    ],
+    "DIAGNOSTIC": [
+      "partition",
+      "partition_usable",
+      "CONTEXT_5M",
+      "CONTEXT_15M",
+      "CONTEXT_1H",
+      "CONTEXT_4H",
+      "CONTEXT_COMPLETE",
+      "quality_flag_source_tf",
+      "bar_index_relative_to_pivot",
+      "seconds_from_true_pivot",
+      "bars_from_true_pivot",
+      "price_relative_to_C_pct",
+      "price_relative_to_C_ATR",
+      "distance_from_previous_pivot_pct"
+    ]
+  },
+  "validations": {
+    "events": {
+      "ok": true,
+      "errors": []
+    },
+    "bars": {
+      "5m": {
+        "ok": true,
+        "errors": [],
+        "tf": "5m",
+        "row_count": 5759710,
+        "expected_minutes": 5
+      },
+      "15m": {
+        "ok": true,
+        "errors": [],
+        "tf": "15m",
+        "row_count": 3842812,
+        "expected_minutes": 15
+      },
+      "1H": {
+        "ok": true,
+        "errors": [],
+        "tf": "1H",
+        "row_count": 3363541,
+        "expected_minutes": 60
+      },
+      "4H": {
+        "ok": true,
+        "errors": [],
+        "tf": "4H",
+        "row_count": 3602043,
+        "expected_minutes": 240
+      }
+    },
+    "anti_leakage": {
+      "ok": true,
+      "history_len": 180,
+      "decision_time": "2023-05-10T12:00:00+00:00",
+      "leaked_count": 0,
+      "unfinished_higher_tf_bar_test": true
+    }
+  },
+  "artifact_files": [
+    "reversal_events_v1.parquet",
+    "event_bars_5m_v1.parquet",
+    "event_bars_15m_v1.parquet",
+    "event_bars_1h_v1.parquet",
+    "event_bars_4h_v1.parquet",
+    "event_partitions_v1.parquet",
+    "event_schema_registry_v1.csv",
+    "anti_leakage_contract.md"
+  ],
+  "immutable": true,
+  "checksums_sha256": {
+    "reversal_events_v1.parquet": "24e84cf2b534e9e95f4f63c2dbfc38c1b889803ef31e37592b34dc0a3352acbf",
+    "event_bars_5m_v1.parquet": "ebb70470f077422e3a0e4da4758889e072cec96b659a9d8bac718fefd5afcc5c",
+    "event_bars_15m_v1.parquet": "7d00c6a3734034a2307dd42677accd2bfc55f06be108aeec96c36238e96c39de",
+    "event_bars_1h_v1.parquet": "fe9ab8e5699270184130f794578645022d8319a4addfe4390e4d1cad21bdb70a",
+    "event_bars_4h_v1.parquet": "acc0fa1c268bc6e3d20a67594070bab837a0af9a9ebddca7343e94f37264f1c3",
+    "event_partitions_v1.parquet": "1e65ed725b7e8c35fdf4beacff6f2aeebdc59b78e7a22430f86088b9441b35fa",
+    "event_schema_registry_v1.csv": "5474e1d4c82dd55695d195896b1a10311aa48f94071d59a199d0875b807a767b",
+    "anti_leakage_contract.md": "04d44e195016110a9c80ee60571b38461f68ea4da7671cb4a5e1b77c2529f32e"
+  }
+}

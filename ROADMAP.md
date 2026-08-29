@@ -15,12 +15,12 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `WAVE-DATASET-FREEZE-1` |
+| **WIP** | `REVERSAL-EVENT-DATASET-1` |
 | **STATUS** | **REVIEW** |
-| **PHASE** | 1 — Wave Engine Freeze |
-| **Note** | WAVE_ENGINE_V1 / WAVE_DATASET_V1 frozen; awaiting user acceptance |
+| **PHASE** | 2 — Reversal Event Dataset |
+| **Note** | REVERSAL_EVENT_DATASET_V1 built; awaiting user acceptance before CLOSED |
 
-Previous primary: `ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1` → **CLOSED**.
+Previous: `WAVE-DATASET-FREEZE-1` → **CLOSED** (`WAVE_ENGINE_V1` / `WAVE_DATASET_V1`).
 
 ---
 
@@ -470,7 +470,7 @@ WAVE-DATASET-FREEZE-1
 
 ### WIP=WAVE-DATASET-FREEZE-1
 
-STATUS=REVIEW
+STATUS=CLOSED
 
 PHASE=1 — Wave Engine Freeze
 
@@ -498,13 +498,13 @@ Local manifests: `artifacts/WAVE-DATASET-FREEZE-1/`
 Report: `docs/wip/WAVE-DATASET-FREEZE-1.md`
 
 GIT_COMMIT:  
-PENDING
+841ffa24dde1793dc4f98e9b379b6d2a879e32aa
 
 RESULT_SUMMARY:  
-**REVIEW.** `WAVE_ENGINE_V1` + `WAVE_DATASET_V1` created. Group ATR configs frozen. Validation PASS all TFs. R median ≈ 0.94–1.00. 1H flagged `MARGINAL_TOO_DENSE`. Fib fields LEGACY_DIAGNOSTIC_ONLY. Canonical target = continuous R + LEG_PERSISTENCE_BASELINE_V1.
+**CLOSED.** `WAVE_ENGINE_V1` + `WAVE_DATASET_V1` accepted. Decisions: `DINAPOLI_SPECIFIC_RATIOS_NOT_SUPPORTED`, `WAVE_GEOMETRY_SUPPORTED`, `LEG_PERSISTENCE_SUPPORTED`, `R_IS_CONTINUOUS_TARGET`, `LEG_PERSISTENCE_BASELINE_V1` (R_BASELINE=1.0). Do not modify WAVE_DATASET_V1.
 
 NEXT_WIP:  
-REVERSAL-EVENT-DATASET-1 (only after this WIP CLOSED)
+REVERSAL-EVENT-DATASET-1
 
 ---
 
@@ -512,7 +512,7 @@ REVERSAL-EVENT-DATASET-1 (only after this WIP CLOSED)
 
 ### WIP=REVERSAL-EVENT-DATASET-1
 
-STATUS=PLANNED
+STATUS=REVIEW
 
 PHASE=2 — Reversal Event Dataset
 
@@ -523,28 +523,30 @@ WHY:
 Enable WHEN studies without leakage from future bars.
 
 DEPENDS_ON:  
-WAVE-DATASET-FREEZE-1
+WAVE-DATASET-FREEZE-1 CLOSED
 
 INPUTS:  
-Frozen wave dataset
+Frozen `WAVE_DATASET_V1` (immutable)
 
 EXPECTED_OUTPUTS:  
-Event table with TRUE_PIVOT_* labels + causal window indices
+`REVERSAL_EVENT_DATASET_V1` + schema registry + anti-leakage API
 
 ACCEPTANCE_GATE:  
-No future information in features; event schema documented
+WAVE_DATASET_V1 unchanged; causal vs retrospective columns separated; anti-leakage tests PASS; STATUS→REVIEW before CLOSED
 
 ARTIFACTS:  
-`artifacts/REVERSAL-EVENT-DATASET-1/` (planned)
+S13 `/var/tmp/traiding_pilot_ui_workspace/reversal_event_dataset_v1/`  
+`artifacts/REVERSAL-EVENT-DATASET-1/`  
+`docs/wip/REVERSAL-EVENT-DATASET-1.md`
 
 GIT_COMMIT:  
-PENDING
+9d4d6e53d5602d96750a8a95deb118492ff86af3
 
 RESULT_SUMMARY:  
-PENDING
+**REVIEW.** REVERSAL_EVENT_DATASET_V1 frozen on S13. 9992 events from WAVE_DATASET_V1 (unchanged). Schema registry + anti-leakage API/tests PASS. Chronological 60/20/20 partitions with outcome-boundary purge (19 purged). Incomplete multi-TF context marked, not dropped. Do **not** activate indicator engine until CLOSED.
 
 NEXT_WIP:  
-REVERSAL-INDICATOR-ENGINE-1
+REVERSAL-INDICATOR-ENGINE-1 (only after CLOSED)
 
 ---
 
@@ -1242,8 +1244,8 @@ none (end of planned chain)
 | DINAPOLI-COP-OP-XOP-MULTITIMEFRAME-SWEEP-1 | CLOSED_NEGATIVE | Historical |
 | PROJECT-RESEARCH-ROADMAP-AND-WIP-GOVERNANCE-1 | CLOSED | Governance |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
-| WAVE-DATASET-FREEZE-1 | REVIEW | 1 |
-| REVERSAL-EVENT-DATASET-1 | PLANNED | 2 |
+| WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
+| REVERSAL-EVENT-DATASET-1 | REVIEW | 2 |
 | REVERSAL-INDICATOR-ENGINE-1 | PLANNED | 3 |
 | VOLUME-ACCUMULATION-FEATURES-1 | PLANNED | 4 |
 | INVERSE-INDICATOR-PREDICTOR-ENGINE-1 | PLANNED | 5 |
