@@ -1,0 +1,47 @@
+{
+  "BEST_DMA_PERIOD_SHIFT": {
+    "period": 3,
+    "display_shift": 3
+  },
+  "BEST_STOCH_CONFIG_SHIFT": {
+    "k_period": 14,
+    "k_smooth": 3,
+    "d_period": 3,
+    "display_shift": 0,
+    "obos": false
+  },
+  "BEST_STOCH_OB_OS_LEVELS": {
+    "oversold": 20.0,
+    "overbought": 80.0
+  },
+  "BEST_MACD_CONFIG_SHIFT": {
+    "fast": 12,
+    "slow": 26,
+    "signal": 9,
+    "display_shift": 0,
+    "preset_class": "PROJECT_EXPERIMENTAL"
+  },
+  "BEST_CONFIRMATION_COMBINATION": "DMA_STOCH",
+  "BEST_CONFIRMATION_WINDOW": 3,
+  "BEST_SIGNAL_EXPIRATION": 5,
+  "BEST_GEOMETRY_STAGE_GATE": "NO_GEOMETRY_ARM",
+  "BEST_VOLATILITY_GATE": "NO_VOL_GATE",
+  "BEST_VOLUME_CONTEXT_GATE": "NO_VOLUME_GATE",
+  "gate_meta": {
+    "activity_low_cut": 24.566825889226518,
+    "activity_high_cut": 49.693711602440146,
+    "volume_thresholds": {
+      "rel_vol_p50": 0.8280406063478392,
+      "vz_abs_p50": 0.6413937158127814,
+      "er_p50": 0.20366621234574983,
+      "comp_p50": 0.42316860773759335
+    },
+    "empirical_r_threshold": 11.616471538150996,
+    "geometry_tf": "4H",
+    "decision_tf": "1H"
+  },
+  "select_pair": [
+    "4H",
+    "1H"
+  ]
+}

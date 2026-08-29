@@ -15,12 +15,16 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `REVERSAL-SIGNAL-EVENT-STUDY-1` |
+| **WIP** | `ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1` |
 | **STATUS** | **REVIEW** |
 | **PHASE** | 7 — WHEN (core) |
-| **Note** | Dual WHEN study complete; RESEARCH_VERDICT=WHEN_SIGNAL_WEAK; OOS locked; awaiting user acceptance |
+| **Note** | Part 0 audit complete. Composite display-aligned DMA+Stoch (window=3) does not beat price baseline on joint score; higher precision, lower recall. Gates not selected on DISCOVERY. OOS locked. |
 
-Previous: `PREDICTOR-CONFLUENCE-FEATURES-1` → **CLOSED** (`PREDICTOR_CONFLUENCE_ENGINE_V1`, FEATURE_COUNT=100, `c40cdc3`).
+Superseded mid-flight (incomplete): `DISPLACED-CONFLUENCE-AND-VOLATILITY-GATE-STUDY-1` → absorbed into this fuller reconstruction.
+
+Paused: `REVERSAL-SIGNAL-EVENT-STUDY-1` — V1_INITIAL preserved; REVIEW_COMPLETION deferred.
+
+Previous CLOSED: `PREDICTOR-CONFLUENCE-FEATURES-1` (`c40cdc3`).
 
 ---
 
@@ -713,17 +717,52 @@ REVERSAL-SIGNAL-EVENT-STUDY-1
 
 ## PHASE 7 — WHEN — Single Signal Tournament
 
-### WIP=REVERSAL-SIGNAL-EVENT-STUDY-1
+### WIP=ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1
 
 STATUS=REVIEW
 
 PHASE=7 — WHEN (core)
 
 GOAL:  
+Reconstruct and test the original composite causal system: geometry COP/OP/XOP or empirical-R arm → volatility/activity gate → OB/OS → display-aligned DMA + Stoch + MACD confluence → WHEN. Progressive ablation vs price-only. DISCOVERY freeze → VALIDATION; OOS locked; no PnL.
+
+WHY:  
+REVERSAL-SIGNAL-EVENT-STUDY-1 only tested single candidates (source-aligned DMA; undisplaced Stoch/MACD). PRICE_BASELINE_BEATEN=NO there does not refute the original composite hypothesis.
+
+DEPENDS_ON:  
+Part 0 semantic audit; REVERSAL_EVENT_DATASET_V1; INDICATOR_ENGINE_V1; VOLUME_ACCUMULATION_ENGINE_V1; WAVE_DATASET_V1
+
+EXPECTED_OUTPUTS:  
+Semantic audit; volume pipeline repair; display-aligned families; geometry stages; vol/volume gates; composite ablation A–G; MTF pairs; DISCOVERY freeze; VALIDATION; RESEARCH_VERDICT
+
+ACCEPTANCE_GATE:  
+SEMANTIC_AUDIT_COMPLETE=YES; OOS_OPENED=NO; no PnL; READY_FOR_USER_REVIEW
+
+---
+
+### WIP=DISPLACED-CONFLUENCE-AND-VOLATILITY-GATE-STUDY-1
+
+STATUS=SUPERSEDED
+
+PHASE=7 — WHEN (core)
+
+SUPERSEDED_BY: ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1
+
+NOTE: Incomplete mid-flight run stopped; scope absorbed into fuller reconstruction (adds OB/OS composite, geometry stages, volume filter, MTF, ablation).
+
+---
+
+### WIP=REVERSAL-SIGNAL-EVENT-STUDY-1
+
+STATUS=PAUSED
+
+PHASE=7 — WHEN (core) — REVIEW_COMPLETION deferred
+
+GOAL:  
 First real WHEN study: pivot-centered event study + continuous-timeline false-positive scan. Causal directional candidates vs price baselines; context enrichment separate from direction. DISCOVERY explore → freeze → VALIDATION; OOS locked.
 
 WHY:  
-Core WHEN question; must not conflate with WHERE or trading PnL.
+Core WHEN question; must not conflate with WHERE or trading PnL. Valid as **single-candidate baseline** only.
 
 DEPENDS_ON:  
 PREDICTOR-CONFLUENCE-FEATURES-1 (CLOSED)
@@ -737,17 +776,21 @@ Candidate registry, causal signal ledgers, label matches, multi-criteria leaderb
 ACCEPTANCE_GATE:  
 Dual analyses complete; OOS_OPENED=NO; no ML/combinations/PnL; frozen engines unchanged; READY_FOR_USER_REVIEW
 
+NOTE:  
+Provisional WHEN_SIGNAL_WEAK / PRICE_BASELINE_BEATEN=NO preserved in V1_INITIAL for singles already evaluated. Does **not** mean original composite failed.
+
 ARTIFACTS:  
-`artifacts/REVERSAL-SIGNAL-EVENT-STUDY-1/`
+`artifacts/REVERSAL-SIGNAL-EVENT-STUDY-1/`  
+Immutable initial: `.../REVERSAL_SIGNAL_EVENT_STUDY_V1_INITIAL/`
 
 GIT_COMMIT:  
-d31a2cd1ca83033c5bc543d248f32abbf66b190d
+d2af069d45f1fd2b6c8db76ad4cee25ce858945f
 
 RESULT_SUMMARY:  
-**REVIEW.** Dual WHEN study complete on DISCOVERY+VALIDATION. Continuous FP scan PASS. Price baselines competitive; indicators do not clearly beat them on pooled delay/FP tradeoff → RESEARCH_VERDICT=WHEN_SIGNAL_WEAK. Predictor-trigger + confluence context deferred (compute) → INCONCLUSIVE. OOS locked. Awaiting user acceptance.
+**ACTIVE (REVIEW_COMPLETION).** Initial run preserved (PRICE_BASELINE_BEATEN=NO provisional). Completing context plumbing + enrichment, inverse-predictor continuous scan, confluence enrichment, cross-TF normalized scoring. OOS locked. Do not activate later WIP.
 
 NEXT_WIP:  
-Do not auto-activate. After user REVIEW → next roadmap WIP.
+Do not auto-activate.
 
 ---
 
@@ -1249,7 +1292,7 @@ none (end of planned chain)
 | VOLUME-ACCUMULATION-FEATURES-1 | CLOSED | 4 |
 | INVERSE-INDICATOR-PREDICTOR-ENGINE-1 | CLOSED | 5 |
 | PREDICTOR-CONFLUENCE-FEATURES-1 | CLOSED | 6 |
-| REVERSAL-SIGNAL-EVENT-STUDY-1 | REVIEW | 7 |
+| REVERSAL-SIGNAL-EVENT-STUDY-1 | ACTIVE | 7 |
 | BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1 | PLANNED | 8 |
 | HISTORICAL-FUTURES-BACKFILL-1 | PLANNED | 9 |
 | FUTURES-VOLUME-OI-ORDERFLOW-FEATURES-1 | PLANNED | 10 |

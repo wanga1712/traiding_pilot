@@ -1,0 +1,5 @@
+"""ORIGINAL_DINAPOLI_STYLE_WHEN_RECONSTRUCTION_V1."""
+
+from .version import STUDY_VERSION, WIP_ID
+
+__all__ = ["STUDY_VERSION", "WIP_ID"]
