@@ -701,7 +701,7 @@ ARTIFACTS:
 `artifacts/PREDICTOR-CONFLUENCE-FEATURES-1/` (planned)
 
 GIT_COMMIT:  
-PENDING_COMMIT
+c40cdc3f60bd09a0278c0018c097b44e9d886fbe
 
 RESULT_SUMMARY:  
 **REVIEW.** PREDICTOR_CONFLUENCE_ENGINE_V1: RAW+FAMILY_NORMALIZED clustering; within-TF + cross-TF; temporal approach/dispersion. 100 features. Anti-leakage/streaming PASS. No WHEN ranking. Do not start REVERSAL-SIGNAL-EVENT-STUDY-1 until CLOSED.
