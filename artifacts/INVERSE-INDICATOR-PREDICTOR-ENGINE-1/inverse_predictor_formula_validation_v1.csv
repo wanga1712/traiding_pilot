@@ -1,0 +1,7 @@
+test,status,detail
+dma_analytic_replay,PASS,
+rsi_replay,PASS,
+macd_replay,PASS,
+stoch_feasibility,PASS,
+project_oscillator,PASS,
+bollinger_unsupported,PASS,

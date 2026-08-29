@@ -1,0 +1,92 @@
+{
+  "overall_ok": true,
+  "manifest": {
+    "predictor_engine_version": "INVERSE_PREDICTOR_ENGINE_V1",
+    "wip": "INVERSE-INDICATOR-PREDICTOR-ENGINE-1",
+    "created_at": "2026-08-29T15:17:41.611977+00:00",
+    "git_commit": "0114dbaeb5c3d9f088f7ac6b7d06f06d2bf092a5",
+    "overall_ok": true,
+    "predictor_count": 15,
+    "parameter_set_count": 22,
+    "hypothetical_input_type": "NEXT_BAR_CLOSE",
+    "validation_results": [
+      {
+        "test": "dma_analytic_replay",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "rsi_replay",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "macd_replay",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "stoch_feasibility",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "project_oscillator",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "bollinger_unsupported",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "future_mutation",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "true_c_outcome_leakage",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "unfinished_htf",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "batch_streaming",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "engine_version",
+        "status": "PASS",
+        "detail": ""
+      }
+    ],
+    "frozen_inputs": [
+      "WAVE_DATASET_V1",
+      "REVERSAL_EVENT_DATASET_V1",
+      "INDICATOR_ENGINE_V1",
+      "VOLUME_ACCUMULATION_ENGINE_V1"
+    ],
+    "notes": [
+      "No ranking / WHEN tournament",
+      "Stochastic K/D cross requires intrabar assumption",
+      "Bollinger inverse UNSUPPORTED_V1",
+      "Not proprietary DiNapoli"
+    ],
+    "checksums_sha256": {
+      "inverse_predictor_registry_v1.csv": "81b74e2522f847bc352ebf3cadd4d0552a1c5d5a3962f666309643857c28bead",
+      "inverse_predictor_parameter_registry_v1.json": "3525a843ff843bb4271cbbd90637d539da707ce5148f4d1746b5891a2892685e",
+      "inverse_predictor_schema_v1.csv": "7cca4dc28fb2960e6be68e831ef97433d01702123a3be937078652ac2afb0a7d",
+      "inverse_predictor_formula_validation_v1.csv": "539708e9fc153d13ea60450f483604a973a8c131a8f38c6f3408ceb22b386dc9",
+      "inverse_predictor_synthetic_replay_validation_v1.csv": "88f806539cec4ab1fa26ba85e15a154408ad749662da7f0ac8b63df9ae751114",
+      "inverse_predictor_anti_leakage_validation_v1.csv": "9a60343658368ace779338d82e194990361dbeaba25d4345ebde17cc8991be53",
+      "inverse_predictor_streaming_validation_v1.csv": "67b47fa5d56a41205cc6c532f86c2d967a8d59e1fefd6359fe71ee03070971f7",
+      "inverse_predictor_engine_v1.md": "0cacc455fd9a5e08a1763588a47437c0c5617608467b111ed346e416b5c54a2b"
+    }
+  }
+}

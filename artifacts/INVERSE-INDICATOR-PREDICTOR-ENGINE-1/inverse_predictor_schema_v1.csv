@@ -1,0 +1,12 @@
+column,class,note
+predictor_engine_version,IDENTITY,Engine version
+predictor_id,IDENTITY,Predictor type
+parameter_set_id,IDENTITY,Predictor parameter set
+source_timeframe,IDENTITY,TF
+decision_time,CAUSAL_TIME,Decision timestamp
+calculated_at,CAUSAL_TIME,Last closed bar
+available_at,CAUSAL_TIME,Earliest causal use
+predicted_trigger_price,OUTPUT,Solved X or null
+solution_status,DIAGNOSTIC,EXACT_ANALYTIC|...
+hypothetical_input_type,IDENTITY,NEXT_BAR_CLOSE
+distance_*,OUTPUT,Distance features

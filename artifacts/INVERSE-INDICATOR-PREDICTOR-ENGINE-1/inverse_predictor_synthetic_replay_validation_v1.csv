@@ -1,0 +1,4 @@
+test,status,detail
+dma_analytic_replay,PASS,
+rsi_replay,PASS,
+macd_replay,PASS,
