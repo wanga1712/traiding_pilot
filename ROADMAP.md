@@ -741,7 +741,7 @@ ARTIFACTS:
 `artifacts/REVERSAL-SIGNAL-EVENT-STUDY-1/`
 
 GIT_COMMIT:  
-PENDING
+d31a2cd1ca83033c5bc543d248f32abbf66b190d
 
 RESULT_SUMMARY:  
 **REVIEW.** Dual WHEN study complete on DISCOVERY+VALIDATION. Continuous FP scan PASS. Price baselines competitive; indicators do not clearly beat them on pooled delay/FP tradeoff → RESEARCH_VERDICT=WHEN_SIGNAL_WEAK. Predictor-trigger + confluence context deferred (compute) → INCONCLUSIVE. OOS locked. Awaiting user acceptance.
