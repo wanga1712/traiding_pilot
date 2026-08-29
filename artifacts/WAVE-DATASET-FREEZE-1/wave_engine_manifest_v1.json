@@ -1,0 +1,106 @@
+{
+  "wave_engine_version": "WAVE_ENGINE_V1",
+  "algorithm_family": "classic_atr_zigzag",
+  "normalization_method": "ATR_directional_change_grouped_by_TF",
+  "depth": 3,
+  "backstep": 0,
+  "config_by_tf": {
+    "5m": {
+      "atr_n": 10,
+      "atr_k": 15.0,
+      "depth": 3,
+      "backstep": 0,
+      "group": "5m-30m"
+    },
+    "15m": {
+      "atr_n": 10,
+      "atr_k": 15.0,
+      "depth": 3,
+      "backstep": 0,
+      "group": "5m-30m"
+    },
+    "30m": {
+      "atr_n": 10,
+      "atr_k": 15.0,
+      "depth": 3,
+      "backstep": 0,
+      "group": "5m-30m"
+    },
+    "1H": {
+      "atr_n": 14,
+      "atr_k": 2.5,
+      "depth": 3,
+      "backstep": 0,
+      "group": "1H-4H"
+    },
+    "2H": {
+      "atr_n": 14,
+      "atr_k": 2.5,
+      "depth": 3,
+      "backstep": 0,
+      "group": "1H-4H"
+    },
+    "4H": {
+      "atr_n": 14,
+      "atr_k": 2.5,
+      "depth": 3,
+      "backstep": 0,
+      "group": "1H-4H"
+    },
+    "6H": {
+      "atr_n": 14,
+      "atr_k": 0.5,
+      "depth": 3,
+      "backstep": 0,
+      "group": "6H-1D"
+    },
+    "8H": {
+      "atr_n": 14,
+      "atr_k": 0.5,
+      "depth": 3,
+      "backstep": 0,
+      "group": "6H-1D"
+    },
+    "12H": {
+      "atr_n": 14,
+      "atr_k": 0.5,
+      "depth": 3,
+      "backstep": 0,
+      "group": "6H-1D"
+    },
+    "1D": {
+      "atr_n": 14,
+      "atr_k": 0.5,
+      "depth": 3,
+      "backstep": 0,
+      "group": "6H-1D"
+    }
+  },
+  "quality_flag_by_tf": {
+    "5m": "OK",
+    "15m": "OK",
+    "30m": "OK",
+    "1H": "MARGINAL_TOO_DENSE",
+    "2H": "OK",
+    "4H": "OK",
+    "6H": "OK",
+    "8H": "OK",
+    "12H": "OK",
+    "1D": "OK"
+  },
+  "research_decisions": {
+    "DINAPOLI_SPECIFIC_RATIOS_NOT_SUPPORTED": true,
+    "WAVE_GEOMETRY_SUPPORTED": true,
+    "LEG_PERSISTENCE_SUPPORTED": true,
+    "R_IS_CONTINUOUS_TARGET": true,
+    "LEGACY_FIB_FIELDS_STATUS": "LEGACY_DIAGNOSTIC_ONLY",
+    "LEG_PERSISTENCE_BASELINE": "LEG_PERSISTENCE_BASELINE_V1",
+    "R_BASELINE": 1.0,
+    "EMPIRICAL_R_DISTRIBUTION": "EMPIRICAL_R_DISTRIBUTION_V1",
+    "GEOMETRY_COMPARABLE_ACROSS_TF": false,
+    "NOTE": "Future research must primarily model continuous R / next_leg_magnitude. COP/OP/XOP may remain secondary descriptive thresholds only. Do not retune WAVE_ENGINE_V1 for PnL or indicator performance."
+  },
+  "implementation_module": "crypto_trading_bot.research_v2.zigzag.classic.classic_atr_zigzag",
+  "implementation_commit": "a1b8948b665dba12e47455b15211429f68fb1333",
+  "created_at": "2026-08-29T13:13:00.385598+00:00"
+}

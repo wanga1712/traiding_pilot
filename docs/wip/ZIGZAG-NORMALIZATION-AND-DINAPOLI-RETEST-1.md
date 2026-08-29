@@ -1,83 +1,66 @@
 # WIP=ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1
 
-STATUS=REVIEW
+STATUS=CLOSED
 
 STARTED_AT=2026-08-29
-CLOSED_AT=
+CLOSED_AT=2026-08-29
 
 ## Goal
 
-Build timeframe-comparable ZigZag geometry (ATR / vol-percent families), freeze using **wave-geometry criteria only** (no R/DiNapoli leakage), then retest next-leg R and COP/OP/XOP vs control ratios.
+Normalize ZigZag across timeframes and finish the geometry question: R≈1 persistence, Fibonacci-specific attraction, continuous vs multimodal R.
 
 ## Context
 
-Fixed-percent multitf (`FIXED_ZZ_BASELINE_V1`) showed R≈1 everywhere but fib modes not special; low TFs TOO_DENSE. Need normalization before market-context work.
+Fixed-percent multitf (`FIXED_ZZ_BASELINE_V1`) showed R≈1 but fib modes not special; low TFs pathological. Normalization required before market-context work.
 
-## Inputs
+## Results (accepted)
 
-- ETHUSDT 5m…1D via canonical resampling pipeline
-- Immutable baseline: `/var/tmp/traiding_pilot_ui_workspace/dinapoli_multitf_sweep/`
+```
+DINAPOLI_SPECIFIC_RATIOS_SUPPORTED=NO
+COP_RATIO_SPECIAL=NO
+OP_RATIO_SPECIAL=NO
+XOP_RATIO_SPECIAL=NO
+LEG_PERSISTENCE_SUPPORTED=YES
+CONTINUOUS_WAVE_DISTRIBUTION_SUPPORTED=YES
+```
 
-## Constraints
+R median across tested TFs remains approximately 1.  
+Normalized validation found no reproducible special density at 0.618 / 1.000 / 1.618 versus control ratios.
 
-- Do not overwrite FIXED_ZZ_BASELINE_V1
-- Do not choose N/K using COP/OP/XOP / R metrics
-- Prefer one global ATR config; else minimal TF groups
+### Freeze research decision
 
-## Non-goals
+`DINAPOLI_SPECIFIC_RATIOS_NOT_SUPPORTED`
 
-Volume, OI, indicators, ML, PnL, further Fibonacci coefficient tuning
+Future research **MUST NOT** continue tuning Fibonacci ratios unless a completely new independently justified hypothesis is registered as a new roadmap WIP.
 
-## Implementation / Experiment
+Retain as project research authority:
 
-- Family A: ATR(N)×K grid; depth=3 / backstep=0
-- Family B: vol-percent reference
-- Geometry bands (clock-time hours + ppy); group configs when no global
-- Validation 70/30 chronological; bootstrap CIs; continuous-distribution verdict
+- wave geometry
+- R≈1 baseline (`LEG_PERSISTENCE_BASELINE_V1`)
+- complete empirical R distribution
 
-## Anti-leakage rules
+### Normalized configurations
 
-ZigZag calibration on discovery candles/geometry only. All R/target claims from validation.
+| Group | Config |
+|---|---|
+| 5m–30m | ATR(10)×15 / D3/B0 |
+| 1H–4H | ATR(14)×2.5 / D3/B0 |
+| 6H–1D | ATR(14)×0.5 / D3/B0 |
 
-## Acceptance criteria
-
-Reported RETURN with classification; user review for geometry interpretation.
-
-## Results
-
-- `GLOBAL_NORMALIZED_ZZ_FOUND=NO`
-- Groups: `5m-30m ATR(10)*K=15`; `1H-4H ATR(14)*K=2.5`; `6H-1D ATR(14)*K=0.5`
-- R median ≈ 0.98–1.14 across TFs
-- Fib density edges vs controls ≈ 0 / negative
-- `DINAPOLI_SPECIFIC_RATIOS_SUPPORTED=NO`
-- `LEG_PERSISTENCE_SUPPORTED=YES`
-- `CONTINUOUS_WAVE_DISTRIBUTION_SUPPORTED=YES`
-- Freeze note: `DINAPOLI_SPECIFIC_RATIOS_NOT_SUPPORTED`; retain R≈1 / empirical R
+`GEOMETRY_COMPARABLE_ACROSS_TF=NO` — no single global ATR configuration.  
+1H diagnostic: `MARGINAL_TOO_DENSE` (~602 pivots/year).
 
 ## Artifacts
 
-`/var/tmp/traiding_pilot_ui_workspace/dinapoli_normalized_retest/`
-
-Including: `normalized_zigzag_config.csv`, `normalized_dinapoli_multitf.csv`, `fixed_vs_normalized_comparison.csv`, `summary.json`, …
-
-## Browser/runtime evidence
-
-S13 CLI run; baseline marker `FIXED_ZZ_BASELINE_V1.txt` present.
-
-## Git commit
-
-GIT_COMMIT=PENDING
-
-## RETURN
-
-See chat RETURN for WIP=ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 (2026-08-29). Summary above.
+- Normalized: `/var/tmp/traiding_pilot_ui_workspace/dinapoli_normalized_retest/`
+- Baseline (immutable): `/var/tmp/traiding_pilot_ui_workspace/dinapoli_multitf_sweep/` (`FIXED_ZZ_BASELINE_V1`)
 
 ## Decision
 
-Awaiting user acceptance. Expected close label: **CLOSED_NEGATIVE** for Fibonacci-specific hypothesis; wave geometry / R≈1 retained.
+**CLOSED** — experiment completed successfully. Fibonacci-specific hypothesis unsupported; wave geometry / leg persistence / continuous R supported.
 
 ## Roadmap update
 
-ROADMAP_STATUS_UPDATED=YES (STATUS=REVIEW in ROADMAP.md)
+ROADMAP_STATUS_UPDATED=YES
 
 NEXT_WIP=WAVE-DATASET-FREEZE-1

@@ -15,12 +15,12 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1` |
+| **WIP** | `WAVE-DATASET-FREEZE-1` |
 | **STATUS** | **REVIEW** |
-| **PHASE** | 0 — Geometry Validation |
-| **Note** | RETURN delivered; awaiting user acceptance before CLOSED / CLOSED_NEGATIVE |
+| **PHASE** | 1 — Wave Engine Freeze |
+| **Note** | WAVE_ENGINE_V1 / WAVE_DATASET_V1 frozen; awaiting user acceptance |
 
-Governance WIP that established this document: `PROJECT-RESEARCH-ROADMAP-AND-WIP-GOVERNANCE-1` → **CLOSED**.
+Previous primary: `ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1` → **CLOSED**.
 
 ---
 
@@ -424,7 +424,7 @@ Accept/close `ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1`, then `WAVE-DATASET-FR
 
 ### WIP=ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1
 
-STATUS=REVIEW
+STATUS=CLOSED
 
 PHASE=0 — Geometry Validation
 
@@ -454,16 +454,15 @@ GIT_COMMIT:
 PENDING
 
 RESULT_SUMMARY:  
-**RETURN delivered (pending user acceptance).** No single global ATR config; group configs used. R median remains ≈1 across TFs. Fib density edges vs controls ≈0 / negative. Classification: `DINAPOLI_SPECIFIC_RATIOS_SUPPORTED=NO`; `LEG_PERSISTENCE_SUPPORTED=YES`; `CONTINUOUS_WAVE_DISTRIBUTION_SUPPORTED=YES`; freeze note `DINAPOLI_SPECIFIC_RATIOS_NOT_SUPPORTED` + retain R≈1 / empirical R distribution. `READY_FOR_MARKET_CONTEXT_PHASE=YES` after close.
+**Accepted CLOSED (experiment succeeded; Fibonacci-specific hypothesis unsupported).**  
+`DINAPOLI_SPECIFIC_RATIOS_SUPPORTED=NO`; COP/OP/XOP ratio special = NO/NO/NO.  
+`LEG_PERSISTENCE_SUPPORTED=YES`; `CONTINUOUS_WAVE_DISTRIBUTION_SUPPORTED=YES`.  
+R median across TFs ≈ 1. No reproducible special density at 0.618/1.000/1.618 vs controls.  
+Freeze: `DINAPOLI_SPECIFIC_RATIOS_NOT_SUPPORTED`. Retain wave geometry, R≈1 baseline, empirical R distribution.  
+No single global ATR; group configs. `GEOMETRY_COMPARABLE_ACROSS_TF=NO`. 1H flagged MARGINAL_TOO_DENSE.
 
 NEXT_WIP:  
 WAVE-DATASET-FREEZE-1
-
-Possible conclusions (acceptance vocabulary):
-
-- `DINAPOLI_SPECIFIC_RATIOS_SUPPORTED`
-- `WAVE_GEOMETRY_SUPPORTED_BUT_FIBONACCI_NOT_SPECIAL` ← evidence points here
-- `GEOMETRY_WEAK_OR_INCONCLUSIVE`
 
 ---
 
@@ -471,7 +470,7 @@ Possible conclusions (acceptance vocabulary):
 
 ### WIP=WAVE-DATASET-FREEZE-1
 
-STATUS=PLANNED
+STATUS=REVIEW
 
 PHASE=1 — Wave Engine Freeze
 
@@ -482,28 +481,30 @@ WHY:
 Downstream WHEN/WHERE research needs an immutable wave dataset.
 
 DEPENDS_ON:  
-ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 CLOSED or CLOSED_NEGATIVE
+ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 CLOSED
 
 INPUTS:  
-Accepted normalized (or group) ZigZag freeze decision from Phase 0
+Accepted normalized (group) ZigZag freeze decision from Phase 0
 
 EXPECTED_OUTPUTS:  
-Versioned wave parquet/CSV + parameter manifest
+Versioned wave parquet/CSV + parameter manifest (`WAVE_ENGINE_V1` / `WAVE_DATASET_V1`)
 
 ACCEPTANCE_GATE:  
-Parameters frozen; **must not** later be optimized to improve trading PnL
+Parameters frozen; **must not** later be optimized to improve trading PnL; STATUS→REVIEW for user acceptance before CLOSED
 
 ARTIFACTS:  
-`artifacts/WAVE-DATASET-FREEZE-1/` (planned)
+S13 `/var/tmp/traiding_pilot_ui_workspace/wave_dataset_v1/`  
+Local manifests: `artifacts/WAVE-DATASET-FREEZE-1/`  
+Report: `docs/wip/WAVE-DATASET-FREEZE-1.md`
 
 GIT_COMMIT:  
 PENDING
 
 RESULT_SUMMARY:  
-PENDING
+**REVIEW.** `WAVE_ENGINE_V1` + `WAVE_DATASET_V1` created. Group ATR configs frozen. Validation PASS all TFs. R median ≈ 0.94–1.00. 1H flagged `MARGINAL_TOO_DENSE`. Fib fields LEGACY_DIAGNOSTIC_ONLY. Canonical target = continuous R + LEG_PERSISTENCE_BASELINE_V1.
 
 NEXT_WIP:  
-REVERSAL-EVENT-DATASET-1
+REVERSAL-EVENT-DATASET-1 (only after this WIP CLOSED)
 
 ---
 
@@ -1240,8 +1241,8 @@ none (end of planned chain)
 | DINAPOLI-COP-OP-XOP-4H-VALIDATION-1 | CLOSED | Historical |
 | DINAPOLI-COP-OP-XOP-MULTITIMEFRAME-SWEEP-1 | CLOSED_NEGATIVE | Historical |
 | PROJECT-RESEARCH-ROADMAP-AND-WIP-GOVERNANCE-1 | CLOSED | Governance |
-| ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | REVIEW | 0 |
-| WAVE-DATASET-FREEZE-1 | PLANNED | 1 |
+| ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
+| WAVE-DATASET-FREEZE-1 | REVIEW | 1 |
 | REVERSAL-EVENT-DATASET-1 | PLANNED | 2 |
 | REVERSAL-INDICATOR-ENGINE-1 | PLANNED | 3 |
 | VOLUME-ACCUMULATION-FEATURES-1 | PLANNED | 4 |
