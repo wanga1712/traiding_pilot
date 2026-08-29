@@ -1,0 +1,21 @@
+indicator_id,family,description
+DMA,DINAPOLI_DMA,SMA with display-only displacement
+STOCHASTIC,OSCILLATOR,Causal Stochastic %K/%D
+DISPLACED_STOCHASTIC,OSCILLATOR,Stochastic with DISPLAY_SHIFT_BARS; PROJECT_EXPERIMENTAL
+MACD,OSCILLATOR,Causal MACD 12/26/9 baseline
+DISPLACED_MACD,OSCILLATOR,MACD with DISPLAY_SHIFT_BARS; PROJECT_EXPERIMENTAL
+RSI,OSCILLATOR,Wilder RSI
+ROC,MOMENTUM,Rate of change
+MOMENTUM,MOMENTUM,Close - close[n]
+CCI,MOMENTUM,Commodity Channel Index
+WILLIAMS_R,MOMENTUM,Williams %R
+SMA,TREND,Simple moving average
+EMA,TREND,Exponential moving average
+WMA,TREND,Weighted moving average
+MA_CROSS,TREND,Dual MA distance/cross
+ADX_DMI,TREND,ADX / +DI / -DI
+ATR,VOLATILITY,Average True Range (+ normalized)
+BOLLINGER,VOLATILITY,Bollinger mid/upper/lower/width/%B
+REALIZED_VOLATILITY,VOLATILITY,Rolling log-return std + range stats
+CANDLE_STRUCTURE,CANDLE,Numerical candle/structure features
+BASIC_VOLUME,VOLUME,Basic volume transforms (infra only)

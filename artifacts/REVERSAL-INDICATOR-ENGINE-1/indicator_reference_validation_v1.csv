@@ -1,0 +1,11 @@
+test,status,detail
+DMA3x3_numeric,PASS,
+DMA7x5_DMA25x5,PASS,
+Stochastic_correctness,PASS,
+MACD_correctness,PASS,
+RSI_correctness,PASS,
+ATR_correctness,PASS,
+Bollinger_correctness,PASS,
+Warmup,PASS,
+Gap_handling,PASS,
+Reproducibility,PASS,

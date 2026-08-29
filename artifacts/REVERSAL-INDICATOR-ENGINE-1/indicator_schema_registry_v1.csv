@@ -1,0 +1,12 @@
+column,class,note
+indicator_engine_version,IDENTITY,Engine version tag
+indicator_id,IDENTITY,Indicator family id
+parameter_set_id,IDENTITY,Registry parameter set
+source_timeframe,IDENTITY,Bar timeframe
+calculated_at,CAUSAL_TIME,Formula evaluation bar close
+available_at,CAUSAL_TIME,Earliest causal use (== calculated_at for closed-candle)
+displayed_at,DISPLAY_ONLY,Optional chart shift; NEVER availability
+values.*,CAUSAL_OUTPUT,Numeric indicator outputs
+signal_primitives.*,CAUSAL_OUTPUT,Observable states; no BUY/SELL
+valid,DIAGNOSTIC,Warmup/gap validity
+invalid_reason,DIAGNOSTIC,warmup | insufficient_contiguous_history

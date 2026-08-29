@@ -1,0 +1,296 @@
+{
+  "DMA_3X3_V1": {
+    "indicator_id": "DMA",
+    "period": 3,
+    "display_shift": 3,
+    "authority": "DINAPOLI_STYLE",
+    "preset_class": "DINAPOLI_STYLE"
+  },
+  "DMA_7X5_V1": {
+    "indicator_id": "DMA",
+    "period": 7,
+    "display_shift": 5,
+    "authority": "DINAPOLI_STYLE",
+    "preset_class": "DINAPOLI_STYLE"
+  },
+  "DMA_25X5_V1": {
+    "indicator_id": "DMA",
+    "period": 25,
+    "display_shift": 5,
+    "authority": "DINAPOLI_STYLE",
+    "preset_class": "DINAPOLI_STYLE"
+  },
+  "STOCH_14_3_3_V1": {
+    "indicator_id": "STOCHASTIC",
+    "k_period": 14,
+    "k_smooth": 3,
+    "d_period": 3,
+    "display_shift": 0,
+    "overbought": 80.0,
+    "oversold": 20.0,
+    "preset_class": "STANDARD"
+  },
+  "DISPLACED_STOCH_14_3_3_SHIFT3_V1": {
+    "indicator_id": "DISPLACED_STOCHASTIC",
+    "k_period": 14,
+    "k_smooth": 3,
+    "d_period": 3,
+    "display_shift": 3,
+    "overbought": 80.0,
+    "oversold": 20.0,
+    "preset_class": "PROJECT_EXPERIMENTAL"
+  },
+  "MACD_12_26_9_V1": {
+    "indicator_id": "MACD",
+    "fast": 12,
+    "slow": 26,
+    "signal": 9,
+    "display_shift": 0,
+    "preset_class": "STANDARD"
+  },
+  "DISPLACED_MACD_12_26_9_SHIFT3_V1": {
+    "indicator_id": "DISPLACED_MACD",
+    "fast": 12,
+    "slow": 26,
+    "signal": 9,
+    "display_shift": 3,
+    "preset_class": "PROJECT_EXPERIMENTAL"
+  },
+  "RSI_7_V1": {
+    "indicator_id": "RSI",
+    "period": 7,
+    "preset_class": "STANDARD"
+  },
+  "RSI_14_V1": {
+    "indicator_id": "RSI",
+    "period": 14,
+    "preset_class": "STANDARD"
+  },
+  "RSI_21_V1": {
+    "indicator_id": "RSI",
+    "period": 21,
+    "preset_class": "STANDARD"
+  },
+  "ROC_12_V1": {
+    "indicator_id": "ROC",
+    "period": 12,
+    "preset_class": "STANDARD"
+  },
+  "MOMENTUM_10_V1": {
+    "indicator_id": "MOMENTUM",
+    "period": 10,
+    "preset_class": "STANDARD"
+  },
+  "CCI_20_V1": {
+    "indicator_id": "CCI",
+    "period": 20,
+    "preset_class": "STANDARD"
+  },
+  "WILLIAMS_R_14_V1": {
+    "indicator_id": "WILLIAMS_R",
+    "period": 14,
+    "preset_class": "STANDARD"
+  },
+  "ATR_14_V1": {
+    "indicator_id": "ATR",
+    "period": 14,
+    "preset_class": "STANDARD"
+  },
+  "BOLLINGER_20_2_V1": {
+    "indicator_id": "BOLLINGER",
+    "period": 20,
+    "std_mult": 2.0,
+    "preset_class": "STANDARD"
+  },
+  "REALIZED_VOL_20_V1": {
+    "indicator_id": "REALIZED_VOLATILITY",
+    "period": 20,
+    "preset_class": "STANDARD"
+  },
+  "ADX_14_V1": {
+    "indicator_id": "ADX_DMI",
+    "period": 14,
+    "preset_class": "STANDARD"
+  },
+  "CANDLE_STRUCTURE_V1": {
+    "indicator_id": "CANDLE_STRUCTURE",
+    "preset_class": "STANDARD"
+  },
+  "VOLUME_BASIC_20_V1": {
+    "indicator_id": "BASIC_VOLUME",
+    "period": 20,
+    "preset_class": "STANDARD"
+  },
+  "SMA_5_V1": {
+    "indicator_id": "SMA",
+    "period": 5,
+    "preset_class": "STANDARD"
+  },
+  "SMA_8_V1": {
+    "indicator_id": "SMA",
+    "period": 8,
+    "preset_class": "STANDARD"
+  },
+  "SMA_10_V1": {
+    "indicator_id": "SMA",
+    "period": 10,
+    "preset_class": "STANDARD"
+  },
+  "SMA_13_V1": {
+    "indicator_id": "SMA",
+    "period": 13,
+    "preset_class": "STANDARD"
+  },
+  "SMA_20_V1": {
+    "indicator_id": "SMA",
+    "period": 20,
+    "preset_class": "STANDARD"
+  },
+  "SMA_21_V1": {
+    "indicator_id": "SMA",
+    "period": 21,
+    "preset_class": "STANDARD"
+  },
+  "SMA_25_V1": {
+    "indicator_id": "SMA",
+    "period": 25,
+    "preset_class": "STANDARD"
+  },
+  "SMA_34_V1": {
+    "indicator_id": "SMA",
+    "period": 34,
+    "preset_class": "STANDARD"
+  },
+  "SMA_50_V1": {
+    "indicator_id": "SMA",
+    "period": 50,
+    "preset_class": "STANDARD"
+  },
+  "SMA_100_V1": {
+    "indicator_id": "SMA",
+    "period": 100,
+    "preset_class": "STANDARD"
+  },
+  "SMA_200_V1": {
+    "indicator_id": "SMA",
+    "period": 200,
+    "preset_class": "STANDARD"
+  },
+  "EMA_5_V1": {
+    "indicator_id": "EMA",
+    "period": 5,
+    "preset_class": "STANDARD"
+  },
+  "EMA_8_V1": {
+    "indicator_id": "EMA",
+    "period": 8,
+    "preset_class": "STANDARD"
+  },
+  "EMA_10_V1": {
+    "indicator_id": "EMA",
+    "period": 10,
+    "preset_class": "STANDARD"
+  },
+  "EMA_13_V1": {
+    "indicator_id": "EMA",
+    "period": 13,
+    "preset_class": "STANDARD"
+  },
+  "EMA_20_V1": {
+    "indicator_id": "EMA",
+    "period": 20,
+    "preset_class": "STANDARD"
+  },
+  "EMA_21_V1": {
+    "indicator_id": "EMA",
+    "period": 21,
+    "preset_class": "STANDARD"
+  },
+  "EMA_25_V1": {
+    "indicator_id": "EMA",
+    "period": 25,
+    "preset_class": "STANDARD"
+  },
+  "EMA_34_V1": {
+    "indicator_id": "EMA",
+    "period": 34,
+    "preset_class": "STANDARD"
+  },
+  "EMA_50_V1": {
+    "indicator_id": "EMA",
+    "period": 50,
+    "preset_class": "STANDARD"
+  },
+  "EMA_100_V1": {
+    "indicator_id": "EMA",
+    "period": 100,
+    "preset_class": "STANDARD"
+  },
+  "EMA_200_V1": {
+    "indicator_id": "EMA",
+    "period": 200,
+    "preset_class": "STANDARD"
+  },
+  "WMA_5_V1": {
+    "indicator_id": "WMA",
+    "period": 5,
+    "preset_class": "STANDARD"
+  },
+  "WMA_8_V1": {
+    "indicator_id": "WMA",
+    "period": 8,
+    "preset_class": "STANDARD"
+  },
+  "WMA_10_V1": {
+    "indicator_id": "WMA",
+    "period": 10,
+    "preset_class": "STANDARD"
+  },
+  "WMA_13_V1": {
+    "indicator_id": "WMA",
+    "period": 13,
+    "preset_class": "STANDARD"
+  },
+  "WMA_20_V1": {
+    "indicator_id": "WMA",
+    "period": 20,
+    "preset_class": "STANDARD"
+  },
+  "WMA_21_V1": {
+    "indicator_id": "WMA",
+    "period": 21,
+    "preset_class": "STANDARD"
+  },
+  "WMA_25_V1": {
+    "indicator_id": "WMA",
+    "period": 25,
+    "preset_class": "STANDARD"
+  },
+  "WMA_34_V1": {
+    "indicator_id": "WMA",
+    "period": 34,
+    "preset_class": "STANDARD"
+  },
+  "WMA_50_V1": {
+    "indicator_id": "WMA",
+    "period": 50,
+    "preset_class": "STANDARD"
+  },
+  "WMA_100_V1": {
+    "indicator_id": "WMA",
+    "period": 100,
+    "preset_class": "STANDARD"
+  },
+  "WMA_200_V1": {
+    "indicator_id": "WMA",
+    "period": 200,
+    "preset_class": "STANDARD"
+  },
+  "SMA_CROSS_10_50_V1": {
+    "indicator_id": "MA_CROSS",
+    "kind": "SMA",
+    "fast": 10,
+    "slow": 50,
+    "preset_class": "STANDARD"
+  }
+}

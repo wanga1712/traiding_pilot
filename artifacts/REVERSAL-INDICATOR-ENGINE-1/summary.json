@@ -1,0 +1,126 @@
+{
+  "overall_ok": true,
+  "manifest": {
+    "indicator_engine_version": "INDICATOR_ENGINE_V1",
+    "wip": "REVERSAL-INDICATOR-ENGINE-1",
+    "created_at": "2026-08-29T14:10:12.736438+00:00",
+    "git_commit": "ea0c7c32083ba55f7c5039948a37bfdd8769fde3",
+    "overall_ok": true,
+    "parameter_set_count": 54,
+    "indicator_count": 20,
+    "time_semantics": {
+      "CALCULATED_AT": "close_time of last source bar used",
+      "AVAILABLE_AT": "equals CALCULATED_AT for closed-candle indicators",
+      "DISPLAYED_AT": "optional chart shift; never availability"
+    },
+    "baselines": {
+      "DMA": [
+        "DMA_3X3_V1",
+        "DMA_7X5_V1",
+        "DMA_25X5_V1"
+      ],
+      "STOCHASTIC": [
+        "STOCH_14_3_3_V1"
+      ],
+      "DISPLACED_STOCHASTIC": [
+        "DISPLACED_STOCH_14_3_3_SHIFT3_V1"
+      ],
+      "MACD": [
+        "MACD_12_26_9_V1"
+      ],
+      "DISPLACED_MACD": [
+        "DISPLACED_MACD_12_26_9_SHIFT3_V1"
+      ],
+      "RSI": [
+        "RSI_7_V1",
+        "RSI_14_V1",
+        "RSI_21_V1"
+      ]
+    },
+    "validation_results": [
+      {
+        "test": "DMA3x3_numeric",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "DMA7x5_DMA25x5",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "DMA_anti_leakage",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "Stochastic_correctness",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "Displaced_Stochastic_anti_leakage",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "MACD_correctness",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "Displaced_MACD_anti_leakage",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "RSI_correctness",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "ATR_correctness",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "Bollinger_correctness",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "Higher_TF_closed_bar",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "Warmup",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "Gap_handling",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "Reproducibility",
+        "status": "PASS",
+        "detail": ""
+      }
+    ],
+    "checksums_sha256": {
+      "indicator_registry_v1.csv": "bfbb19dd07d60126bf4c55baf0f49a7e85785b3d6aa18f701294af5f15a2fcc9",
+      "indicator_parameter_registry_v1.json": "72638ced1d136b606aa915b816c7f1ea0050528bba145ce83c82b9393476c19f",
+      "indicator_schema_registry_v1.csv": "10b5d65fec035d79799bb85cd6fd3ce1781376fc694aab0c541ac91a8bbf6992",
+      "indicator_reference_validation_v1.csv": "b6fbea54fffeeed0cc128bcad74e30cd226030ad0f8f9f0b52bc18ab86b0a108",
+      "indicator_anti_leakage_validation_v1.csv": "debbf4dd5dd49ef04e82026dd0fbe643c0c96967dfdf48aca2925c26a02b9fbc",
+      "README.md": "30accf64aec874b5dd127e80383665612af93a0062183d18799471590cae0874"
+    },
+    "notes": [
+      "No true-pivot tournament in this WIP",
+      "Displaced Stoch/MACD presets marked PROJECT_EXPERIMENTAL",
+      "Do not modify WAVE_DATASET_V1 or REVERSAL_EVENT_DATASET_V1"
+    ]
+  }
+}
