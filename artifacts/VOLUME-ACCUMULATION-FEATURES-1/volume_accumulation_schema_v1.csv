@@ -1,0 +1,10 @@
+column,class,note
+feature_engine_version,IDENTITY,Engine version
+feature_family,IDENTITY,Family id
+parameter_set_id,IDENTITY,Parameter registry key
+source_timeframe,IDENTITY,Bar TF
+calculated_at,CAUSAL_TIME,Bar close used
+available_at,CAUSAL_TIME,Earliest causal use
+values.*,CAUSAL_OUTPUT,Feature values
+valid,DIAGNOSTIC,Warmup/gap validity
+invalid_reason,DIAGNOSTIC,INVALID_WARMUP | insufficient_contiguous_history

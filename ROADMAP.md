@@ -554,7 +554,7 @@ REVERSAL-INDICATOR-ENGINE-1
 
 ### WIP=REVERSAL-INDICATOR-ENGINE-1
 
-STATUS=REVIEW
+STATUS=CLOSED
 
 PHASE=3 — Indicator Engine
 
@@ -583,10 +583,10 @@ GIT_COMMIT:
 44749b91ff299e7b3e70251f60bdb80f413238fd
 
 RESULT_SUMMARY:  
-**REVIEW.** INDICATOR_ENGINE_V1 implemented with DMA/Stoch/MACD/RSI/momentum/trend/ADX/volatility/candle/basic-volume. Parameter registry + causal time semantics. All acceptance unit tests PASS. No WHEN tournament. Do not start VOLUME-ACCUMULATION-FEATURES-1 until CLOSED.
+**CLOSED.** User accepted. INDICATOR_ENGINE_VERSION=INDICATOR_ENGINE_V1. Freeze semantics. Evidence: DMA 3x3/7x5/25x5; Stoch/MACD (+displaced); RSI/ROC/Momentum/CCI/Williams; SMA/EMA/WMA/ADX; ATR/BB/realized vol; candle; basic volume; 54 parameter sets; anti-leakage/reference/HTF/warmup/gap PASS.
 
 NEXT_WIP:  
-VOLUME-ACCUMULATION-FEATURES-1 (only after CLOSED)
+VOLUME-ACCUMULATION-FEATURES-1
 
 ---
 
@@ -594,7 +594,7 @@ VOLUME-ACCUMULATION-FEATURES-1 (only after CLOSED)
 
 ### WIP=VOLUME-ACCUMULATION-FEATURES-1
 
-STATUS=PLANNED
+STATUS=REVIEW
 
 PHASE=4 — Volume and Accumulation
 
@@ -620,13 +620,13 @@ ARTIFACTS:
 `artifacts/VOLUME-ACCUMULATION-FEATURES-1/` (planned)
 
 GIT_COMMIT:  
-PENDING
+PENDING_COMMIT
 
 RESULT_SUMMARY:  
-PENDING
+**REVIEW.** VOLUME_ACCUMULATION_ENGINE_V1: 63 registered features across intensity/PV/compression/efficiency/balance/concentration/exhaustion/rejection/breakout/compression-expansion/duration. Context snapshot API + batch==streaming PASS. Anti-leakage incl. true-C/outcome rejection PASS. Do not start INVERSE-INDICATOR-PREDICTOR-ENGINE-1 until CLOSED.
 
 NEXT_WIP:  
-INVERSE-INDICATOR-PREDICTOR-ENGINE-1
+INVERSE-INDICATOR-PREDICTOR-ENGINE-1 (only after CLOSED)
 
 ---
 
@@ -1246,8 +1246,8 @@ none (end of planned chain)
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
-| REVERSAL-INDICATOR-ENGINE-1 | REVIEW | 3 |
-| VOLUME-ACCUMULATION-FEATURES-1 | PLANNED | 4 |
+| REVERSAL-INDICATOR-ENGINE-1 | CLOSED | 3 |
+| VOLUME-ACCUMULATION-FEATURES-1 | REVIEW | 4 |
 | INVERSE-INDICATOR-PREDICTOR-ENGINE-1 | PLANNED | 5 |
 | PREDICTOR-CONFLUENCE-FEATURES-1 | PLANNED | 6 |
 | REVERSAL-SIGNAL-EVENT-STUDY-1 | PLANNED | 7 |

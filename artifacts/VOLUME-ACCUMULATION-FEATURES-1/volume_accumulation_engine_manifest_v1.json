@@ -1,0 +1,105 @@
+{
+  "feature_engine_version": "VOLUME_ACCUMULATION_ENGINE_V1",
+  "wip": "VOLUME-ACCUMULATION-FEATURES-1",
+  "created_at": "2026-08-29T14:26:03.421871+00:00",
+  "git_commit": "fea627fa19fbd45fe6b368b13b54a5b5294b4fa5",
+  "overall_ok": true,
+  "feature_count": 63,
+  "parameter_set_count": 20,
+  "feature_families": [
+    "BREAKOUT_ATTEMPTS",
+    "COMPRESSION",
+    "COMPRESSION_EXPANSION",
+    "DURATION",
+    "EFFICIENCY_CHOP",
+    "EXHAUSTION",
+    "PRICE_VOLUME_INTERACTION",
+    "RANGE_BALANCE",
+    "REJECTION",
+    "VOLUME_CONCENTRATION",
+    "VOLUME_INTENSITY"
+  ],
+  "timeframes_supported": [
+    "5m",
+    "15m",
+    "1H",
+    "4H"
+  ],
+  "context_snapshot_api": "compute_market_context",
+  "validation_results": [
+    {
+      "test": "reference_obv_vwap_efficiency",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "reference_cmf_mfi",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "reference_compression_ratio",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "batch_streaming",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "future_price_mutation",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "true_pivot_outcome_leakage",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "forbidden_keys",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "unfinished_htf",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "warmup_gap",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "context_snapshot_api",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "no_c_centered_window",
+      "status": "PASS",
+      "detail": ""
+    }
+  ],
+  "frozen_inputs": [
+    "WAVE_DATASET_V1",
+    "REVERSAL_EVENT_DATASET_V1",
+    "INDICATOR_ENGINE_V1"
+  ],
+  "checksums_sha256": {
+    "volume_accumulation_feature_registry_v1.csv": "978e199a499e5fb91e0b41aae5932f3fc8dbfa2f7d8869286c7dbd44e210541e",
+    "volume_accumulation_parameter_registry_v1.json": "c07752c3d86dbe9a206e080b7dd304651138ee8ec7906e419027a025cd5906b5",
+    "volume_accumulation_schema_v1.csv": "f6b8efde18f14ceb410a426c32d54236629b48d31820234874991b4edf6e4ca0",
+    "volume_accumulation_reference_validation_v1.csv": "a1416b04592df717ecbca56f91a05c5346b803a3ba0c8271eea56ebbdd4c930f",
+    "volume_accumulation_anti_leakage_validation_v1.csv": "ef8ca84e3f5b6ada772c05df3a878884f440d528633243139131637befd621a2",
+    "volume_accumulation_streaming_validation_v1.csv": "21efd1cc34e922e6f911b7dfcda9009411c72139123a7bd0f1485c5f77ef5ef7",
+    "README.md": "5b56d40fcaacc444ef11a789dd0ab7d59f509f787987fc81bcb7b4e579be40fe"
+  },
+  "notes": [
+    "No WHEN tournament",
+    "Neutral terminology: no ACCUMULATION/DISTRIBUTION ground truth",
+    "Spot OHLCV proxies only \u2014 not taker/orderflow"
+  ]
+}

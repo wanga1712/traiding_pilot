@@ -1,0 +1,6 @@
+test,status,detail
+future_price_mutation,PASS,
+true_pivot_outcome_leakage,PASS,
+forbidden_keys,PASS,
+unfinished_htf,PASS,
+no_c_centered_window,PASS,

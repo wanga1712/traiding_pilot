@@ -1,0 +1,4 @@
+test,status,detail
+reference_obv_vwap_efficiency,PASS,
+reference_cmf_mfi,PASS,
+reference_compression_ratio,PASS,

@@ -1,0 +1,121 @@
+{
+  "VOL_WINDOW_5_V1": {
+    "family": "VOLUME_INTENSITY",
+    "window": 5,
+    "preset_class": "STANDARD"
+  },
+  "VOL_WINDOW_10_V1": {
+    "family": "VOLUME_INTENSITY",
+    "window": 10,
+    "preset_class": "STANDARD"
+  },
+  "VOL_WINDOW_20_V1": {
+    "family": "VOLUME_INTENSITY",
+    "window": 20,
+    "preset_class": "STANDARD"
+  },
+  "VOL_WINDOW_50_V1": {
+    "family": "VOLUME_INTENSITY",
+    "window": 50,
+    "preset_class": "STANDARD"
+  },
+  "VOL_WINDOW_100_V1": {
+    "family": "VOLUME_INTENSITY",
+    "window": 100,
+    "preset_class": "STANDARD"
+  },
+  "EFFICIENCY_10_V1": {
+    "family": "EFFICIENCY_CHOP",
+    "window": 10,
+    "preset_class": "STANDARD"
+  },
+  "EFFICIENCY_20_V1": {
+    "family": "EFFICIENCY_CHOP",
+    "window": 20,
+    "preset_class": "STANDARD"
+  },
+  "RANGE_20_V1": {
+    "family": "RANGE_BALANCE",
+    "window": 20,
+    "preset_class": "STANDARD"
+  },
+  "RANGE_50_V1": {
+    "family": "RANGE_BALANCE",
+    "window": 50,
+    "preset_class": "STANDARD"
+  },
+  "COMPRESSION_5_20_V1": {
+    "family": "COMPRESSION",
+    "short_window": 5,
+    "long_window": 20,
+    "threshold": 0.5,
+    "preset_class": "STANDARD"
+  },
+  "COMPRESSION_10_50_V1": {
+    "family": "COMPRESSION",
+    "short_window": 10,
+    "long_window": 50,
+    "threshold": 0.5,
+    "preset_class": "STANDARD"
+  },
+  "COMPRESSION_20_100_V1": {
+    "family": "COMPRESSION",
+    "short_window": 20,
+    "long_window": 100,
+    "threshold": 0.5,
+    "preset_class": "STANDARD"
+  },
+  "PV_INTERACTION_20_V1": {
+    "family": "PRICE_VOLUME_INTERACTION",
+    "window": 20,
+    "preset_class": "STANDARD"
+  },
+  "CONCENTRATION_20_V1": {
+    "family": "VOLUME_CONCENTRATION",
+    "window": 20,
+    "preset_class": "STANDARD"
+  },
+  "EXHAUSTION_20_V1": {
+    "family": "EXHAUSTION",
+    "window": 20,
+    "preset_class": "STANDARD"
+  },
+  "REJECTION_20_V1": {
+    "family": "REJECTION",
+    "window": 20,
+    "confirm_bars": 1,
+    "preset_class": "STANDARD"
+  },
+  "BREAKOUT_ATTEMPTS_20_V1": {
+    "family": "BREAKOUT_ATTEMPTS",
+    "window": 20,
+    "confirm_bars": 1,
+    "preset_class": "STANDARD"
+  },
+  "COMPRESSION_EXPANSION_10_50_V1": {
+    "family": "COMPRESSION_EXPANSION",
+    "short_window": 10,
+    "long_window": 50,
+    "threshold": 0.5,
+    "preset_class": "STANDARD"
+  },
+  "DURATION_20_V1": {
+    "family": "DURATION",
+    "window": 20,
+    "short_window": 10,
+    "long_window": 50,
+    "threshold": 0.5,
+    "vol_spike_z": 2.0,
+    "preset_class": "STANDARD"
+  },
+  "CONTEXT_BUNDLE_V1": {
+    "family": "CONTEXT_BUNDLE",
+    "volume_window": 20,
+    "efficiency_window": 10,
+    "range_window": 20,
+    "short_window": 10,
+    "long_window": 50,
+    "threshold": 0.5,
+    "preset_class": "STANDARD"
+  }
+}

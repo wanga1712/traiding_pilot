@@ -1,0 +1,64 @@
+feature_id,family,description,unit,causal,warmup
+VOLUME_RAW,VOLUME_INTENSITY,Bar volume,volume,YES,0
+VOLUME_ROLLING_MEAN,VOLUME_INTENSITY,Rolling mean volume,volume,YES,window
+VOLUME_ROLLING_MEDIAN,VOLUME_INTENSITY,Rolling median volume,volume,YES,window
+VOLUME_RELATIVE_TO_MEAN,VOLUME_INTENSITY,vol / mean,ratio,YES,window
+VOLUME_RELATIVE_TO_MEDIAN,VOLUME_INTENSITY,vol / median,ratio,YES,window
+VOLUME_ZSCORE,VOLUME_INTENSITY,z-score vs rolling mean/std,z,YES,window
+VOLUME_CHANGE_1,VOLUME_INTENSITY,1-bar volume change pct,pct,YES,1
+VOLUME_CHANGE_N,VOLUME_INTENSITY,N-bar volume change pct,pct,YES,window
+VOLUME_SLOPE,VOLUME_INTENSITY,1-bar volume delta,volume,YES,1
+VOLUME_PERCENTILE,VOLUME_INTENSITY,percentile rank in window,pctile,YES,window
+VOLUME_CV,VOLUME_INTENSITY,std/mean volume,ratio,YES,window
+OBV,PRICE_VOLUME_INTERACTION,On-balance volume (close-direction proxy),volume,YES,1
+OBV_SLOPE,PRICE_VOLUME_INTERACTION,OBV 1-bar delta,volume,YES,2
+VWAP_ROLLING,PRICE_VOLUME_INTERACTION,Rolling VWAP of typical price,price,YES,window
+DISTANCE_TO_VWAP_PCT,PRICE_VOLUME_INTERACTION,(close-vwap)/vwap,pct,YES,window
+DISTANCE_TO_VWAP_ATR,PRICE_VOLUME_INTERACTION,(close-vwap)/ATR,atr,YES,window
+CMF,PRICE_VOLUME_INTERACTION,Chaikin Money Flow,ratio,YES,window
+MFI,PRICE_VOLUME_INTERACTION,Money Flow Index,index,YES,window+1
+CLOSE_LOCATION_VALUE,PRICE_VOLUME_INTERACTION,CLV = ((c-l)-(h-c))/(h-l),ratio,YES,0
+VOLUME_WEIGHTED_CLOSE_LOCATION,PRICE_VOLUME_INTERACTION,CLV * volume,volume,YES,0
+UP_BAR_VOLUME,PRICE_VOLUME_INTERACTION,"Volume on up-close bars (proxy, not taker buy)",volume,YES,1
+DOWN_BAR_VOLUME,PRICE_VOLUME_INTERACTION,Volume on down-close bars (proxy),volume,YES,1
+UP_DOWN_VOLUME_RATIO,PRICE_VOLUME_INTERACTION,Rolling up/down volume proxy ratio,ratio,YES,window
+ROLLING_HIGH,COMPRESSION,Rolling high,price,YES,window
+ROLLING_LOW,COMPRESSION,Rolling low,price,YES,window
+RANGE_WIDTH_ABS,COMPRESSION,high-low of window,price,YES,window
+RANGE_WIDTH_PCT,COMPRESSION,range/mid,pct,YES,window
+RANGE_WIDTH_ATR,COMPRESSION,range/ATR,atr,YES,window
+ROLLING_STD,COMPRESSION,close std,price,YES,window
+REALIZED_VOLATILITY,COMPRESSION,log-return std,vol,YES,window
+ATR_RELATIVE,COMPRESSION,ATR/price,ratio,YES,14
+ATR_PERCENTILE,COMPRESSION,ATR percentile in long window,pctile,YES,long
+BOLLINGER_WIDTH,COMPRESSION,(upper-lower)/mid,ratio,YES,20
+BOLLINGER_WIDTH_PERCENTILE,COMPRESSION,BB width percentile,pctile,YES,long
+COMPRESSION_RATIO,COMPRESSION,short_range / long_range,ratio,YES,long
+NET_MOVE,EFFICIENCY_CHOP,close_t - close_t-N,price,YES,window
+PATH_LENGTH,EFFICIENCY_CHOP,sum abs close deltas,price,YES,window
+EFFICIENCY_RATIO,EFFICIENCY_CHOP,abs(net)/path,ratio,YES,window
+DIRECTIONAL_EFFICIENCY,EFFICIENCY_CHOP,signed net/path,ratio,YES,window
+BAR_OVERLAP_RATIO,EFFICIENCY_CHOP,overlap with prior bar / ranges,ratio,YES,1
+AVERAGE_BAR_OVERLAP,EFFICIENCY_CHOP,mean overlap in window,ratio,YES,window
+CLOSE_DISPERSION,EFFICIENCY_CHOP,std of closes,price,YES,window
+HIGH_LOW_DISPERSION,EFFICIENCY_CHOP,mean bar range,price,YES,window
+BARS_IN_RANGE,RANGE_BALANCE,bars with close inside rolling range core,count,YES,window
+RANGE_OCCUPANCY,RANGE_BALANCE,fraction of closes in range,ratio,YES,window
+TIME_NEAR_RANGE_MID,RANGE_BALANCE,fraction near mid,ratio,YES,window
+TIME_NEAR_RANGE_HIGH,RANGE_BALANCE,fraction near high,ratio,YES,window
+TIME_NEAR_RANGE_LOW,RANGE_BALANCE,fraction near low,ratio,YES,window
+CLOSES_INSIDE_CORE_RANGE,RANGE_BALANCE,count in central 50% of range,count,YES,window
+CORE_RANGE_WIDTH,RANGE_BALANCE,central 50% width,price,YES,window
+PRICE_DENSITY,RANGE_BALANCE,bars / range_width,density,YES,window
+VOLUME_PER_PRICE_RANGE,VOLUME_CONCENTRATION,cum vol / range,vol/price,YES,window
+HIGH_VOLUME_LOW_PROGRESS_SCORE,VOLUME_CONCENTRATION,cum_vol / (1+abs(net)),score,YES,window
+LOW_VOLUME_HIGH_PROGRESS_SCORE,VOLUME_CONCENTRATION,abs(net) / (1+cum_vol),score,YES,window
+PRICE_SLOPE,EXHAUSTION,close slope,price,YES,1
+PRICE_PROGRESS_PER_VOLUME,EXHAUSTION,net/cum_vol,price/vol,YES,window
+UPPER_REJECTION_STRENGTH,REJECTION,upper wick ratio after high attempt,ratio,YES,window
+LOWER_REJECTION_STRENGTH,REJECTION,lower wick ratio after low attempt,ratio,YES,window
+COUNT_UPSIDE_BREAKOUT_ATTEMPTS,BREAKOUT_ATTEMPTS,causal upside break attempts,count,YES,window
+COUNT_FAILED_UPSIDE_BREAKOUTS,BREAKOUT_ATTEMPTS,exceed high then close back (confirm=1),count,YES,window
+COMPRESSION_STATE,COMPRESSION_EXPANSION,short/long range below threshold,bool,YES,long
+COMPRESSION_DURATION,DURATION,bars in compression state,bars,YES,long
+EXPANSION_AFTER_COMPRESSION,COMPRESSION_EXPANSION,left compression this bar,bool,YES,long
