@@ -1,0 +1,38 @@
+{
+  "CONF_PCT_010_V1": {
+    "threshold_pct": 0.1,
+    "threshold_atr": 0.25,
+    "preset_class": "STANDARD"
+  },
+  "CONF_PCT_025_V1": {
+    "threshold_pct": 0.25,
+    "threshold_atr": 0.25,
+    "preset_class": "STANDARD"
+  },
+  "CONF_PCT_050_V1": {
+    "threshold_pct": 0.5,
+    "threshold_atr": 0.5,
+    "preset_class": "STANDARD"
+  },
+  "CONF_ATR_025_V1": {
+    "threshold_pct": 0.25,
+    "threshold_atr": 0.25,
+    "preset_class": "STANDARD"
+  },
+  "CONF_ATR_050_V1": {
+    "threshold_pct": 0.5,
+    "threshold_atr": 0.5,
+    "preset_class": "STANDARD"
+  },
+  "CONF_ATR_100_V1": {
+    "threshold_pct": 1.0,
+    "threshold_atr": 1.0,
+    "preset_class": "STANDARD"
+  },
+  "CONF_PCT_025_ATR_050_V1": {
+    "threshold_pct": 0.25,
+    "threshold_atr": 0.5,
+    "preset_class": "STANDARD",
+    "note": "default baseline: join if gap<=0.25% OR gap<=0.50 ATR"
+  }
+}

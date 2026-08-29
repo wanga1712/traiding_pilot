@@ -1,0 +1,5 @@
+decision_index,valid_triggers,cluster_count,nearest_cluster_size,distinct_families,dispersion_pct,unsupported_or_intrabar
+40,11,5,5,4,2.3318241966096798,1
+60,13,4,9,5,1.7145460535390744,1
+80,13,5,5,5,2.278991641624083,1
+95,15,5,8,6,1.8408116272353083,1

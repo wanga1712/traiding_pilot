@@ -1,0 +1,8 @@
+column,class,note
+confluence_engine_version,IDENTITY,Engine version
+predictor_engine_version,IDENTITY,Frozen inverse engine
+decision_time,CAUSAL_TIME,Decision timestamp
+parameter_set_id,IDENTITY,Clustering thresholds
+view,IDENTITY,RAW | FAMILY_NORMALIZED
+scope,IDENTITY,WITHIN_TF | CROSS_TF
+features.*,CAUSAL_OUTPUT,Confluence features

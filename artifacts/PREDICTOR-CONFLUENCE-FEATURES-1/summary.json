@@ -1,0 +1,88 @@
+{
+  "overall_ok": true,
+  "manifest": {
+    "confluence_engine_version": "PREDICTOR_CONFLUENCE_ENGINE_V1",
+    "wip": "PREDICTOR-CONFLUENCE-FEATURES-1",
+    "created_at": "2026-08-29T15:28:23.033527+00:00",
+    "git_commit": "b7232c5725e12581ec72900ddbb3a81a2ca709b3",
+    "overall_ok": true,
+    "feature_count": 100,
+    "parameter_set_count": 7,
+    "clustering_method": "sorted_adjacent_gap_OR_pct_ATR",
+    "pct_thresholds": [
+      0.1,
+      0.25,
+      0.5,
+      1.0
+    ],
+    "atr_thresholds": [
+      0.25,
+      0.5,
+      1.0
+    ],
+    "views": [
+      "RAW",
+      "FAMILY_NORMALIZED"
+    ],
+    "api": "compute_predictor_confluence",
+    "validation_results": [
+      {
+        "test": "raw_family_normalized",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "cross_tf",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "temporal",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "future_mutation",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "true_c_outcome_leakage",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "unfinished_htf",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "batch_streaming",
+        "status": "PASS",
+        "detail": ""
+      }
+    ],
+    "frozen_inputs": [
+      "WAVE_DATASET_V1",
+      "REVERSAL_EVENT_DATASET_V1",
+      "INDICATOR_ENGINE_V1",
+      "VOLUME_ACCUMULATION_ENGINE_V1",
+      "INVERSE_PREDICTOR_ENGINE_V1"
+    ],
+    "checksums_sha256": {
+      "predictor_confluence_feature_registry_v1.csv": "ae22f463da53ed48a7a6e161009e555dc0d6d3521b1c3a6a55520cc74b0db12a",
+      "predictor_confluence_parameter_registry_v1.json": "69fb772bf4581ca3b8351f31ead380d809df564d865b7d53011838abf92b7a5b",
+      "predictor_confluence_schema_v1.csv": "f5631cc75861be0810b5bd269ca9f689175f0fcb44b71b37b6ac33ae71b5d892",
+      "predictor_confluence_validation_v1.csv": "3b43a6d28cf7f0aab913ba9ff4596ebb2c29ad4224465db77543d73132de0759",
+      "predictor_confluence_anti_leakage_validation_v1.csv": "9a60343658368ace779338d82e194990361dbeaba25d4345ebde17cc8991be53",
+      "predictor_confluence_streaming_validation_v1.csv": "67b47fa5d56a41205cc6c532f86c2d967a8d59e1fefd6359fe71ee03070971f7",
+      "predictor_confluence_descriptive_stats_v1.csv": "e4aa41069ecf470d5c02a395466a95e2795b1c30b9ecbf467511c2e149e813bf",
+      "predictor_confluence_engine_v1.md": "263ba06fac5ef90b3da427755531d0c63667d435ed1fe50ca99e9f4db4a3acfb"
+    },
+    "notes": [
+      "No WHEN tournament",
+      "No outcome-conditioned ranking",
+      "Descriptive stats only"
+    ]
+  }
+}
