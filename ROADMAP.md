@@ -620,7 +620,7 @@ ARTIFACTS:
 `artifacts/VOLUME-ACCUMULATION-FEATURES-1/` (planned)
 
 GIT_COMMIT:  
-PENDING_COMMIT
+9f1a186d7526c52807127c4e0d2bc9def8b29f70
 
 RESULT_SUMMARY:  
 **REVIEW.** VOLUME_ACCUMULATION_ENGINE_V1: 63 registered features across intensity/PV/compression/efficiency/balance/concentration/exhaustion/rejection/breakout/compression-expansion/duration. Context snapshot API + batch==streaming PASS. Anti-leakage incl. true-C/outcome rejection PASS. Do not start INVERSE-INDICATOR-PREDICTOR-ENGINE-1 until CLOSED.
