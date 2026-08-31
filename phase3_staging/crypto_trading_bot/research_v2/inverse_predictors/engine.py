@@ -134,6 +134,7 @@ def predict(
             parameter_set_id=parameter_set_id,
             source_timeframe=source_timeframe,
             band="OB" if pid.endswith("_OB") else "OS",
+            gap_flags=state.gap_flags,
         )
     raise KeyError(pid)
 

@@ -1,7 +1,6 @@
 """O(N) sequential predictor series — shared by batch and streaming."""
 from __future__ import annotations
 
-from collections import deque
 from dataclasses import dataclass
 from typing import Any
 
@@ -30,6 +29,7 @@ def _distance_features(
         "PRICE_DISTANCE_ATR": (dist / atr) if atr and atr != 0 else None,
     }
 
+
 MANDATORY_DYNAMIC_FIELDS = (
     "DYNAMIC_OB_OSC_TARGET",
     "DYNAMIC_OS_OSC_TARGET",
@@ -39,7 +39,8 @@ MANDATORY_DYNAMIC_FIELDS = (
 
 
 @dataclass
-class _BandSnapshot:
+class _BarSnapshot:
+    index: int
     price: float | None = None
     ob: float | None = None
     os: float | None = None
@@ -53,12 +54,26 @@ class PredictorSeriesEngine:
         self.config = config
         self._confirmed_peaks: list[ConfirmedExtremum] = []
         self._confirmed_troughs: list[ConfirmedExtremum] = []
-        self._prev_valid: deque[_BandSnapshot] = deque(maxlen=3)
+        self._bar_history: dict[int, _BarSnapshot] = {}
 
     def reset_segment(self) -> None:
         self._confirmed_peaks.clear()
         self._confirmed_troughs.clear()
-        self._prev_valid.clear()
+        self._bar_history.clear()
+
+    def _snapshot_at(self, idx: int) -> _BarSnapshot:
+        return self._bar_history.get(idx, _BarSnapshot(index=idx))
+
+    def _record(
+        self,
+        idx: int,
+        *,
+        valid: bool,
+        price: float | None = None,
+        ob: float | None = None,
+        os: float | None = None,
+    ) -> None:
+        self._bar_history[idx] = _BarSnapshot(idx, price, ob, os, valid)
 
     def _confirm_at(self, dno: np.ndarray, gap_flags: np.ndarray, idx: int) -> None:
         k = self.config.peak_strength
@@ -112,7 +127,9 @@ class PredictorSeriesEngine:
         if idx < seg_start + cfg.period - 1 or not contiguous_ok(
             gap_flags, max(seg_start, idx - cfg.period + 1), idx
         ):
-            return {"predictor_state": "INSUFFICIENT_HISTORY", "valid": False}
+            out = {"predictor_state": "INSUFFICIENT_HISTORY", "valid": False}
+            self._record(idx, valid=False)
+            return out
 
         current = float(arrays.close[idx])
         atr_i = (
@@ -168,6 +185,7 @@ class PredictorSeriesEngine:
         neg_troughs = sorted(troughs, key=lambda x: x.index)[-cfg.samples :]
 
         if len(pos_peaks) < cfg.samples or len(neg_troughs) < cfg.samples:
+            self._record(idx, valid=False)
             return out
 
         mean_ob = float(np.mean([p.value for p in pos_peaks]))
@@ -193,6 +211,7 @@ class PredictorSeriesEngine:
         )
         if ob_st != "OK" or os_st != "OK" or ob_price is None or os_price is None:
             out["predictor_state"] = ob_st if ob_st != "OK" else os_st
+            self._record(idx, valid=False)
             return out
 
         ob_dist = _distance_features(current, ob_price, atr_i)
@@ -200,9 +219,8 @@ class PredictorSeriesEngine:
         band_width = ob_price - os_price
         pos_in_band = (current - os_price) / band_width if band_width else None
 
-        prev1 = self._prev_valid[-1] if len(self._prev_valid) >= 1 else _BandSnapshot()
-        prev3 = self._prev_valid[-3] if len(self._prev_valid) >= 3 else _BandSnapshot()
-        same_as_prev = idx > 0 and same_segment(gap_flags, idx - 1, idx)
+        prev1 = self._snapshot_at(idx - 1)
+        prev3 = self._snapshot_at(idx - 3)
 
         out.update(
             {
@@ -226,44 +244,38 @@ class PredictorSeriesEngine:
                 "BELOW_PREDICTOR_OS": bool(current < os_price),
                 "INSIDE_PREDICTOR_BAND": bool(os_price <= current <= ob_price),
                 "OB_BAND_SLOPE_1": (ob_price - prev1.ob)
-                if prev1.valid and prev1.ob is not None and same_as_prev
+                if prev1.valid and prev1.ob is not None
                 else None,
                 "OS_BAND_SLOPE_1": (os_price - prev1.os)
-                if prev1.valid and prev1.os is not None and same_as_prev
+                if prev1.valid and prev1.os is not None
                 else None,
                 "OB_BAND_SLOPE_3": (ob_price - prev3.ob)
-                if prev3.valid and prev3.ob is not None and same_as_prev
+                if prev3.valid and prev3.ob is not None and same_segment(gap_flags, idx - 3, idx)
                 else None,
                 "OS_BAND_SLOPE_3": (os_price - prev3.os)
-                if prev3.valid and prev3.os is not None and same_as_prev
+                if prev3.valid and prev3.os is not None and same_segment(gap_flags, idx - 3, idx)
                 else None,
             }
         )
 
-        if prev1.valid and same_as_prev and prev1.price is not None and prev1.ob is not None:
+        if prev1.valid and prev1.price is not None and prev1.ob is not None:
             out["CROSSED_OB_BAND_UP"] = bool(prev1.price <= prev1.ob and current > ob_price)
             out["CROSSED_OB_BAND_DOWN"] = bool(prev1.price >= prev1.ob and current < ob_price)
             out["OB_BAND_CONVERGING_TO_PRICE"] = bool(
                 abs(ob_price - current) < abs(prev1.ob - prev1.price)
             )
-        if prev1.valid and same_as_prev and prev1.price is not None and prev1.os is not None:
+        if prev1.valid and prev1.price is not None and prev1.os is not None:
             out["CROSSED_OS_BAND_UP"] = bool(prev1.price <= prev1.os and current > os_price)
             out["CROSSED_OS_BAND_DOWN"] = bool(prev1.price >= prev1.os and current < os_price)
             out["OS_BAND_CONVERGING_TO_PRICE"] = bool(
                 abs(os_price - current) < abs(prev1.os - prev1.price)
             )
-        if (
-            prev1.valid
-            and same_as_prev
-            and prev1.ob is not None
-            and prev1.os is not None
-        ):
+        if prev1.valid and prev1.ob is not None and prev1.os is not None:
             prev_bw = prev1.ob - prev1.os
             out["BAND_COMPRESSION"] = bool(prev_bw and band_width < prev_bw - 1e-9)
             out["BAND_EXPANSION"] = bool(prev_bw and band_width > prev_bw + 1e-9)
 
-        snap = _BandSnapshot(price=current, ob=ob_price, os=os_price, valid=True)
-        self._prev_valid.append(snap)
+        self._record(idx, valid=True, price=current, ob=ob_price, os=os_price)
         return out
 
     def compute_series(

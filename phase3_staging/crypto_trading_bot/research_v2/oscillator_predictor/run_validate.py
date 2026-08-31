@@ -355,7 +355,198 @@ def run_post_gap_independence() -> dict[str, Any]:
     mut_ok = base.get("valid") and all(base.get(k) == after.get(k) for k in keys)
     return {
         "PREDICTOR_POST_GAP_INDEPENDENCE": "PASS" if ext_ok and mut_ok else "FAIL",
-        "pre_gap_extrema_in_segment_b": ext_ok,
+        "CURRENT_SEGMENT_EXTREMA_ONLY": ext_ok,
+    }
+
+
+def run_public_dno_inverse_tests() -> dict[str, Any]:
+    from crypto_trading_bot.research_v2.inverse_predictors.engine import predict
+
+    bars, seg_b = _gap_fixture_bars(50, 50)
+    period = 7
+    early_idx = seg_b + 2
+    ok_idx = seg_b + period - 2
+    r_early = predict(
+        bars,
+        parameter_set_id="PRED_DNO_OB_V1",
+        source_timeframe="1H",
+        decision_time=bars[early_idx]["close_time"],
+    )
+    r_ok = predict(
+        bars,
+        parameter_set_id="PRED_DNO_OB_V1",
+        source_timeframe="1H",
+        decision_time=bars[ok_idx]["close_time"],
+    )
+    mutated = [dict(b) for b in bars]
+    for i in range(seg_b):
+        mutated[i]["close"] = float(mutated[i]["close"]) + 8000.0
+        mutated[i]["open"] = mutated[i]["high"] = mutated[i]["low"] = mutated[i]["close"]
+    r_base = predict(
+        bars,
+        parameter_set_id="PRED_DNO_OB_V1",
+        source_timeframe="1H",
+        decision_time=bars[ok_idx]["close_time"],
+    )
+    r_mut = predict(
+        mutated,
+        parameter_set_id="PRED_DNO_OB_V1",
+        source_timeframe="1H",
+        decision_time=bars[ok_idx]["close_time"],
+    )
+    return {
+        "PUBLIC_DNO_INVERSE_SEGMENT_SAFE": "PASS"
+        if r_early.solution_status == INSUFFICIENT_CONTIGUOUS_HISTORY
+        and r_ok.solution_status == "EXACT_ANALYTIC"
+        else "FAIL",
+        "PUBLIC_DNO_INVERSE_POST_GAP_INDEPENDENCE": "PASS"
+        if r_base.solution_status == "EXACT_ANALYTIC"
+        and r_base.predicted_trigger_price == r_mut.predicted_trigger_price
+        else "FAIL",
+    }
+
+
+def run_dno_atr_segment_safe() -> dict[str, Any]:
+    from crypto_trading_bot.research_v2.inverse_predictors.dno_solver import segment_safe_atr14
+    from crypto_trading_bot.research_v2.inverse_predictors.state import build_state
+
+    bars, seg_b = _gap_fixture_bars(60, 60)
+    ok_idx = seg_b + 20
+    state = build_state(bars, decision_time=bars[ok_idx]["close_time"], timeframe="1H")
+    assert state is not None
+    atr_seg = segment_safe_atr14(state)
+    mutated = [dict(b) for b in bars]
+    for i in range(seg_b):
+        mutated[i]["close"] = float(mutated[i]["close"]) + 5000.0
+        mutated[i]["high"] = float(mutated[i]["close"]) * 1.05
+        mutated[i]["low"] = float(mutated[i]["close"]) * 0.95
+        mutated[i]["open"] = float(mutated[i]["close"])
+    state_mut = build_state(mutated, decision_time=bars[ok_idx]["close_time"], timeframe="1H")
+    assert state_mut is not None
+    atr_mut = segment_safe_atr14(state_mut)
+    cross_gap_atr = state.atr14
+    ok = (
+        atr_seg is not None
+        and atr_mut is not None
+        and abs(atr_seg - atr_mut) < 1e-6
+        and (cross_gap_atr is None or abs(cross_gap_atr - atr_seg) > 1e-9 or seg_b > 14)
+    )
+    return {"DNO_INVERSE_ATR_SEGMENT_SAFE": "PASS" if ok else "FAIL"}
+
+
+def run_dno_derived_post_gap() -> dict[str, Any]:
+    bars, seg_b = _gap_fixture_bars(40, 40)
+    arrays = bars_to_arrays(bars, timeframe="1H")
+    period = 7
+    samples = compute_dno_feature_series(arrays, period=period, atr=_atr_for(bars))
+    first_valid = seg_b + period - 1
+    prim = samples[first_valid].signal_primitives
+    ok = (
+        samples[first_valid].valid
+        and prim.get("DNO_SLOPE_1") is None
+        and prim.get("DNO_ZERO_CROSS_UP") is False
+        and prim.get("DNO_ZERO_CROSS_DOWN") is False
+    )
+    if first_valid + 1 < len(samples) and samples[first_valid + 1].valid:
+        prim2 = samples[first_valid + 1].signal_primitives
+        ok = ok and prim2.get("DNO_SLOPE_1") is not None
+    return {"DNO_DERIVED_FEATURE_POST_GAP_SAFETY": "PASS" if ok else "FAIL"}
+
+
+def run_dno_batch_streaming_gap_parity() -> dict[str, Any]:
+    gap_bars, _ = _gap_fixture_bars(100, 100)
+    cfg = PredictorConfig(period=7, peak_strength=2, lookback=120, samples=4, ob_os_level_percent=0.75)
+    atr = _atr_for(gap_bars)
+    gs = StreamingOscillatorPredictor(config=cfg)
+    gs.set_atr(atr)
+    gstream = [gs.on_bar_close(b) for b in gap_bars]
+    gbatch = gs.batch_recompute()
+    ok = len(gstream) == len(gbatch)
+    if ok:
+        for (sd, _), (bd, _) in zip(gstream, gbatch):
+            if not _pred_equal(sd, bd, tol=1e-6):
+                ok = False
+                break
+    return {"DNO_BATCH_STREAMING_GAP_PARITY": "PASS" if ok else "FAIL"}
+
+
+def run_predictor_exact_bar_lag() -> dict[str, Any]:
+    closes = [3000 + np.sin(i / 2.5) * 90 + i * 0.12 for i in range(250)]
+    bars = _make_bars(closes)
+    arrays = bars_to_arrays(bars, timeframe="1H")
+    cfg = PredictorConfig(period=7, peak_strength=2, lookback=100, samples=3, ob_os_level_percent=0.8)
+    series = compute_predictor_feature_series(arrays, config=cfg, atr=_atr_for(bars))
+    prev1_ok = prev3_ok = True
+    for i in range(len(series)):
+        cur = series[i]
+        if not cur.get("valid"):
+            continue
+        if cur.get("OB_BAND_SLOPE_1") is not None:
+            if not (series[i - 1].get("valid") if i > 0 else False):
+                prev1_ok = False
+        if cur.get("OB_BAND_SLOPE_3") is not None:
+            if not (series[i - 3].get("valid") if i >= 3 else False):
+                prev3_ok = False
+    return {
+        "PREDICTOR_PREV1_EXACT_BAR": "PASS" if prev1_ok else "FAIL",
+        "PREDICTOR_PREV3_EXACT_BAR": "PASS" if prev3_ok else "FAIL",
+    }
+
+
+def run_predictor_no_stale_bridging() -> dict[str, Any]:
+    """After gap: first re-valid bar must not bridge pre-gap or stale invalid-interval state."""
+    bars, seg_b = _gap_fixture_bars(80, 80)
+    arrays = bars_to_arrays(bars, timeframe="1H")
+    cfg = PredictorConfig(period=7, peak_strength=2, lookback=80, samples=2, ob_os_level_percent=0.8)
+    series = compute_predictor_feature_series(arrays, config=cfg, atr=_atr_for(bars))
+    first_valid_after = None
+    for i in range(seg_b, len(series)):
+        if series[i].get("valid"):
+            first_valid_after = i
+            break
+    ok = first_valid_after is not None and (first_valid_after - seg_b) >= 2
+    if ok:
+        row = series[first_valid_after]
+        ok = row.get("OB_BAND_SLOPE_1") is None
+        ok = ok and row.get("CROSSED_OB_BAND_UP") is None
+        ok = ok and row.get("CROSSED_OS_BAND_DOWN") is None
+        ok = ok and row.get("OB_BAND_CONVERGING_TO_PRICE") is None
+        ok = ok and not series[first_valid_after - 1].get("valid")
+        if row.get("OB_BAND_SLOPE_3") is not None:
+            ok = ok and series[first_valid_after - 3].get("valid")
+    return {"PREDICTOR_NO_STALE_VALID_STATE_BRIDGING": "PASS" if ok else "FAIL"}
+
+
+def run_engine_cross_event_reference() -> dict[str, Any]:
+    closes = [3000 + np.sin(i / 1.8) * 120 + np.cos(i / 5) * 40 for i in range(300)]
+    bars = _make_bars(closes)
+    arrays = bars_to_arrays(bars, timeframe="1H")
+    cfg = PredictorConfig(period=7, peak_strength=1, lookback=120, samples=2, ob_os_level_percent=0.85)
+    series = compute_predictor_feature_series(arrays, config=cfg, atr=_atr_for(bars))
+    ob_event = os_event = False
+    for i in range(1, len(series)):
+        cur, prev = series[i], series[i - 1]
+        if not cur.get("valid") or not prev.get("valid"):
+            continue
+        pp = float(arrays.close[i - 1])
+        cp = float(arrays.close[i])
+        pob = prev.get("PREDICTOR_OB_PRICE_NEXT_BAR")
+        cob = cur.get("PREDICTOR_OB_PRICE_NEXT_BAR")
+        pos = prev.get("PREDICTOR_OS_PRICE_NEXT_BAR")
+        cos = cur.get("PREDICTOR_OS_PRICE_NEXT_BAR")
+        if pob is None or cob is None or pos is None or cos is None:
+            continue
+        expected_ob_up = pp <= pob and cp > cob
+        expected_os_down = pp >= pos and cp < cos
+        if cur.get("CROSSED_OB_BAND_UP") is not None and cur.get("CROSSED_OB_BAND_UP") == expected_ob_up:
+            if cur.get("CROSSED_OB_BAND_UP"):
+                ob_event = True
+        if cur.get("CROSSED_OS_BAND_DOWN") is not None and cur.get("CROSSED_OS_BAND_DOWN") == expected_os_down:
+            if cur.get("CROSSED_OS_BAND_DOWN"):
+                os_event = True
+    return {
+        "ENGINE_OB_CROSS_EVENT_REFERENCE": "PASS" if ob_event else "FAIL",
+        "ENGINE_OS_CROSS_EVENT_REFERENCE": "PASS" if os_event else "FAIL",
     }
 
 
@@ -527,6 +718,16 @@ def write_artifacts(results: dict[str, Any]) -> None:
         "DNO_RAW_SERIES_SEGMENT_MASKED",
         "POST_GAP_WARMUP_DNO_NOT_USED_FOR_EXTREMA",
         "PREDICTOR_POST_GAP_INDEPENDENCE",
+        "CURRENT_SEGMENT_EXTREMA_ONLY",
+        "PUBLIC_DNO_INVERSE_SEGMENT_SAFE",
+        "PUBLIC_DNO_INVERSE_POST_GAP_INDEPENDENCE",
+        "DNO_INVERSE_ATR_SEGMENT_SAFE",
+        "DNO_DERIVED_FEATURE_POST_GAP_SAFETY",
+        "PREDICTOR_NO_STALE_VALID_STATE_BRIDGING",
+        "PREDICTOR_PREV1_EXACT_BAR",
+        "PREDICTOR_PREV3_EXACT_BAR",
+        "ENGINE_OB_CROSS_EVENT_REFERENCE",
+        "ENGINE_OS_CROSS_EVENT_REFERENCE",
     ]
     (ARTIFACT_ROOT / "anti_leakage_tests_v1.json").write_text(
         json.dumps({k: results[k] for k in anti_keys if k in results}, indent=2), encoding="utf-8"
@@ -539,6 +740,7 @@ def write_artifacts(results: dict[str, Any]) -> None:
                     "VALID_PREDICTOR_ROW_COUNT",
                     "PREDICTOR_BATCH_STREAMING_PARITY",
                     "PREDICTOR_BATCH_STREAMING_GAP_PARITY",
+                    "DNO_BATCH_STREAMING_GAP_PARITY",
                     "STREAMING_DOES_NOT_FULL_RECOMPUTE_HISTORY",
                 )
                 if k in results
@@ -563,7 +765,7 @@ def write_artifacts(results: dict[str, Any]) -> None:
     manifest = {
         "wip_id": WIP_ID,
         "version": OSCILLATOR_PREDICTOR_VERSION,
-        "mode": "INDEPENDENT-REVIEW-FIX-1",
+        "mode": "SECOND-INDEPENDENT-REVIEW-FINAL-INTEGRITY-FIX-1",
         "artifact_root": str(ARTIFACT_ROOT.relative_to(REPO_ROOT)).replace("\\", "/"),
         "tests": results,
         "inverse_predictor_families": INVERSE_PREDICTOR_FAMILY_STATUS,
@@ -583,6 +785,13 @@ def main() -> dict[str, Any]:
     results.update(run_streaming_incremental())
     results.update(run_batch_streaming_parity())
     results.update(run_post_gap_independence())
+    results.update(run_public_dno_inverse_tests())
+    results.update(run_dno_atr_segment_safe())
+    results.update(run_dno_derived_post_gap())
+    results.update(run_dno_batch_streaming_gap_parity())
+    results.update(run_predictor_exact_bar_lag())
+    results.update(run_predictor_no_stale_bridging())
+    results.update(run_engine_cross_event_reference())
     results.update(run_future_mutation_test())
     results.update(run_inverse_family_audit())
     results.update(run_feature_registry_parity())

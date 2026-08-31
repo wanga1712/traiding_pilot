@@ -9,6 +9,7 @@ import numpy as np
 from crypto_trading_bot.research_v2.indicator_engine.bars import TF_MINUTES, parse_ts
 
 from .config import PredictorConfig
+from .dno import dno_primitives_at
 from .dynamic_predictor import compute_predictor_feature_series
 from .series_engine import PredictorSeriesEngine
 
@@ -60,33 +61,13 @@ class StreamingOscillatorPredictor:
         return close - sma
 
     def _dno_features_at(self, idx: int) -> dict[str, Any]:
-        period = self.config.period
-        dv = self._dno_values[idx] if idx < len(self._dno_values) else float("nan")
-        if np.isnan(dv):
+        if np.isnan(self._dno_values[idx]):
             return {}
-        prev = (
-            float(self._dno_values[idx - 1])
-            if idx > 0 and not np.isnan(self._dno_values[idx - 1])
-            else None
+        arrays = self._bar_arrays_view()
+        dno_arr = np.array(self._dno_values, dtype=float)
+        return dno_primitives_at(
+            arrays, idx, period=self.config.period, masked_dno=dno_arr, atr=self._atr
         )
-        ma3 = (
-            float(self._dno_values[idx - 3])
-            if idx >= 3 and not np.isnan(self._dno_values[idx - 3])
-            else None
-        )
-        atr_i = None
-        if self._atr is not None and idx < len(self._atr) and not np.isnan(self._atr[idx]):
-            atr_i = float(self._atr[idx])
-        return {
-            "DNO_VALUE": dv,
-            "DNO_SLOPE_1": (dv - prev) if prev is not None else None,
-            "DNO_SLOPE_3": (dv - ma3) if ma3 is not None else None,
-            "DNO_ZERO_CROSS_UP": bool(prev is not None and prev <= 0 and dv > 0),
-            "DNO_ZERO_CROSS_DOWN": bool(prev is not None and prev >= 0 and dv < 0),
-            "DNO_DISTANCE_FROM_ZERO": abs(dv),
-            "DNO_ABS": abs(dv),
-            "DNO_ATR_NORMALIZED": (dv / atr_i) if atr_i and atr_i != 0 else None,
-        }
 
     def _bar_arrays_view(self):
         from crypto_trading_bot.research_v2.indicator_engine.bars import BarArrays
@@ -130,7 +111,7 @@ class StreamingOscillatorPredictor:
 
     def batch_recompute(self) -> list[tuple[dict[str, Any], dict[str, Any]]]:
         from crypto_trading_bot.research_v2.indicator_engine.bars import bars_to_arrays
-        from .dno import compute_dno_feature_series
+        from .dno import compute_dno_feature_series, dno_primitives_at
 
         if not self._closes:
             return []
