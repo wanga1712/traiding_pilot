@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from .segments import iter_segments
+
 
 def sma(x: np.ndarray, period: int) -> np.ndarray:
     """Simple moving average. Windows containing NaN remain NaN (no poison via cumsum)."""
@@ -18,16 +20,25 @@ def sma(x: np.ndarray, period: int) -> np.ndarray:
     return out
 
 
-def ema(x: np.ndarray, period: int, *, adjust: bool = False) -> np.ndarray:
-    """Standard recursive EMA; first value = SMA of first `period` bars (TradingView/common)."""
+def ema(x: np.ndarray, period: int, *, gap_flags: np.ndarray | None = None, adjust: bool = False) -> np.ndarray:
+    """Standard recursive EMA; first value = SMA of first `period` bars in each contiguous segment."""
     out = np.full(len(x), np.nan, dtype=float)
     if period <= 0 or len(x) < period:
         return out
     alpha = 2.0 / (period + 1.0)
-    seed = float(np.mean(x[:period]))
-    out[period - 1] = seed
-    for i in range(period, len(x)):
-        out[i] = alpha * float(x[i]) + (1.0 - alpha) * out[i - 1]
+    flags = gap_flags if gap_flags is not None else np.zeros(len(x), dtype=bool)
+    for start, end in iter_segments(flags, len(x)):
+        if end - start + 1 < period:
+            continue
+        seed_i = start + period - 1
+        window = x[start : seed_i + 1]
+        if np.any(np.isnan(window)):
+            continue
+        out[seed_i] = float(np.mean(window))
+        for i in range(seed_i + 1, end + 1):
+            if np.isnan(x[i]) or np.isnan(out[i - 1]):
+                continue
+            out[i] = alpha * float(x[i]) + (1.0 - alpha) * out[i - 1]
     return out
 
 
@@ -43,28 +54,46 @@ def wma(x: np.ndarray, period: int) -> np.ndarray:
     return out
 
 
-def true_range(high: np.ndarray, low: np.ndarray, close: np.ndarray) -> np.ndarray:
+def true_range(
+    high: np.ndarray,
+    low: np.ndarray,
+    close: np.ndarray,
+    *,
+    gap_flags: np.ndarray | None = None,
+) -> np.ndarray:
     tr = np.full(len(close), np.nan, dtype=float)
     if len(close) == 0:
         return tr
-    tr[0] = float(high[0] - low[0])
-    for i in range(1, len(close)):
-        tr[i] = max(
-            float(high[i] - low[i]),
-            abs(float(high[i] - close[i - 1])),
-            abs(float(low[i] - close[i - 1])),
-        )
+    flags = gap_flags if gap_flags is not None else np.zeros(len(close), dtype=bool)
+    for start, end in iter_segments(flags, len(close)):
+        tr[start] = float(high[start] - low[start])
+        for i in range(start + 1, end + 1):
+            tr[i] = max(
+                float(high[i] - low[i]),
+                abs(float(high[i] - close[i - 1])),
+                abs(float(low[i] - close[i - 1])),
+            )
     return tr
 
 
-def rma(x: np.ndarray, period: int) -> np.ndarray:
-    """Wilder RMA / smoothed MA used by RSI/ATR/ADX."""
+def rma(x: np.ndarray, period: int, *, gap_flags: np.ndarray | None = None) -> np.ndarray:
+    """Wilder RMA / smoothed MA — restarted per contiguous segment."""
     out = np.full(len(x), np.nan, dtype=float)
     if period <= 0 or len(x) < period:
         return out
-    out[period - 1] = float(np.mean(x[:period]))
-    for i in range(period, len(x)):
-        out[i] = (out[i - 1] * (period - 1) + float(x[i])) / period
+    flags = gap_flags if gap_flags is not None else np.zeros(len(x), dtype=bool)
+    for start, end in iter_segments(flags, len(x)):
+        if end - start + 1 < period:
+            continue
+        seed_i = start + period - 1
+        window = x[start : seed_i + 1]
+        if np.any(np.isnan(window)):
+            continue
+        out[seed_i] = float(np.mean(window))
+        for i in range(seed_i + 1, end + 1):
+            if np.isnan(x[i]) or np.isnan(out[i - 1]):
+                continue
+            out[i] = (out[i - 1] * (period - 1) + float(x[i])) / period
     return out
 
 

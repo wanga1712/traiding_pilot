@@ -136,6 +136,7 @@ def build_stochastic_registry() -> dict[str, dict[str, Any]]:
         "preset_class": "DINAPOLI_REFERENCE",
         "implementation_name": "DINAPOLI_PREFERRED_STOCHASTIC",
         "smoothing": "MODIFIED_RECURSIVE",
+        "threshold_profile": "PROJECT_GENERIC_80_20",
     }
     din_row["warmup_bars"] = registry_warmup_bars(din_row)
     reg[din_row["feature_set_id"]] = din_row

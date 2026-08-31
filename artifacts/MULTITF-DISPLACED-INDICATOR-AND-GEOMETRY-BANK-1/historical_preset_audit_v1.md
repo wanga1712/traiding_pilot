@@ -10,13 +10,12 @@
 - 14/3/3 shift 0 — `STOCH_14_3_3_V1` (STANDARD)
 - 14/3/3 shift 3 — `DISPLACED_STOCH_14_3_3_SHIFT3_V1` (PROJECT_DISPLACED_STOCHASTIC)
 - 8/3/3 modified smoothing — `DINAPOLI_PREFERRED_STOCHASTIC_REFERENCE_V1` (DINAPOLI_REFERENCE)
-- Canonical SMA-smoothed Stochastic kept separate from DiNapoli Preferred reference
+- 80/20 thresholds: THRESHOLD_PROFILE=PROJECT_GENERIC_80_20 (not part of DiNapoli reference formula)
 
 ## MACD presets found
 - 12/26/9 shift 0 — `MACD_12_26_9_V1` (STANDARD)
 - 12/26/9 shift 3 — `DISPLACED_MACD_12_26_9_SHIFT3_V1` (PROJECT_DISPLACED_MACD)
 - Alpha coefficients 0.213/0.108/0.199 — `DINAPOLI_MACD_REFERENCE_V1` (DINAPOLI_REFERENCE)
-- Integer-period MACD kept separate from DiNapoli coefficient reference
 
 ## Sources
 - dma_3x3: `phase3_staging/crypto_trading_bot/research_v2/indicator_engine/registry.py:DMA_3X3_V1`

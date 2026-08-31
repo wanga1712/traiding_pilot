@@ -227,11 +227,14 @@ def _reference_dinapoli_stoch(high, low, close, idx):
     fk_arr = _stoch_raw(high, low, close, K_PERIOD)
     k = np.full(len(close), np.nan)
     d = np.full(len(close), np.nan)
-    first = K_PERIOD - 1
-    k[first] = fk_arr[first]
-    d[first] = k[first]
-    for i in range(first + 1, idx + 1):
+    fastk_first = K_PERIOD - 1
+    k_seed = fastk_first + SLOWING - 1
+    d_seed = k_seed + D_PERIOD - 1
+    k[k_seed] = float(np.mean(fk_arr[fastk_first : k_seed + 1]))
+    for i in range(k_seed + 1, idx + 1):
         k[i] = k[i - 1] + (fk_arr[i] - k[i - 1]) / SLOWING
+    d[d_seed] = float(np.mean(k[k_seed : d_seed + 1]))
+    for i in range(d_seed + 1, idx + 1):
         d[i] = d[i - 1] + (k[i] - d[i - 1]) / D_PERIOD
     return float(k[idx]), float(d[idx])
 

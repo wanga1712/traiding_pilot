@@ -34,11 +34,13 @@ def ssh(script: str) -> str:
 def main() -> int:
     for pkg in ["multitf_feature_bank", "indicator_engine"]:
         scp(ROOT / "crypto_trading_bot" / "research_v2" / pkg, f"{REMOTE_PKG}/crypto_trading_bot/research_v2/")
+    scp(ROOT / "crypto_trading_bot" / "research_v2" / "resampling", f"{REMOTE_PKG}/crypto_trading_bot/research_v2/")
+    scp(ROOT / "crypto_trading_bot" / "research_v2" / "market_data", f"{REMOTE_PKG}/crypto_trading_bot/research_v2/")
     ssh(f"mkdir -p {REMOTE_PKG}/tests")
     scp(ROOT / "tests" / "multitf_feature_bank", f"{REMOTE_PKG}/tests/")
-    ssh(
-        f"cd {REMOTE_PKG} && PYTHONPATH=. {REMOTE_WS}/.venv/bin/python tests/multitf_feature_bank/test_anti_leakage.py"
-    )
+    py = f"{REMOTE_WS}/.venv/bin/python"
+    ssh(f"cd {REMOTE_PKG} && PYTHONPATH=. {py} tests/multitf_feature_bank/test_segment_semantics_fix.py")
+    ssh(f"cd {REMOTE_PKG} && PYTHONPATH=. {py} -m crypto_trading_bot.research_v2.multitf_feature_bank.gap_audit")
     return 0
 
 

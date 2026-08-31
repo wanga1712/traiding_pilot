@@ -10,6 +10,8 @@ from crypto_trading_bot.research_v2.indicator_engine.dinapoli_macd import comput
 from crypto_trading_bot.research_v2.indicator_engine.macd import compute_macd_series
 from crypto_trading_bot.research_v2.indicator_engine.types import IndicatorSample
 
+from crypto_trading_bot.research_v2.indicator_engine.segments import same_segment
+
 from .aligned_features import cross_down, cross_up, source_index, source_sample_valid
 
 
@@ -44,11 +46,15 @@ def _macd_feats_at(
     *,
     display_shift: int,
     valid_flags: list[bool],
+    gap_flags: np.ndarray | None = None,
 ) -> dict[str, Any]:
     m, s, h = _v(macd, i), _v(signal, i), _v(hist, i)
     if m is None or s is None or h is None:
         return {}
-    m_prev, s_prev, h_prev = _v(macd, i - 1), _v(signal, i - 1), _v(hist, i - 1)
+    prev_ok = gap_flags is None or (i > 0 and same_segment(gap_flags, i - 1, i))
+    m_prev, s_prev, h_prev = (
+        (_v(macd, i - 1), _v(signal, i - 1), _v(hist, i - 1)) if prev_ok else (None, None, None)
+    )
 
     out: dict[str, Any] = {
         "MACD": m,
@@ -58,8 +64,8 @@ def _macd_feats_at(
         "MACD_SLOPE": (m - m_prev) if m_prev is not None else None,
         "SIGNAL_SLOPE": (s - s_prev) if s_prev is not None else None,
         "HIST_SLOPE": (h - h_prev) if h_prev is not None else None,
-        "MACD_CROSS_UP_SIGNAL": cross_up(m_prev, m, s_prev, s),
-        "MACD_CROSS_DOWN_SIGNAL": cross_down(m_prev, m, s_prev, s),
+        "MACD_CROSS_UP_SIGNAL": cross_up(m_prev, m, s_prev, s) if m_prev is not None and s_prev is not None else False,
+        "MACD_CROSS_DOWN_SIGNAL": cross_down(m_prev, m, s_prev, s) if m_prev is not None and s_prev is not None else False,
         "HIST_CROSS_UP_ZERO": bool(h_prev is not None and h_prev <= 0 and h > 0),
         "HIST_CROSS_DOWN_ZERO": bool(h_prev is not None and h_prev >= 0 and h < 0),
         "HIST_CONTRACTING_NEGATIVE": bool(h < 0 and h_prev is not None and h_prev < 0 and abs(h) < abs(h_prev)),
@@ -134,10 +140,17 @@ def _standard_macd_valid(i: int, *, slow: int, signal: int, macd: np.ndarray, si
 
 
 def _dinapoli_macd_valid(i: int, *, macd: np.ndarray, signal_line: np.ndarray, gap_flags: np.ndarray) -> bool:
+    from crypto_trading_bot.research_v2.indicator_engine.segments import same_segment, segment_start_for
+
     warmup = 1
     if i < warmup or np.isnan(macd[i]) or np.isnan(signal_line[i]):
         return False
-    return contiguous_ok(gap_flags, 0, i)
+    if i > 0 and not same_segment(gap_flags, i - 1, i):
+        return False
+    seg_start = segment_start_for(gap_flags, i)
+    if i - seg_start < warmup:
+        return False
+    return contiguous_ok(gap_flags, seg_start, i)
 
 
 def compute_macd_feature_series(
@@ -170,7 +183,9 @@ def compute_macd_feature_series(
         if not s.valid:
             out.append(s)
             continue
-        prim = _macd_feats_at(i, macd, sig, hist, display_shift=display_shift, valid_flags=valid_flags)
+        prim = _macd_feats_at(
+            i, macd, sig, hist, display_shift=display_shift, valid_flags=valid_flags, gap_flags=arrays.gap_flags
+        )
         out.append(
             IndicatorSample(
                 s.calculated_at,
@@ -189,7 +204,7 @@ def compute_dinapoli_macd_feature_series(
     *,
     display_shift: int = 0,
 ) -> list[IndicatorSample]:
-    macd, sig, hist = compute_dinapoli_macd_arrays(arrays.close)
+    macd, sig, hist = compute_dinapoli_macd_arrays(arrays.close, gap_flags=arrays.gap_flags)
     n = len(arrays.close)
     valid_flags = [
         _dinapoli_macd_valid(i, macd=macd, signal_line=sig, gap_flags=arrays.gap_flags) for i in range(n)
@@ -212,7 +227,9 @@ def compute_dinapoli_macd_feature_series(
                 )
             )
             continue
-        prim = _macd_feats_at(i, macd, sig, hist, display_shift=display_shift, valid_flags=valid_flags)
+        prim = _macd_feats_at(
+            i, macd, sig, hist, display_shift=display_shift, valid_flags=valid_flags, gap_flags=arrays.gap_flags
+        )
         samples.append(
             IndicatorSample(
                 calc_at,

@@ -1,10 +1,5 @@
 {
-  "numeric_reference_tests": "PASS",
-  "displacement_alignment_tests": "PASS",
-  "geometry_formula_tests": "PASS",
-  "future_price_mutation_test": "PASS",
-  "future_d_leakage_test": "PASS",
-  "batch_streaming_parity": "PASS",
-  "higher_tf_leakage_test": "PASS",
-  "true_pivot_leakage_test": "PASS"
+  "SORTED_HTF_CAUSALITY_TEST": "PASS",
+  "TRUE_PIVOT_LEAKAGE_TEST": "PASS",
+  "FUTURE_D_LEAKAGE_TEST": "PASS"
 }

@@ -25,8 +25,11 @@ def standard_stoch_first_valid_index(*, k_period: int, k_smooth: int, d_period: 
 
 
 def dinapoli_stoch_first_valid_index(*, k_period: int, slowing: int, d_period: int, display_shift: int) -> int:
-    _ = slowing, d_period
-    return k_period + display_shift
+    from crypto_trading_bot.research_v2.indicator_engine.dinapoli_stochastic import dinapoli_stoch_warmup_indices
+
+    return dinapoli_stoch_warmup_indices(k_period=k_period, slowing=slowing, d_period=d_period)[
+        "first_full_feature_index"
+    ] + display_shift
 
 
 def standard_macd_first_valid_index(*, slow: int, signal: int, display_shift: int) -> int:

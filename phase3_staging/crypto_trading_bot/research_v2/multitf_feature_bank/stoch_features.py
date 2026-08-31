@@ -11,6 +11,8 @@ from crypto_trading_bot.research_v2.indicator_engine.math_core import sma
 from crypto_trading_bot.research_v2.indicator_engine.stochastic import _stoch_raw
 from crypto_trading_bot.research_v2.indicator_engine.types import IndicatorSample
 
+from crypto_trading_bot.research_v2.indicator_engine.segments import same_segment
+
 from .aligned_features import cross_down, cross_up, source_index, source_sample_valid
 
 
@@ -47,11 +49,13 @@ def _stoch_feats_at(
     overbought: float,
     oversold: float,
     valid_flags: list[bool],
+    gap_flags: np.ndarray | None = None,
 ) -> dict[str, Any]:
     rk, kv, dv = _v(raw, i), _v(k, i), _v(d, i)
     if kv is None or dv is None:
         return {}
-    k_prev, d_prev = _v(k, i - 1), _v(d, i - 1)
+    prev_ok = gap_flags is None or (i > 0 and same_segment(gap_flags, i - 1, i))
+    k_prev, d_prev = (_v(k, i - 1), _v(d, i - 1)) if prev_ok else (None, None)
 
     out: dict[str, Any] = {
         "RAW_K": rk,
@@ -61,8 +65,8 @@ def _stoch_feats_at(
         "K_MINUS_D_SLOPE": (kv - dv) - (k_prev - d_prev) if k_prev is not None and d_prev is not None else None,
         "K_SLOPE": (kv - k_prev) if k_prev is not None else None,
         "D_SLOPE": (dv - d_prev) if d_prev is not None else None,
-        "K_CROSS_UP_D": cross_up(k_prev, kv, d_prev, dv),
-        "K_CROSS_DOWN_D": cross_down(k_prev, kv, d_prev, dv),
+        "K_CROSS_UP_D": cross_up(k_prev, kv, d_prev, dv) if k_prev is not None and d_prev is not None else False,
+        "K_CROSS_DOWN_D": cross_down(k_prev, kv, d_prev, dv) if k_prev is not None and d_prev is not None else False,
         "DIST_TO_OVERSOLD": kv - oversold,
         "DIST_TO_OVERBOUGHT": overbought - kv,
         "OVERBOUGHT_80": kv >= overbought,
@@ -147,14 +151,23 @@ def _dinapoli_stoch_valid(
     i: int,
     *,
     k_period: int,
+    slowing: int,
+    d_period: int,
     k: np.ndarray,
     d: np.ndarray,
     gap_flags: np.ndarray,
 ) -> bool:
-    warmup = k_period
-    if i < warmup or np.isnan(k[i]) or np.isnan(d[i]):
+    from crypto_trading_bot.research_v2.indicator_engine.dinapoli_stochastic import dinapoli_stoch_warmup_indices
+    from crypto_trading_bot.research_v2.indicator_engine.segments import same_segment, segment_start_for
+
+    first_full = dinapoli_stoch_warmup_indices(k_period=k_period, slowing=slowing, d_period=d_period)[
+        "first_full_feature_index"
+    ]
+    if i < first_full or np.isnan(k[i]) or np.isnan(d[i]):
         return False
-    return contiguous_ok(gap_flags, max(0, k_period - 1), i)
+    if i > 0 and not same_segment(gap_flags, i - 1, i):
+        return False
+    return contiguous_ok(gap_flags, segment_start_for(gap_flags, i), i)
 
 
 def compute_stoch_feature_series(
@@ -209,7 +222,12 @@ def compute_stoch_feature_series(
             continue
         kv, dv = float(k[i]), float(d[i])
         prim = _stoch_feats_at(
-            i, raw, k, d, display_shift=display_shift, overbought=overbought, oversold=oversold, valid_flags=valid_flags
+            i, raw, k, d,
+            display_shift=display_shift,
+            overbought=overbought,
+            oversold=oversold,
+            valid_flags=valid_flags,
+            gap_flags=arrays.gap_flags,
         )
         samples.append(
             IndicatorSample(
@@ -235,14 +253,22 @@ def compute_dinapoli_stoch_feature_series(
     oversold: float = 20.0,
 ) -> list[IndicatorSample]:
     raw, k, d = compute_dinapoli_stoch_arrays(
-        arrays.high, arrays.low, arrays.close, k_period=k_period, slowing=slowing, d_period=d_period
+        arrays.high, arrays.low, arrays.close, k_period=k_period, slowing=slowing, d_period=d_period,
+        gap_flags=arrays.gap_flags,
     )
     n = len(arrays.close)
     valid_flags = [
-        _dinapoli_stoch_valid(i, k_period=k_period, k=k, d=d, gap_flags=arrays.gap_flags) for i in range(n)
+        _dinapoli_stoch_valid(
+            i, k_period=k_period, slowing=slowing, d_period=d_period, k=k, d=d, gap_flags=arrays.gap_flags
+        )
+        for i in range(n)
     ]
     samples: list[IndicatorSample] = []
-    warmup = k_period
+    from crypto_trading_bot.research_v2.indicator_engine.dinapoli_stochastic import dinapoli_stoch_warmup_indices
+
+    warmup = dinapoli_stoch_warmup_indices(k_period=k_period, slowing=slowing, d_period=d_period)[
+        "first_full_feature_index"
+    ]
     for i in range(n):
         calc_at = arrays.close_time[i]
         disp = displayed_at_for(arrays.close_time, arrays.open_time, i, display_shift)
@@ -254,7 +280,15 @@ def compute_dinapoli_stoch_feature_series(
             continue
         kv, dv = float(k[i]), float(d[i])
         prim = _stoch_feats_at(
-            i, raw, k, d, display_shift=display_shift, overbought=overbought, oversold=oversold, valid_flags=valid_flags
+            i,
+            raw,
+            k,
+            d,
+            display_shift=display_shift,
+            overbought=overbought,
+            oversold=oversold,
+            valid_flags=valid_flags,
+            gap_flags=arrays.gap_flags,
         )
         samples.append(
             IndicatorSample(

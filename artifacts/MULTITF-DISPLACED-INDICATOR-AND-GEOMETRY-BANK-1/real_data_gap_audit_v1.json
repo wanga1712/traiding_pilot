@@ -1,0 +1,127 @@
+{
+  "audit_source": "S13_cached_resampled_parquet",
+  "audit_window": "trailing_MAX_BARS_PER_TF=5000",
+  "timeframes": [
+    {
+      "timeframe": "5m",
+      "bar_count": 5000,
+      "gap_count": 0,
+      "families": {
+        "EMA_DMA": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "STANDARD_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_STOCH": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "ATR": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0}
+      }
+    },
+    {
+      "timeframe": "15m",
+      "bar_count": 5000,
+      "gap_count": 0,
+      "families": {
+        "EMA_DMA": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "STANDARD_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_STOCH": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "ATR": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0}
+      }
+    },
+    {
+      "timeframe": "30m",
+      "bar_count": 5000,
+      "gap_count": 0,
+      "families": {
+        "EMA_DMA": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "STANDARD_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_STOCH": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "ATR": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0}
+      }
+    },
+    {
+      "timeframe": "1H",
+      "bar_count": 5000,
+      "gap_count": 0,
+      "families": {
+        "EMA_DMA": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "STANDARD_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_STOCH": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "ATR": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0}
+      }
+    },
+    {
+      "timeframe": "2H",
+      "bar_count": 5000,
+      "gap_count": 0,
+      "families": {
+        "EMA_DMA": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "STANDARD_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_STOCH": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "ATR": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0}
+      }
+    },
+    {
+      "timeframe": "4H",
+      "bar_count": 5000,
+      "gap_count": 0,
+      "families": {
+        "EMA_DMA": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "STANDARD_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_STOCH": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "ATR": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0}
+      }
+    },
+    {
+      "timeframe": "6H",
+      "bar_count": 5000,
+      "gap_count": 0,
+      "families": {
+        "EMA_DMA": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "STANDARD_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_STOCH": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "ATR": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0}
+      }
+    },
+    {
+      "timeframe": "8H",
+      "bar_count": 5000,
+      "gap_count": 0,
+      "families": {
+        "EMA_DMA": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "STANDARD_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_STOCH": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "ATR": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0}
+      }
+    },
+    {
+      "timeframe": "12H",
+      "bar_count": 4333,
+      "gap_count": 0,
+      "families": {
+        "EMA_DMA": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "STANDARD_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_STOCH": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "ATR": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0}
+      }
+    },
+    {
+      "timeframe": "1D",
+      "bar_count": 2423,
+      "gap_count": 0,
+      "families": {
+        "EMA_DMA": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "STANDARD_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_MACD": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "DINAPOLI_STOCH": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0},
+        "ATR": {"invalid_due_to_gap_count": 0, "recovered_after_gap_count": 0, "permanent_invalid_after_gap_count": 0}
+      }
+    }
+  ],
+  "permanent_invalid_after_recoverable_gap_count": 0
+}

@@ -17,5 +17,9 @@
   "stoch_parameter_set_count": 17,
   "macd_parameter_set_count": 13,
   "feature_row_count": 16380,
-  "git_commit": "6f6760714387"
+  "git_commit": "b3022913ae62",
+  "validation_summary": {
+    "PERMANENT_INVALID_AFTER_RECOVERABLE_GAP_COUNT": 0
+  },
+  "gap_audit_status": "PASS"
 }

@@ -10,6 +10,7 @@ from crypto_trading_bot.research_v2.indicator_engine.math_core import ema, sma, 
 from crypto_trading_bot.research_v2.indicator_engine.types import IndicatorSample
 
 from .aligned_features import cross_down, cross_up, source_index, source_sample_valid
+from crypto_trading_bot.research_v2.indicator_engine.segments import same_segment
 
 
 def _ma_fn(kind: str):
@@ -43,6 +44,7 @@ def _build_ma_features_at(
     display_shift: int,
     atr_i: float | None,
     valid_flags: list[bool],
+    gap_flags: np.ndarray,
 ) -> dict[str, Any]:
     mv = _ma_at(ma, i)
     if mv is None:
@@ -52,13 +54,13 @@ def _build_ma_features_at(
     dist_pct = (dist / mv * 100.0) if mv else None
     dist_atr = (dist / atr_i) if atr_i and atr_i != 0 else None
     prev_mv = _ma_at(ma, i - 1)
-    slope1 = (mv - prev_mv) if prev_mv is not None else None
+    slope1 = (mv - prev_mv) if prev_mv is not None and same_segment(gap_flags, i - 1, i) else None
     ma3 = _ma_at(ma, i - 3)
-    slope3 = (mv - ma3) if ma3 is not None else None
+    slope3 = (mv - ma3) if ma3 is not None and same_segment(gap_flags, i - 3, i) else None
     prev_slope1 = None
-    if i > 1:
+    if i > 1 and same_segment(gap_flags, i - 2, i):
         pm, ppm = _ma_at(ma, i - 1), _ma_at(ma, i - 2)
-        if pm is not None and ppm is not None:
+        if pm is not None and ppm is not None and same_segment(gap_flags, i - 1, i):
             prev_slope1 = pm - ppm
 
     out: dict[str, Any] = {
@@ -68,10 +70,18 @@ def _build_ma_features_at(
         "PRICE_MINUS_MA_ATR": dist_atr,
         "MA_SLOPE_1": slope1,
         "MA_SLOPE_3": slope3,
-        "PRICE_CROSS_UP_MA": cross_up(prev_price, price, prev_mv, mv),
-        "PRICE_CROSS_DOWN_MA": cross_down(prev_price, price, prev_mv, mv),
-        "MA_SLOPE_TURN_UP": bool(slope1 is not None and prev_slope1 is not None and prev_slope1 <= 0 and slope1 > 0),
-        "MA_SLOPE_TURN_DOWN": bool(slope1 is not None and prev_slope1 is not None and prev_slope1 >= 0 and slope1 < 0),
+        "PRICE_CROSS_UP_MA": cross_up(prev_price, price, prev_mv, mv)
+        if prev_mv is not None and same_segment(gap_flags, i - 1, i)
+        else False,
+        "PRICE_CROSS_DOWN_MA": cross_down(prev_price, price, prev_mv, mv)
+        if prev_mv is not None and same_segment(gap_flags, i - 1, i)
+        else False,
+        "MA_SLOPE_TURN_UP": bool(
+            slope1 is not None and prev_slope1 is not None and same_segment(gap_flags, i - 2, i) and prev_slope1 <= 0 and slope1 > 0
+        ),
+        "MA_SLOPE_TURN_DOWN": bool(
+            slope1 is not None and prev_slope1 is not None and same_segment(gap_flags, i - 2, i) and prev_slope1 >= 0 and slope1 < 0
+        ),
     }
 
     if display_shift == 0:
@@ -154,7 +164,10 @@ def compute_dma_feature_series(
     atr: np.ndarray | None = None,
 ) -> list[IndicatorSample]:
     fn = _ma_fn(ma_type)
-    ma = fn(arrays.close, period)
+    if ma_type == "EMA":
+        ma = ema(arrays.close, period, gap_flags=arrays.gap_flags)
+    else:
+        ma = fn(arrays.close, period)
     key = "ma"
     n = len(arrays.close)
     valid_flags = [
@@ -182,6 +195,7 @@ def compute_dma_feature_series(
             display_shift=display_shift,
             atr_i=atr_i,
             valid_flags=valid_flags,
+            gap_flags=arrays.gap_flags,
         )
         samples.append(IndicatorSample(calc_at, calc_at, disp, {key: mv}, prim, True))
     return samples
