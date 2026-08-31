@@ -50,8 +50,15 @@ def write_artifacts(root: Path) -> dict:
         ("macd_registry_v1.csv", MACD_REGISTRY),
     ):
         items = list(reg.values())
+        fieldnames: list[str] = []
+        seen: set[str] = set()
+        for item in items:
+            for key in item:
+                if key not in seen:
+                    seen.add(key)
+                    fieldnames.append(key)
         with (root / name).open("w", newline="", encoding="utf-8") as f:
-            w = csv.DictWriter(f, fieldnames=list(items[0].keys()))
+            w = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
             w.writeheader()
             w.writerows(items)
 
@@ -68,13 +75,15 @@ def write_artifacts(root: Path) -> dict:
                 "",
                 "## Stochastic presets found",
                 "- 14/3/3 shift 0 — `STOCH_14_3_3_V1` (STANDARD)",
-                "- 14/3/3 shift 3 — `DISPLACED_STOCH_14_3_3_SHIFT3_V1` (PROJECT_EXPERIMENTAL)",
-                "- No proprietary DiNapoli-exact stochastic source — use PROJECT_DISPLACED_STOCHASTIC",
+                "- 14/3/3 shift 3 — `DISPLACED_STOCH_14_3_3_SHIFT3_V1` (PROJECT_DISPLACED_STOCHASTIC)",
+                "- 8/3/3 modified smoothing — `DINAPOLI_PREFERRED_STOCHASTIC_REFERENCE_V1` (DINAPOLI_REFERENCE)",
+                "- Canonical SMA-smoothed Stochastic kept separate from DiNapoli Preferred reference",
                 "",
                 "## MACD presets found",
-                "- 12/26/9 shift 0 — `MACD_12_26_9_V1`",
-                "- 12/26/9 shift 3 — `DISPLACED_MACD_12_26_9_SHIFT3_V1` (PROJECT_EXPERIMENTAL)",
-                "- No DiNapoli-exact MACD source — use PROJECT_DISPLACED_MACD",
+                "- 12/26/9 shift 0 — `MACD_12_26_9_V1` (STANDARD)",
+                "- 12/26/9 shift 3 — `DISPLACED_MACD_12_26_9_SHIFT3_V1` (PROJECT_DISPLACED_MACD)",
+                "- Alpha coefficients 0.213/0.108/0.199 — `DINAPOLI_MACD_REFERENCE_V1` (DINAPOLI_REFERENCE)",
+                "- Integer-period MACD kept separate from DiNapoli coefficient reference",
                 "",
                 "## Sources",
                 *[f"- {k}: `{v}`" for k, v in HISTORICAL_SOURCES.items()],

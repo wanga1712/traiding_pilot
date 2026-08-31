@@ -44,3 +44,25 @@ def confirmed_pivots_at(pivots: list[PivotRecord], decision_time: datetime) -> l
         [p for p in pivots if p.confirmation_time <= decision_time],
         key=lambda p: p.confirmation_time,
     )
+
+
+def prior_same_direction_leg(
+    confirmed: list[PivotRecord],
+) -> tuple[float | None, tuple[str, str] | None]:
+    """Most recent physical pivot pair before current A with same direction as AB."""
+    if len(confirmed) < 5:
+        return None, None
+    a, b = confirmed[-3], confirmed[-2]
+    ab_delta = b.pivot_price - a.pivot_price
+    if ab_delta == 0:
+        return None, None
+    ab_sign = 1 if ab_delta > 0 else -1
+    for i in range(len(confirmed) - 4, -1, -1):
+        p0, p1 = confirmed[i], confirmed[i + 1]
+        leg_delta = p1.pivot_price - p0.pivot_price
+        if leg_delta == 0:
+            continue
+        leg_sign = 1 if leg_delta > 0 else -1
+        if leg_sign == ab_sign:
+            return abs(p1.pivot_price - p0.pivot_price), (p0.pivot_id, p1.pivot_id)
+    return None, None

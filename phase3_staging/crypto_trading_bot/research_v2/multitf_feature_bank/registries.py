@@ -5,6 +5,8 @@ from typing import Any
 
 from crypto_trading_bot.research_v2.resampling import UI_TIMEFRAMES
 
+from .warmup import registry_warmup_bars
+
 MA_PERIODS = (3, 5, 7, 10, 14, 20, 25)
 MA_SHIFTS = (0, 2, 3, 5, 8)
 MA_TYPES = ("SMA", "EMA", "WMA")
@@ -76,7 +78,7 @@ def build_dma_registry() -> dict[str, dict[str, Any]]:
         for period, shift in DMA_CURATED:
             fid = _dma_id(ma_type, period, shift)
             preset = "DINAPOLI_STYLE" if ma_type == "SMA" and (period, shift) in ((3, 3), (7, 5), (25, 5)) else "PROJECT_RESEARCH"
-            reg[fid] = {
+            row = {
                 "feature_set_id": fid,
                 "family": "DMA",
                 "ma_type": ma_type,
@@ -84,11 +86,13 @@ def build_dma_registry() -> dict[str, dict[str, Any]]:
                 "display_shift": shift,
                 "formula_version": "MA_V1",
                 "causal_semantics": "CLOSED_CANDLE",
-                "warmup_bars": period + shift,
                 "source_engine": "INDICATOR_ENGINE_V1",
                 "reference_status": "NUMERIC_REFERENCE_TESTED" if ma_type == "SMA" and shift in (0, 3) else "PROJECT_RESEARCH",
                 "preset_class": preset,
+                "implementation_name": "DINAPOLI_DMA" if preset == "DINAPOLI_STYLE" else "PROJECT_RESEARCH_DMA",
             }
+            row["warmup_bars"] = registry_warmup_bars(row)
+            reg[fid] = row
     return reg
 
 
@@ -97,7 +101,7 @@ def build_stochastic_registry() -> dict[str, dict[str, Any]]:
     for cfg in STOCH_CONFIGS:
         for shift in STOCH_SHIFTS:
             fid = _stoch_id(cfg, shift)
-            reg[fid] = {
+            row = {
                 "feature_set_id": fid,
                 "family": "STOCHASTIC",
                 "k_period": cfg["k_period"],
@@ -108,12 +112,33 @@ def build_stochastic_registry() -> dict[str, dict[str, Any]]:
                 "oversold": 20.0,
                 "formula_version": "STOCH_CANONICAL_V1",
                 "causal_semantics": "CLOSED_CANDLE",
-                "warmup_bars": cfg["k_period"] + cfg["k_smooth"] + cfg["d_period"],
                 "source_engine": "INDICATOR_ENGINE_V1",
                 "reference_status": "NUMERIC_REFERENCE_TESTED" if cfg["label"] == "14/3/3" and shift == 0 else "PROJECT_RESEARCH",
                 "preset_class": "STANDARD" if shift == 0 else "PROJECT_DISPLACED_STOCHASTIC",
-                "implementation_name": "PROJECT_DISPLACED_STOCHASTIC",
+                "implementation_name": "STANDARD_STOCHASTIC" if shift == 0 else "PROJECT_DISPLACED_STOCHASTIC",
             }
+            row["warmup_bars"] = registry_warmup_bars(row)
+            reg[fid] = row
+    # DiNapoli Preferred Stochastic reference — separate from canonical SMA-smoothed Stochastic
+    din_row = {
+        "feature_set_id": "DINAPOLI_PREFERRED_STOCHASTIC_REFERENCE_V1",
+        "family": "STOCHASTIC",
+        "k_period": 8,
+        "slowing": 3,
+        "d_period": 3,
+        "display_shift": 0,
+        "overbought": 80.0,
+        "oversold": 20.0,
+        "formula_version": "DINAPOLI_PREFERRED_STOCH_REFERENCE_V1",
+        "causal_semantics": "CLOSED_CANDLE",
+        "source_engine": "INDICATOR_ENGINE_V1",
+        "reference_status": "DINAPOLI_REFERENCE_IMPLEMENTATION",
+        "preset_class": "DINAPOLI_REFERENCE",
+        "implementation_name": "DINAPOLI_PREFERRED_STOCHASTIC",
+        "smoothing": "MODIFIED_RECURSIVE",
+    }
+    din_row["warmup_bars"] = registry_warmup_bars(din_row)
+    reg[din_row["feature_set_id"]] = din_row
     return reg
 
 
@@ -122,7 +147,7 @@ def build_macd_registry() -> dict[str, dict[str, Any]]:
     for cfg in MACD_CONFIGS:
         for shift in MACD_SHIFTS:
             fid = _macd_id(cfg, shift)
-            reg[fid] = {
+            row = {
                 "feature_set_id": fid,
                 "family": "MACD",
                 "fast": cfg["fast"],
@@ -131,12 +156,33 @@ def build_macd_registry() -> dict[str, dict[str, Any]]:
                 "display_shift": shift,
                 "formula_version": "MACD_CANONICAL_V1",
                 "causal_semantics": "CLOSED_CANDLE",
-                "warmup_bars": cfg["slow"] + cfg["signal"],
                 "source_engine": "INDICATOR_ENGINE_V1",
                 "reference_status": "NUMERIC_REFERENCE_TESTED" if cfg["label"] == "12/26/9" and shift == 0 else "PROJECT_RESEARCH",
                 "preset_class": "STANDARD" if shift == 0 else "PROJECT_DISPLACED_MACD",
-                "implementation_name": "PROJECT_DISPLACED_MACD",
+                "implementation_name": "STANDARD_MACD" if shift == 0 else "PROJECT_DISPLACED_MACD",
             }
+            row["warmup_bars"] = registry_warmup_bars(row)
+            reg[fid] = row
+    din_row = {
+        "feature_set_id": "DINAPOLI_MACD_REFERENCE_V1",
+        "family": "MACD",
+        "fast_alpha": 0.213,
+        "slow_alpha": 0.108,
+        "signal_alpha": 0.199,
+        "fast_period_equiv": 8.3896,
+        "slow_period_equiv": 17.5185,
+        "signal_period_equiv": 9.0503,
+        "display_shift": 0,
+        "formula_version": "DINAPOLI_MACD_REFERENCE_V1",
+        "causal_semantics": "CLOSED_CANDLE",
+        "source_engine": "INDICATOR_ENGINE_V1",
+        "reference_status": "DINAPOLI_REFERENCE_IMPLEMENTATION",
+        "preset_class": "DINAPOLI_REFERENCE",
+        "implementation_name": "DINAPOLI_REFERENCE_MACD",
+        "init_convention": "alpha_ema_seed_close0_signal_seed_macd0",
+    }
+    din_row["warmup_bars"] = registry_warmup_bars(din_row)
+    reg[din_row["feature_set_id"]] = din_row
     return reg
 
 
@@ -226,15 +272,18 @@ FEATURE_OUTPUTS = {
     "GEOMETRY": [
         "AB_LENGTH",
         "AB_LENGTH_ATR",
+        "REFERENCE_AB_LENGTH",
         "R_CURRENT",
         "R_MINUS_1",
+        "DIST_TO_R1",
+        "CURRENT_VS_REFERENCE_AB_RATIO",
+        "PRIOR_SAME_DIRECTION_LEG_LENGTH",
         "DIST_TO_COP",
         "DIST_TO_OP",
         "DIST_TO_XOP",
         "DIST_TO_COP_ATR",
         "DIST_TO_OP_ATR",
         "DIST_TO_XOP_ATR",
-        "CURRENT_VS_PREV_LEG_RATIO",
         "GEOMETRY_STAGE",
         "COP_REACHED",
         "OP_REACHED",

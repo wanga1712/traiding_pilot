@@ -16,6 +16,16 @@ def source_index(decision_index: int, display_shift: int) -> int | None:
     return src if src >= 0 else None
 
 
+def source_sample_valid(valid_flags: Sequence[bool], decision_index: int, display_shift: int) -> bool:
+    """Display-aligned features at t require source sample s=t-shift to be VALID."""
+    if display_shift <= 0:
+        return bool(valid_flags[decision_index])
+    src = source_index(decision_index, display_shift)
+    if src is None:
+        return False
+    return bool(valid_flags[src])
+
+
 def provenance_at(
     samples: Sequence[IndicatorSample],
     decision_index: int,

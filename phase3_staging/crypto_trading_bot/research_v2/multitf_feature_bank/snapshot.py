@@ -13,7 +13,7 @@ from .aligned_features import provenance_at
 from .geometry import compute_geometry_features
 from .macd_features import compute_macd_feature_series
 from .ma_features import compute_dma_feature_series
-from .pivots import PivotRecord, confirmed_pivots_at
+from .pivots import PivotRecord, confirmed_pivots_at, prior_same_direction_leg
 from .registries import DMA_REGISTRY, FEATURE_OUTPUTS, MACD_REGISTRY, STOCHASTIC_REGISTRY
 from .stoch_features import compute_stoch_feature_series
 from .version import FEATURE_BANK_VERSION
@@ -105,14 +105,17 @@ class FeatureBank:
                 shift = int(meta_ps["display_shift"])
                 if key not in self._cache:
                     arrays = bars_to_arrays(bars, timeframe=tf)
+                    fv = meta_ps.get("formula_version", "STOCH_CANONICAL_V1")
                     self._cache[key] = compute_stoch_feature_series(
                         arrays,
                         k_period=int(meta_ps["k_period"]),
-                        k_smooth=int(meta_ps["k_smooth"]),
+                        k_smooth=int(meta_ps.get("k_smooth", 3)),
                         d_period=int(meta_ps["d_period"]),
                         display_shift=shift,
                         overbought=float(meta_ps.get("overbought", 80)),
                         oversold=float(meta_ps.get("oversold", 20)),
+                        formula_version=fv,
+                        slowing=int(meta_ps["slowing"]) if "slowing" in meta_ps else None,
                     )
                 samples = self._cache[key]
                 if idx < len(samples) and samples[idx].valid:
@@ -126,13 +129,20 @@ class FeatureBank:
                 shift = int(meta_ps["display_shift"])
                 if key not in self._cache:
                     arrays = bars_to_arrays(bars, timeframe=tf)
-                    self._cache[key] = compute_macd_feature_series(
-                        arrays,
-                        fast=int(meta_ps["fast"]),
-                        slow=int(meta_ps["slow"]),
-                        signal=int(meta_ps["signal"]),
-                        display_shift=shift,
-                    )
+                    fv = meta_ps.get("formula_version", "MACD_CANONICAL_V1")
+                    if fv == "DINAPOLI_MACD_REFERENCE_V1":
+                        self._cache[key] = compute_macd_feature_series(
+                            arrays, display_shift=shift, formula_version=fv
+                        )
+                    else:
+                        self._cache[key] = compute_macd_feature_series(
+                            arrays,
+                            fast=int(meta_ps["fast"]),
+                            slow=int(meta_ps["slow"]),
+                            signal=int(meta_ps["signal"]),
+                            display_shift=shift,
+                            formula_version=fv,
+                        )
                 samples = self._cache[key]
                 if idx < len(samples) and samples[idx].valid:
                     pref = f"{tf}.{ps_id}"
@@ -140,12 +150,13 @@ class FeatureBank:
                     _emit_declared(feats, prefix=pref, family="MACD", prim=prim)
                     if shift > 0:
                         meta["provenance"][f"{pref}.DISPLAY_ALIGNED_MACD"] = provenance_at(samples, idx, shift)
-            self._attach_geometry(feats, tf, bars, idx, decision_time)
+            self._attach_geometry(feats, meta, tf, bars, idx, decision_time)
         return FeatureSnapshot(decision_time=decision_time, features=feats, metadata=meta)
 
     def _attach_geometry(
         self,
         feats: dict[str, float | bool | None],
+        meta: dict[str, Any],
         tf: str,
         bars: list[dict[str, Any]],
         idx: int,
@@ -169,10 +180,7 @@ class FeatureBank:
         if idx < len(atr_s) and atr_s[idx].valid:
             atr_val = float(atr_s[idx].values["atr"])  # type: ignore
 
-        prev_leg = None
-        if len(confirmed) >= 4:
-            p_prev = confirmed[-4]
-            prev_leg = abs(b.pivot_price - p_prev.pivot_price)
+        prior_leg_len, prior_leg_ids = prior_same_direction_leg(confirmed)
 
         geo = compute_geometry_features(
             a_price=a.pivot_price,
@@ -180,7 +188,11 @@ class FeatureBank:
             c_price=c.pivot_price,
             current_price=current,
             atr=atr_val,
-            prev_same_direction_leg=prev_leg,
+            prior_same_direction_leg_length=prior_leg_len,
         )
         prefix = f"{tf}.GEOMETRY_ABC"
         _emit_declared(feats, prefix=prefix, family="GEOMETRY", prim=geo)
+        if prior_leg_ids:
+            meta.setdefault("geometry_provenance", {})[f"{prefix}.PRIOR_SAME_DIRECTION_LEG_LENGTH"] = {
+                "pivot_ids": prior_leg_ids,
+            }

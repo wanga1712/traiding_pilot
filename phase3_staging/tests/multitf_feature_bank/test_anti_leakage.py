@@ -22,36 +22,45 @@ def _bar(open_time: datetime, minutes: int, o: float, h: float, l: float, c: flo
     }
 
 
+def _assert_chronological(bars: list[dict], label: str) -> None:
+    times = [b["open_time"] for b in bars]
+    assert times == sorted(times), f"{label} bar stream not chronologically sorted"
+
+
 def build_htf_leakage_fixture() -> tuple[datetime, dict[str, list[dict]], dict[str, list[dict]]]:
     """
     Decision at 10:30 UTC falls inside unfinished 1H [10:00,11:00) and 4H [08:00,12:00).
     Snapshot must use last closed 1H (09:00-10:00) and 4H (04:00-08:00).
+    Bar streams are strictly chronological: closed bars, then one in-progress HTF candle.
     """
     t0 = datetime(2022, 6, 1, 0, 0, tzinfo=timezone.utc)
     decision = datetime(2022, 6, 10, 10, 30, tzinfo=timezone.utc)
 
-    # 5m bars through decision day
-    n_5m = int((decision - t0).total_seconds() / 300) + 20
+    n_5m = int((decision - t0).total_seconds() / 300) + 1
     bars_5m = make_bars([100 + i * 0.01 for i in range(n_5m)], start=t0, minutes=5)
 
     bars_1h: list[dict] = []
-    h_end = int((decision - t0).total_seconds() / 3600) + 2
-    for h in range(h_end):
-        ot = t0 + timedelta(hours=h)
+    ot = t0
+    while ot + timedelta(hours=1) <= decision:
+        h = int((ot - t0).total_seconds() / 3600)
         c = 100 + h * 0.5
         bars_1h.append(_bar(ot, 60, c - 1, c + 2, c - 2, c))
-    # in-progress 1H containing decision (10:00-11:00 on Jun 10)
+        ot += timedelta(hours=1)
     ot_live = decision.replace(minute=0, second=0, microsecond=0)
-    bars_1h.append(_bar(ot_live, 60, 118, 999, 50, 777))
+    bars_1h.append(_bar(ot_live, 60, 118, 130, 110, 119))
 
     bars_4h: list[dict] = []
-    n_4h = int((decision - t0).total_seconds() / 14400) + 2
-    for b in range(n_4h):
-        ot = t0 + timedelta(hours=4 * b)
+    ot = t0
+    while ot + timedelta(hours=4) <= decision:
+        b = int((ot - t0).total_seconds() / 14400)
         c = 90 + b * 2
         bars_4h.append(_bar(ot, 240, c - 1, c + 3, c - 3, c))
+        ot += timedelta(hours=4)
     ot_live_4h = decision.replace(hour=(decision.hour // 4) * 4, minute=0, second=0, microsecond=0)
-    bars_4h.append(_bar(ot_live_4h, 240, 150, 888, 40, 666))
+    bars_4h.append(_bar(ot_live_4h, 240, 150, 200, 140, 155))
+
+    _assert_chronological(bars_1h, "1H")
+    _assert_chronological(bars_4h, "4H")
 
     baseline = {"5m": bars_5m, "1H": bars_1h, "4H": bars_4h}
     return decision, baseline, baseline
@@ -66,22 +75,38 @@ def test_higher_tf_leakage() -> None:
     assert h4_keys, "expected 4H features at decision inside live 4H candle"
 
     mutated = copy.deepcopy(baseline)
-    # mutate in-progress + future HTF OHLC
-    for tf in ("1H", "4H"):
+    for tf, mins in (("1H", 60), ("4H", 240)):
         live = mutated[tf][-1]
         live["open"] = 1e6
         live["high"] = 2e6
         live["low"] = -1e6
         live["close"] = 3e6
-        if len(mutated[tf]) > 1:
-            future = copy.deepcopy(live)
-            future["open_time"] = (datetime.fromisoformat(live["close_time"]) + timedelta(hours=1)).isoformat()
-            future["close_time"] = (datetime.fromisoformat(future["open_time"]) + timedelta(hours=1)).isoformat()
-            mutated[tf].append(future)
+        live_close = datetime.fromisoformat(live["close_time"].replace("Z", "+00:00"))
+        mutated[tf].append(_bar(live_close, mins, 1e6, 2e6, -1e6, 3e6))
+        _assert_chronological(mutated[tf], tf)
 
     snap_mut = FeatureBank(mutated).snapshot(decision)
     for k in h1_keys + h4_keys:
         assert snap_base.features.get(k) == snap_mut.features.get(k), f"HTF leak at {k}"
+
+
+def test_sorted_htf_causality() -> None:
+    """Sorted HTF streams; mutating in-progress + future bars must not change pre-decision snapshot."""
+    decision, baseline, _ = build_htf_leakage_fixture()
+    snap_before = FeatureBank(baseline).snapshot(decision)
+
+    mutated = copy.deepcopy(baseline)
+    for tf, mins in (("1H", 60), ("4H", 240)):
+        live = mutated[tf][-1]
+        live["close"] = 99999.0
+        live_close = datetime.fromisoformat(live["close_time"].replace("Z", "+00:00"))
+        for j in range(2):
+            mutated[tf].append(_bar(live_close + timedelta(minutes=mins * j), mins, 888, 999, 777, 888))
+
+    snap_after = FeatureBank(mutated).snapshot(decision)
+    for k, v in snap_before.features.items():
+        if k.startswith("1H.") or k.startswith("4H."):
+            assert snap_after.features.get(k) == v, k
 
 
 def build_pivot_leakage_fixture() -> tuple[datetime, dict[str, list[dict]], list[PivotRecord], list[PivotRecord]]:
@@ -130,6 +155,7 @@ def test_future_d_leakage() -> None:
 
 if __name__ == "__main__":
     test_higher_tf_leakage()
+    test_sorted_htf_causality()
     test_true_pivot_leakage()
     test_future_d_leakage()
     print("ALL ANTI-LEAKAGE TESTS PASS")

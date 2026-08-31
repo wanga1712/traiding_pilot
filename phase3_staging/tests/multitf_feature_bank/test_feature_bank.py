@@ -110,5 +110,5 @@ def test_batch_streaming_parity():
 
 def test_registry_counts():
     assert len(DMA_REGISTRY) >= 14 * 3  # curated * 3 MA types
-    assert len(STOCHASTIC_REGISTRY) == 4 * 4
-    assert len(MACD_REGISTRY) == 3 * 4
+    assert len(STOCHASTIC_REGISTRY) == 4 * 4 + 1  # + DiNapoli reference
+    assert len(MACD_REGISTRY) == 3 * 4 + 1  # + DiNapoli reference

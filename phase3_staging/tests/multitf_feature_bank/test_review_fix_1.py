@@ -110,11 +110,11 @@ def test_geometry_atr_and_leg_ratio():
         c_price=150,
         current_price=160,
         atr=10.0,
-        prev_same_direction_leg=50.0,
     )
     assert geo["AB_LENGTH_ATR"] == 10.0
     assert geo["DIST_TO_COP_ATR"] is not None
-    assert geo["CURRENT_VS_PREV_LEG_RATIO"] == abs(160 - 150) / 50.0
+    assert geo["REFERENCE_AB_LENGTH"] == 100.0
+    assert abs(geo["CURRENT_VS_REFERENCE_AB_RATIO"] - 0.1) < FLOAT_TOL
 
 
 def test_full_batch_streaming_parity():

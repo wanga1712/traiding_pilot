@@ -51,7 +51,7 @@ def compute_geometry_features(
     c_price: float,
     current_price: float,
     atr: float | None = None,
-    prev_same_direction_leg: float | None = None,
+    prior_same_direction_leg_length: float | None = None,
 ) -> dict[str, Any]:
     """Causal geometry features from known A, B, confirmed C — no future D."""
     geo = ABCGeometry(a_price, b_price, c_price)
@@ -63,10 +63,11 @@ def compute_geometry_features(
     r_minus_1 = r_current - 1.0 if r_current is not None else None
     dist_r1 = abs(r_current - 1.0) if r_current is not None else None
 
-    leg_ratio = None
-    if prev_same_direction_leg is not None and prev_same_direction_leg != 0:
-        # C→price progress magnitude / prior same-direction leg magnitude
-        leg_ratio = abs(current_price - c_price) / abs(prev_same_direction_leg)
+    reference_ab_length = ab_abs
+    current_vs_reference_ab_ratio = (
+        abs(current_price - c_price) / ab_abs if ab_abs else None
+    )
+    # Magnitude-equivalent to abs(R_CURRENT) when AB != 0
 
     def _dist(level: float) -> dict[str, float | None]:
         d = current_price - level
@@ -83,12 +84,13 @@ def compute_geometry_features(
         "AB_LENGTH": ab,
         "AB_LENGTH_PCT": (ab / c_price * 100.0) if c_price else None,
         "AB_LENGTH_ATR": (ab / atr) if atr and atr != 0 else None,
+        "REFERENCE_AB_LENGTH": reference_ab_length,
         "CURRENT_PROGRESS_FROM_C": r_current,
         "R_CURRENT": r_current,
         "R_MINUS_1": r_minus_1,
         "DIST_TO_R1": dist_r1,
-        "PREV_SAME_DIRECTION_LEG": prev_same_direction_leg,
-        "CURRENT_VS_PREV_LEG_RATIO": leg_ratio,
+        "CURRENT_VS_REFERENCE_AB_RATIO": current_vs_reference_ab_ratio,
+        "PRIOR_SAME_DIRECTION_LEG_LENGTH": prior_same_direction_leg_length,
         "COP": cop,
         "OP": op,
         "XOP": xop,
