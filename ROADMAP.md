@@ -15,10 +15,15 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `TRADING-RESEARCH-COCKPIT-FOUNDATION-1` |
-| **STATUS** | **REVIEW** |
-| **PHASE** | 8 — Execution / UI foundation |
-| **Note** | Historical run result panel below chart; TRADING_RUN_RESULT_V1 schema, repository, API, reconciliation validator. No execution simulator yet. |
+| **WIP** | *(none — awaiting user activation)* |
+| **STATUS** | — |
+| **PHASE** | — |
+| **Note** | `TRADING-RESEARCH-COCKPIT-FOUNDATION-1` **CLOSED** (deployed S13 `:8055`, visual acceptance PASS). |
+
+**Next planned sequence (not auto-activated):**  
+`PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` → `TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1` → `TRADING-POLICY-MODEL-BAKEOFF-1` → `QWEN-HISTORICAL-TRADING-PILOT-1`
+
+Long-lead parallel (later): `BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1` → `HISTORICAL-BYBIT-FUTURES-BACKFILL-1` → …
 
 Previous CLOSED: `ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1` — verdict `COMPOSITE_NOT_BETTER_THAN_PRICE`; best human composite preserved (display-aligned DMA 3×3 + Stoch 14/3/3, confirmation_window=3, signal_expiration=5). Not a profitability verdict.
 
@@ -169,21 +174,26 @@ PREDICTOR-CONFLUENCE-FEATURES-1
 ↓
 REVERSAL-SIGNAL-EVENT-STUDY-1
 ↓
+TRADING-RESEARCH-COCKPIT-FOUNDATION-1
+↓
+PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
+↓
+TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1
+↓
+TRADING-POLICY-MODEL-BAKEOFF-1
+↓
+QWEN-HISTORICAL-TRADING-PILOT-1
+↓
+[parallel / long-lead data foundation]
 BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1
 ↓
-HISTORICAL-FUTURES-BACKFILL-1
+HISTORICAL-BYBIT-FUTURES-BACKFILL-1
 ↓
-FUTURES-VOLUME-OI-ORDERFLOW-FEATURES-1
+FUTURES-OI-FUNDING-ORDERFLOW-FEATURES-1
 ↓
-LIQUIDATION-PRESSURE-MAP-1
+PROBABILISTIC-MARKET-STATE-ENGINE-1
 ↓
-REVERSAL-CONFLUENCE-STUDY-1
-↓
-REVERSAL-MODEL-V1
-↓
-FUTURES-RISK-AND-ENTRY-ENGINE-1
-↓
-FUTURES-EXECUTION-SIMULATOR-1
+FUTURES-EXECUTION-SIMULATOR-V1
 ↓
 OLD-VS-NEW-STRATEGY-RECONSTRUCTION-1
 ↓
@@ -795,24 +805,30 @@ Do not auto-activate.
 
 ### WIP=TRADING-RESEARCH-COCKPIT-FOUNDATION-1
 
-STATUS=REVIEW
+STATUS=CLOSED
 
 PHASE=8 — Execution / UI foundation
 
 GOAL:  
-Extend trading UI (`:8055`) with historical run result panel below chart. TRADING_RUN_RESULT_V1 contract, repository, REST API, economic reconciliation validator, null-vs-zero semantics. No futures simulator yet.
+Extend trading UI (`:8055`) with historical run result panel below chart. TRADING_RUN_RESULT_V1 contract, repository, REST API, economic reconciliation validator, null-vs-zero semantics.
 
-DEPENDS_ON:  
-Existing expert visualization app; ORIGINAL-DINAPOLI WHEN research (STRUCTURAL_ONLY exposure only)
-
-EXPECTED_OUTPUTS:  
-Panel UI, schema, API, repository, tests, artifacts under `artifacts/TRADING-RESEARCH-COCKPIT-FOUNDATION-1/`
+DEPLOYED:  
+`http://10.8.0.13:8055/` — runtime visual acceptance PASS (2026-08-31).
 
 ACCEPTANCE_GATE:  
-Chart regression PASS; no fake PnL; STRUCTURAL_ONLY cannot masquerade as monetary backtest; tests PASS
+Chart regression PASS; no fake PnL; STRUCTURAL_ONLY protection PASS; fixtures disabled in production.
+
+ARTIFACTS:  
+`artifacts/TRADING-RESEARCH-COCKPIT-FOUNDATION-1/` (includes runtime screenshots)
+
+GIT_COMMIT:  
+fd4524ce0cb13f43574f8f50bbad6d257a9ed68b
+
+RESULT_SUMMARY:  
+Panel + API + repository shipped. Production exposes one STRUCTURAL_ONLY research run only. Monetary fixtures test-only via `TRADING_RUN_INCLUDE_FIXTURES=1`.
 
 NEXT_WIP:  
-BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1 (do not auto-activate)
+PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 (do not auto-activate)
 
 ---
 
@@ -852,11 +868,32 @@ RESULT_SUMMARY:
 PENDING
 
 NEXT_WIP:  
-HISTORICAL-FUTURES-BACKFILL-1
+PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 (do not auto-activate)
+
+NOTE:  
+Long-lead data foundation — may start in parallel per global exception rule, but is **not** the immediate next primary research sequence after cockpit closure.
 
 ---
 
-## PHASE 9 — Historical Futures Backfill
+## PHASE 8b — Planned execution / agent sequence (not active)
+
+### WIP=PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
+
+STATUS=PLANNED
+
+### WIP=TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1
+
+STATUS=PLANNED
+
+### WIP=TRADING-POLICY-MODEL-BAKEOFF-1
+
+STATUS=PLANNED
+
+### WIP=QWEN-HISTORICAL-TRADING-PILOT-1
+
+STATUS=PLANNED
+
+---
 
 ### WIP=HISTORICAL-FUTURES-BACKFILL-1
 
@@ -1314,8 +1351,14 @@ none (end of planned chain)
 | VOLUME-ACCUMULATION-FEATURES-1 | CLOSED | 4 |
 | INVERSE-INDICATOR-PREDICTOR-ENGINE-1 | CLOSED | 5 |
 | PREDICTOR-CONFLUENCE-FEATURES-1 | CLOSED | 6 |
-| REVERSAL-SIGNAL-EVENT-STUDY-1 | ACTIVE | 7 |
-| BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1 | PLANNED | 8 |
+| REVERSAL-SIGNAL-EVENT-STUDY-1 | PAUSED | 7 |
+| ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1 | CLOSED | 7 |
+| TRADING-RESEARCH-COCKPIT-FOUNDATION-1 | CLOSED | 8 |
+| PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | PLANNED | 8b |
+| TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1 | PLANNED | 8b |
+| TRADING-POLICY-MODEL-BAKEOFF-1 | PLANNED | 8b |
+| QWEN-HISTORICAL-TRADING-PILOT-1 | PLANNED | 8b |
+| BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1 | PLANNED | 8 (parallel) |
 | HISTORICAL-FUTURES-BACKFILL-1 | PLANNED | 9 |
 | FUTURES-VOLUME-OI-ORDERFLOW-FEATURES-1 | PLANNED | 10 |
 | LIQUIDATION-PRESSURE-MAP-1 | PLANNED | 11 |

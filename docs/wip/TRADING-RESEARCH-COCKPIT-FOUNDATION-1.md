@@ -2,49 +2,31 @@
 
 ## Status
 
-`REVIEW`
+`CLOSED` — deployed to S13, runtime visual acceptance PASS (2026-08-31).
 
-## Goal
+## Deploy
 
-Extend the trading UI at `:8055` with a compact **Historical Run Result** panel directly below the chart. Primary question: if a strategy started with $100, what balance did it finish with?
+- URL: `http://10.8.0.13:8055/`
+- Commit: `fd4524ce0cb13f43574f8f50bbad6d257a9ed68b`
+- Production manifest: `ORIGINAL_DMA_STOCH_STRUCTURAL_V1` only (STRUCTURAL_ONLY)
+- Fixtures: `TRADING_RUN_INCLUDE_FIXTURES=1` test-only; disabled in production
 
-## Scope delivered
+## Runtime acceptance
 
-- `TRADING_RUN_RESULT_V1` schema + validation
-- Null-vs-zero semantics (unknown ≠ zero)
-- Economic reconciliation validator (`PASS` | `FAIL` | `NOT_AVAILABLE`)
-- `TradingRunRepository` + `FileTradingRunRepository`
-- REST API under `/api/trading-runs/...`
-- Dash panel: run selector, 6 summary cards, equity curve, cost breakdown, detail tabs
-- STRUCTURAL_ONLY protection for WHEN research (no synthetic monetary fields)
-- Test fixtures (7 types) + 14 automated tests
+- Chart + ZigZag controls: PASS
+- Historical run panel below chart: PASS
+- STRUCTURAL_ONLY monetary suppression: PASS
+- Empty state readable: PASS
+- Fixture API smoke (completed/running/recon-fail/zero-liq/unknown-liq): PASS
 
-## Not in scope (later WIPs)
+## Screenshots
 
-Futures simulator, fees/funding/spread/slippage/liquidation engines, Bybit downloader, Qwen trading.
+`artifacts/TRADING-RESEARCH-COCKPIT-FOUNDATION-1/screenshots/`
 
-## Production data
+## GIT_COMMIT
 
-Default manifest exposes one STRUCTURAL_ONLY research run: `ORIGINAL_DMA_STOCH_STRUCTURAL_V1` (precision/recall metrics only).
+fd4524ce0cb13f43574f8f50bbad6d257a9ed68b
 
-Monetary fixtures require `TRADING_RUN_INCLUDE_FIXTURES=1` (test/dev only).
+## NEXT_WIP (do not auto-activate)
 
-## Artifacts
-
-`artifacts/TRADING-RESEARCH-COCKPIT-FOUNDATION-1/`
-
-## Tests
-
-`phase3_staging/test_trading_run_v1.py` — 14 passed
-
-## RETURN
-
-```
-WIP=TRADING-RESEARCH-COCKPIT-FOUNDATION-1
-ROADMAP_STATUS=REVIEW
-READY_FOR_USER_REVIEW=YES
-```
-
-## Next WIP (do not auto-activate)
-
-`BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1`
+PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
