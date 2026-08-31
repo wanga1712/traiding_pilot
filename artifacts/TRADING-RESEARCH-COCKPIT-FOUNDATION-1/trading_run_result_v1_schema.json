@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "TRADING_RUN_RESULT_V1",
+  "title": "TRADING_RUN_RESULT_V1",
+  "type": "object",
+  "required": ["schema_version", "run_id", "run_status", "created_at", "strategy", "market", "capital", "performance", "execution"],
+  "properties": {
+    "schema_version": { "const": "TRADING_RUN_RESULT_V1" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "run_status": { "enum": ["PENDING", "RUNNING", "COMPLETED", "FAILED", "INVALID"] },
+    "created_at": { "type": "string" },
+    "strategy": {
+      "type": "object",
+      "properties": {
+        "strategy_id": { "type": ["string", "null"] },
+        "strategy_name": { "type": ["string", "null"] },
+        "strategy_version": { "type": ["string", "null"] },
+        "model_name": { "type": ["string", "null"] },
+        "model_version": { "type": ["string", "null"] },
+        "prompt_version": { "type": ["string", "null"] }
+      }
+    },
+    "market": {
+      "type": "object",
+      "properties": {
+        "exchange": { "type": ["string", "null"] },
+        "instrument": { "type": ["string", "null"] },
+        "category": { "type": ["string", "null"] },
+        "start_time": { "type": ["string", "null"] },
+        "end_time": { "type": ["string", "null"] }
+      }
+    },
+    "capital": {
+      "type": "object",
+      "properties": {
+        "start_equity": { "type": ["number", "null"] },
+        "final_equity": { "type": ["number", "null"] },
+        "net_return_pct": { "type": ["number", "null"] },
+        "peak_equity": { "type": ["number", "null"] },
+        "trough_equity": { "type": ["number", "null"] }
+      }
+    },
+    "performance": { "type": "object" },
+    "costs": { "type": "object" },
+    "execution": {
+      "type": "object",
+      "properties": {
+        "execution_realism_level": {
+          "enum": [
+            "STRUCTURAL_ONLY",
+            "OHLC_BACKTEST",
+            "ONE_MINUTE_EXECUTION",
+            "TRADE_LEVEL_EXECUTION",
+            "ORDERBOOK_EXECUTION"
+          ]
+        }
+      }
+    },
+    "equity_curve": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string" },
+          "equity": { "type": "number" },
+          "balance": { "type": "number" },
+          "unrealized_pnl": { "type": ["number", "null"] }
+        }
+      }
+    },
+    "trades": { "type": ["array", "null"] },
+    "liquidations": { "type": ["array", "null"] },
+    "parameters": { "type": "object" },
+    "research_metrics": { "type": "object" },
+    "liquidation_data_status": { "enum": ["ZERO_CONFIRMED", "NOT_AVAILABLE", null] }
+  },
+  "additionalProperties": true
+}

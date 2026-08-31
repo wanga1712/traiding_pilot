@@ -1,0 +1,73 @@
+{
+  "schema_version": "TRADING_RUN_RESULT_V1",
+  "run_id": "ORIGINAL_DMA_STOCH_STRUCTURAL_V1",
+  "run_status": "COMPLETED",
+  "created_at": "2026-08-29T21:00:00+00:00",
+  "strategy": {
+    "strategy_id": "ORIGINAL_DMA_STOCH_RULE",
+    "strategy_name": "Display-aligned DMA 3x3 + Stoch 14/3/3",
+    "strategy_version": "frozen_v1",
+    "model_name": null,
+    "model_version": null,
+    "prompt_version": null
+  },
+  "market": {
+    "exchange": "binance",
+    "instrument": "ETHUSDT",
+    "category": "spot_research",
+    "start_time": "2019-05-12T00:00:00+00:00",
+    "end_time": "2023-06-20T00:00:00+00:00"
+  },
+  "capital": {
+    "start_equity": null,
+    "final_equity": null,
+    "net_return_pct": null,
+    "peak_equity": null,
+    "trough_equity": null
+  },
+  "performance": {
+    "gross_pnl": null,
+    "net_pnl": null,
+    "realized_pnl": null,
+    "unrealized_pnl_at_end": null,
+    "trade_count": null,
+    "winning_trade_count": null,
+    "losing_trade_count": null,
+    "win_rate": null,
+    "profit_factor": null,
+    "expectancy": null,
+    "max_drawdown_amount": null,
+    "max_drawdown_pct": null,
+    "long_trade_count": null,
+    "short_trade_count": null,
+    "liquidation_count": null
+  },
+  "costs": {},
+  "execution": {
+    "decision_timeframe": "1H",
+    "execution_timeframe": null,
+    "execution_realism_level": "STRUCTURAL_ONLY"
+  },
+  "equity_curve": null,
+  "research_metrics": {
+    "precision": 0.4708,
+    "recall": 0.3767,
+    "false_positive_rate": 0.047,
+    "remaining_wave_fraction": 0.646,
+    "verdict": "COMPOSITE_NOT_BETTER_THAN_PRICE",
+    "best_human_composite": {
+      "dma": "3x3 display-aligned",
+      "stoch": "14/3/3",
+      "confirmation_window": 3,
+      "signal_expiration": 5
+    }
+  },
+  "trades": [],
+  "liquidations": [],
+  "parameters": {
+    "confirmation_window": 3,
+    "signal_expiration": 5,
+    "git_commit": "5924b9e"
+  },
+  "liquidation_data_status": "NOT_AVAILABLE"
+}

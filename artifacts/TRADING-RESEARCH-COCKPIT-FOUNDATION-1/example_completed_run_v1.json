@@ -1,0 +1,150 @@
+{
+  "schema_version": "TRADING_RUN_RESULT_V1",
+  "run_id": "FIXTURE_COMPLETED_REALISTIC_V1",
+  "run_status": "COMPLETED",
+  "created_at": "2026-08-31T08:00:00+00:00",
+  "strategy": {
+    "strategy_id": "FIXTURE_DMA_STOCH",
+    "strategy_name": "Fixture DMA+Stoch",
+    "strategy_version": "v1",
+    "model_name": null,
+    "model_version": null,
+    "prompt_version": null
+  },
+  "market": {
+    "exchange": "bybit",
+    "instrument": "ETHUSDT",
+    "category": "linear",
+    "start_time": "2023-01-01T00:00:00+00:00",
+    "end_time": "2023-12-31T23:59:59+00:00"
+  },
+  "capital": {
+    "start_equity": 100.0,
+    "final_equity": 179.1,
+    "net_return_pct": 79.1,
+    "peak_equity": 198.4,
+    "trough_equity": 92.1
+  },
+  "performance": {
+    "gross_pnl": 95.0,
+    "net_pnl": 79.1,
+    "realized_pnl": 79.1,
+    "unrealized_pnl_at_end": 0.0,
+    "trade_count": 67,
+    "winning_trade_count": 38,
+    "losing_trade_count": 29,
+    "win_rate": 0.567,
+    "profit_factor": 1.42,
+    "expectancy": 1.23,
+    "max_drawdown_amount": 14.8,
+    "max_drawdown_pct": -14.8,
+    "long_trade_count": 34,
+    "short_trade_count": 33,
+    "liquidation_count": 0
+  },
+  "costs": {
+    "entry_fees": 4.2,
+    "exit_fees": 4.3,
+    "total_trading_fees": 8.5,
+    "funding_paid": 5.1,
+    "funding_received": 2.7,
+    "net_funding": -2.4,
+    "spread_cost": 3.1,
+    "slippage_cost": 1.9,
+    "liquidation_cost": 0.0,
+    "total_costs": 15.9
+  },
+  "execution": {
+    "decision_timeframe": "1H",
+    "execution_timeframe": "1m",
+    "fee_model_version": "FIXTURE_FEE_V1",
+    "funding_model_version": "FIXTURE_FUNDING_V1",
+    "slippage_model_version": "FIXTURE_SLIP_V1",
+    "liquidation_model_version": "FIXTURE_LIQ_V1",
+    "execution_realism_level": "ONE_MINUTE_EXECUTION"
+  },
+  "equity_curve": [
+    {
+      "timestamp": "2023-01-01T00:00:00+00:00",
+      "equity": 97.5,
+      "balance": 97.5,
+      "unrealized_pnl": 0.0
+    },
+    {
+      "timestamp": "2023-02-01T00:00:00+00:00",
+      "equity": 97.5,
+      "balance": 97.5,
+      "unrealized_pnl": 0.0
+    },
+    {
+      "timestamp": "2023-03-01T00:00:00+00:00",
+      "equity": 100.0,
+      "balance": 100.0,
+      "unrealized_pnl": 0.0
+    },
+    {
+      "timestamp": "2023-04-01T00:00:00+00:00",
+      "equity": 97.5,
+      "balance": 97.5,
+      "unrealized_pnl": 0.0
+    },
+    {
+      "timestamp": "2023-05-01T00:00:00+00:00",
+      "equity": 97.5,
+      "balance": 97.5,
+      "unrealized_pnl": 0.0
+    },
+    {
+      "timestamp": "2023-06-01T00:00:00+00:00",
+      "equity": 100.0,
+      "balance": 100.0,
+      "unrealized_pnl": 0.0
+    },
+    {
+      "timestamp": "2023-07-01T00:00:00+00:00",
+      "equity": 97.5,
+      "balance": 97.5,
+      "unrealized_pnl": 0.0
+    },
+    {
+      "timestamp": "2023-08-01T00:00:00+00:00",
+      "equity": 97.5,
+      "balance": 97.5,
+      "unrealized_pnl": 0.0
+    },
+    {
+      "timestamp": "2023-09-01T00:00:00+00:00",
+      "equity": 100.0,
+      "balance": 100.0,
+      "unrealized_pnl": 0.0
+    },
+    {
+      "timestamp": "2023-01-01T00:00:00+00:00",
+      "equity": 97.5,
+      "balance": 97.5,
+      "unrealized_pnl": 0.0
+    },
+    {
+      "timestamp": "2023-02-01T00:00:00+00:00",
+      "equity": 97.5,
+      "balance": 97.5,
+      "unrealized_pnl": 0.0
+    },
+    {
+      "timestamp": "2023-03-01T00:00:00+00:00",
+      "equity": 100.0,
+      "balance": 100.0,
+      "unrealized_pnl": 0.0
+    }
+  ],
+  "trades": [
+    {
+      "trade_id": "T1"
+    }
+  ],
+  "liquidations": [],
+  "parameters": {
+    "git_commit": "TEST_FIXTURE_ONLY"
+  },
+  "liquidation_data_status": "ZERO_CONFIRMED"
+}

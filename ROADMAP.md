@@ -15,12 +15,14 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1` |
+| **WIP** | `TRADING-RESEARCH-COCKPIT-FOUNDATION-1` |
 | **STATUS** | **REVIEW** |
-| **PHASE** | 7 — WHEN (core) |
-| **Note** | Part 0 audit complete. Composite display-aligned DMA+Stoch (window=3) does not beat price baseline on joint score; higher precision, lower recall. Gates not selected on DISCOVERY. OOS locked. |
+| **PHASE** | 8 — Execution / UI foundation |
+| **Note** | Historical run result panel below chart; TRADING_RUN_RESULT_V1 schema, repository, API, reconciliation validator. No execution simulator yet. |
 
-Superseded mid-flight (incomplete): `DISPLACED-CONFLUENCE-AND-VOLATILITY-GATE-STUDY-1` → absorbed into this fuller reconstruction.
+Previous CLOSED: `ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1` — verdict `COMPOSITE_NOT_BETTER_THAN_PRICE`; best human composite preserved (display-aligned DMA 3×3 + Stoch 14/3/3, confirmation_window=3, signal_expiration=5). Not a profitability verdict.
+
+Superseded (incomplete): `DISPLACED-CONFLUENCE-AND-VOLATILITY-GATE-STUDY-1`.
 
 Paused: `REVERSAL-SIGNAL-EVENT-STUDY-1` — V1_INITIAL preserved; REVIEW_COMPLETION deferred.
 
@@ -719,24 +721,19 @@ REVERSAL-SIGNAL-EVENT-STUDY-1
 
 ### WIP=ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1
 
-STATUS=REVIEW
+STATUS=CLOSED
 
 PHASE=7 — WHEN (core)
 
-GOAL:  
-Reconstruct and test the original composite causal system: geometry COP/OP/XOP or empirical-R arm → volatility/activity gate → OB/OS → display-aligned DMA + Stoch + MACD confluence → WHEN. Progressive ablation vs price-only. DISCOVERY freeze → VALIDATION; OOS locked; no PnL.
+RESEARCH_VERDICT=COMPOSITE_NOT_BETTER_THAN_PRICE
 
-WHY:  
-REVERSAL-SIGNAL-EVENT-STUDY-1 only tested single candidates (source-aligned DMA; undisplaced Stoch/MACD). PRICE_BASELINE_BEATEN=NO there does not refute the original composite hypothesis.
+BEST_HUMAN_COMPOSITE=display-aligned DMA 3x3 + Stochastic 14/3/3 + confirmation_window=3 + signal_expiration=5
 
-DEPENDS_ON:  
-Part 0 semantic audit; REVERSAL_EVENT_DATASET_V1; INDICATOR_ENGINE_V1; VOLUME_ACCUMULATION_ENGINE_V1; WAVE_DATASET_V1
+NOTE: Not a profitability verdict. OOS locked; no PnL.
 
-EXPECTED_OUTPUTS:  
-Semantic audit; volume pipeline repair; display-aligned families; geometry stages; vol/volume gates; composite ablation A–G; MTF pairs; DISCOVERY freeze; VALIDATION; RESEARCH_VERDICT
+GIT_COMMIT=5924b9eee07d3e38f4365c4977166a27dbf07962
 
-ACCEPTANCE_GATE:  
-SEMANTIC_AUDIT_COMPLETE=YES; OOS_OPENED=NO; no PnL; READY_FOR_USER_REVIEW
+NEXT_WIP=TRADING-RESEARCH-COCKPIT-FOUNDATION-1
 
 ---
 
@@ -791,6 +788,31 @@ RESULT_SUMMARY:
 
 NEXT_WIP:  
 Do not auto-activate.
+
+---
+
+## PHASE 8 — Trading UI / Execution foundation
+
+### WIP=TRADING-RESEARCH-COCKPIT-FOUNDATION-1
+
+STATUS=REVIEW
+
+PHASE=8 — Execution / UI foundation
+
+GOAL:  
+Extend trading UI (`:8055`) with historical run result panel below chart. TRADING_RUN_RESULT_V1 contract, repository, REST API, economic reconciliation validator, null-vs-zero semantics. No futures simulator yet.
+
+DEPENDS_ON:  
+Existing expert visualization app; ORIGINAL-DINAPOLI WHEN research (STRUCTURAL_ONLY exposure only)
+
+EXPECTED_OUTPUTS:  
+Panel UI, schema, API, repository, tests, artifacts under `artifacts/TRADING-RESEARCH-COCKPIT-FOUNDATION-1/`
+
+ACCEPTANCE_GATE:  
+Chart regression PASS; no fake PnL; STRUCTURAL_ONLY cannot masquerade as monetary backtest; tests PASS
+
+NEXT_WIP:  
+BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1 (do not auto-activate)
 
 ---
 

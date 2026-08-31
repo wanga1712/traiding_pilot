@@ -2,7 +2,7 @@
 
 ## Status
 
-`REVIEW` — OOS locked. No PnL.
+`CLOSED` — User accepted. OOS locked. No PnL. **Not a profitability verdict.**
 
 ## Correction
 
