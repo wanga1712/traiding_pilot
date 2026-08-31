@@ -1,4 +1,4 @@
-"""Extended MA / DMA feature extraction with display alignment."""
+"""Extended MA / DMA feature extraction with true display-aligned features."""
 from __future__ import annotations
 
 from typing import Any
@@ -9,9 +9,93 @@ from crypto_trading_bot.research_v2.indicator_engine.bars import BarArrays, cont
 from crypto_trading_bot.research_v2.indicator_engine.math_core import ema, sma, slope_last, wma
 from crypto_trading_bot.research_v2.indicator_engine.types import IndicatorSample
 
+from .aligned_features import cross_down, cross_up, source_index
+
 
 def _ma_fn(kind: str):
     return {"SMA": sma, "EMA": ema, "WMA": wma}[kind]
+
+
+def _ma_at(ma: np.ndarray, i: int) -> float | None:
+    if i < 0 or i >= len(ma) or np.isnan(ma[i]):
+        return None
+    return float(ma[i])
+
+
+def _build_ma_features_at(
+    *,
+    i: int,
+    price: float,
+    prev_price: float | None,
+    ma: np.ndarray,
+    display_shift: int,
+    atr_i: float | None,
+) -> dict[str, Any]:
+    mv = _ma_at(ma, i)
+    if mv is None:
+        return {}
+
+    dist = price - mv
+    dist_pct = (dist / mv * 100.0) if mv else None
+    dist_atr = (dist / atr_i) if atr_i and atr_i != 0 else None
+    prev_mv = _ma_at(ma, i - 1)
+    slope1 = (mv - prev_mv) if prev_mv is not None else None
+    ma3 = _ma_at(ma, i - 3)
+    slope3 = (mv - ma3) if ma3 is not None else None
+    prev_slope1 = None
+    if i > 1:
+        pm, ppm = _ma_at(ma, i - 1), _ma_at(ma, i - 2)
+        if pm is not None and ppm is not None:
+            prev_slope1 = pm - ppm
+
+    src = source_index(i, display_shift)
+    da_mv = _ma_at(ma, src) if src is not None else mv if display_shift == 0 else None
+    da_prev_mv = _ma_at(ma, src - 1) if src is not None and src > 0 else None
+    da_prev_src = source_index(i - 1, display_shift) if i > 0 else None
+    da_prev_mv_alt = _ma_at(ma, da_prev_src) if da_prev_src is not None else None
+
+    out: dict[str, Any] = {
+        "MA_VALUE": mv,
+        "PRICE_MINUS_MA": dist,
+        "PRICE_MINUS_MA_PCT": dist_pct,
+        "PRICE_MINUS_MA_ATR": dist_atr,
+        "MA_SLOPE_1": slope1,
+        "MA_SLOPE_3": slope3,
+        "PRICE_CROSS_UP_MA": cross_up(prev_price, price, prev_mv, mv),
+        "PRICE_CROSS_DOWN_MA": cross_down(prev_price, price, prev_mv, mv),
+        "MA_SLOPE_TURN_UP": bool(slope1 is not None and prev_slope1 is not None and prev_slope1 <= 0 and slope1 > 0),
+        "MA_SLOPE_TURN_DOWN": bool(slope1 is not None and prev_slope1 is not None and prev_slope1 >= 0 and slope1 < 0),
+    }
+
+    if da_mv is not None:
+        da_dist = price - da_mv
+        da_slope1 = (da_mv - da_prev_mv) if da_prev_mv is not None else None
+        da_ma3 = _ma_at(ma, src - 3) if src is not None else None
+        da_slope3 = (da_mv - da_ma3) if da_ma3 is not None else None
+        da_ps1 = None
+        if src is not None and src > 1:
+            a, b = _ma_at(ma, src - 1), _ma_at(ma, src - 2)
+            if a is not None and b is not None:
+                da_ps1 = a - b
+        out.update(
+            {
+                "DISPLAY_ALIGNED_MA_VALUE": da_mv,
+                "DISPLAY_ALIGNED_PRICE_MINUS_MA": da_dist,
+                "DISPLAY_ALIGNED_PRICE_MINUS_MA_PCT": (da_dist / da_mv * 100.0) if da_mv else None,
+                "DISPLAY_ALIGNED_PRICE_MINUS_MA_ATR": (da_dist / atr_i) if atr_i and atr_i != 0 else None,
+                "DISPLAY_ALIGNED_MA_SLOPE_1": da_slope1,
+                "DISPLAY_ALIGNED_MA_SLOPE_3": da_slope3,
+                "DISPLAY_ALIGNED_PRICE_CROSS_UP_MA": cross_up(prev_price, price, da_prev_mv_alt, da_mv),
+                "DISPLAY_ALIGNED_PRICE_CROSS_DOWN_MA": cross_down(prev_price, price, da_prev_mv_alt, da_mv),
+                "DISPLAY_ALIGNED_MA_SLOPE_TURN_UP": bool(
+                    da_slope1 is not None and da_ps1 is not None and da_ps1 <= 0 and da_slope1 > 0
+                ),
+                "DISPLAY_ALIGNED_MA_SLOPE_TURN_DOWN": bool(
+                    da_slope1 is not None and da_ps1 is not None and da_ps1 >= 0 and da_slope1 < 0
+                ),
+            }
+        )
+    return out
 
 
 def compute_dma_feature_series(
@@ -22,7 +106,6 @@ def compute_dma_feature_series(
     display_shift: int,
     atr: np.ndarray | None = None,
 ) -> list[IndicatorSample]:
-    """Full DMA feature set per bar with explicit MA_VALUE + display-aligned form."""
     fn = _ma_fn(ma_type)
     ma = fn(arrays.close, period)
     key = "ma"
@@ -44,42 +127,15 @@ def compute_dma_feature_series(
             continue
         mv = float(ma[i])
         price = float(arrays.close[i])
-        prev_mv = float(ma[i - 1]) if i > 0 and not np.isnan(ma[i - 1]) else None
         prev_price = float(arrays.close[i - 1]) if i > 0 else None
-        slope1 = slope_last(ma, i)
-        slope3 = float(ma[i] - ma[i - 3]) if i >= 3 and not np.isnan(ma[i - 3]) else None
-        prev_slope1 = slope_last(ma, i - 1) if i > 1 else None
-
-        dist = price - mv
-        dist_pct = (dist / mv * 100.0) if mv else None
-        dist_atr = (dist / float(atr[i])) if atr is not None and i < len(atr) and not np.isnan(atr[i]) and atr[i] else None
-
-        cross_up = cross_down = False
-        if prev_price is not None and prev_mv is not None:
-            cross_up = prev_price <= prev_mv and price > mv
-            cross_down = prev_price >= prev_mv and price < mv
-
-        turn_up = turn_down = False
-        if slope1 is not None and prev_slope1 is not None:
-            turn_up = prev_slope1 <= 0 and slope1 > 0
-            turn_down = prev_slope1 >= 0 and slope1 < 0
-
-        da_val = mv
-        if display_shift > 0 and i >= display_shift and not np.isnan(ma[i - display_shift]):
-            da_val = float(ma[i - display_shift])
-
-        prim: dict[str, Any] = {
-            "MA_VALUE": mv,
-            "DISPLAY_ALIGNED_MA_VALUE": da_val,
-            "PRICE_MINUS_MA": dist,
-            "PRICE_MINUS_MA_PCT": dist_pct,
-            "PRICE_MINUS_MA_ATR": dist_atr,
-            "MA_SLOPE_1": slope1,
-            "MA_SLOPE_3": slope3,
-            "PRICE_CROSS_UP_MA": cross_up,
-            "PRICE_CROSS_DOWN_MA": cross_down,
-            "MA_SLOPE_TURN_UP": turn_up,
-            "MA_SLOPE_TURN_DOWN": turn_down,
-        }
+        atr_i = float(atr[i]) if atr is not None and i < len(atr) and not np.isnan(atr[i]) else None
+        prim = _build_ma_features_at(
+            i=i,
+            price=price,
+            prev_price=prev_price,
+            ma=ma,
+            display_shift=display_shift,
+            atr_i=atr_i,
+        )
         samples.append(IndicatorSample(calc_at, calc_at, disp, {key: mv}, prim, True))
     return samples

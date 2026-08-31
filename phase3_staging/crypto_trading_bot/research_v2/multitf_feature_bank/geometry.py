@@ -13,6 +13,9 @@ OP_FORMULA = "OP = C_price + AB * 1.000"
 XOP_FORMULA = "XOP = C_price + AB * 1.618"
 
 
+from .geometry_stage import stage_from_normalized_r
+
+
 @dataclass(frozen=True)
 class ABCGeometry:
     a_price: float
@@ -34,28 +37,11 @@ class ABCGeometry:
 
 
 def geometry_stage(current_price: float, geo: ABCGeometry) -> str:
-    """Direction-consistent stage from C using signed AB extension."""
     ab = geo.ab_length
     if ab == 0:
         return "UNKNOWN"
-    # Progress along AB direction from C
     r = (current_price - geo.c_price) / ab
-    if ab > 0:
-        if r < COP_RATIO:
-            return "PRE_COP"
-        if r < OP_RATIO:
-            return "COP_TO_OP"
-        if r < XOP_RATIO:
-            return "OP_TO_XOP"
-        return "POST_XOP"
-    else:
-        if r > -COP_RATIO:
-            return "PRE_COP"
-        if r > -OP_RATIO:
-            return "COP_TO_OP"
-        if r > -XOP_RATIO:
-            return "OP_TO_XOP"
-        return "POST_XOP"
+    return stage_from_normalized_r(r)
 
 
 def compute_geometry_features(
@@ -79,7 +65,8 @@ def compute_geometry_features(
 
     leg_ratio = None
     if prev_same_direction_leg is not None and prev_same_direction_leg != 0:
-        leg_ratio = ab_abs / abs(prev_same_direction_leg)
+        # C→price progress magnitude / prior same-direction leg magnitude
+        leg_ratio = abs(current_price - c_price) / abs(prev_same_direction_leg)
 
     def _dist(level: float) -> dict[str, float | None]:
         d = current_price - level

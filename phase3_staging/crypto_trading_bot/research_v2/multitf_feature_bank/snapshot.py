@@ -5,18 +5,17 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Sequence
 
-from crypto_trading_bot.research_v2.indicator_engine.bars import parse_ts
-from crypto_trading_bot.research_v2.indicator_engine.bars import bars_to_arrays
-from crypto_trading_bot.research_v2.indicator_engine.macd import compute_macd_series
-from crypto_trading_bot.research_v2.indicator_engine.stochastic import compute_stochastic_series
+from crypto_trading_bot.research_v2.indicator_engine.bars import bars_to_arrays, parse_ts
 from crypto_trading_bot.research_v2.indicator_engine.types import IndicatorSample
 from crypto_trading_bot.research_v2.resampling import UI_TIMEFRAMES
 
-from .displacement import display_aligned_usable_at
+from .aligned_features import provenance_at
 from .geometry import compute_geometry_features
+from .macd_features import compute_macd_feature_series
 from .ma_features import compute_dma_feature_series
 from .pivots import PivotRecord, confirmed_pivots_at
-from .registries import DMA_REGISTRY, MACD_REGISTRY, STOCHASTIC_REGISTRY
+from .registries import DMA_REGISTRY, FEATURE_OUTPUTS, MACD_REGISTRY, STOCHASTIC_REGISTRY
+from .stoch_features import compute_stoch_feature_series
 from .version import FEATURE_BANK_VERSION
 
 
@@ -42,83 +41,15 @@ def _last_completed_bar_index(bars: Sequence[dict[str, Any]], decision_time: dat
     return idx
 
 
-def _extract_stoch_features(samples: Sequence[IndicatorSample], idx: int, shift: int) -> dict[str, Any]:
-    s = samples[idx]
-    if not s.valid:
-        return {}
-    k, d = s.values.get("k"), s.values.get("d")
-    da_k = display_aligned_usable_at(samples, idx, shift, s.available_at, value_key="k") if shift else k
-    da_d = display_aligned_usable_at(samples, idx, shift, s.available_at, value_key="d") if shift else d
-    prim = s.signal_primitives
-    return {
-        "K": k,
-        "D": d,
-        "DISPLAY_ALIGNED_K": da_k,
-        "DISPLAY_ALIGNED_D": da_d,
-        "K_MINUS_D": (k - d) if k is not None and d is not None else None,
-        "K_SLOPE": prim.get("SLOPE_K"),
-        "D_SLOPE": prim.get("SLOPE_D"),
-        "K_CROSS_UP_D": prim.get("K_CROSS_UP_D"),
-        "K_CROSS_DOWN_D": prim.get("K_CROSS_DOWN_D"),
-        "DIST_TO_OVERSOLD": prim.get("DISTANCE_TO_OVERSOLD"),
-        "DIST_TO_OVERBOUGHT": prim.get("DISTANCE_TO_OVERBOUGHT"),
-        "OVERBOUGHT_80": prim.get("OVERBOUGHT"),
-        "OVERSOLD_20": prim.get("OVERSOLD"),
-    }
-
-
-def _extract_macd_features(samples: Sequence[IndicatorSample], idx: int, shift: int) -> dict[str, Any]:
-    s = samples[idx]
-    if not s.valid:
-        return {}
-    macd, sig, hist = s.values.get("macd"), s.values.get("signal"), s.values.get("hist")
-    prim = s.signal_primitives
-    return {
-        "MACD": macd,
-        "SIGNAL": sig,
-        "HIST": hist,
-        "DISPLAY_ALIGNED_MACD": display_aligned_usable_at(samples, idx, shift, s.available_at, value_key="macd")
-        if shift
-        else macd,
-        "MACD_MINUS_SIGNAL": prim.get("MACD_MINUS_SIGNAL"),
-        "MACD_SLOPE": prim.get("SLOPE_MACD"),
-        "SIGNAL_SLOPE": prim.get("SLOPE_SIGNAL"),
-        "HIST_SLOPE": prim.get("SLOPE_HIST"),
-        "MACD_CROSS_UP_SIGNAL": prim.get("MACD_CROSS_UP_SIGNAL"),
-        "MACD_CROSS_DOWN_SIGNAL": prim.get("MACD_CROSS_DOWN_SIGNAL"),
-        "HIST_CROSS_UP_ZERO": prim.get("HIST_CROSS_UP_ZERO"),
-        "HIST_CROSS_DOWN_ZERO": prim.get("HIST_CROSS_DOWN_ZERO"),
-        "HIST_CONTRACTING_NEGATIVE": prim.get("HIST_CONTRACTING_NEGATIVE"),
-        "HIST_CONTRACTING_POSITIVE": prim.get("HIST_CONTRACTING_POSITIVE"),
-    }
-
-
-def _stoch_samples(bars: list[dict], tf: str, meta: dict) -> tuple[Any, ...]:
-    arrays = bars_to_arrays(bars, timeframe=tf)
-    return tuple(
-        compute_stochastic_series(
-            arrays,
-            k_period=int(meta["k_period"]),
-            k_smooth=int(meta["k_smooth"]),
-            d_period=int(meta["d_period"]),
-            display_shift=int(meta["display_shift"]),
-            overbought=float(meta.get("overbought", 80)),
-            oversold=float(meta.get("oversold", 20)),
-        )
-    )
-
-
-def _macd_samples(bars: list[dict], tf: str, meta: dict) -> tuple[Any, ...]:
-    arrays = bars_to_arrays(bars, timeframe=tf)
-    return tuple(
-        compute_macd_series(
-            arrays,
-            fast=int(meta["fast"]),
-            slow=int(meta["slow"]),
-            signal=int(meta["signal"]),
-            display_shift=int(meta["display_shift"]),
-        )
-    )
+def _emit_declared(
+    feats: dict[str, float | bool | None],
+    *,
+    prefix: str,
+    family: str,
+    prim: dict[str, Any],
+) -> None:
+    for name in FEATURE_OUTPUTS[family]:
+        feats[f"{prefix}.{name}"] = prim.get(name)
 
 
 class FeatureBank:
@@ -136,7 +67,7 @@ class FeatureBank:
 
     def snapshot(self, decision_time: datetime) -> FeatureSnapshot:
         feats: dict[str, float | bool | None] = {}
-        meta: dict[str, Any] = {"feature_bank_version": FEATURE_BANK_VERSION}
+        meta: dict[str, Any] = {"feature_bank_version": FEATURE_BANK_VERSION, "provenance": {}}
         for tf in UI_TIMEFRAMES:
             bars = self.bars_by_tf.get(tf) or []
             if not bars:
@@ -146,6 +77,7 @@ class FeatureBank:
                 continue
             for ps_id, meta_ps in DMA_REGISTRY.items():
                 key = (tf, ps_id)
+                shift = int(meta_ps["display_shift"])
                 if key not in self._cache:
                     from crypto_trading_bot.research_v2.indicator_engine.volatility import compute_atr_series
 
@@ -158,31 +90,56 @@ class FeatureBank:
                         arrays,
                         ma_type=meta_ps["ma_type"],
                         period=meta_ps["period"],
-                        display_shift=meta_ps["display_shift"],
+                        display_shift=shift,
                         atr=atr,
                     )
                 samples = self._cache[key]
                 if idx < len(samples) and samples[idx].valid:
-                    for fk, fv in samples[idx].signal_primitives.items():
-                        feats[f"{tf}.{ps_id}.{fk}"] = fv
+                    pref = f"{tf}.{ps_id}"
+                    prim = samples[idx].signal_primitives
+                    _emit_declared(feats, prefix=pref, family="DMA", prim=prim)
+                    if shift > 0:
+                        meta["provenance"][f"{pref}.DISPLAY_ALIGNED_MA_VALUE"] = provenance_at(samples, idx, shift)
             for ps_id, meta_ps in STOCHASTIC_REGISTRY.items():
                 key = (tf, ps_id)
+                shift = int(meta_ps["display_shift"])
                 if key not in self._cache:
-                    self._cache[key] = _stoch_samples(bars, tf, meta_ps)
+                    arrays = bars_to_arrays(bars, timeframe=tf)
+                    self._cache[key] = compute_stoch_feature_series(
+                        arrays,
+                        k_period=int(meta_ps["k_period"]),
+                        k_smooth=int(meta_ps["k_smooth"]),
+                        d_period=int(meta_ps["d_period"]),
+                        display_shift=shift,
+                        overbought=float(meta_ps.get("overbought", 80)),
+                        oversold=float(meta_ps.get("oversold", 20)),
+                    )
                 samples = self._cache[key]
                 if idx < len(samples) and samples[idx].valid:
-                    ext = _extract_stoch_features(samples, idx, int(meta_ps["display_shift"]))
-                    for fk, fv in ext.items():
-                        feats[f"{tf}.{ps_id}.{fk}"] = fv
+                    pref = f"{tf}.{ps_id}"
+                    prim = samples[idx].signal_primitives
+                    _emit_declared(feats, prefix=pref, family="STOCHASTIC", prim=prim)
+                    if shift > 0:
+                        meta["provenance"][f"{pref}.DISPLAY_ALIGNED_K"] = provenance_at(samples, idx, shift)
             for ps_id, meta_ps in MACD_REGISTRY.items():
                 key = (tf, ps_id)
+                shift = int(meta_ps["display_shift"])
                 if key not in self._cache:
-                    self._cache[key] = _macd_samples(bars, tf, meta_ps)
+                    arrays = bars_to_arrays(bars, timeframe=tf)
+                    self._cache[key] = compute_macd_feature_series(
+                        arrays,
+                        fast=int(meta_ps["fast"]),
+                        slow=int(meta_ps["slow"]),
+                        signal=int(meta_ps["signal"]),
+                        display_shift=shift,
+                    )
                 samples = self._cache[key]
                 if idx < len(samples) and samples[idx].valid:
-                    ext = _extract_macd_features(samples, idx, int(meta_ps["display_shift"]))
-                    for fk, fv in ext.items():
-                        feats[f"{tf}.{ps_id}.{fk}"] = fv
+                    pref = f"{tf}.{ps_id}"
+                    prim = samples[idx].signal_primitives
+                    _emit_declared(feats, prefix=pref, family="MACD", prim=prim)
+                    if shift > 0:
+                        meta["provenance"][f"{pref}.DISPLAY_ALIGNED_MACD"] = provenance_at(samples, idx, shift)
             self._attach_geometry(feats, tf, bars, idx, decision_time)
         return FeatureSnapshot(decision_time=decision_time, features=feats, metadata=meta)
 
@@ -200,12 +157,30 @@ class FeatureBank:
             return
         a, b, c = confirmed[-3], confirmed[-2], confirmed[-1]
         current = float(bars[idx]["close"])
+        atr_val = None
+        atr_key = (tf, "__atr14__")
+        if atr_key not in self._cache:
+            arrays = bars_to_arrays(bars, timeframe=tf)
+            from crypto_trading_bot.research_v2.indicator_engine.volatility import compute_atr_series
+
+            atr_s = compute_atr_series(arrays, period=14)
+            self._cache[atr_key] = atr_s
+        atr_s = self._cache[atr_key]
+        if idx < len(atr_s) and atr_s[idx].valid:
+            atr_val = float(atr_s[idx].values["atr"])  # type: ignore
+
+        prev_leg = None
+        if len(confirmed) >= 4:
+            p_prev = confirmed[-4]
+            prev_leg = abs(b.pivot_price - p_prev.pivot_price)
+
         geo = compute_geometry_features(
             a_price=a.pivot_price,
             b_price=b.pivot_price,
             c_price=c.pivot_price,
             current_price=current,
+            atr=atr_val,
+            prev_same_direction_leg=prev_leg,
         )
         prefix = f"{tf}.GEOMETRY_ABC"
-        for k, v in geo.items():
-            feats[f"{prefix}.{k}"] = v
+        _emit_declared(feats, prefix=prefix, family="GEOMETRY", prim=geo)

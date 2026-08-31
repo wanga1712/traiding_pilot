@@ -16,6 +16,6 @@
   "dma_parameter_set_count": 42,
   "stoch_parameter_set_count": 16,
   "macd_parameter_set_count": 12,
-  "feature_row_count": 9040,
-  "git_commit": "de0ab41bfe02"
+  "feature_row_count": 15830,
+  "git_commit": "438f22643397"
 }
