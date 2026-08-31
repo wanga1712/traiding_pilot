@@ -47,9 +47,22 @@ def _ssh_s7(cmd: str) -> tuple[int, str]:
         ["ssh", "-i", str(key), "-o", "BatchMode=yes", "-o", "ConnectTimeout=20", SSH_S7_HOST, cmd],
         capture_output=True,
         text=True,
-        timeout=60,
+        timeout=120,
     )
     return r.returncode, (r.stdout or r.stderr or "").strip()
+
+
+def _scp_from_s7(remote: str, local: Path) -> bool:
+    key = resolve_ssh_key()
+    if not key:
+        return False
+    local.parent.mkdir(parents=True, exist_ok=True)
+    r = subprocess.run(
+        ["scp", "-i", str(key), "-o", "BatchMode=yes", f"{SSH_S7_HOST}:{remote}", str(local)],
+        capture_output=True,
+        timeout=300,
+    )
+    return r.returncode == 0 and local.is_file()
 
 
 def s13_to_s7_connectivity() -> tuple[str, str]:
@@ -69,50 +82,48 @@ def _read_partition_meta(token: str) -> dict[str, Any]:
     first_time = None
     last_time = None
     error = None
-    if path.is_file():
-        try:
-            table = pq.read_table(path, columns=["open_time_utc"])
-            row_count = table.num_rows
-            if row_count > 0:
-                first_time = table["open_time_utc"][0].as_py()
-                last_time = table["open_time_utc"][-1].as_py()
-            readable = True
-        except Exception as exc:  # noqa: BLE001
-            error = str(exc)
-    else:
-        key = resolve_ssh_key()
-        if key:
-            remote = str(path)
-            code, _ = _ssh_s7(f"test -f {remote}")
-            if code == 0:
-                py = (
-                    "import pyarrow.parquet as pq;"
-                    f"t=pq.read_table('{remote}',columns=['open_time_utc']);"
-                    "print(t.num_rows);"
-                    "print(t['open_time_utc'][0].as_py().isoformat() if t.num_rows else '');"
-                    "print(t['open_time_utc'][-1].as_py().isoformat() if t.num_rows else '')"
-                )
-                r = subprocess.run(
-                    ["ssh", "-i", str(key), "-o", "BatchMode=yes", SSH_S7_HOST, f"python3 -c \"{py}\""],
-                    capture_output=True,
-                    text=True,
-                    timeout=120,
-                )
-                if r.returncode == 0:
-                    lines = [ln for ln in r.stdout.strip().split("\n") if ln]
-                    if lines:
-                        row_count = int(lines[0])
-                        readable = row_count > 0
-                        if len(lines) > 1 and lines[1]:
-                            first_time = datetime.fromisoformat(lines[1])
-                        if len(lines) > 2 and lines[2]:
-                            last_time = datetime.fromisoformat(lines[2])
-                else:
-                    error = r.stderr or r.stdout
-            else:
-                error = f"missing: {remote}"
-        else:
-            error = f"missing: {path}"
+    read_path = path
+    temp_path: Path | None = None
+
+    if not path.is_file():
+        remote = str(path)
+        code, _ = _ssh_s7(f"test -f {remote}")
+        if code != 0:
+            return {
+                "token": token,
+                "path": str(path),
+                "readable": False,
+                "row_count": None,
+                "first_time": None,
+                "last_time": None,
+                "error": f"missing: {remote}",
+            }
+        temp_path = Path("/tmp") / f"s7_probe_{token}.parquet"
+        if not _scp_from_s7(remote, temp_path):
+            return {
+                "token": token,
+                "path": str(path),
+                "readable": False,
+                "row_count": None,
+                "first_time": None,
+                "last_time": None,
+                "error": f"scp failed: {remote}",
+            }
+        read_path = temp_path
+
+    try:
+        table = pq.read_table(read_path, columns=["open_time_utc"])
+        row_count = table.num_rows
+        if row_count > 0:
+            first_time = table["open_time_utc"][0].as_py()
+            last_time = table["open_time_utc"][-1].as_py()
+        readable = row_count > 0
+    except Exception as exc:  # noqa: BLE001
+        error = str(exc)
+    finally:
+        if temp_path and temp_path.is_file():
+            temp_path.unlink(missing_ok=True)
+
     return {
         "token": token,
         "path": str(path),
@@ -130,9 +141,17 @@ def canonical_inventory() -> dict[str, Any]:
     partition_count = 0
     row_count = None
     manifest_id = "UNKNOWN"
-    if manifest_path.is_file():
+
+    local_manifest = manifest_path
+    temp_manifest: Path | None = None
+    if not local_manifest.is_file():
+        temp_manifest = Path("/tmp") / "s7_market_manifest.sqlite3"
+        if _scp_from_s7(CANONICAL_MANIFEST_PATH, temp_manifest):
+            local_manifest = temp_manifest
+
+    if local_manifest.is_file():
         try:
-            conn = sqlite3.connect(str(manifest_path))
+            conn = sqlite3.connect(str(local_manifest))
             rows = conn.execute(
                 "SELECT first_open_time, last_open_time, actual_rows FROM market_partitions "
                 "WHERE symbol='ETHUSDT' AND timeframe='1m' ORDER BY year, month"
@@ -146,12 +165,17 @@ def canonical_inventory() -> dict[str, Any]:
             manifest_id = f"market.sqlite3:{partition_count}_partitions"
         except Exception:  # noqa: BLE001
             pass
+        finally:
+            if temp_manifest and temp_manifest.is_file():
+                temp_manifest.unlink(missing_ok=True)
+
     if partition_count == 0:
-        root = Path(CANONICAL_SOURCE_PATH)
-        if root.is_dir():
-            files = sorted(root.rglob("ETHUSDT-1m-*.parquet"))
-            partition_count = len(files)
-            manifest_id = "directory_scan"
+        code, out = _ssh_s7(
+            f"find {CANONICAL_SOURCE_PATH} -name 'ETHUSDT-1m-*.parquet' 2>/dev/null | wc -l"
+        )
+        if code == 0 and out.strip().isdigit():
+            partition_count = int(out.strip())
+            manifest_id = "s7_find_count"
     return {
         "CANONICAL_FIRST_TIME": first_time,
         "CANONICAL_LAST_TIME": last_time,
