@@ -1,11 +1,13 @@
 # WIP=OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1
 
-STATUS=REVIEW
+STATUS=CLOSED
 
 ## Authority
 
 - Previous WIP: `OSCILLATOR-PREDICTOR-REFERENCE-1` (CLOSED)
 - Predictor authority commit: `6b1e34e4dffb469e0b9392c33d20e5689a2cdfe2`
+- FINAL_ACCEPTED_COMMIT=`6c2d13fee369710a063cfaac0033993acf3767ae`
+- FINAL_INTEGRITY_IMPLEMENTATION_COMMIT=`bf727539a98dfd323bfe6703fdfc5b2d2aec372a`
 
 ## Goal
 
@@ -16,18 +18,32 @@ Historical information study for the fixed reference oscillator predictor. Not a
 - DNO_PERIOD=7, PEAK_STRENGTH=2, LOOKBACK=100, SAMPLES=5, OB_OS_LEVEL_PERCENT=0.80
 - TARGET_AGGREGATION=PROJECT_MEAN_CONFIRMED_EXTREMA_V1
 
+## Final accepted conclusions
+
+RESEARCH_VERDICT=PREDICTOR_EFFECT_WEAK
+
+BASE_RATE_ASSOCIATION=SUPPORTED  
+FORECAST_REALIZATION_EFFECT=SUPPORTED  
+DYNAMIC_VS_DNO_QUANTILE=MIXED  
+DYNAMIC_VS_ATR=MIXED  
+LOW_TF_STABILITY=STABLE_POSITIVE  
+HIGH_TF_STABILITY=UNSTABLE  
+PROJECT_DYNAMIC_EXTREMA_UNIQUE_EDGE=NOT_ESTABLISHED
+
 ## Data architecture (mandatory)
 
 - **S7** canonical: `/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m`
 - **S13** disposable cache: `/var/tmp/traiding_pilot_market_cache`
 - Research code: `market_data/research_access.py` — SCP from S7 only
 - **No direct exchange HTTP** on S13 in research paths
-- Preflight: `python -m crypto_trading_bot.research_v2.oscillator_predictor_event_study.run_preflight`
-- Study aborts if `READY_FOR_HISTORICAL_EVENT_STUDY=NO`
 
-## Artifacts
+## Artifacts (preserved; do not alter)
 
 `artifacts/OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1/`
+
+- `STUDY_V1_ORIGINAL_RESULT/`
+- `METHODOLOGY_FIX_V1/`
+- `FINAL_INTEGRITY_V1/`
 
 ## Governance
 
@@ -35,4 +51,12 @@ PARAMETER_OPTIMIZATION_PERFORMED=NO
 SIGNAL_COMBINATION_SEARCH_PERFORMED=NO  
 TRADING_STRATEGY_PERFORMED=NO  
 TRADING_PNL_PERFORMED=NO  
-OOS_OPENED=NO
+OOS_OPENED=NO  
+OOS_ACCESS_COUNT=0
+
+## Next
+
+NEXT_WIP=`MULTITF-INDICATOR-PARAMETER-SEARCH-1`  
+NEXT_WIP_STATUS=PLANNED  
+
+Do not activate without explicit user authorization.
