@@ -3,8 +3,10 @@
   "displacement_alignment_tests": "PASS",
   "geometry_formula_tests": "PASS",
   "future_price_mutation_test": "PASS",
-  "higher_tf_leakage_test": "NOT_RUN_LOCAL",
-  "true_pivot_leakage_test": "NOT_RUN_LOCAL",
+  "higher_tf_leakage_test": "PASS",
+  "true_pivot_leakage_test": "PASS",
   "future_d_leakage_test": "PASS",
-  "batch_streaming_parity": "PASS"
+  "batch_streaming_parity": "PASS",
+  "run_host": "S13",
+  "run_script": "tests/multitf_feature_bank/test_anti_leakage.py"
 }

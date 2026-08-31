@@ -140,11 +140,22 @@ def write_artifacts(root: Path) -> dict:
         "displacement_alignment_tests": "PASS",
         "geometry_formula_tests": "PASS",
         "future_price_mutation_test": "PASS",
-        "higher_tf_leakage_test": "NOT_RUN_LOCAL",
-        "true_pivot_leakage_test": "NOT_RUN_LOCAL",
         "future_d_leakage_test": "PASS",
         "batch_streaming_parity": "PASS",
+        "higher_tf_leakage_test": "PENDING",
+        "true_pivot_leakage_test": "PENDING",
     }
+    try:
+        from tests.multitf_feature_bank import test_anti_leakage as al
+
+        al.test_higher_tf_leakage()
+        al.test_true_pivot_leakage()
+        al.test_future_d_leakage()
+        test_summary["higher_tf_leakage_test"] = "PASS"
+        test_summary["true_pivot_leakage_test"] = "PASS"
+    except Exception as exc:
+        test_summary["higher_tf_leakage_test"] = f"FAIL:{exc}"
+        test_summary["true_pivot_leakage_test"] = f"FAIL:{exc}"
     (root / "numeric_reference_tests_v1.json").write_text(json.dumps(test_summary, indent=2), encoding="utf-8")
     (root / "anti_leakage_tests_v1.json").write_text(json.dumps(test_summary, indent=2), encoding="utf-8")
     return manifest

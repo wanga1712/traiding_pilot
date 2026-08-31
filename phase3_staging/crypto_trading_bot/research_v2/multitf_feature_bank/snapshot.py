@@ -13,7 +13,9 @@ from crypto_trading_bot.research_v2.indicator_engine.types import IndicatorSampl
 from crypto_trading_bot.research_v2.resampling import UI_TIMEFRAMES
 
 from .displacement import display_aligned_usable_at
+from .geometry import compute_geometry_features
 from .ma_features import compute_dma_feature_series
+from .pivots import PivotRecord, confirmed_pivots_at
 from .registries import DMA_REGISTRY, MACD_REGISTRY, STOCHASTIC_REGISTRY
 from .version import FEATURE_BANK_VERSION
 
@@ -122,8 +124,14 @@ def _macd_samples(bars: list[dict], tf: str, meta: dict) -> tuple[Any, ...]:
 class FeatureBank:
     """Batch precomputation + point-in-time snapshots."""
 
-    def __init__(self, bars_by_tf: dict[str, list[dict[str, Any]]]) -> None:
+    def __init__(
+        self,
+        bars_by_tf: dict[str, list[dict[str, Any]]],
+        *,
+        pivots_by_tf: dict[str, list[PivotRecord]] | None = None,
+    ) -> None:
         self.bars_by_tf = bars_by_tf
+        self.pivots_by_tf = pivots_by_tf or {}
         self._cache: dict[tuple[str, str], Any] = {}
 
     def snapshot(self, decision_time: datetime) -> FeatureSnapshot:
@@ -175,4 +183,29 @@ class FeatureBank:
                     ext = _extract_macd_features(samples, idx, int(meta_ps["display_shift"]))
                     for fk, fv in ext.items():
                         feats[f"{tf}.{ps_id}.{fk}"] = fv
+            self._attach_geometry(feats, tf, bars, idx, decision_time)
         return FeatureSnapshot(decision_time=decision_time, features=feats, metadata=meta)
+
+    def _attach_geometry(
+        self,
+        feats: dict[str, float | bool | None],
+        tf: str,
+        bars: list[dict[str, Any]],
+        idx: int,
+        decision_time: datetime,
+    ) -> None:
+        pivots = self.pivots_by_tf.get(tf) or []
+        confirmed = confirmed_pivots_at(pivots, decision_time)
+        if len(confirmed) < 3:
+            return
+        a, b, c = confirmed[-3], confirmed[-2], confirmed[-1]
+        current = float(bars[idx]["close"])
+        geo = compute_geometry_features(
+            a_price=a.pivot_price,
+            b_price=b.pivot_price,
+            c_price=c.pivot_price,
+            current_price=current,
+        )
+        prefix = f"{tf}.GEOMETRY_ABC"
+        for k, v in geo.items():
+            feats[f"{prefix}.{k}"] = v
