@@ -61,7 +61,7 @@ def test_reconciliation_failure_detection():
 
 def test_run_status_running_not_final():
     panel = build_historical_run_panel(fixture_running(), runs_available=True)
-    assert "RUN IN PROGRESS" in str(panel)
+    assert "Прогон выполняется" in str(panel)
 
 
 def test_structural_only_monetary_suppression():
@@ -70,9 +70,14 @@ def test_structural_only_monetary_suppression():
     assert validate_run(run) == []
     panel = build_historical_run_panel(run, runs_available=True)
     text = str(panel)
-    assert "STRUCTURAL ONLY" in text
+    assert "Торговый прогон ещё не выполнен" in text
+    assert "Посмотреть исследование" in text
+    assert "поиск разворотов" in text
     assert "$100" not in text
-    assert "not a monetary backtest" in text
+    assert "START" not in text
+    assert "Precision" not in text.split("Посмотреть исследование")[0]
+    assert "RUN_ID" not in text.split("Посмотреть исследование")[0]
+    assert "{" not in text.split("Посмотреть исследование")[0]
 
 
 def test_equity_series_rendering():
@@ -86,8 +91,41 @@ def test_equity_series_rendering():
 def test_empty_state_rendering():
     panel = build_historical_run_panel(None, runs_available=False)
     text = str(panel)
-    assert "NO EXECUTION RUN AVAILABLE" in text
+    assert "Торговый прогон ещё не выполнен" in text
     assert "$0" not in text
+
+
+def test_human_composite_rows():
+    from crypto_trading_bot.research_v2.visualization.trading_run_panel import _human_composite_rows
+
+    rows = _human_composite_rows(
+        {"dma": "3x3 display-aligned", "stoch": "14/3/3", "confirmation_window": 3, "signal_expiration": 5}
+    )
+    assert rows[0][0] == "DMA"
+    assert "3×3" in rows[0][1]
+    assert rows[2][1] == "3 свечи"
+
+
+def test_single_run_selector_deemphasized():
+    from crypto_trading_bot.research_v2.visualization.trading_run_panel import build_run_selector
+
+    panel = build_run_selector(
+        [{"run_id": "R1", "strategy_name": "Test Strategy", "run_status": "COMPLETED"}],
+        "R1",
+    )
+    text = str(panel)
+    assert "run-selector-single" in text
+    assert "Test Strategy" in text
+
+
+def test_monetary_primary_layout():
+    run = fixture_completed_realistic()
+    panel = build_historical_run_panel(run, runs_available=True)
+    text = str(panel)
+    assert "START" in text and "FINAL" in text and "RETURN" in text
+    assert "Расходы" in text
+    assert "Подробнее" in text
+    assert "ONE_MINUTE_EXECUTION" not in text.split("Подробнее")[0]
 
 
 def test_trades_null_field_tolerance():

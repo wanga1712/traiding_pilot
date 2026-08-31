@@ -18,12 +18,14 @@ from crypto_trading_bot.research_v2.trading_runs.null_semantics import (
 from crypto_trading_bot.research_v2.trading_runs.reconciliation import reconcile_run
 
 
-def _period_label(market: dict[str, Any] | None) -> str:
+def _period_label(market: dict[str, Any] | None, *, compact: bool = False) -> str:
     if not market:
         return "—"
     start = str(market.get("start_time", ""))[:10]
     end = str(market.get("end_time", ""))[:10]
     inst = market.get("instrument", "—")
+    if compact:
+        return f"{inst} · {start} → {end}"
     cat = market.get("category", "")
     exch = market.get("exchange", "")
     return f"{inst} {cat} | {exch} | {start} → {end}"
@@ -70,45 +72,206 @@ def _equity_figure(curve: list[dict[str, Any]] | None) -> go.Figure | None:
     return fig
 
 
+def _technical_meta_block(run: dict[str, Any] | None, run_index: dict[str, Any] | None = None) -> html.Div:
+    row = run_index or {}
+    strat = (run or {}).get("strategy") or {}
+    exec_block = (run or {}).get("execution") or {}
+    rows = [
+        ("RUN_ID", row.get("run_id") or (run or {}).get("run_id")),
+        ("STATUS", row.get("run_status") or (run or {}).get("run_status")),
+        ("CREATED_AT", str(row.get("created_at") or (run or {}).get("created_at") or "—")[:19]),
+        ("STRATEGY_VERSION", row.get("strategy_version") or strat.get("strategy_version")),
+        ("EXECUTION_REALISM", exec_block.get("execution_realism_level")),
+    ]
+    return html.Div(
+        [html.Div([html.Span(k), html.Strong(str(v or "—"))], className="metric") for k, v in rows],
+        className="run-tech-meta",
+    )
+
+
 def build_run_selector(runs: list[dict[str, Any]], selected_id: str | None) -> html.Div:
-    options = [{"label": f"{r['run_id']} ({r.get('run_status')})", "value": r["run_id"]} for r in runs]
-    selected = next((r for r in runs if r["run_id"] == selected_id), None)
-    meta = None
-    if selected:
-        meta = html.Div(
+    options = [{"label": r.get("strategy_name") or r["run_id"], "value": r["run_id"]} for r in runs]
+    if len(runs) == 1:
+        name = runs[0].get("strategy_name") or runs[0]["run_id"]
+        return html.Div(
             [
-                html.Div([html.Span("RUN_ID"), selected.get("run_id", "—")]),
-                html.Div([html.Span("STATUS"), selected.get("run_status", "—")]),
-                html.Div([html.Span("CREATED_AT"), str(selected.get("created_at", "—"))[:19]]),
-                html.Div([html.Span("STRATEGY_VERSION"), selected.get("strategy_version", "—")]),
+                dcc.Dropdown(
+                    id="trading-run-select",
+                    options=options,
+                    value=selected_id or runs[0]["run_id"],
+                    clearable=False,
+                    className="run-selector-dropdown run-selector-hidden",
+                ),
+                html.Div(name, className="run-single-strategy-label"),
             ],
-            className="run-selector-meta",
+            className="run-selector-row run-selector-single",
         )
     return html.Div(
         [
-            html.Div("RUN", className="run-selector-label"),
+            html.Div("Прогон", className="run-selector-label"),
             dcc.Dropdown(
                 id="trading-run-select",
                 options=options,
                 value=selected_id,
                 clearable=True,
-                placeholder="Select run",
+                placeholder="Выберите прогон",
                 className="run-selector-dropdown",
             ),
-            meta,
         ],
         className="run-selector-row",
     )
 
 
-def build_historical_run_panel(run: dict[str, Any] | None, *, runs_available: bool) -> html.Div:
+def _human_composite_rows(composite: dict[str, Any] | None) -> list[tuple[str, str]]:
+    if not composite:
+        return []
+    dma_raw = str(composite.get("dma") or "—")
+    dma = dma_raw.replace("3x3", "3×3")
+    if "display-aligned" in dma_raw.lower():
+        dma = dma.replace("display-aligned", "").replace("  ", " ").strip(" ,")
+        dma = f"{dma}, смещение 3" if dma else "3×3, смещение 3"
+    stoch = str(composite.get("stoch") or "—")
+    conf = composite.get("confirmation_window")
+    expire = composite.get("signal_expiration")
+    return [
+        ("DMA", dma),
+        ("Stochastic", stoch),
+        ("Окно подтверждения", f"{conf} свечи" if conf is not None else "—"),
+        ("Срок сигнала", f"{expire} свечей" if expire is not None else "—"),
+    ]
+
+
+def _metric_row(label: str, value: str) -> html.Div:
+    return html.Div([html.Span(label), html.Strong(value)], className="metric")
+
+
+def _research_details_block(
+    run: dict[str, Any],
+    research: dict[str, Any],
+    *,
+    run_index: dict[str, Any] | None,
+) -> html.Details:
+    row = run_index or {}
+    strat = run.get("strategy") or {}
+    exec_block = run.get("execution") or {}
+    composite_rows = _human_composite_rows(research.get("best_human_composite"))
+
+    inner = html.Div(
+        [
+            html.Div("Метрики исследования", className="run-section-title"),
+            html.Div(
+                [
+                    _metric_row("Precision", str(research.get("precision", "—"))),
+                    _metric_row("Recall", str(research.get("recall", "—"))),
+                    _metric_row("FPR", str(research.get("false_positive_rate", "—"))),
+                    _metric_row("Remaining wave", str(research.get("remaining_wave_fraction", "—"))),
+                ],
+                className="run-research-metrics-list",
+            ),
+            html.Div("Параметры стратегии", className="run-section-title"),
+            html.Div([_metric_row(k, v) for k, v in composite_rows], className="run-research-metrics-list")
+            if composite_rows
+            else html.Div("—", className="run-empty-text"),
+            html.Div("Техническая информация", className="run-section-title"),
+            html.Div(
+                [
+                    _metric_row("RUN_ID", str(row.get("run_id") or run.get("run_id") or "—")),
+                    _metric_row("STATUS", str(row.get("run_status") or run.get("run_status") or "—")),
+                    _metric_row("CREATED_AT", str(row.get("created_at") or run.get("created_at") or "—")[:19]),
+                    _metric_row("STRATEGY_VERSION", str(row.get("strategy_version") or strat.get("strategy_version") or "—")),
+                    _metric_row("EXECUTION_REALISM", str(exec_block.get("execution_realism_level") or "—")),
+                ],
+                className="run-research-metrics-list",
+            ),
+        ],
+        className="run-research-inner",
+    )
+    return html.Details(
+        [html.Summary("Посмотреть исследование"), inner],
+        open=False,
+        className="run-details-block run-research-details",
+    )
+
+
+def _cost_breakdown_section(cost_items: list[tuple[str, str, bool]]) -> html.Div:
+    return html.Div(
+        [
+            html.Div("Расходы", className="run-section-title"),
+            html.Div(
+                [
+                    html.Div(
+                        [html.Span(label), html.Strong(val, className="cost-val" + (" emphasis" if emph else ""))],
+                        className="cost-row",
+                    )
+                    for label, val, emph in cost_items
+                ],
+                className="run-cost-breakdown",
+            ),
+        ],
+        className="run-cost-section",
+    )
+
+
+def _details_section(
+    run: dict[str, Any],
+    *,
+    run_index: dict[str, Any] | None,
+    rec_status: str,
+    perf: dict[str, Any],
+    costs: dict[str, Any],
+    include_tabs: bool = True,
+) -> html.Details:
+    children: list[Any] = [
+        html.Summary("Подробнее"),
+        _technical_meta_block(run, run_index),
+    ]
+    if rec_status != "NOT_AVAILABLE":
+        children.append(
+            html.Div(
+                f"Сверка экономики: {rec_status}",
+                className="reconciliation-line "
+                + ("rec-pass" if rec_status == "PASS" else "rec-fail" if rec_status == "FAIL" else "rec-na"),
+            )
+        )
+    children.append(
+        html.Div(
+            [
+                html.Span(f"Win rate {perf.get('win_rate', '—')}"),
+                html.Span(f"Profit factor {perf.get('profit_factor', '—')}"),
+            ],
+            className="run-secondary-metrics",
+        )
+    )
+    if include_tabs:
+        children.append(
+            dcc.Tabs(
+                id="run-detail-tabs",
+                value="trades",
+                children=[
+                    dcc.Tab(label="Сделки", value="trades", children=[_trades_tab(run)]),
+                    dcc.Tab(label="Расходы", value="costs", children=[_costs_tab(costs, perf)]),
+                    dcc.Tab(label="Ликвидации", value="liquidations", children=[_liquidations_tab(run)]),
+                    dcc.Tab(label="Параметры", value="parameters", children=[_parameters_tab(run)]),
+                ],
+                className="run-detail-tabs",
+            )
+        )
+    return html.Details(children, open=False, className="run-details-block")
+
+
+def build_historical_run_panel(
+    run: dict[str, Any] | None,
+    *,
+    runs_available: bool,
+    run_index: dict[str, Any] | None = None,
+) -> html.Div:
     if not runs_available or run is None:
         return html.Div(
             [
-                html.Div("HISTORICAL RUN RESULT", className="run-panel-title"),
-                html.Div("NO EXECUTION RUN AVAILABLE", className="run-empty-title"),
+                html.Div("Исторический прогон", className="run-panel-title"),
+                html.Div("Торговый прогон ещё не выполнен", className="run-empty-title"),
                 html.P(
-                    "Historical execution results will appear here after a simulator run.",
+                    "Здесь появятся результаты после запуска симулятора исполнения.",
                     className="run-empty-text",
                 ),
             ],
@@ -123,24 +286,17 @@ def build_historical_run_panel(run: dict[str, Any] | None, *, runs_available: bo
     cap = run.get("capital") or {}
     perf = run.get("performance") or {}
     costs = run.get("costs") or {}
-    exec_block = run.get("execution") or {}
     research = run.get("research_metrics") or {}
     rec = reconcile_run(run)
 
     if status == "RUNNING":
         return html.Div(
             [
-                html.Div("HISTORICAL RUN RESULT", className="run-panel-title"),
-                html.Div(
-                    [
-                        html.Div(strat.get("strategy_name", "—"), className="run-strategy-name"),
-                        html.Div(_period_label(market), className="run-period"),
-                        _status_badge(status),
-                    ],
-                    className="run-header-row",
-                ),
-                html.Div("RUN IN PROGRESS", className="run-running-banner"),
-                html.P("Partial equity is not shown as a final result.", className="run-empty-text"),
+                html.Div("Исторический прогон", className="run-panel-title"),
+                html.Div(strat.get("strategy_name", "—"), className="run-strategy-name run-strategy-name-lg"),
+                html.Div(_period_label(market, compact=True), className="run-period"),
+                html.Div("Прогон выполняется", className="run-running-banner"),
+                html.P("Промежуточный результат не показывается как финальный.", className="run-empty-text"),
             ],
             className="historical-run-panel running",
             id="historical-run-panel",
@@ -149,10 +305,10 @@ def build_historical_run_panel(run: dict[str, Any] | None, *, runs_available: bo
     if status == "FAILED":
         return html.Div(
             [
-                html.Div("HISTORICAL RUN RESULT", className="run-panel-title"),
-                html.Div(strat.get("strategy_name", "—"), className="run-strategy-name"),
-                _status_badge(status),
-                html.P("This run failed before producing a completed result.", className="run-empty-text"),
+                html.Div("Исторический прогон", className="run-panel-title"),
+                html.Div(strat.get("strategy_name", "—"), className="run-strategy-name run-strategy-name-lg"),
+                html.Div("Прогон завершился с ошибкой", className="run-empty-title"),
+                html.P("Финальный результат недоступен.", className="run-empty-text"),
             ],
             className="historical-run-panel failed",
             id="historical-run-panel",
@@ -161,43 +317,22 @@ def build_historical_run_panel(run: dict[str, Any] | None, *, runs_available: bo
     if structural:
         return html.Div(
             [
-                html.Div("HISTORICAL RUN RESULT", className="run-panel-title"),
-                html.Div(
-                    [
-                        html.Div(strat.get("strategy_name", "—"), className="run-strategy-name"),
-                        html.Div(_period_label(market), className="run-period"),
-                        _status_badge(status),
-                        html.Span("STRUCTURAL ONLY", className="realism-badge structural"),
-                    ],
-                    className="run-header-row",
+                html.Div("Исторический прогон", className="run-panel-title"),
+                html.Div(strat.get("strategy_name", "—"), className="run-strategy-name run-strategy-name-lg"),
+                html.Div(_period_label(market, compact=True), className="run-period run-period-lg"),
+                html.Div("Торговый прогон ещё не выполнен", className="structural-headline"),
+                html.P(
+                    "Эта стратегия пока проверялась только на поиск разворотов. "
+                    "Баланс, сделки, комиссии и ликвидации будут рассчитаны торговым симулятором.",
+                    className="run-empty-text structural-support",
                 ),
-                html.Div(
-                    "This is WHEN/structure research — not a monetary backtest. "
-                    "Start/final balance and execution costs are not available.",
-                    className="structural-notice",
-                ),
-                html.Div(
-                    [
-                        _summary_card("Precision", f"{research.get('precision', '—')}", ""),
-                        _summary_card("Recall", f"{research.get('recall', '—')}", ""),
-                        _summary_card("FPR", f"{research.get('false_positive_rate', '—')}", ""),
-                        _summary_card("Remaining wave", f"{research.get('remaining_wave_fraction', '—')}", ""),
-                    ],
-                    className="run-summary-grid research",
-                ),
-                html.Details(
-                    [
-                        html.Summary("Research metrics"),
-                        html.Pre(str(research.get("best_human_composite", {})), className="run-params-pre"),
-                    ],
-                    open=False,
-                ),
+                _research_details_block(run, research, run_index=run_index),
             ],
             className="historical-run-panel structural",
             id="historical-run-panel",
         )
 
-    # Completed monetary run
+    # Completed monetary run — primary screen only
     start = cap.get("start_equity")
     final = cap.get("final_equity")
     net_ret = cap.get("net_return_pct")
@@ -253,60 +388,28 @@ def build_historical_run_panel(run: dict[str, Any] | None, *, runs_available: bo
 
     curve = run.get("equity_curve")
     fig = _equity_figure(curve)
-
-    realism = exec_block.get("execution_realism_level", "—")
     rec_status = rec.get("ECONOMIC_RECONCILIATION_STATUS", "NOT_AVAILABLE")
 
     return html.Div(
         [
-            html.Div("HISTORICAL RUN RESULT", className="run-panel-title"),
-            html.Div(
-                [
-                    html.Div(strat.get("strategy_name", "—"), className="run-strategy-name"),
-                    html.Div(_period_label(market), className="run-period"),
-                    _status_badge(status),
-                    html.Span(f"REALISM: {realism}", className="realism-badge"),
-                ],
-                className="run-header-row",
-            ),
+            html.Div("Исторический прогон", className="run-panel-title"),
+            html.Div(strat.get("strategy_name", "—"), className="run-strategy-name run-strategy-name-lg"),
+            html.Div(_period_label(market, compact=True), className="run-period run-period-lg"),
             html.Div(cards, className="run-summary-grid"),
             html.Div(
                 dcc.Graph(figure=fig, config={"displayModeBar": False})
                 if fig
-                else html.Div("EQUITY CURVE NOT AVAILABLE", className="run-empty-text"),
+                else html.Div("Кривая капитала недоступна", className="run-empty-text"),
                 className="run-equity-wrap",
             ),
-            html.Div(
-                [
-                    html.Div(
-                        [html.Span(label), html.Strong(val, className="cost-val" + (" emphasis" if emph else ""))],
-                        className="cost-row",
-                    )
-                    for label, val, emph in cost_items
-                ],
-                className="run-cost-breakdown",
-            ),
-            html.Div(
-                f"Reconciliation: {rec_status}",
-                className="reconciliation-line " + ("rec-pass" if rec_status == "PASS" else "rec-fail" if rec_status == "FAIL" else "rec-na"),
-            ),
-            html.Div(
-                [
-                    html.Span(f"Win rate {perf.get('win_rate', '—')}"),
-                    html.Span(f"Profit factor {perf.get('profit_factor', '—')}"),
-                ],
-                className="run-secondary-metrics",
-            ),
-            dcc.Tabs(
-                id="run-detail-tabs",
-                value="trades",
-                children=[
-                    dcc.Tab(label="TRADES", value="trades", children=[_trades_tab(run)]),
-                    dcc.Tab(label="COSTS", value="costs", children=[_costs_tab(costs, perf)]),
-                    dcc.Tab(label="LIQUIDATIONS", value="liquidations", children=[_liquidations_tab(run)]),
-                    dcc.Tab(label="RUN PARAMETERS", value="parameters", children=[_parameters_tab(run)]),
-                ],
-                className="run-detail-tabs",
+            _cost_breakdown_section(cost_items),
+            _details_section(
+                run,
+                run_index=run_index,
+                rec_status=rec_status,
+                perf=perf,
+                costs=costs,
+                include_tabs=True,
             ),
         ],
         className="historical-run-panel completed",
@@ -317,7 +420,7 @@ def build_historical_run_panel(run: dict[str, Any] | None, *, runs_available: bo
 def _trades_tab(run: dict[str, Any]) -> html.Div:
     trades = run.get("trades") or []
     if not trades:
-        return html.Div("No trade detail rows.", className="run-tab-body")
+        return html.Div("Нет данных по сделкам.", className="run-tab-body")
     return html.Div([html.Pre(str(t), className="run-params-pre") for t in trades[:20]], className="run-tab-body")
 
 
