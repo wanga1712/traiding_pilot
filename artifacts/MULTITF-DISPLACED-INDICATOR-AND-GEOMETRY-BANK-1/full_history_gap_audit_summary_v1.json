@@ -1,0 +1,707 @@
+{
+  "audit_source": "/var/tmp/traiding_pilot_market_cache/resampled",
+  "audit_scope": "full_history_no_tail_limit",
+  "timeframes": [
+    {
+      "timeframe": "5m",
+      "first_bar_time": "2019-03-27T23:45:00Z",
+      "last_bar_time": "2025-02-28T23:55:00Z",
+      "bar_count": 622781,
+      "gap_count": 20,
+      "segment_count": 21,
+      "families": {
+        "EMA_DMA": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "STANDARD_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_PREFERRED_STOCH": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "ATR": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        }
+      }
+    },
+    {
+      "timeframe": "15m",
+      "first_bar_time": "2019-03-27T23:15:00Z",
+      "last_bar_time": "2025-02-28T23:45:00Z",
+      "bar_count": 207598,
+      "gap_count": 20,
+      "segment_count": 21,
+      "families": {
+        "EMA_DMA": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "STANDARD_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_PREFERRED_STOCH": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "ATR": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        }
+      }
+    },
+    {
+      "timeframe": "30m",
+      "first_bar_time": "2019-03-27T22:30:00Z",
+      "last_bar_time": "2025-02-28T23:30:00Z",
+      "bar_count": 103805,
+      "gap_count": 20,
+      "segment_count": 21,
+      "families": {
+        "EMA_DMA": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "STANDARD_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_PREFERRED_STOCH": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "ATR": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 20,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        }
+      }
+    },
+    {
+      "timeframe": "1H",
+      "first_bar_time": "2019-03-27T20:00:00Z",
+      "last_bar_time": "2025-02-28T23:00:00Z",
+      "bar_count": 51911,
+      "gap_count": 19,
+      "segment_count": 20,
+      "families": {
+        "EMA_DMA": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 19,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "STANDARD_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 19,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 19,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_PREFERRED_STOCH": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 19,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "ATR": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 19,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        }
+      }
+    },
+    {
+      "timeframe": "2H",
+      "first_bar_time": "2019-03-27T18:00:00Z",
+      "last_bar_time": "2025-02-28T22:00:00Z",
+      "bar_count": 25964,
+      "gap_count": 11,
+      "segment_count": 12,
+      "families": {
+        "EMA_DMA": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 11,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "STANDARD_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 11,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 11,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_PREFERRED_STOCH": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 11,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "ATR": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 11,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        }
+      }
+    },
+    {
+      "timeframe": "4H",
+      "first_bar_time": "2019-03-05T20:00:00Z",
+      "last_bar_time": "2025-02-28T20:00:00Z",
+      "bar_count": 13118,
+      "gap_count": 4,
+      "segment_count": 5,
+      "families": {
+        "EMA_DMA": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 4,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "STANDARD_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 4,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 4,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_PREFERRED_STOCH": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 4,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "ATR": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 4,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        }
+      }
+    },
+    {
+      "timeframe": "6H",
+      "first_bar_time": "2019-02-25T06:00:00Z",
+      "last_bar_time": "2025-02-28T18:00:00Z",
+      "bar_count": 8782,
+      "gap_count": 1,
+      "segment_count": 2,
+      "families": {
+        "EMA_DMA": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 1,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "STANDARD_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 1,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 1,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_PREFERRED_STOCH": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 1,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "ATR": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 1,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        }
+      }
+    },
+    {
+      "timeframe": "8H",
+      "first_bar_time": "2019-03-27T00:00:00Z",
+      "last_bar_time": "2025-02-28T16:00:00Z",
+      "bar_count": 6498,
+      "gap_count": 0,
+      "segment_count": 1,
+      "families": {
+        "EMA_DMA": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "STANDARD_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_PREFERRED_STOCH": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "ATR": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        }
+      }
+    },
+    {
+      "timeframe": "12H",
+      "first_bar_time": "2019-03-26T12:00:00Z",
+      "last_bar_time": "2025-02-28T12:00:00Z",
+      "bar_count": 4333,
+      "gap_count": 0,
+      "segment_count": 1,
+      "families": {
+        "EMA_DMA": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "STANDARD_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_PREFERRED_STOCH": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "ATR": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        }
+      }
+    },
+    {
+      "timeframe": "1D",
+      "first_bar_time": "2018-07-13T00:00:00Z",
+      "last_bar_time": "2025-02-28T00:00:00Z",
+      "bar_count": 2423,
+      "gap_count": 0,
+      "segment_count": 1,
+      "families": {
+        "EMA_DMA": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "STANDARD_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_MACD": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "DINAPOLI_PREFERRED_STOCH": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        },
+        "ATR": {
+          "invalid_due_to_gap_count": 0,
+          "recovered_after_gap_count": 0,
+          "permanent_invalid_after_recoverable_gap_count": 0,
+          "insufficient_post_gap_history_count": 0
+        }
+      }
+    }
+  ],
+  "totals": {
+    "bar_count": 1047213,
+    "gap_count": 95,
+    "segment_count": 105,
+    "insufficient_post_gap_history_count": 0,
+    "permanent_invalid_after_recoverable_gap_count": 0
+  },
+  "family_totals": {
+    "EMA_DMA": {
+      "recoverable_gaps": 95,
+      "recovered": 95,
+      "permanent_invalid": 0
+    },
+    "STANDARD_MACD": {
+      "recoverable_gaps": 95,
+      "recovered": 95,
+      "permanent_invalid": 0
+    },
+    "DINAPOLI_MACD": {
+      "recoverable_gaps": 95,
+      "recovered": 95,
+      "permanent_invalid": 0
+    },
+    "DINAPOLI_PREFERRED_STOCH": {
+      "recoverable_gaps": 95,
+      "recovered": 95,
+      "permanent_invalid": 0
+    },
+    "ATR": {
+      "recoverable_gaps": 95,
+      "recovered": 95,
+      "permanent_invalid": 0
+    }
+  },
+  "real_gap_segment_independence": "PASS",
+  "real_gap_segment_independence_checks": [
+    {
+      "timeframe": "5m",
+      "gap_index": 182294,
+      "segment_b_length": 960,
+      "check_index": 182339,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "5m",
+      "gap_index": 183254,
+      "segment_b_length": 13833,
+      "check_index": 183299,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "5m",
+      "gap_index": 419045,
+      "segment_b_length": 203736,
+      "check_index": 419090,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "15m",
+      "gap_index": 60768,
+      "segment_b_length": 320,
+      "check_index": 60813,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "15m",
+      "gap_index": 61088,
+      "segment_b_length": 4611,
+      "check_index": 61133,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "15m",
+      "gap_index": 139686,
+      "segment_b_length": 67912,
+      "check_index": 139731,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "30m",
+      "gap_index": 30388,
+      "segment_b_length": 160,
+      "check_index": 30433,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "30m",
+      "gap_index": 30548,
+      "segment_b_length": 2306,
+      "check_index": 30593,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "30m",
+      "gap_index": 69849,
+      "segment_b_length": 33956,
+      "check_index": 69894,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "1H",
+      "gap_index": 15200,
+      "segment_b_length": 80,
+      "check_index": 15245,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "1H",
+      "gap_index": 15280,
+      "segment_b_length": 1153,
+      "check_index": 15325,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "1H",
+      "gap_index": 34933,
+      "segment_b_length": 16978,
+      "check_index": 34978,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "2H",
+      "gap_index": 9037,
+      "segment_b_length": 61,
+      "check_index": 9082,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "2H",
+      "gap_index": 1680,
+      "segment_b_length": 1076,
+      "check_index": 1725,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "2H",
+      "gap_index": 10415,
+      "segment_b_length": 15549,
+      "check_index": 10460,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "4H",
+      "gap_index": 38,
+      "segment_b_length": 383,
+      "check_index": 83,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "4H",
+      "gap_index": 971,
+      "segment_b_length": 1129,
+      "check_index": 1016,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "4H",
+      "gap_index": 2100,
+      "segment_b_length": 11018,
+      "check_index": 2145,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    },
+    {
+      "timeframe": "6H",
+      "gap_index": 316,
+      "segment_b_length": 8466,
+      "check_index": 361,
+      "EMA_DMA": "PASS",
+      "STANDARD_MACD": "PASS",
+      "DINAPOLI_MACD": "PASS",
+      "DINAPOLI_PREFERRED_STOCH": "PASS",
+      "ATR": "PASS"
+    }
+  ],
+  "real_gap_atr_boundary": "PASS",
+  "real_gap_atr_boundary_detail": [
+    {
+      "timeframe": "5m",
+      "passed": 20,
+      "total": 20
+    },
+    {
+      "timeframe": "15m",
+      "passed": 20,
+      "total": 20
+    },
+    {
+      "timeframe": "30m",
+      "passed": 20,
+      "total": 20
+    },
+    {
+      "timeframe": "1H",
+      "passed": 19,
+      "total": 19
+    },
+    {
+      "timeframe": "2H",
+      "passed": 11,
+      "total": 11
+    },
+    {
+      "timeframe": "4H",
+      "passed": 4,
+      "total": 4
+    },
+    {
+      "timeframe": "6H",
+      "passed": 1,
+      "total": 1
+    },
+    {
+      "timeframe": "8H",
+      "passed": 0,
+      "total": 0
+    },
+    {
+      "timeframe": "12H",
+      "passed": 0,
+      "total": 0
+    },
+    {
+      "timeframe": "1D",
+      "passed": 0,
+      "total": 0
+    }
+  ],
+  "full_history_first_time": "2018-07-13T00:00:00Z",
+  "full_history_last_time": "2025-02-28T23:55:00Z"
+}
