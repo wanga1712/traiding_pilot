@@ -36,6 +36,7 @@ from .study_engine import (
     build_reach_rows,
     build_scan_context,
     compute_base_rates_from_contexts,
+    precompute_tf_series,
 )
 from .version import PREDICTOR_AUTHORITY_COMMIT, STUDY_VERSION, WIP_ID
 
@@ -193,6 +194,8 @@ def run_study() -> dict[str, Any]:
         load_meta[tf] = {"full_span": meta}
         if not bars:
             continue
+        print(f"  precompute series {tf} n={len(bars)}...", flush=True)
+        arrays, atr, dno, preds, seg_starts = precompute_tf_series(bars, timeframe=tf)
         for split in ACTIVE_SPLITS:
             start, end = split_bounds(split)
             eff_first, eff_last, scan = effective_scan_range(bars, start, end)
@@ -214,13 +217,18 @@ def run_study() -> dict[str, Any]:
                 scan_indices=scan_indices,
                 effective_first=eff_first or start,
                 effective_last=eff_last or end,
+                arrays=arrays,
+                atr=atr,
+                dno=dno,
+                preds=preds,
+                seg_starts=seg_starts,
             )
             contexts.append(ctx)
             bars_by_key[(tf, split)] = bars
             reach = build_reach_rows(ctx)
             reach_all.extend(reach)
             events_all.extend(build_cross_event_rows(ctx))
-            valid_counts[split] += sum(1 for i in scan_indices if ctx.preds[i].get("valid"))
+            valid_counts[split] += sum(1 for i in scan_indices if preds[i].get("valid"))
             split_periods.setdefault(split, {})[tf] = load_meta[tf][split]["effective_last"]
         print(f"  done {tf}: {len(bars)} bars", flush=True)
 

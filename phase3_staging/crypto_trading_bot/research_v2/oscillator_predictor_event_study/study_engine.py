@@ -59,12 +59,22 @@ def build_scan_context(
     effective_first: datetime,
     effective_last: datetime,
     config: PredictorConfig = FROZEN_PREDICTOR_CONFIG,
+    arrays: Any | None = None,
+    atr: np.ndarray | None = None,
+    dno: np.ndarray | None = None,
+    preds: list[dict[str, Any]] | None = None,
+    seg_starts: np.ndarray | None = None,
 ) -> ScanContext:
-    arrays = bars_to_arrays(bars, timeframe=timeframe)
-    atr = _atr_array(bars)
-    dno = compute_masked_dno_series(arrays, period=config.period)
-    preds = compute_predictor_feature_series(arrays, config=config, atr=atr)
-    seg_starts = segment_starts_array(arrays.gap_flags)
+    if arrays is None:
+        arrays = bars_to_arrays(bars, timeframe=timeframe)
+    if atr is None:
+        atr = _atr_array(bars)
+    if dno is None:
+        dno = compute_masked_dno_series(arrays, period=config.period)
+    if preds is None:
+        preds = compute_predictor_feature_series(arrays, config=config, atr=atr)
+    if seg_starts is None:
+        seg_starts = segment_starts_array(arrays.gap_flags)
     return ScanContext(
         timeframe=timeframe,
         split=split,
@@ -78,6 +88,21 @@ def build_scan_context(
         effective_last=effective_last,
         seg_starts=seg_starts,
     )
+
+
+def precompute_tf_series(
+    bars: list[dict[str, Any]],
+    *,
+    timeframe: str,
+    config: PredictorConfig = FROZEN_PREDICTOR_CONFIG,
+) -> tuple[Any, np.ndarray, np.ndarray, list[dict[str, Any]], np.ndarray]:
+    """Compute shared predictor/DNO/ATR series once per timeframe."""
+    arrays = bars_to_arrays(bars, timeframe=timeframe)
+    atr = _atr_array(bars)
+    dno = compute_masked_dno_series(arrays, period=config.period)
+    preds = compute_predictor_feature_series(arrays, config=config, atr=atr)
+    seg_starts = segment_starts_array(arrays.gap_flags)
+    return arrays, atr, dno, preds, seg_starts
 
 
 def _quantile_control_prices(
