@@ -5,18 +5,19 @@ import numpy as np
 
 from .bars import BarArrays, contiguous_ok, displayed_at_for
 from .math_core import rma, rolling_std, sma, true_range
-from .segments import segment_start_for
+from .segments import segment_starts_array
 from .types import IndicatorSample
 
 
 def compute_atr_series(arrays: BarArrays, *, period: int = 14) -> list[IndicatorSample]:
     tr = true_range(arrays.high, arrays.low, arrays.close, gap_flags=arrays.gap_flags)
     atr = rma(tr, period, gap_flags=arrays.gap_flags)
+    seg_starts = segment_starts_array(arrays.gap_flags)
     samples: list[IndicatorSample] = []
     for i in range(len(arrays.close)):
         calc_at = arrays.close_time[i]
         disp = displayed_at_for(arrays.close_time, arrays.open_time, i, 0)
-        seg_start = segment_start_for(arrays.gap_flags, i)
+        seg_start = int(seg_starts[i])
         if i - seg_start + 1 < period or np.isnan(atr[i]):
             samples.append(
                 IndicatorSample(calc_at, calc_at, disp, {"atr": None, "atr_norm": None}, valid=False, invalid_reason="warmup")

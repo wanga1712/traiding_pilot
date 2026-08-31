@@ -10,7 +10,6 @@ import pandas as pd
 
 from crypto_trading_bot.research_v2.indicator_engine.bars import bars_to_arrays, parse_ts
 from crypto_trading_bot.research_v2.indicator_engine.segments import same_segment, segment_starts_array
-from crypto_trading_bot.research_v2.indicator_engine.volatility import compute_atr_series
 from crypto_trading_bot.research_v2.oscillator_predictor.config import PredictorConfig
 from crypto_trading_bot.research_v2.oscillator_predictor.dno import compute_masked_dno_series
 from crypto_trading_bot.research_v2.oscillator_predictor.dynamic_predictor import compute_predictor_feature_series
@@ -42,11 +41,19 @@ class ScanContext:
 
 
 def _atr_array(bars: list[dict[str, Any]]) -> np.ndarray:
+    """Segment-aware ATR14 as float array — O(n), no per-bar segment scan."""
+    from crypto_trading_bot.research_v2.indicator_engine.math_core import rma, true_range
+
     arrays = bars_to_arrays(bars, timeframe=str(bars[0].get("timeframe", "1H")))
+    tr = true_range(arrays.high, arrays.low, arrays.close, gap_flags=arrays.gap_flags)
+    atr = rma(tr, 14, gap_flags=arrays.gap_flags)
+    seg_starts = segment_starts_array(arrays.gap_flags)
     out = np.full(len(bars), np.nan)
-    for i, s in enumerate(compute_atr_series(arrays, period=14)):
-        if s.valid and s.values.get("atr") is not None:
-            out[i] = float(s.values["atr"])
+    for i in range(len(bars)):
+        seg_start = int(seg_starts[i])
+        if i - seg_start + 1 < 14 or np.isnan(atr[i]):
+            continue
+        out[i] = float(atr[i])
     return out
 
 
