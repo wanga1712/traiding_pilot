@@ -1,0 +1,102 @@
+[
+  {
+    "timeframe": "5m",
+    "FIRST_TIME": "2019-05-12T00:04:59.999999+00:00",
+    "LAST_TIME": "2023-06-20T06:04:59.999999+00:00",
+    "BAR_COUNT": 431331,
+    "GAP_COUNT": 20,
+    "monotonic": true,
+    "duplicate_timestamps": false,
+    "oos_timestamps": 0
+  },
+  {
+    "timeframe": "15m",
+    "FIRST_TIME": "2019-05-12T00:14:59.999999+00:00",
+    "LAST_TIME": "2023-06-20T05:59:59.999999+00:00",
+    "BAR_COUNT": 143779,
+    "GAP_COUNT": 20,
+    "monotonic": true,
+    "duplicate_timestamps": false,
+    "oos_timestamps": 0
+  },
+  {
+    "timeframe": "30m",
+    "FIRST_TIME": "2019-05-12T00:29:59.999999+00:00",
+    "LAST_TIME": "2023-06-20T05:59:59.999999+00:00",
+    "BAR_COUNT": 71894,
+    "GAP_COUNT": 20,
+    "monotonic": true,
+    "duplicate_timestamps": false,
+    "oos_timestamps": 0
+  },
+  {
+    "timeframe": "1H",
+    "FIRST_TIME": "2019-05-12T00:59:59.999999+00:00",
+    "LAST_TIME": "2023-06-20T05:59:59.999999+00:00",
+    "BAR_COUNT": 35953,
+    "GAP_COUNT": 19,
+    "monotonic": true,
+    "duplicate_timestamps": false,
+    "oos_timestamps": 0
+  },
+  {
+    "timeframe": "2H",
+    "FIRST_TIME": "2019-05-12T01:59:59.999999+00:00",
+    "LAST_TIME": "2023-06-20T05:59:59.999999+00:00",
+    "BAR_COUNT": 17984,
+    "GAP_COUNT": 11,
+    "monotonic": true,
+    "duplicate_timestamps": false,
+    "oos_timestamps": 0
+  },
+  {
+    "timeframe": "4H",
+    "FIRST_TIME": "2019-05-12T03:59:59.999999+00:00",
+    "LAST_TIME": "2023-06-20T03:59:59.999999+00:00",
+    "BAR_COUNT": 8997,
+    "GAP_COUNT": 3,
+    "monotonic": true,
+    "duplicate_timestamps": false,
+    "oos_timestamps": 0
+  },
+  {
+    "timeframe": "6H",
+    "FIRST_TIME": "2019-05-12T05:59:59.999999+00:00",
+    "LAST_TIME": "2023-06-20T05:59:59.999999+00:00",
+    "BAR_COUNT": 6000,
+    "GAP_COUNT": 1,
+    "monotonic": true,
+    "duplicate_timestamps": false,
+    "oos_timestamps": 0
+  },
+  {
+    "timeframe": "8H",
+    "FIRST_TIME": "2019-05-12T07:59:59.999999+00:00",
+    "LAST_TIME": "2023-06-19T23:59:59.999999+00:00",
+    "BAR_COUNT": 4500,
+    "GAP_COUNT": 0,
+    "monotonic": true,
+    "duplicate_timestamps": false,
+    "oos_timestamps": 0
+  },
+  {
+    "timeframe": "12H",
+    "FIRST_TIME": "2019-05-12T11:59:59.999999+00:00",
+    "LAST_TIME": "2023-06-19T23:59:59.999999+00:00",
+    "BAR_COUNT": 3000,
+    "GAP_COUNT": 0,
+    "monotonic": true,
+    "duplicate_timestamps": false,
+    "oos_timestamps": 0
+  },
+  {
+    "timeframe": "1D",
+    "FIRST_TIME": "2019-05-12T23:59:59.999999+00:00",
+    "LAST_TIME": "2023-06-19T23:59:59.999999+00:00",
+    "BAR_COUNT": 1500,
+    "GAP_COUNT": 0,
+    "monotonic": true,
+    "duplicate_timestamps": false,
+    "oos_timestamps": 0
+  }
+]

@@ -1,0 +1,78 @@
+{
+  "source_host": "S7",
+  "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+  "source_type": "CANONICAL",
+  "cache_host": "S13",
+  "cache_disposable": true,
+  "copied_at": "2026-08-31T15:35:33.441956+00:00",
+  "source_first_time": "2017-08-17T04:00:00+00:00",
+  "source_last_time": "2026-07-31T23:59:00+00:00",
+  "study_first_time": "2019-05-12T00:00:00+00:00",
+  "study_last_time": "2023-06-20T06:08:00+00:00",
+  "timeframes": [
+    "5m",
+    "15m",
+    "30m",
+    "1H",
+    "2H",
+    "4H",
+    "6H",
+    "8H",
+    "12H",
+    "1D"
+  ],
+  "row_counts": {
+    "5m": 431832,
+    "15m": 144280,
+    "30m": 72395,
+    "1H": 36454,
+    "2H": 18485,
+    "4H": 9497,
+    "6H": 6501,
+    "8H": 5001,
+    "12H": 3501,
+    "1D": 2001
+  },
+  "source_partition_count": 108,
+  "source_dataset_hash_or_manifest_id": "market.sqlite3:108_partitions",
+  "sample_partitions": [
+    {
+      "token": "2019-05",
+      "path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m/2019/ETHUSDT-1m-2019-05.parquet",
+      "readable": true,
+      "row_count": 44040,
+      "first_time": "2019-05-01T00:00:00+00:00",
+      "last_time": "2019-05-31T23:59:00+00:00",
+      "error": null
+    },
+    {
+      "token": "2021-06",
+      "path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m/2021/ETHUSDT-1m-2021-06.parquet",
+      "readable": true,
+      "row_count": 43200,
+      "first_time": "2021-06-01T00:00:00+00:00",
+      "last_time": "2021-06-30T23:59:00+00:00",
+      "error": null
+    },
+    {
+      "token": "2022-06",
+      "path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m/2022/ETHUSDT-1m-2022-06.parquet",
+      "readable": true,
+      "row_count": 43200,
+      "first_time": "2022-06-01T00:00:00+00:00",
+      "last_time": "2022-06-30T23:59:00+00:00",
+      "error": null
+    },
+    {
+      "token": "2023-06",
+      "path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m/2023/ETHUSDT-1m-2023-06.parquet",
+      "readable": true,
+      "row_count": 43200,
+      "first_time": "2023-06-01T00:00:00+00:00",
+      "last_time": "2023-06-30T23:59:00+00:00",
+      "error": null
+    }
+  ],
+  "S13_CACHE_SOURCE": "S7",
+  "SYNTHETIC_GAP_FILL": "NO"
+}

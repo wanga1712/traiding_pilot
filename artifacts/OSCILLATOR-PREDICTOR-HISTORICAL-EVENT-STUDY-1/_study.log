@@ -1,0 +1,74 @@
+Loading 5m...
+  precompute series 5m n=431831...
+  done 5m: 431831 bars
+Loading 15m...
+  precompute series 15m n=144279...
+  done 15m: 144279 bars
+Loading 30m...
+  precompute series 30m n=72394...
+  done 30m: 72394 bars
+Loading 1H...
+  precompute series 1H n=36453...
+  done 1H: 36453 bars
+Loading 2H...
+  precompute series 2H n=18484...
+  done 2H: 18484 bars
+Loading 4H...
+  precompute series 4H n=9496...
+  done 4H: 9496 bars
+Loading 6H...
+  precompute series 6H n=6500...
+  done 6H: 6500 bars
+Loading 8H...
+  precompute series 8H n=5000...
+  done 8H: 5000 bars
+Loading 12H...
+  precompute series 12H n=3500...
+  done 12H: 3500 bars
+Loading 1D...
+  precompute series 1D n=2000...
+  done 1D: 2000 bars
+fatal: не найден git репозиторий (или один из родительских каталогов): .git
+{
+  "wip_id": "OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1",
+  "study_version": "OSCILLATOR_PREDICTOR_HISTORICAL_EVENT_STUDY_V1",
+  "predictor_authority_commit": "6b1e34e4dffb469e0b9392c33d20e5689a2cdfe2",
+  "fixed_config": "7 / 2 / 100 / 5 / 0.80",
+  "target_aggregation": "PROJECT_MEAN_CONFIRMED_EXTREMA_V1",
+  "discovery_period": "2019-05-12T00:00:00+00:00",
+  "discovery_period_end": "2022-06-10T04:36:00+00:00",
+  "validation_period": "2022-06-10T04:36:00+00:00",
+  "validation_period_end": "2023-06-20T06:08:00+00:00",
+  "oos_opened": "NO",
+  "total_valid_predictor_rows_discovery": 538668,
+  "total_valid_predictor_rows_validation": 181301,
+  "total_ob_events_discovery": 32208,
+  "total_os_events_discovery": 31842,
+  "total_ob_events_validation": 10338,
+  "total_os_events_validation": 10407,
+  "next_bar_distance_calibration": "NON_MONOTONIC",
+  "research_verdict": "PREDICTOR_EFFECT_SUPPORTED",
+  "DYNAMIC_VS_DNO_QUANTILE_CONTROL": "CONTROL_BETTER",
+  "DYNAMIC_VS_ATR_CONTROL": "INSUFFICIENT_SAMPLE",
+  "discovery_validation_stability": {
+    "STABLE_POSITIVE": 42,
+    "UNSTABLE": 19,
+    "NEGATIVE": 10,
+    "INSUFFICIENT_SAMPLE": 8,
+    "WEAK_POSITIVE": 1
+  },
+  "FUTURE_PRICE_MUTATION": "PASS",
+  "FUTURE_EVENT_OUTCOME_NOT_IN_FEATURES": "PASS",
+  "HTF_COMPLETION_CAUSALITY": "PASS",
+  "GAP_SEGMENT_POLICY": "PASS",
+  "BATCH_STREAMING_REFERENCE_PARITY": "PASS",
+  "OOS_ACCESS_COUNT": 0,
+  "git_commit": "UNKNOWN",
+  "ob_reversal_lift_discovery": 0.020235972241469363,
+  "ob_reversal_lift_validation": -0.014881342013584287,
+  "os_reversal_lift_discovery": 0.03664524530947292,
+  "os_reversal_lift_validation": 0.029005267309165063,
+  "best_supported_tf_discovery": "30m",
+  "best_supported_tf_validation": "1D",
+  "artifact_root": "artifacts/OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1"
+}
