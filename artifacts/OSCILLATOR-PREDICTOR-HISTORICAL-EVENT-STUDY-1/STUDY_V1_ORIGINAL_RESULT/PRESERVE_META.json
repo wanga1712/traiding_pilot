@@ -1,0 +1,9 @@
+﻿{
+  "label": "STUDY_V1_ORIGINAL_RESULT",
+  "base_study_commit": "f98c10d47c4b3749ed90940eb7b2a8584268ddda",
+  "summary_commit": "bfb7f89557de43d6040954b68f58aa34cfc35bcd",
+  "predictor_authority_commit": "6b1e34e4dffb469e0b9392c33d20e5689a2cdfe2",
+  "original_research_verdict": "PREDICTOR_EFFECT_SUPPORTED",
+  "INDEPENDENT_REVIEW_STATUS": "METHODOLOGY_FIX_REQUIRED",
+  "preserved_at": "2026-08-31T18:04:00+00:00"
+}

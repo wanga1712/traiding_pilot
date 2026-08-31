@@ -1,0 +1,124 @@
+{
+  "load_meta": {
+    "5m": {
+      "timeframe": "5m",
+      "source_host": "S7",
+      "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+      "compute_host": "S13",
+      "s13_cache_path": "/var/tmp/traiding_pilot_market_cache",
+      "cache_disposable": true,
+      "source": "S7_canonical_via_S13_disposable_cache",
+      "first_loaded": "2019-05-10T06:24:59.999999+00:00",
+      "last_loaded": "2023-06-20T06:04:59.999999+00:00",
+      "row_count": 431831
+    },
+    "15m": {
+      "timeframe": "15m",
+      "source_host": "S7",
+      "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+      "compute_host": "S13",
+      "s13_cache_path": "/var/tmp/traiding_pilot_market_cache",
+      "cache_disposable": true,
+      "source": "S7_canonical_via_S13_disposable_cache",
+      "first_loaded": "2019-05-06T19:14:59.999999+00:00",
+      "last_loaded": "2023-06-20T05:59:59.999999+00:00",
+      "row_count": 144279
+    },
+    "30m": {
+      "timeframe": "30m",
+      "source_host": "S7",
+      "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+      "compute_host": "S13",
+      "s13_cache_path": "/var/tmp/traiding_pilot_market_cache",
+      "cache_disposable": true,
+      "source": "S7_canonical_via_S13_disposable_cache",
+      "first_loaded": "2019-05-01T14:29:59.999999+00:00",
+      "last_loaded": "2023-06-20T05:59:59.999999+00:00",
+      "row_count": 72394
+    },
+    "1H": {
+      "timeframe": "1H",
+      "source_host": "S7",
+      "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+      "compute_host": "S13",
+      "s13_cache_path": "/var/tmp/traiding_pilot_market_cache",
+      "cache_disposable": true,
+      "source": "S7_canonical_via_S13_disposable_cache",
+      "first_loaded": "2019-04-21T04:59:59.999999+00:00",
+      "last_loaded": "2023-06-20T05:59:59.999999+00:00",
+      "row_count": 36453
+    },
+    "2H": {
+      "timeframe": "2H",
+      "source_host": "S7",
+      "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+      "compute_host": "S13",
+      "s13_cache_path": "/var/tmp/traiding_pilot_market_cache",
+      "cache_disposable": true,
+      "source": "S7_canonical_via_S13_disposable_cache",
+      "first_loaded": "2019-03-31T09:59:59.999999+00:00",
+      "last_loaded": "2023-06-20T05:59:59.999999+00:00",
+      "row_count": 18484
+    },
+    "4H": {
+      "timeframe": "4H",
+      "source_host": "S7",
+      "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+      "compute_host": "S13",
+      "s13_cache_path": "/var/tmp/traiding_pilot_market_cache",
+      "cache_disposable": true,
+      "source": "S7_canonical_via_S13_disposable_cache",
+      "first_loaded": "2019-02-17T19:59:59.999999+00:00",
+      "last_loaded": "2023-06-20T03:59:59.999999+00:00",
+      "row_count": 9496
+    },
+    "6H": {
+      "timeframe": "6H",
+      "source_host": "S7",
+      "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+      "compute_host": "S13",
+      "s13_cache_path": "/var/tmp/traiding_pilot_market_cache",
+      "cache_disposable": true,
+      "source": "S7_canonical_via_S13_disposable_cache",
+      "first_loaded": "2019-01-07T05:59:59.999999+00:00",
+      "last_loaded": "2023-06-20T05:59:59.999999+00:00",
+      "row_count": 6500
+    },
+    "8H": {
+      "timeframe": "8H",
+      "source_host": "S7",
+      "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+      "compute_host": "S13",
+      "s13_cache_path": "/var/tmp/traiding_pilot_market_cache",
+      "cache_disposable": true,
+      "source": "S7_canonical_via_S13_disposable_cache",
+      "first_loaded": "2018-11-26T15:59:59.999999+00:00",
+      "last_loaded": "2023-06-19T23:59:59.999999+00:00",
+      "row_count": 5000
+    },
+    "12H": {
+      "timeframe": "12H",
+      "source_host": "S7",
+      "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+      "compute_host": "S13",
+      "s13_cache_path": "/var/tmp/traiding_pilot_market_cache",
+      "cache_disposable": true,
+      "source": "S7_canonical_via_S13_disposable_cache",
+      "first_loaded": "2018-09-04T11:59:59.999999+00:00",
+      "last_loaded": "2023-06-19T23:59:59.999999+00:00",
+      "row_count": 3500
+    },
+    "1D": {
+      "timeframe": "1D",
+      "source_host": "S7",
+      "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+      "compute_host": "S13",
+      "s13_cache_path": "/var/tmp/traiding_pilot_market_cache",
+      "cache_disposable": true,
+      "source": "S7_canonical_via_S13_disposable_cache",
+      "first_loaded": "2017-12-28T23:59:59.999999+00:00",
+      "last_loaded": "2023-06-19T23:59:59.999999+00:00",
+      "row_count": 2000
+    }
+  }
+}
