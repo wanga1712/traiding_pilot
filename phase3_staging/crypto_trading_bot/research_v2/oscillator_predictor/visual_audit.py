@@ -1,16 +1,21 @@
-"""Research-only visual audit using real Binance ETHUSDT history."""
+"""Research-only visual audit using S7 canonical ETHUSDT history via S13 cache."""
 from __future__ import annotations
 
 import json
-import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 
-from crypto_trading_bot.research_v2.indicator_engine.bars import bars_to_arrays
+from crypto_trading_bot.research_v2.indicator_engine.bars import bars_to_arrays, parse_ts
 from crypto_trading_bot.research_v2.indicator_engine.volatility import compute_atr_series
+from crypto_trading_bot.research_v2.market_data.research_access import (
+    CANONICAL_HOST,
+    CANONICAL_SOURCE_PATH,
+    make_research_bar_service,
+)
+from crypto_trading_bot.research_v2.reversal_signal_study.bar_io import normalize_bar
 
 from .dno import compute_masked_dno_series
 from .config import DEFAULT_PREDICTOR_CONFIG
@@ -28,31 +33,26 @@ WINDOWS = (
 )
 
 
-def fetch_ethusdt_1h(start_ms: int, limit: int = 240) -> list[dict[str, Any]]:
-    url = (
-        f"https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1h"
-        f"&startTime={start_ms}&limit={limit}"
-    )
-    with urllib.request.urlopen(url, timeout=30) as resp:
-        raw = json.loads(resp.read().decode())
-    bars = []
-    for row in raw:
-        ot = datetime.fromtimestamp(row[0] / 1000, tz=timezone.utc)
-        ct = datetime.fromtimestamp(row[6] / 1000, tz=timezone.utc)
-        c = float(row[4])
-        bars.append(
-            {
-                "open_time": ot,
-                "close_time": ct,
-                "open": float(row[1]),
-                "high": float(row[2]),
-                "low": float(row[3]),
-                "close": c,
-                "volume": float(row[5]),
-                "timeframe": "1H",
-            }
+def fetch_ethusdt_1h_from_canonical(start_ms: int, limit: int = 240) -> list[dict[str, Any]]:
+    """Load 1H bars from S7 canonical store — no direct exchange HTTP."""
+    start = datetime.fromtimestamp(start_ms / 1000, tz=timezone.utc)
+    end = start + timedelta(hours=limit + 2)
+    service = make_research_bar_service()
+    raw = service.get_bars("1H", after=start - timedelta(hours=48), before=end, limit=limit + 100)
+    bars = [normalize_bar(r) for r in raw]
+    out = []
+    for b in bars:
+        ct = parse_ts(b["close_time"])
+        if ct.tzinfo is None:
+            ct = ct.replace(tzinfo=timezone.utc)
+        if ct >= start and len(out) < limit:
+            b["timeframe"] = "1H"
+            out.append(b)
+    if not out:
+        raise RuntimeError(
+            f"No 1H bars from {CANONICAL_HOST}:{CANONICAL_SOURCE_PATH} for window starting {start.isoformat()}"
         )
-    return bars
+    return out[:limit]
 
 
 def _html_chart(payload: dict[str, Any], title: str) -> str:
@@ -62,7 +62,7 @@ def _html_chart(payload: dict[str, Any], title: str) -> str:
 <style>body{{font-family:sans-serif;margin:16px}}canvas{{border:1px solid #ccc;max-width:100%}}</style>
 </head><body>
 <h2>{title}</h2>
-<p>Research-only audit — ETHUSDT 1H real history from Binance public API.</p>
+<p>Research-only audit — ETHUSDT 1H from S7 canonical market data via S13 disposable cache.</p>
 <canvas id='c' width='1200' height='700'></canvas>
 <script>
 const D = {data_json};
@@ -97,7 +97,7 @@ ctx.fillStyle='#27ae60'; D.trough_idx.forEach(i=>{{ctx.beginPath();ctx.arc(x(i),
 
 
 def export_window(name: str, start_ms: int) -> None:
-    bars = fetch_ethusdt_1h(start_ms)
+    bars = fetch_ethusdt_1h_from_canonical(start_ms)
     arrays = bars_to_arrays(bars, timeframe="1H")
     atr = np.array(
         [
@@ -121,6 +121,10 @@ def export_window(name: str, start_ms: int) -> None:
         "window": name,
         "symbol": "ETHUSDT",
         "timeframe": "1H",
+        "data_provenance": {
+            "source_host": CANONICAL_HOST,
+            "source_path": CANONICAL_SOURCE_PATH,
+        },
         "closes": [float(b["close"]) for b in bars],
         "dno": [None if np.isnan(x) else float(x) for x in dno],
         "ob": [p.get("PREDICTOR_OB_PRICE_NEXT_BAR") if p.get("valid") else None for p in preds],
@@ -140,11 +144,16 @@ def run_real_history_visual_audit() -> dict[str, Any]:
         for name, start_ms in WINDOWS:
             export_window(name, start_ms)
         (ART / "README.txt").write_text(
-            "Real ETHUSDT 1H history visual audit (Binance public API).\n"
+            "Real ETHUSDT 1H history visual audit from S7 canonical data via S13 disposable cache.\n"
+            "Existing committed artifacts from prior Binance-API runs remain as historical evidence.\n"
             "Files: *.html charts + *.json machine-readable payloads.\n",
             encoding="utf-8",
         )
-        return {"REAL_HISTORY_VISUAL_AUDIT": "PASS", "windows": [w[0] for w in WINDOWS]}
+        return {
+            "REAL_HISTORY_VISUAL_AUDIT": "PASS",
+            "windows": [w[0] for w in WINDOWS],
+            "data_source": f"{CANONICAL_HOST}:{CANONICAL_SOURCE_PATH}",
+        }
     except Exception as exc:
         return {"REAL_HISTORY_VISUAL_AUDIT": "FAIL", "error": str(exc)}
 

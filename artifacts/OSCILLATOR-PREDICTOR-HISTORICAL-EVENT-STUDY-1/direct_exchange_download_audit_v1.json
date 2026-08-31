@@ -1,0 +1,47 @@
+{
+  "mode": "DATA-LOCATION-PREFLIGHT",
+  "audit_date": "2026-08-31",
+  "rule": "No Binance/Bybit/public-exchange download from S13 inside historical research code",
+  "direct_exchange_download_on_s13": "NO",
+  "findings": [
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/visual_audit.py",
+      "status": "FIXED",
+      "was": "api.binance.com/api/v3/klines direct HTTP",
+      "now": "S7 canonical via make_research_bar_service()"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/bar_loader.py",
+      "status": "FIXED",
+      "was": "api.binance.com klines + data.binance.vision archive download",
+      "now": "S7 canonical only; raises CanonicalDataUnavailableError if missing"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/market_cache.py",
+      "status": "REMOVED",
+      "was": "data.binance.vision monthly zip download to S13",
+      "now": "deleted"
+    },
+    {
+      "path": "phase2_staging/crypto_trading_bot/research_v2/market_data/binance_archive.py",
+      "status": "INGEST_ONLY",
+      "note": "S7 ingest tooling — not a research/backtest read path on S13"
+    },
+    {
+      "path": "phase2_staging/crypto_trading_bot/research_v2/market_data/ingest.py",
+      "status": "INGEST_ONLY",
+      "note": "Populates S7 canonical store — not used by research runners"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/bar_io.py",
+      "status": "COMPLIANT",
+      "note": "SCP from S7 canonical path into S13 disposable cache"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/market_data/research_access.py",
+      "status": "NEW_AUTHORITY",
+      "note": "Shared S7→S13 research data access + cache manifest"
+    }
+  ],
+  "contaminated_s13_cache_warning": "Any parquet under S13 cache populated via prior Binance HTTP downloads must be treated as non-canonical and rebuilt from S7 before historical study."
+}

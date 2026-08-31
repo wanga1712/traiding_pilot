@@ -15,18 +15,18 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `OSCILLATOR-PREDICTOR-REFERENCE-1` |
+| **WIP** | `OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1` |
 | **STATUS** | `REVIEW` |
-| **PHASE** | 8a — Oscillator predictor reference |
-| **Note** | Causal DNO reference + project-style dynamic OB/OS predictor bands. **Not** proprietary exact replication. Awaiting independent review. |
+| **PHASE** | 8a — Oscillator predictor historical event study |
+| **Note** | Fixed-config causal reach/cross/reversal study on ETHUSDT. No PnL, no parameter search. |
 
 **Immediate sequence (user-authorized):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` *(do not start until explicitly authorized)*
 
-**Next planned after oscillator predictor review:**  
-`OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1` → then `MULTITF-INDICATOR-PARAMETER-SEARCH-1` *(do not activate without user acceptance)*
+**Next planned after historical event study review:**  
+`MULTITF-INDICATOR-PARAMETER-SEARCH-1` *(do not activate without user acceptance)*
 
-Previous CLOSED: `MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1` — `MULTITF_INDICATOR_FEATURE_BANK_V1`; formula authority `b93f3ca`; full-history gap audit `2d8a738`; roadmap closure `dd5ba25`.
+Previous CLOSED: `OSCILLATOR-PREDICTOR-REFERENCE-1` — authority `6b1e34e`; causal DNO reference + project-style dynamic OB/OS bands; second-review integrity fix.
 
 Previous CLOSED: `ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1` — verdict `COMPOSITE_NOT_BETTER_THAN_PRICE`; best human composite preserved (display-aligned DMA 3×3 + Stoch 14/3/3, confirmation_window=3, signal_expiration=5). Not a profitability verdict.
 
@@ -911,12 +911,14 @@ NEXT_WIP:
 
 ### WIP=OSCILLATOR-PREDICTOR-REFERENCE-1
 
-STATUS=REVIEW
+STATUS=CLOSED
 
 PHASE=8a — Oscillator predictor reference
 
 GOAL:  
 Causal price-domain predictor layer: documented DNO reference, project-style dynamic OB/OS bands, integration with existing inverse predictor engine. No parameter optimization.
+
+FINAL_AUTHORITY_COMMIT=6b1e34e4dffb469e0b9392c33d20e5689a2cdfe2
 
 DNO_REFERENCE_VERSION=DINAPOLI_DETRENDED_OSCILLATOR_REFERENCE_V1
 
@@ -937,11 +939,35 @@ TRADING_PNL_PERFORMED=NO
 OOS_OPENED=NO
 
 NEXT_WIP:  
-`OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1` (do not activate without user acceptance)
+`OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1` (CLOSED — activated next WIP)
 
 HISTORICAL_EVENT_STUDY_PERFORMED=NO
 
-Then: `MULTITF-INDICATOR-PARAMETER-SEARCH-1` (planned after historical reference study)
+### WIP=OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1
+
+STATUS=REVIEW
+
+PHASE=8a — Oscillator predictor historical event study
+
+GOAL:  
+Determine whether the fixed reference oscillator predictor contains useful historical information (reach, distance calibration, cross-event reversal, controls). Not a trading strategy test.
+
+PREDICTOR_AUTHORITY_COMMIT=6b1e34e4dffb469e0b9392c33d20e5689a2cdfe2
+
+FIXED_CONFIG=7 / 2 / 100 / 5 / 0.80
+
+TARGET_AGGREGATION=PROJECT_MEAN_CONFIRMED_EXTREMA_V1
+
+ARTIFACTS:  
+`artifacts/OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1/`
+
+PARAMETER_OPTIMIZATION_PERFORMED=NO  
+SIGNAL_SEARCH_PERFORMED=NO  
+TRADING_PNL_PERFORMED=NO  
+OOS_OPENED=NO
+
+NEXT_WIP:  
+`MULTITF-INDICATOR-PARAMETER-SEARCH-1` (do not activate without user acceptance)
 
 ### WIP=PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
 
@@ -1421,9 +1447,9 @@ none (end of planned chain)
 | ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1 | CLOSED | 7 |
 | TRADING-RESEARCH-COCKPIT-FOUNDATION-1 | CLOSED | 8 |
 | MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1 | CLOSED | 8a |
-| OSCILLATOR-PREDICTOR-REFERENCE-1 | REVIEW | 8a |
-| OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1 | PLANNED (next — do not auto-activate) | 8a |
-| MULTITF-INDICATOR-PARAMETER-SEARCH-1 | PLANNED (after historical event study) | 8a |
+| OSCILLATOR-PREDICTOR-REFERENCE-1 | CLOSED | 8a |
+| OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1 | REVIEW | 8a |
+| MULTITF-INDICATOR-PARAMETER-SEARCH-1 | PLANNED (after historical event study review) | 8a |
 | PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | PLANNED (paused) | 8b |
 | TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1 | PLANNED | 8b |
 | TRADING-POLICY-MODEL-BAKEOFF-1 | PLANNED | 8b |
