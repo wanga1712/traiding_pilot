@@ -15,13 +15,16 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | *(none — awaiting user activation)* |
-| **STATUS** | — |
-| **PHASE** | — |
-| **Note** | `TRADING-RESEARCH-COCKPIT-FOUNDATION-1` **CLOSED** (deployed S13 `:8055`, visual acceptance PASS). |
+| **WIP** | `MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1` |
+| **STATUS** | REVIEW |
+| **PHASE** | Feature bank — formulas, registries, causal alignment (no optimization) |
+| **Note** | Monetary simulator **paused** per roadmap correction. Independent formula review required before parameter search. |
 
-**Next planned sequence (not auto-activated):**  
-`PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` → `TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1` → `TRADING-POLICY-MODEL-BAKEOFF-1` → `QWEN-HISTORICAL-TRADING-PILOT-1`
+**Immediate sequence (user-authorized):**  
+`MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1` → independent formula review → `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
+
+**Next planned after execution path:**  
+`TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1` → `TRADING-POLICY-MODEL-BAKEOFF-1` → `QWEN-HISTORICAL-TRADING-PILOT-1`
 
 Long-lead parallel (later): `BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1` → `HISTORICAL-BYBIT-FUTURES-BACKFILL-1` → …
 
@@ -877,9 +880,16 @@ Long-lead data foundation — may start in parallel per global exception rule, b
 
 ## PHASE 8b — Planned execution / agent sequence (not active)
 
+### WIP=MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1
+
+STATUS=REVIEW
+
+GOAL:  
+Complete causal multi-TF displaced indicator + geometry feature bank (`MULTITF_INDICATOR_FEATURE_BANK_V1`). No parameter optimization.
+
 ### WIP=PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
 
-STATUS=PLANNED
+STATUS=PLANNED (paused — do not run until feature bank reviewed)
 
 ### WIP=TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1
 
@@ -1354,7 +1364,8 @@ none (end of planned chain)
 | REVERSAL-SIGNAL-EVENT-STUDY-1 | PAUSED | 7 |
 | ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1 | CLOSED | 7 |
 | TRADING-RESEARCH-COCKPIT-FOUNDATION-1 | CLOSED | 8 |
-| PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | PLANNED | 8b |
+| MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1 | REVIEW | 8a |
+| PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | PLANNED (paused) | 8b |
 | TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1 | PLANNED | 8b |
 | TRADING-POLICY-MODEL-BAKEOFF-1 | PLANNED | 8b |
 | QWEN-HISTORICAL-TRADING-PILOT-1 | PLANNED | 8b |

@@ -1,0 +1,10 @@
+{
+  "numeric_reference_tests": "PASS",
+  "displacement_alignment_tests": "PASS",
+  "geometry_formula_tests": "PASS",
+  "future_price_mutation_test": "PASS",
+  "higher_tf_leakage_test": "NOT_RUN_LOCAL",
+  "true_pivot_leakage_test": "NOT_RUN_LOCAL",
+  "future_d_leakage_test": "PASS",
+  "batch_streaming_parity": "PASS"
+}
