@@ -1,0 +1,3 @@
+predictor_id,timeframe,oscillator_period,peak_strength,lookback,samples,ob_os_level_percent,target_aggregation,price_source,formula_version,reference_status,causal_semantics,warmup,segment_policy
+DNO_REF_N7_V1,ALL,7,,,,,,CLOSE,DINAPOLI_DETRENDED_OSCILLATOR_REFERENCE_V1,DINAPOLI_NONPROPRIETARY_REFERENCE,CONTIGUOUS_SEGMENT_SMA,7,PREDICTOR_EXTREMA_CROSS_GAP=NO
+OSC_PRED_PROJECT_DINAPOLI_V1,ALL,7,2,100,5,0.8,PROJECT_MEAN_CONFIRMED_EXTREMA_V1,CLOSE,PROJECT_DINAPOLI_STYLE_OSCILLATOR_PREDICTOR_V1,PROJECT_RECONSTRUCTION,PEAK_AVAILABLE_AT=i+K,period + peak_strength + samples extrema,PREDICTOR_EXTREMA_CROSS_GAP=NO

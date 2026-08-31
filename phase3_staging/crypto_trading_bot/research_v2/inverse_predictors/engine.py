@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import Any, Sequence
 
 from .dma_solver import solve_dma_cross
+from .dno_solver import solve_dno_level
 from .ma_osc_solver import bollinger_feasibility, solve_ema_cross, solve_project_oscillator, solve_sma_cross, solve_wma_cross
 from .macd_solver import solve_macd
 from .registry import PARAMETER_REGISTRY
@@ -123,6 +124,16 @@ def predict(
             predictor_id=pid,
             parameter_set_id=parameter_set_id,
             source_timeframe=source_timeframe,
+        )
+    if pid in ("DNO_OB_OS_PREDICTOR_OB", "DNO_OB_OS_PREDICTOR_OS"):
+        return solve_dno_level(
+            state,
+            period=int(params["period"]),
+            target_level=float(params["target_level"]),
+            predictor_id=pid,
+            parameter_set_id=parameter_set_id,
+            source_timeframe=source_timeframe,
+            band="OB" if pid.endswith("_OB") else "OS",
         )
     raise KeyError(pid)
 

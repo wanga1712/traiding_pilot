@@ -151,7 +151,55 @@ class FeatureBank:
                     if shift > 0:
                         meta["provenance"][f"{pref}.DISPLAY_ALIGNED_MACD"] = provenance_at(samples, idx, shift)
             self._attach_geometry(feats, meta, tf, bars, idx, decision_time)
+            self._attach_oscillator_predictor(feats, meta, tf, bars, idx)
         return FeatureSnapshot(decision_time=decision_time, features=feats, metadata=meta)
+
+    def _attach_oscillator_predictor(
+        self,
+        feats: dict[str, float | bool | None],
+        meta: dict[str, Any],
+        tf: str,
+        bars: list[dict[str, Any]],
+        idx: int,
+    ) -> None:
+        from crypto_trading_bot.research_v2.indicator_engine.volatility import compute_atr_series
+        from crypto_trading_bot.research_v2.oscillator_predictor.dno import (
+            DNO_DEFAULT_PERIOD,
+            compute_dno_feature_series,
+        )
+        from crypto_trading_bot.research_v2.oscillator_predictor.dynamic_predictor import (
+            DEFAULT_PREDICTOR_CONFIG,
+            compute_predictor_at_index,
+        )
+
+        dno_key = (tf, "__dno__")
+        pred_key = (tf, "__osc_pred__")
+        if dno_key not in self._cache:
+            arrays = bars_to_arrays(bars, timeframe=tf)
+            atr_s = compute_atr_series(arrays, period=14)
+            atr = __import__("numpy").array(
+                [s.values["atr"] if s.valid else float("nan") for s in atr_s], dtype=float
+            )
+            self._cache[dno_key] = (
+                compute_dno_feature_series(arrays, period=DNO_DEFAULT_PERIOD, atr=atr),
+                atr,
+                arrays,
+            )
+        dno_samples, atr, arrays = self._cache[dno_key]
+        if idx < len(dno_samples) and dno_samples[idx].valid:
+            pref = f"{tf}.DNO"
+            _emit_declared(feats, prefix=pref, family="DNO", prim=dno_samples[idx].signal_primitives)
+        if pred_key not in self._cache:
+            self._cache[pred_key] = DEFAULT_PREDICTOR_CONFIG
+        cfg = self._cache[pred_key]
+        pred = compute_predictor_at_index(arrays, idx, config=cfg, atr=atr)
+        if pred.get("valid"):
+            pref = f"{tf}.OSC_PREDICTOR"
+            _emit_declared(feats, prefix=pref, family="OSC_PREDICTOR", prim=pred)
+            meta.setdefault("oscillator_predictor", {})[tf] = {
+                "predictor_state": pred.get("predictor_state"),
+                "formula_version": "PROJECT_DINAPOLI_STYLE_OSCILLATOR_PREDICTOR_V1",
+            }
 
     def _attach_geometry(
         self,

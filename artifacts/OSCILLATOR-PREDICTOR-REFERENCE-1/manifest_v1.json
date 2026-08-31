@@ -1,0 +1,60 @@
+{
+  "wip_id": "OSCILLATOR-PREDICTOR-REFERENCE-1",
+  "version": "OSCILLATOR_PREDICTOR_REFERENCE_V1",
+  "artifact_root": "artifacts/OSCILLATOR-PREDICTOR-REFERENCE-1",
+  "tests": {
+    "DNO_INVERSE_ROUNDTRIP": "PASS",
+    "DNO_INVERSE_OB_ROUNDTRIP": "PASS",
+    "DNO_INVERSE_OS_ROUNDTRIP": "PASS",
+    "manual_ob_price": 105.41666666666667,
+    "computed_ob_price": 105.41666666666667,
+    "manual_os_price": 100.39999999999999,
+    "computed_os_price": 100.39999999999999,
+    "fixture_closes": [
+      100.0,
+      101.0,
+      102.0,
+      103.0,
+      104.0,
+      105.0
+    ],
+    "period": 7,
+    "numeric": {
+      "DNO_INVERSE_ROUNDTRIP": "PASS",
+      "DNO_INVERSE_OB_ROUNDTRIP": "PASS",
+      "DNO_INVERSE_OS_ROUNDTRIP": "PASS",
+      "manual_ob_price": 105.41666666666667,
+      "computed_ob_price": 105.41666666666667,
+      "manual_os_price": 100.39999999999999,
+      "computed_os_price": 100.39999999999999,
+      "fixture_closes": [
+        100.0,
+        101.0,
+        102.0,
+        103.0,
+        104.0,
+        105.0
+      ],
+      "period": 7
+    },
+    "PEAK_CONFIRMATION_CAUSALITY": "PASS",
+    "before_peak_count": 0,
+    "at_confirm_peak_count": 1,
+    "FUTURE_PEAK_LEAKAGE_TEST": "PASS",
+    "PREDICTOR_FUTURE_MUTATION_TEST": "PASS",
+    "DNO_POST_GAP_INDEPENDENCE": "PASS",
+    "PREDICTOR_POST_GAP_INDEPENDENCE": "PASS",
+    "PREDICTOR_BATCH_STREAMING_PARITY": "PASS"
+  },
+  "inverse_predictor_families": {
+    "DMA_PRICE_CROSS_PREDICTOR": "SUPPORTED_ANALYTICALLY",
+    "STANDARD_STOCH_THRESHOLD_PREDICTOR": "SUPPORTED_ANALYTICALLY",
+    "STANDARD_STOCH_KD_CROSS_PREDICTOR": "UNSUPPORTED",
+    "DINAPOLI_PREFERRED_STOCH_THRESHOLD_PREDICTOR": "SUPPORTED_ANALYTICALLY",
+    "DINAPOLI_PREFERRED_STOCH_KD_CROSS_PREDICTOR": "UNSUPPORTED",
+    "STANDARD_MACD_CROSS_PREDICTOR": "SUPPORTED_ANALYTICALLY",
+    "DINAPOLI_MACD_CROSS_PREDICTOR": "SUPPORTED_ANALYTICALLY",
+    "DNO_OB_OS_PREDICTOR": "SUPPORTED_ANALYTICALLY"
+  },
+  "INVERSE_PREDICTOR_ENGINE_REUSED": "YES"
+}

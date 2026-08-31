@@ -15,20 +15,18 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | *(none — awaiting user authorization)* |
-| **STATUS** | — |
-| **PHASE** | — |
-| **Note** | `MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1` **CLOSED**. Next WIP **not** auto-activated. |
+| **WIP** | `OSCILLATOR-PREDICTOR-REFERENCE-1` |
+| **STATUS** | `REVIEW` |
+| **PHASE** | 8a — Oscillator predictor reference |
+| **Note** | Causal DNO reference + project-style dynamic OB/OS predictor bands. **Not** proprietary exact replication. Awaiting independent review. |
 
 **Immediate sequence (user-authorized):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` *(do not start until explicitly authorized)*
 
-**Next planned after execution path:**  
-`TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1` → `TRADING-POLICY-MODEL-BAKEOFF-1` → `QWEN-HISTORICAL-TRADING-PILOT-1`
+**Next planned after oscillator predictor review:**  
+`MULTITF-INDICATOR-PARAMETER-SEARCH-1` *(do not activate without user acceptance)*
 
-Long-lead parallel (later): `BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1` → `HISTORICAL-BYBIT-FUTURES-BACKFILL-1` → …
-
-Previous CLOSED: `MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1` — `MULTITF_INDICATOR_FEATURE_BANK_V1`; formula authority `b93f3ca`; full-history gap audit `2d8a738`; `PERMANENT_INVALID_AFTER_RECOVERABLE_GAP_COUNT=0`; no optimization/search/PnL/OOS.
+Previous CLOSED: `MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1` — `MULTITF_INDICATOR_FEATURE_BANK_V1`; formula authority `b93f3ca`; full-history gap audit `2d8a738`; roadmap closure `dd5ba25`.
 
 Previous CLOSED: `ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1` — verdict `COMPOSITE_NOT_BETTER_THAN_PRICE`; best human composite preserved (display-aligned DMA 3×3 + Stoch 14/3/3, confirmation_window=3, signal_expiration=5). Not a profitability verdict.
 
@@ -909,7 +907,37 @@ TRADING_PNL_PERFORMED=NO
 OOS_OPENED=NO
 
 NEXT_WIP:  
-Do not auto-activate. Await user authorization for `MULTITF-INDICATOR-PARAMETER-SEARCH-1`.
+`OSCILLATOR-PREDICTOR-REFERENCE-1` (implemented — REVIEW)
+
+### WIP=OSCILLATOR-PREDICTOR-REFERENCE-1
+
+STATUS=REVIEW
+
+PHASE=8a — Oscillator predictor reference
+
+GOAL:  
+Causal price-domain predictor layer: documented DNO reference, project-style dynamic OB/OS bands, integration with existing inverse predictor engine. No parameter optimization.
+
+DNO_REFERENCE_VERSION=DINAPOLI_DETRENDED_OSCILLATOR_REFERENCE_V1
+
+PROJECT_DINAPOLI_STYLE_PREDICTOR_VERSION=PROJECT_DINAPOLI_STYLE_OSCILLATOR_PREDICTOR_V1
+
+PROPRIETARY_EXACT_REPLICATION=NO
+
+TARGET_AGGREGATION=PROJECT_MEAN_CONFIRMED_EXTREMA_V1
+
+PREDICTOR_EXTREMA_CROSS_GAP=NO
+
+ARTIFACTS:  
+`artifacts/OSCILLATOR-PREDICTOR-REFERENCE-1/`
+
+PARAMETER_OPTIMIZATION_PERFORMED=NO  
+SIGNAL_SEARCH_PERFORMED=NO  
+TRADING_PNL_PERFORMED=NO  
+OOS_OPENED=NO
+
+NEXT_WIP:  
+`MULTITF-INDICATOR-PARAMETER-SEARCH-1` (do not activate without user acceptance)
 
 ### WIP=PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
 
@@ -1389,6 +1417,8 @@ none (end of planned chain)
 | ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1 | CLOSED | 7 |
 | TRADING-RESEARCH-COCKPIT-FOUNDATION-1 | CLOSED | 8 |
 | MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1 | CLOSED | 8a |
+| OSCILLATOR-PREDICTOR-REFERENCE-1 | REVIEW | 8a |
+| MULTITF-INDICATOR-PARAMETER-SEARCH-1 | PLANNED (next — do not auto-activate) | 8a |
 | PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | PLANNED (paused) | 8b |
 | TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1 | PLANNED | 8b |
 | TRADING-POLICY-MODEL-BAKEOFF-1 | PLANNED | 8b |

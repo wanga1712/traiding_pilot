@@ -150,6 +150,18 @@ PARAMETER_REGISTRY: dict[str, dict[str, Any]] = {
         "indicator_parameter_set_id": "BOLLINGER_20_2_V1",
         "status": "UNSUPPORTED_V1",
     },
+    "PRED_DNO_OB_V1": {
+        "predictor_id": "DNO_OB_OS_PREDICTOR_OB",
+        "indicator_parameter_set_id": "DNO_REF_N7_V1",
+        "period": 7,
+        "target_level": 2.0,
+    },
+    "PRED_DNO_OS_V1": {
+        "predictor_id": "DNO_OB_OS_PREDICTOR_OS",
+        "indicator_parameter_set_id": "DNO_REF_N7_V1",
+        "period": 7,
+        "target_level": -2.0,
+    },
 }
 
 PREDICTOR_REGISTRY: list[dict[str, Any]] = [
@@ -167,6 +179,8 @@ PREDICTOR_REGISTRY: list[dict[str, Any]] = [
     {"predictor_id": "EMA_CROSS_UP", "indicator_family": "EMA", "solution_method": "EXACT_ANALYTIC", "hypothetical_input_type": "NEXT_BAR_CLOSE", "intrabar_assumption": "NONE", "causal_eligible": "YES"},
     {"predictor_id": "WMA_CROSS_UP", "indicator_family": "WMA", "solution_method": "EXACT_ANALYTIC", "hypothetical_input_type": "NEXT_BAR_CLOSE", "intrabar_assumption": "NONE", "causal_eligible": "YES"},
     {"predictor_id": "PROJECT_OSCILLATOR_PREDICTOR_V1", "indicator_family": "PROJECT_OSC", "solution_method": "EXACT_ANALYTIC", "hypothetical_input_type": "NEXT_BAR_CLOSE", "intrabar_assumption": "NONE", "causal_eligible": "YES"},
+    {"predictor_id": "DNO_OB_OS_PREDICTOR_OB", "indicator_family": "DNO", "solution_method": "EXACT_ANALYTIC", "hypothetical_input_type": "NEXT_BAR_CLOSE", "intrabar_assumption": "NONE", "causal_eligible": "YES"},
+    {"predictor_id": "DNO_OB_OS_PREDICTOR_OS", "indicator_family": "DNO", "solution_method": "EXACT_ANALYTIC", "hypothetical_input_type": "NEXT_BAR_CLOSE", "intrabar_assumption": "NONE", "causal_eligible": "YES"},
     {"predictor_id": "BOLLINGER_BAND_INVERSE", "indicator_family": "BOLLINGER", "solution_method": "UNSUPPORTED_V1", "hypothetical_input_type": "NEXT_BAR_CLOSE", "intrabar_assumption": "N/A", "causal_eligible": "NO"},
 ]
 
