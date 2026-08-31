@@ -5,7 +5,7 @@ import numpy as np
 
 from crypto_trading_bot.research_v2.indicator_engine.bars import BarArrays, contiguous_ok, displayed_at_for
 from crypto_trading_bot.research_v2.indicator_engine.math_core import sma
-from crypto_trading_bot.research_v2.indicator_engine.segments import same_segment
+from crypto_trading_bot.research_v2.indicator_engine.segments import iter_segments, same_segment
 from crypto_trading_bot.research_v2.indicator_engine.types import IndicatorSample
 
 DNO_REFERENCE_VERSION = "DINAPOLI_DETRENDED_OSCILLATOR_REFERENCE_V1"
@@ -23,6 +23,30 @@ def compute_dno_series(
     ma = sma(arrays.close, period)
     dno = arrays.close - ma
     return dno, ma
+
+
+def compute_masked_dno_series(
+    arrays: BarArrays,
+    *,
+    period: int = DNO_DEFAULT_PERIOD,
+) -> np.ndarray:
+    """
+    Segment-masked DNO for extrema/predictor use.
+
+    First N-1 bars of each segment are NaN; cross-gap SMA values never participate.
+    """
+    dno_raw, _ = compute_dno_series(arrays, period=period)
+    masked = np.full_like(dno_raw, np.nan, dtype=float)
+    gap_flags = arrays.gap_flags
+    for start, end in iter_segments(gap_flags, len(dno_raw)):
+        for i in range(start, end + 1):
+            if i < start + period - 1:
+                continue
+            if i - period + 1 < start:
+                continue
+            if contiguous_ok(gap_flags, i - period + 1, i):
+                masked[i] = dno_raw[i]
+    return masked
 
 
 def _index_valid(i: int, *, period: int, dno: np.ndarray, gap_flags: np.ndarray) -> bool:

@@ -48,3 +48,15 @@ def segment_start_for(gap_flags: np.ndarray, index: int) -> int:
         if gap_flags[i]:
             start = i
     return start
+
+
+def segment_starts_array(gap_flags: np.ndarray) -> np.ndarray:
+    """O(n) array where out[i] is segment start index for bar i."""
+    n = len(gap_flags)
+    out = np.zeros(n, dtype=int)
+    start = 0
+    for i in range(n):
+        if i > 0 and gap_flags[i]:
+            start = i
+        out[i] = start
+    return out

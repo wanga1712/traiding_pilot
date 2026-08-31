@@ -169,11 +169,11 @@ class FeatureBank:
         )
         from crypto_trading_bot.research_v2.oscillator_predictor.dynamic_predictor import (
             DEFAULT_PREDICTOR_CONFIG,
-            compute_predictor_at_index,
+            compute_predictor_feature_series,
         )
 
         dno_key = (tf, "__dno__")
-        pred_key = (tf, "__osc_pred__")
+        pred_key = (tf, "__osc_pred_series__")
         if dno_key not in self._cache:
             arrays = bars_to_arrays(bars, timeframe=tf)
             atr_s = compute_atr_series(arrays, period=14)
@@ -190,14 +190,15 @@ class FeatureBank:
             pref = f"{tf}.DNO"
             _emit_declared(feats, prefix=pref, family="DNO", prim=dno_samples[idx].signal_primitives)
         if pred_key not in self._cache:
-            self._cache[pred_key] = DEFAULT_PREDICTOR_CONFIG
-        cfg = self._cache[pred_key]
-        pred = compute_predictor_at_index(arrays, idx, config=cfg, atr=atr)
-        if pred.get("valid"):
+            self._cache[pred_key] = compute_predictor_feature_series(
+                arrays, config=DEFAULT_PREDICTOR_CONFIG, atr=atr
+            )
+        pred_series = self._cache[pred_key]
+        if idx < len(pred_series) and pred_series[idx].get("valid"):
             pref = f"{tf}.OSC_PREDICTOR"
-            _emit_declared(feats, prefix=pref, family="OSC_PREDICTOR", prim=pred)
+            _emit_declared(feats, prefix=pref, family="OSC_PREDICTOR", prim=pred_series[idx])
             meta.setdefault("oscillator_predictor", {})[tf] = {
-                "predictor_state": pred.get("predictor_state"),
+                "predictor_state": pred_series[idx].get("predictor_state"),
                 "formula_version": "PROJECT_DINAPOLI_STYLE_OSCILLATOR_PREDICTOR_V1",
             }
 

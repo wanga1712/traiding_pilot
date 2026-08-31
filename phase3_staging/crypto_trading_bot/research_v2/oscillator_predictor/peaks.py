@@ -60,6 +60,8 @@ def confirmed_extrema_at(
     troughs: list[ConfirmedExtremum] = []
     start = max(peak_strength, decision_index - lookback + 1)
     for i in range(start, decision_index - peak_strength + 1):
+        if not same_segment(gap_flags, i, decision_index):
+            continue
         if not same_segment(gap_flags, i - peak_strength, i + peak_strength):
             continue
         avail = i + peak_strength

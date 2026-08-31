@@ -387,4 +387,34 @@ def build_feature_registry_rows() -> list[dict[str, Any]]:
                     "reference_status": "NUMERIC_REFERENCE_TESTED",
                 }
             )
+        for feat in FEATURE_OUTPUTS["DNO"]:
+            rows.append(
+                {
+                    "feature_id": f"{tf}.DNO.{feat}",
+                    "family": "DNO",
+                    "timeframe": tf,
+                    "parameter_set": "DNO_REF_N7_V1",
+                    "formula_version": "DINAPOLI_DETRENDED_OSCILLATOR_REFERENCE_V1",
+                    "causal_semantics": "CONTIGUOUS_SEGMENT_SMA",
+                    "units": "price_or_ratio",
+                    "warmup_bars": 7,
+                    "source_engine": "OSCILLATOR_PREDICTOR_REFERENCE_V1",
+                    "reference_status": "DINAPOLI_NONPROPRIETARY_REFERENCE",
+                }
+            )
+        for feat in FEATURE_OUTPUTS["OSC_PREDICTOR"]:
+            rows.append(
+                {
+                    "feature_id": f"{tf}.OSC_PREDICTOR.{feat}",
+                    "family": "OSC_PREDICTOR",
+                    "timeframe": tf,
+                    "parameter_set": "OSC_PRED_PROJECT_DINAPOLI_V1",
+                    "formula_version": "PROJECT_DINAPOLI_STYLE_OSCILLATOR_PREDICTOR_V1",
+                    "causal_semantics": "PEAK_AVAILABLE_AT=i+K",
+                    "units": "price_or_ratio_or_flag",
+                    "warmup_bars": "period+peak_strength+samples",
+                    "source_engine": "OSCILLATOR_PREDICTOR_REFERENCE_V1",
+                    "reference_status": "PROJECT_RECONSTRUCTION",
+                }
+            )
     return rows
