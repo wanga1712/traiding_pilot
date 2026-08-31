@@ -15,18 +15,20 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | Feature bank — formulas, registries, causal alignment (no optimization) |
-| **Note** | Monetary simulator **paused** per roadmap correction. Independent formula review required before parameter search. |
+| **WIP** | *(none — awaiting user authorization)* |
+| **STATUS** | — |
+| **PHASE** | — |
+| **Note** | `MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1` **CLOSED**. Next WIP **not** auto-activated. |
 
 **Immediate sequence (user-authorized):**  
-`MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1` → independent formula review → `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
+`MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` *(do not start until explicitly authorized)*
 
 **Next planned after execution path:**  
 `TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1` → `TRADING-POLICY-MODEL-BAKEOFF-1` → `QWEN-HISTORICAL-TRADING-PILOT-1`
 
 Long-lead parallel (later): `BYBIT-FUTURES-DATA-FOUNDATION-AND-LIVE-RECORDER-1` → `HISTORICAL-BYBIT-FUTURES-BACKFILL-1` → …
+
+Previous CLOSED: `MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1` — `MULTITF_INDICATOR_FEATURE_BANK_V1`; formula authority `b93f3ca`; full-history gap audit `2d8a738`; `PERMANENT_INVALID_AFTER_RECOVERABLE_GAP_COUNT=0`; no optimization/search/PnL/OOS.
 
 Previous CLOSED: `ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1` — verdict `COMPOSITE_NOT_BETTER_THAN_PRICE`; best human composite preserved (display-aligned DMA 3×3 + Stoch 14/3/3, confirmation_window=3, signal_expiration=5). Not a profitability verdict.
 
@@ -882,10 +884,32 @@ Long-lead data foundation — may start in parallel per global exception rule, b
 
 ### WIP=MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1
 
-STATUS=REVIEW
+STATUS=CLOSED
+
+PHASE=8a — Feature bank (formulas, registries, causal alignment)
 
 GOAL:  
 Complete causal multi-TF displaced indicator + geometry feature bank (`MULTITF_INDICATOR_FEATURE_BANK_V1`). No parameter optimization.
+
+FORMULA_AUTHORITY_COMMIT=b93f3ca5655ecd727b6f5345c41aa5c434f3bfd0
+
+FULL_HISTORY_GAP_AUDIT_COMMIT=2d8a7384987914436d036d5a2c4edb9e1badb81c
+
+GIT_COMMIT=2d8a7384987914436d036d5a2c4edb9e1badb81c
+
+RESULT_SUMMARY:  
+**CLOSED.** Segment semantics + DiNapoli reference seed fixes accepted. Full-history S13 gap audit: 1,047,213 bars, 95 gaps, 105 segments; all recoverable gaps recovered; `PERMANENT_INVALID_AFTER_RECOVERABLE_GAP_COUNT=0`. Real-gap segment independence PASS; ATR boundary PASS. No optimization / signal search / trading PnL / OOS.
+
+ARTIFACTS:  
+`artifacts/MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1/` (includes `full_history_gap_audit_v1.csv`, `full_history_gap_audit_summary_v1.json`)
+
+PARAMETER_OPTIMIZATION_PERFORMED=NO  
+SIGNAL_SEARCH_PERFORMED=NO  
+TRADING_PNL_PERFORMED=NO  
+OOS_OPENED=NO
+
+NEXT_WIP:  
+Do not auto-activate. Await user authorization for `MULTITF-INDICATOR-PARAMETER-SEARCH-1`.
 
 ### WIP=PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
 
@@ -1364,7 +1388,7 @@ none (end of planned chain)
 | REVERSAL-SIGNAL-EVENT-STUDY-1 | PAUSED | 7 |
 | ORIGINAL-DINAPOLI-STYLE-WHEN-RECONSTRUCTION-1 | CLOSED | 7 |
 | TRADING-RESEARCH-COCKPIT-FOUNDATION-1 | CLOSED | 8 |
-| MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1 | REVIEW | 8a |
+| MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1 | CLOSED | 8a |
 | PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | PLANNED (paused) | 8b |
 | TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1 | PLANNED | 8b |
 | TRADING-POLICY-MODEL-BAKEOFF-1 | PLANNED | 8b |
