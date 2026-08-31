@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 from crypto_trading_bot.research_v2.indicator_engine.bars import bars_to_arrays, parse_ts
-from crypto_trading_bot.research_v2.indicator_engine.segments import same_segment
+from crypto_trading_bot.research_v2.indicator_engine.segments import same_segment, segment_starts_array
 from crypto_trading_bot.research_v2.indicator_engine.volatility import compute_atr_series
 from crypto_trading_bot.research_v2.oscillator_predictor.config import PredictorConfig
 from crypto_trading_bot.research_v2.oscillator_predictor.dno import compute_masked_dno_series
@@ -38,6 +38,7 @@ class ScanContext:
     preds: list[dict[str, Any]]
     effective_first: datetime
     effective_last: datetime
+    seg_starts: np.ndarray | None = None
 
 
 def _atr_array(bars: list[dict[str, Any]]) -> np.ndarray:
@@ -63,6 +64,7 @@ def build_scan_context(
     atr = _atr_array(bars)
     dno = compute_masked_dno_series(arrays, period=config.period)
     preds = compute_predictor_feature_series(arrays, config=config, atr=atr)
+    seg_starts = segment_starts_array(arrays.gap_flags)
     return ScanContext(
         timeframe=timeframe,
         split=split,
@@ -74,6 +76,7 @@ def build_scan_context(
         preds=preds,
         effective_first=effective_first,
         effective_last=effective_last,
+        seg_starts=seg_starts,
     )
 
 
@@ -86,13 +89,16 @@ def _quantile_control_prices(
     lb = config.lookback
     lo = max(0, idx - lb + 1)
     window = ctx.dno[lo : idx + 1]
-    gap = ctx.arrays.gap_flags[lo : idx + 1]
     valid_vals = []
+    seg = int(ctx.seg_starts[idx]) if ctx.seg_starts is not None else None
     for j, v in enumerate(window):
         gi = lo + j
         if np.isnan(v):
             continue
-        if not same_segment(ctx.arrays.gap_flags, gi, idx):
+        if seg is not None:
+            if int(ctx.seg_starts[gi]) != seg:
+                continue
+        elif not same_segment(ctx.arrays.gap_flags, gi, idx):
             continue
         valid_vals.append(float(v))
     if len(valid_vals) < max(10, config.period):
@@ -100,10 +106,20 @@ def _quantile_control_prices(
     ob_t = float(np.percentile(valid_vals, 80))
     os_t = float(np.percentile(valid_vals, 20))
     ob_p, _ = price_for_next_detrended_value_segment_safe(
-        ctx.arrays.close, ctx.arrays.gap_flags, idx, period=config.period, target_oscillator_value=ob_t
+        ctx.arrays.close,
+        ctx.arrays.gap_flags,
+        idx,
+        period=config.period,
+        target_oscillator_value=ob_t,
+        seg_starts=ctx.seg_starts,
     )
     os_p, _ = price_for_next_detrended_value_segment_safe(
-        ctx.arrays.close, ctx.arrays.gap_flags, idx, period=config.period, target_oscillator_value=os_t
+        ctx.arrays.close,
+        ctx.arrays.gap_flags,
+        idx,
+        period=config.period,
+        target_oscillator_value=os_t,
+        seg_starts=ctx.seg_starts,
     )
     return ob_p, os_p
 
