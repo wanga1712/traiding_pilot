@@ -1,0 +1,17 @@
+{
+  "predictor_files_scanned": 11,
+  "forbidden_name_hits": [],
+  "forbidden_tokens": [
+    "forward_return",
+    "reversal_success",
+    "mfe_pct",
+    "mae_pct",
+    "mfe_atr",
+    "mae_atr",
+    "next_close_at_or_above",
+    "next_high_touch",
+    "next_low_touch"
+  ],
+  "method": "AST_NAME_ATTR_SCAN_PLUS_NO_EVENT_STUDY_IMPORT",
+  "FUTURE_EVENT_OUTCOME_NOT_IN_FEATURES": "PASS"
+}

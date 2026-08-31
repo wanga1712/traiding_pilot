@@ -1,0 +1,23 @@
+{
+  "mode": "DATA-LOCATION-PREFLIGHT",
+  "CANONICAL_MARKET_DATA_HOST": "S7",
+  "COMPUTE_HOST": "S13",
+  "DIRECT_EXCHANGE_DOWNLOAD_ON_S13": "NO",
+  "CANONICAL_SOURCE_PATH": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+  "S13_RESEARCH_CACHE_PATH": "/var/tmp/traiding_pilot_market_cache",
+  "S13_CACHE_DISPOSABLE": "YES",
+  "VISUAL_AUDIT_USES_CANONICAL_DATA": "YES",
+  "HISTORICAL_EVENT_STUDY_STARTED": "NO",
+  "READY_FOR_HISTORICAL_EVENT_STUDY": "YES",
+  "s7_reachable": true,
+  "probe_detail": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m/2019/ETHUSDT-1m-2019-05.parquet",
+  "months_in_range": 50,
+  "sample_months_checked": [
+    "2019-05",
+    "2021-06",
+    "2023-06"
+  ],
+  "missing_on_s7": [],
+  "required_range_start": "2019-05-12T00:00:00+00:00",
+  "required_range_end": "2023-06-20T06:08:00+00:00"
+}
