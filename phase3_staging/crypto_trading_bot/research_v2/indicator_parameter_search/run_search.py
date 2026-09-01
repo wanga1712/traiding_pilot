@@ -248,10 +248,18 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
     for tf in SEARCH_TFS:
         bars = bars_by_tf[tf]
         print(f"[param-search] signals {tf} n_candidates={len(by_tf[tf])}", flush=True)
+        sorted_rows = sorted(by_tf[tf], key=lambda r: (r["family"], r["parameter_set_id"], r["event_primitive"], r["direction"]))
+        idx = 0
+        last_key = None
         sample_cache: dict[tuple, Any] = {}
-        for idx, row in enumerate(by_tf[tf]):
+        for row in sorted_rows:
+            key = (row["family"], row["parameter_set_id"])
+            if last_key is not None and key != last_key:
+                sample_cache.clear()
+            last_key = key
             sigs = generate_signals_for_row(bars, row, scan_start_iso=disc_start.isoformat(), sample_cache=sample_cache)
-            if idx and idx % 25 == 0:
+            idx += 1
+            if idx % 25 == 0:
                 print(f"  {tf}: {idx}/{len(by_tf[tf])} candidates", flush=True)
             signals_by_cid[row["candidate_id"]] = sigs
             event_sets[row["candidate_id"]] = {s["signal_time"] for s in sigs}

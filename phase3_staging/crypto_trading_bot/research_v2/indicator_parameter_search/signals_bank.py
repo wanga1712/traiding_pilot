@@ -87,7 +87,7 @@ def _load_feature_samples(
             [float(s.values["atr"]) if s.valid and s.values.get("atr") is not None else np.nan for s in compute_atr_series(arrays, period=14)],
             dtype=float,
         )
-        payload = ("dma", arrays, compute_dma_feature_series(
+        payload = ("dma", compute_dma_feature_series(
             arrays, ma_type=meta["ma_type"], period=meta["period"], display_shift=meta["display_shift"], atr=atr
         ))
     elif family == "STOCHASTIC" and ps_id in STOCHASTIC_REGISTRY:
@@ -127,7 +127,7 @@ def _load_feature_samples(
             dtype=float,
         )
         cfg = _predictor_config_from_row(row)
-        payload = ("predictor", arrays, compute_predictor_feature_series(arrays, config=cfg, atr=atr) if cfg else None)
+        payload = ("predictor", compute_predictor_feature_series(arrays, config=cfg, atr=atr) if cfg else None)
 
     if sample_cache is not None and payload is not None:
         sample_cache[key] = payload
@@ -156,11 +156,12 @@ def generate_bank_family_signals(
     if kind == "engine":
         return _scan_from_indicator_samples(payload[1], bars, row, scan_start_iso)
     if kind == "predictor":
-        arrays, preds = payload[1], payload[2]
+        preds = payload[1]
         if preds is None:
             return []
+        arrays = bars_to_arrays(bars, timeframe=row["decision_tf"])
         return _scan_predictor_payload(bars, row, arrays, preds, scan_start_iso=scan_start_iso)
-    samples = payload[1] if kind != "dma" else payload[2]
+    samples = payload[1]
     return _scan_primitive_series(bars, samples, candidate_id=cid, primitive=prim, direction=direction, decision_tf=tf, scan_start_iso=scan_start_iso)
 
 
