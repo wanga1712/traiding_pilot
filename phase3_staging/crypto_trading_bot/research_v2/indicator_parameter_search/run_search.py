@@ -179,9 +179,9 @@ def _run_validation_only() -> dict[str, Any]:
         bkey = (tf, row["direction"], "VALIDATION")
         if bkey not in baseline_cache:
             baseline_cache[bkey] = price_baseline_metrics(
-                baselines_by_tf[tf], events, decision_tf=tf, direction=row["direction"], partition="VALIDATION"
+                baselines_by_tf[tf], events, decision_tf=tf, direction=row["direction"], partition="VALIDATION", bars=bars_by_tf[tf]
             )
-        m_val = evaluate_candidate(sigs, events, row, partition="VALIDATION", valid_bars=len(bars_by_tf[tf]))
+        m_val = evaluate_candidate(sigs, events, row, partition="VALIDATION", valid_bars=len(bars_by_tf[tf]), bars=bars_by_tf[tf])
         m_val = add_baseline_deltas(m_val, baseline_cache[bkey])
         disc_row = disc_df[disc_df["candidate_id"] == cid]
         d = disc_row.iloc[0].to_dict() if not disc_row.empty else {}
@@ -342,6 +342,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
                     direction=row["direction"],
                     partition="DISCOVERY",
                     valid_bars=discovery_valid_bars[tf],
+                    bars=bars_by_tf[tf],
                 )
             m_disc = evaluate_candidate(
                 sigs,
@@ -349,6 +350,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
                 row,
                 partition="DISCOVERY",
                 valid_bars=discovery_valid_bars[tf],
+                bars=bars_by_tf[tf],
             )
             m_disc = add_baseline_deltas(m_disc, baseline_cache[bkey])
             m_disc["decision_tf"] = tf
@@ -368,6 +370,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
                         fold_start=fs.isoformat(),
                         fold_end=fe.isoformat(),
                         valid_bars=fold_valid,
+                        bars=bars,
                     )
                 mf = evaluate_candidate(
                     sigs,
@@ -377,6 +380,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
                     fold_start=fs.isoformat(),
                     fold_end=fe.isoformat(),
                     valid_bars=fold_valid,
+                    bars=bars,
                 )
                 mf = add_baseline_deltas(mf, baseline_cache[fbkey])
                 mf["fold"] = i + 1
@@ -500,6 +504,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
                     direction=row["direction"],
                     partition="VALIDATION",
                     valid_bars=count_valid_bars(val_bars_by_tf[tf], split_bounds("VALIDATION")[0], val_end),
+                    bars=val_bars_by_tf[tf],
                 )
             m_val = evaluate_candidate(
                 sigs,
@@ -507,6 +512,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
                 row,
                 partition="VALIDATION",
                 valid_bars=count_valid_bars(val_bars_by_tf[tf], split_bounds("VALIDATION")[0], val_end),
+                bars=val_bars_by_tf[tf],
             )
             m_val = add_baseline_deltas(m_val, baseline_cache[bkey])
             disc_row = disc_df[disc_df["candidate_id"] == cid]

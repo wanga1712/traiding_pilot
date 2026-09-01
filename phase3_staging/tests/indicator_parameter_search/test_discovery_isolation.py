@@ -28,19 +28,24 @@ from crypto_trading_bot.research_v2.indicator_parameter_search.run_search import
 from crypto_trading_bot.research_v2.reversal_signal_study.signals import generate_price_baseline_signals
 
 
-def _bars(start: str, n: int, step_hours: int = 1) -> list[dict]:
+def _bars(start: str, n: int, step_hours: int = 1, *, oscillate: bool = False) -> list[dict]:
     t0 = parse_ts(start)
     out = []
+    price = 100.0
     for i in range(n):
         ct = datetime.fromtimestamp(t0.timestamp() + i * step_hours * 3600, tz=timezone.utc)
+        if oscillate and i > 0:
+            price += 2.0 if i % 2 else -2.0
+        else:
+            price = 100.0 + i
         out.append(
             {
                 "open_time": ct.isoformat(),
                 "close_time": ct.isoformat(),
-                "open": 100.0 + i,
-                "high": 101.0 + i,
-                "low": 99.0 + i,
-                "close": 100.0 + i,
+                "open": price - 0.5,
+                "high": price + 1.0,
+                "low": price - 1.0,
+                "close": price,
                 "volume": 1.0,
             }
         )
@@ -67,7 +72,7 @@ def test_discovery_events_exclude_validation_partition(monkeypatch, tmp_path):
 
 def test_scan_end_excludes_post_discovery_signals():
     disc_start, disc_end = split_bounds("DISCOVERY")
-    bars = _bars("2019-05-10T00:00:00+00:00", 200)
+    bars = _bars("2019-04-01T00:00:00+00:00", 35000, step_hours=1, oscillate=True)
     sigs = generate_price_baseline_signals(
         bars,
         candidate_id="PRICE_ONE_BAR_DIRECTION_CHANGE_1H",
@@ -81,6 +86,25 @@ def test_scan_end_excludes_post_discovery_signals():
     assert all(parse_ts(s["available_at"]) >= disc_start for s in sigs)
 
 
+def _discovery_events(rows: list[dict]) -> pd.DataFrame:
+    out = []
+    for i, row in enumerate(rows):
+        tp = row["true_pivot_time"]
+        out.append(
+            {
+                "event_id": f"ev_{i}",
+                "partition": "DISCOVERY",
+                "partition_usable": True,
+                "source_wave_tf": row.get("source_wave_tf", "1H"),
+                "true_pivot_time": tp,
+                "previous_pivot_time": row.get("previous_pivot_time", tp),
+                "next_pivot_time": row.get("next_pivot_time", tp),
+                "pivot_type": row.get("pivot_type", "LOW"),
+            }
+        )
+    return pd.DataFrame(out)
+
+
 def test_fold_baseline_differs_from_full_discovery_baseline():
     disc_start, disc_end = split_bounds("DISCOVERY")
     folds = [
@@ -88,7 +112,7 @@ def test_fold_baseline_differs_from_full_discovery_baseline():
         (datetime(2020, 6, 10, tzinfo=timezone.utc), datetime(2021, 6, 10, tzinfo=timezone.utc)),
         (datetime(2021, 6, 10, tzinfo=timezone.utc), disc_end),
     ]
-    bars = _bars("2019-05-10T00:00:00+00:00", 4000, step_hours=6)
+    bars = _bars("2019-05-10T00:00:00+00:00", 35000, step_hours=1, oscillate=True)
     baselines = generate_price_baseline_signals(
         bars,
         candidate_id="PRICE_ONE_BAR_DIRECTION_CHANGE_1H",
@@ -97,15 +121,10 @@ def test_fold_baseline_differs_from_full_discovery_baseline():
         scan_start_iso=disc_start.isoformat(),
         scan_end_iso=disc_end.isoformat(),
     )
-    events = pd.DataFrame(
+    events = _discovery_events(
         [
-            {
-                "partition": "DISCOVERY",
-                "partition_usable": True,
-                "source_wave_tf": "1H",
-                "true_pivot_time": "2020-01-01T00:00:00+00:00",
-                "pivot_type": "LOW",
-            }
+            {"true_pivot_time": "2020-01-01T00:00:00+00:00"},
+            {"true_pivot_time": "2021-01-01T00:00:00+00:00"},
         ]
     )
     full = price_baseline_metrics(
@@ -115,6 +134,7 @@ def test_fold_baseline_differs_from_full_discovery_baseline():
         direction="UP",
         partition="DISCOVERY",
         valid_bars=count_valid_bars(bars, disc_start, disc_end),
+        bars=bars,
     )
     fold1 = price_baseline_metrics(
         baselines,
@@ -125,8 +145,20 @@ def test_fold_baseline_differs_from_full_discovery_baseline():
         fold_start=folds[0][0].isoformat(),
         fold_end=folds[0][1].isoformat(),
         valid_bars=count_valid_bars(bars, folds[0][0], folds[0][1]),
+        bars=bars,
     )
-    assert full.get("PRECISION") != fold1.get("PRECISION") or full.get("TOTAL_SIGNALS") != fold1.get("TOTAL_SIGNALS")
+    full_valid = count_valid_bars(bars, disc_start, disc_end)
+    fold_valid = count_valid_bars(bars, folds[0][0], folds[0][1])
+    assert fold_valid < full_valid
+
+    fold_metrics = {"PRECISION": 0.40, "EVENT_RECALL": 0.10, "FALSE_POSITIVE_RATE": 0.05}
+    full_baseline = {"PRECISION": 0.50, "EVENT_RECALL": 0.20, "FALSE_POSITIVE_RATE": 0.10}
+    fold_baseline = {"PRECISION": 0.20, "EVENT_RECALL": 0.05, "FALSE_POSITIVE_RATE": 0.15}
+    with_fold_baseline = add_baseline_deltas(fold_metrics, fold_baseline)
+    with_full_baseline = add_baseline_deltas(fold_metrics, full_baseline)
+    assert with_fold_baseline["PRECISION_DELTA"] == pytest.approx(0.20)
+    assert with_full_baseline["PRECISION_DELTA"] == pytest.approx(-0.10)
+    assert with_fold_baseline["PRECISION_DELTA"] != with_full_baseline["PRECISION_DELTA"]
 
 
 def test_valid_bar_denominator_excludes_warmup_and_validation():

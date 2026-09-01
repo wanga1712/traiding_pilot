@@ -43,6 +43,7 @@ def evaluate_candidate(
     fold_start: str | None = None,
     fold_end: str | None = None,
     valid_bars: int = 0,
+    bars: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     _patch_match_config()
     sig_df = pd.DataFrame(signals) if signals else pd.DataFrame()
@@ -69,7 +70,8 @@ def evaluate_candidate(
             "sample_flag": "INSUFFICIENT",
         }
     matches = match_signals_to_events(sig_df, ev, decision_tf=row["decision_tf"])
-    matches = enrich_matches_with_path_excursion(matches, ev)
+    if bars is not None:
+        matches = enrich_matches_with_path_excursion(matches, {row["decision_tf"]: bars})
     year_inputs = sig_df["signal_time"].astype(str).tolist() if not sig_df.empty else ev["true_pivot_time"].astype(str).tolist()
     years = years_covered(year_inputs)
     m = compute_directional_metrics(
@@ -111,6 +113,7 @@ def price_baseline_metrics(
     fold_start: str | None = None,
     fold_end: str | None = None,
     valid_bars: int = 0,
+    bars: list[dict[str, Any]] | None = None,
 ) -> dict[str, float | None]:
     # Frozen primary baseline from REVERSAL-SIGNAL-EVENT-STUDY-1 semantics.
     cid = f"PRICE_ONE_BAR_DIRECTION_CHANGE_{decision_tf}"
@@ -131,6 +134,7 @@ def price_baseline_metrics(
         fold_start=fold_start,
         fold_end=fold_end,
         valid_bars=valid_bars,
+        bars=bars,
     )
     return {
         "PRECISION": m.get("PRECISION"),
