@@ -1,0 +1,15 @@
+{
+  "wip_id": "MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "mode": "SEARCH-SPEC-V2-ROUTE-AUTHORITY-CORRECTION-1",
+  "DISCOVERY_RUN_1813764": "FAILED_INVALID_EXECUTION_AUTHORITY",
+  "FAILED_DISCOVERY_PID": 1813764,
+  "INVALIDATED_DISCOVERY_STOPPED": "YES",
+  "failure_reasons": [
+    "INVERSE_PREDICTOR route aliases were not actual inverse_predictors.PARAMETER_REGISTRY IDs",
+    "DNO_PERIOD_7_REFERENCE was executed through dynamic OSC predictor bands instead of DNO_ZERO_CROSS",
+    "Candidate routing preflight only proved no outer exception, not executable route semantics"
+  ],
+  "partial_results_discarded": true,
+  "validation_started": "NO",
+  "oos_access_count": 0
+}

@@ -45,6 +45,7 @@ REGISTRY_COMPARE_FIELDS = (
     "down_primitive",
     "reference_status",
     "is_reference",
+    "execution_route",
     "version",
     "comparison_scope",
 )
@@ -132,6 +133,7 @@ def _row(
     down_primitive: str,
     reference_status: str,
     is_reference: bool,
+    execution_route: str = "",
 ) -> dict[str, Any]:
     return {
         "candidate_id": candidate_id,
@@ -146,6 +148,7 @@ def _row(
         "down_primitive": down_primitive,
         "reference_status": reference_status,
         "is_reference": is_reference,
+        "execution_route": execution_route or formula_variant,
         "version": STUDY_VERSION,
         "comparison_scope": "SINGLE_FAMILY_SINGLE_PRIMITIVE",
     }
@@ -243,13 +246,67 @@ def _predictor_config_dict(cfg) -> dict[str, Any]:
     }
 
 
-def _dno_predictor_candidates() -> list[dict[str, Any]]:
-    rows = []
+def _pure_dno_candidates() -> list[dict[str, Any]]:
+    """Pure DNO reference — DNO[t]=Close-SMA7, zero-cross primitives only."""
+    rows: list[dict[str, Any]] = []
+    params = {"period": 7, "formula": "DNO_CLOSE_MINUS_SMA", "authority": "OSCILLATOR_PREDICTOR_REFERENCE_V1"}
+    for tf in SEARCH_TFS:
+        for up, down in EVENT_PRIMITIVES["DNO"]:
+            for direction, prim in (("UP", up), ("DOWN", down)):
+                cid = _cid("PURE_DNO", "DNO_PERIOD_7_REFERENCE", prim, tf, direction)
+                rows.append(
+                    _row(
+                        candidate_id=cid,
+                        family="PURE_DNO",
+                        formula_variant="DNO_PERIOD_7_REFERENCE",
+                        parameter_set_id="DNO_PERIOD_7_REFERENCE",
+                        parameters=params,
+                        decision_tf=tf,
+                        direction=direction,
+                        event_primitive=prim,
+                        up_primitive=up,
+                        down_primitive=down,
+                        reference_status="DINAPOLI_NONPROPRIETARY_REFERENCE",
+                        is_reference=True,
+                        execution_route="compute_dno_feature_series",
+                    )
+                )
+    return rows
+
+
+def _dno_quantile_candidates() -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    params = {"control": "quantile_80_20", "period": 7, "lookback": 100}
+    label = "CAUSAL_DNO_QUANTILE_80_20_CONTROL_V1"
+    for tf in SEARCH_TFS:
+        for up, down in EVENT_PRIMITIVES["OSC_PREDICTOR"]:
+            for direction, prim in (("UP", up), ("DOWN", down)):
+                cid = _cid("DNO_QUANTILE", label, prim, tf, direction)
+                rows.append(
+                    _row(
+                        candidate_id=cid,
+                        family="DNO_QUANTILE",
+                        formula_variant=label,
+                        parameter_set_id=label,
+                        parameters=params,
+                        decision_tf=tf,
+                        direction=direction,
+                        event_primitive=prim,
+                        up_primitive=up,
+                        down_primitive=down,
+                        reference_status="REFERENCE",
+                        is_reference=True,
+                        execution_route="precompute_control_forecast_bands",
+                    )
+                )
+    return rows
+
+
+def _osc_predictor_candidates() -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
     ref = FROZEN_PREDICTOR_REFERENCE
-    configs: list[tuple[str, Any, dict]] = [
+    configs: list[tuple[str, PredictorConfig, dict]] = [
         ("PROJECT_DINAPOLI_STYLE_OSCILLATOR_PREDICTOR_REFERENCE", ref, _predictor_config_dict(ref)),
-        ("CAUSAL_DNO_QUANTILE_80_20_CONTROL_V1", None, {"control": "quantile_80_20"}),
-        ("DNO_PERIOD_7_REFERENCE", ref, {"period": 7, "family": "DNO_ONLY"}),
     ]
     for axis, values in DNO_ONE_FACTOR_AXES.items():
         for v in values:
@@ -273,20 +330,15 @@ def _dno_predictor_candidates() -> list[dict[str, Any]]:
             label = f"OSC_PRED_SWEEP_{axis.upper()}_{v}"
             configs.append((label, p, {"sweep_axis": axis, "sweep_value": v, **_predictor_config_dict(p)}))
 
-    for label, cfg, params in configs:
-        family = "DNO_PREDICTOR" if "QUANTILE" not in label and "DNO_PERIOD" in label else (
-            "DNO_PREDICTOR" if cfg is None else "OSC_PREDICTOR"
-        )
-        if "QUANTILE" in label:
-            family = "DNO_PREDICTOR"
+    for label, _cfg, params in configs:
         for tf in SEARCH_TFS:
             for up, down in EVENT_PRIMITIVES["OSC_PREDICTOR"]:
                 for direction, prim in (("UP", up), ("DOWN", down)):
-                    cid = _cid(family, label, prim, tf, direction)
+                    cid = _cid("OSC_PREDICTOR", label, prim, tf, direction)
                     rows.append(
                         _row(
                             candidate_id=cid,
-                            family=family,
+                            family="OSC_PREDICTOR",
                             formula_variant=label,
                             parameter_set_id=label,
                             parameters=params,
@@ -295,35 +347,79 @@ def _dno_predictor_candidates() -> list[dict[str, Any]]:
                             event_primitive=prim,
                             up_primitive=up,
                             down_primitive=down,
-                            reference_status="REFERENCE" if "REFERENCE" in label or "QUANTILE" in label else "SWEEP",
-                            is_reference="REFERENCE" in label or "QUANTILE" in label or "DNO_PERIOD" in label,
+                            reference_status="REFERENCE" if "REFERENCE" in label else "SWEEP",
+                            is_reference=bool("REFERENCE" in label),
+                            execution_route="compute_predictor_feature_series",
                         )
                     )
     return rows
 
 
+INVERSE_EXECUTION_MAP: list[dict[str, str]] = [
+    {
+        "indicator_family": "DMA",
+        "indicator_parameter_set_id": "DMA_SMA_P3_SHIFT3_V1",
+        "up_parameter_set_id": "PRED_DMA_3X3_CROSS_UP_V1",
+        "down_parameter_set_id": "PRED_DMA_3X3_CROSS_DOWN_V1",
+        "formula_variant": "INVERSE_DMA_3X3",
+    },
+    {
+        "indicator_family": "DMA",
+        "indicator_parameter_set_id": "DMA_SMA_P7_SHIFT5_V1",
+        "up_parameter_set_id": "PRED_DMA_7X5_CROSS_UP_V1",
+        "down_parameter_set_id": "PRED_DMA_7X5_CROSS_DOWN_V1",
+        "formula_variant": "INVERSE_DMA_7X5",
+    },
+    {
+        "indicator_family": "DMA",
+        "indicator_parameter_set_id": "DMA_SMA_P25_SHIFT5_V1",
+        "up_parameter_set_id": "PRED_DMA_25X5_CROSS_UP_V1",
+        "down_parameter_set_id": "PRED_DMA_25X5_CROSS_DOWN_V1",
+        "formula_variant": "INVERSE_DMA_25X5",
+    },
+    {
+        "indicator_family": "STOCHASTIC",
+        "indicator_parameter_set_id": "STOCH_K14_KS3_D3_SHIFT0_V1",
+        "up_parameter_set_id": "PRED_STOCH_14_K_20_POINT_V1",
+        "down_parameter_set_id": "PRED_STOCH_14_K_80_POINT_V1",
+        "formula_variant": "INVERSE_STOCH_14_3_3_POINT_BAR",
+        "stoch_meaning": "UP uses OS-side K=20 point-bar threshold; DOWN uses OB-side K=80 point-bar threshold",
+    },
+    {
+        "indicator_family": "MACD",
+        "indicator_parameter_set_id": "MACD_12_26_9_SHIFT0_V1",
+        "up_parameter_set_id": "PRED_MACD_12_26_9_SIGNAL_CROSS_UP_V1",
+        "down_parameter_set_id": "PRED_MACD_12_26_9_SIGNAL_CROSS_DOWN_V1",
+        "formula_variant": "INVERSE_MACD_12_26_9_SIGNAL_CROSS",
+    },
+    {
+        "indicator_family": "PURE_DNO",
+        "indicator_parameter_set_id": "DNO_PERIOD_7_REFERENCE",
+        "up_parameter_set_id": "PRED_DNO_OS_V1",
+        "down_parameter_set_id": "PRED_DNO_OB_V1",
+        "formula_variant": "INVERSE_DNO_N7_OB_OS",
+        "dno_meaning": "UP reversal uses OS-side DNO inverse (PRED_DNO_OS_V1); DOWN uses OB-side (PRED_DNO_OB_V1)",
+    },
+]
+
+
 def _inverse_candidates() -> list[dict[str, Any]]:
-    """Executable inverse routes only — from INVERSE_PREDICTOR_FAMILY_STATUS."""
-    supported = [
-        ("DMA", "DMA_SMA_P3_SHIFT3_V1", "DMA_PRICE_CROSS_PREDICTOR"),
-        ("DMA", "DMA_SMA_P7_SHIFT5_V1", "DMA_PRICE_CROSS_PREDICTOR"),
-        ("DMA", "DMA_SMA_P25_SHIFT5_V1", "DMA_PRICE_CROSS_PREDICTOR"),
-        ("STOCHASTIC", "STOCH_K14_KS3_D3_SHIFT0_V1", "STANDARD_STOCH_THRESHOLD_PREDICTOR"),
-        ("MACD", "MACD_12_26_9_SHIFT0_V1", "STANDARD_MACD_CROSS_PREDICTOR"),
-        ("DNO_PREDICTOR", "DNO_REF_N7_V1", "DNO_OB_OS_PREDICTOR"),
-    ]
-    rows = []
-    for tf in SEARCH_TFS:
-        for family, ps_id, route in supported:
+    rows: list[dict[str, Any]] = []
+    for spec in INVERSE_EXECUTION_MAP:
+        for tf in SEARCH_TFS:
             for direction in ("UP", "DOWN"):
-                cid = _cid("INVERSE", route, ps_id, tf, direction)
+                pred_id = spec["up_parameter_set_id"] if direction == "UP" else spec["down_parameter_set_id"]
+                cid = _cid("INVERSE", spec["formula_variant"], spec["indicator_parameter_set_id"], tf, direction)
                 rows.append(
                     _row(
                         candidate_id=cid,
                         family="INVERSE_PREDICTOR",
-                        formula_variant=route,
-                        parameter_set_id=ps_id,
-                        parameters={"inverse_route": route},
+                        formula_variant=spec["formula_variant"],
+                        parameter_set_id=spec["indicator_parameter_set_id"],
+                        parameters={
+                            "inverse_parameter_set_id": pred_id,
+                            "indicator_parameter_set_id": spec["indicator_parameter_set_id"],
+                        },
                         decision_tf=tf,
                         direction=direction,
                         event_primitive="INVERSE_THRESHOLD_CROSS",
@@ -331,6 +427,7 @@ def _inverse_candidates() -> list[dict[str, Any]]:
                         down_primitive="INVERSE_DOWN",
                         reference_status="SUPPORTED_ANALYTICALLY",
                         is_reference=True,
+                        execution_route=pred_id,
                     )
                 )
     return rows
@@ -341,9 +438,47 @@ def build_candidate_registry() -> list[dict[str, Any]]:
     rows.extend(_dma_candidates())
     rows.extend(_stoch_candidates())
     rows.extend(_macd_candidates())
-    rows.extend(_dno_predictor_candidates())
+    rows.extend(_pure_dno_candidates())
+    rows.extend(_dno_quantile_candidates())
+    rows.extend(_osc_predictor_candidates())
     rows.extend(_inverse_candidates())
     return rows
+
+
+def registry_family_counts(rows: list[dict[str, Any]]) -> dict[str, int]:
+    return {
+        "DMA_CANDIDATES": sum(1 for r in rows if r["family"] == "DMA"),
+        "STOCH_CANDIDATES": sum(1 for r in rows if r["family"] == "STOCHASTIC"),
+        "MACD_CANDIDATES": sum(1 for r in rows if r["family"] == "MACD"),
+        "PURE_DNO_CANDIDATES": sum(1 for r in rows if r["family"] == "PURE_DNO"),
+        "DNO_QUANTILE_CANDIDATES": sum(1 for r in rows if r["family"] == "DNO_QUANTILE"),
+        "OSC_PREDICTOR_CANDIDATES": sum(1 for r in rows if r["family"] == "OSC_PREDICTOR"),
+        "INVERSE_PREDICTOR_CANDIDATES": sum(1 for r in rows if r["family"] == "INVERSE_PREDICTOR"),
+    }
+
+
+def audit_registry_semantic_consistency(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    dno_zero = [r for r in rows if r["event_primitive"] in ("DNO_ZERO_CROSS_UP", "DNO_ZERO_CROSS_DOWN")]
+    bad_dno = [
+        r
+        for r in rows
+        if r.get("parameters", {}).get("family") == "DNO_ONLY"
+        and r["event_primitive"] in EVENT_PRIMITIVES["OSC_PREDICTOR"]
+    ]
+    bad_pure = [
+        r
+        for r in rows
+        if r["family"] == "PURE_DNO"
+        and r["event_primitive"] not in ("DNO_ZERO_CROSS_UP", "DNO_ZERO_CROSS_DOWN")
+    ]
+    return {
+        "DNO_ZERO_CROSS_CANDIDATE_COUNT": len(dno_zero),
+        "DNO_ONLY_OSC_PRIMITIVE_COUNT": len(bad_dno),
+        "PURE_DNO_NON_ZERO_PRIMITIVE_COUNT": len(bad_pure),
+        "SEARCH_SPEC_REGISTRY_SEMANTIC_CONSISTENCY": "PASS"
+        if dno_zero and not bad_dno and not bad_pure
+        else "FAIL",
+    }
 
 
 def registry_summary(rows: list[dict[str, Any]]) -> dict[str, int]:

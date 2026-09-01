@@ -1,0 +1,17 @@
+{
+  "SEARCH_SPEC_V1_STATUS": "SUPERSEDED_INVALID_EXECUTION_SPEC",
+  "superseded_at": "2026-09-01T00:00:00+00:00",
+  "reason": [
+    "INVERSE_PREDICTOR route aliases were not actual PARAMETER_REGISTRY IDs",
+    "DNO_PERIOD_7_REFERENCE was routed through dynamic OSC predictor bands instead of DNO_ZERO_CROSS",
+    "Candidate routing preflight only proved no outer exception, not executable semantics"
+  ],
+  "search_spec_v1_freeze_commit": "3540b2f57c121fe8e2f7001430f4907b5b07d922",
+  "invalidated_discovery_runs": [
+    {
+      "pid": 1813764,
+      "status": "FAILED_INVALID_EXECUTION_AUTHORITY"
+    }
+  ],
+  "no_research_result_accepted_under_v1": true
+}

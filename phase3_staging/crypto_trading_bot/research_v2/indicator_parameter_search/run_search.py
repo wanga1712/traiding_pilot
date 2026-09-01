@@ -18,7 +18,7 @@ from crypto_trading_bot.research_v2.reversal_signal_study.bar_io import load_con
 from crypto_trading_bot.research_v2.reversal_signal_study.metrics import benjamini_hochberg
 
 from .anti_leakage import run_anti_leakage_gates
-from .candidate_registry import build_candidate_registry, load_frozen_registry, registry_summary
+from .candidate_registry import build_candidate_registry, load_frozen_registry, registry_family_counts, registry_summary
 from .config import ARTIFACT_ROOT, EVENT_DIR, SEARCH_TFS, discovery_fold_bounds, split_bounds
 from .data_isolation import (
     build_discovery_access_audit,
@@ -39,12 +39,12 @@ from .evaluation import (
     select_discovery_shortlist,
     validation_candidate_hash,
 )
-from .frozen_spec import verify_frozen_artifacts
-from .search_spec import write_search_spec
+from .frozen_spec import verify_frozen_v2_artifacts
+from .search_spec import write_search_spec_v2
 from .signals_bank import generate_frozen_price_baselines, generate_signals_for_row
 from .version import WIP_ID
 
-MODE = "DISCOVERY-ISOLATION-INTEGRITY-FIX-1"
+MODE = "SEARCH-SPEC-V2-ROUTE-AUTHORITY-CORRECTION-1"
 
 
 def _git_sha() -> str:
@@ -60,7 +60,7 @@ def _load_events(*, partitions: tuple[str, ...] = ("DISCOVERY", "VALIDATION")) -
 
 
 def _load_frozen_registry() -> list[dict[str, Any]]:
-    return load_frozen_registry(ARTIFACT_ROOT / "candidate_registry_snapshot_v1.csv")
+    return load_frozen_registry(ARTIFACT_ROOT / "candidate_registry_snapshot_v2.csv")
 
 
 def _require_discovery_freeze_manifest() -> dict[str, Any]:
@@ -119,16 +119,18 @@ def _write_visual_audit(selected: pd.DataFrame, bars_by_tf: dict, signals_by_cid
 
 def run_freeze_spec_only() -> dict[str, Any]:
     ARTIFACT_ROOT.mkdir(parents=True, exist_ok=True)
-    write_search_spec(ARTIFACT_ROOT)
+    write_search_spec_v2(ARTIFACT_ROOT)
     registry = build_candidate_registry()
-    pd.DataFrame(registry).to_csv(ARTIFACT_ROOT / "candidate_registry_snapshot_v1.csv", index=False)
+    pd.DataFrame(registry).to_csv(ARTIFACT_ROOT / "candidate_registry_snapshot_v2.csv", index=False)
     folds = discovery_fold_bounds()
+    family_counts = registry_family_counts(registry)
     return {
         "WIP": WIP_ID,
-        "phase": "SEARCH_SPEC_FREEZE",
+        "phase": "SEARCH_SPEC_V2_FREEZE",
         "ROADMAP_STATUS": "ACTIVE",
-        "TOTAL_CANDIDATES_DISCOVERY": len(registry),
+        "TOTAL_CANDIDATE_ROWS_V2": len(registry),
         "candidate_counts": registry_summary(registry),
+        **family_counts,
         "DISCOVERY_FOLD_1": [folds[0][0].isoformat(), folds[0][1].isoformat()],
         "DISCOVERY_FOLD_2": [folds[1][0].isoformat(), folds[1][1].isoformat()],
         "DISCOVERY_FOLD_3": [folds[2][0].isoformat(), folds[2][1].isoformat()],
@@ -244,7 +246,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
     scan_start_iso = disc_start.isoformat()
     scan_end_iso = disc_end.isoformat()
 
-    frozen_hashes = verify_frozen_artifacts(ARTIFACT_ROOT)
+    frozen_hashes = verify_frozen_v2_artifacts(ARTIFACT_ROOT)
     registry = _load_frozen_registry()
 
     preflight = run_data_location_preflight(
@@ -573,7 +575,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
         verdict = "NO_STABLE_CONFIGS_FOUND"
 
     fam_verdict = {}
-    for fam in ("DMA", "STOCHASTIC", "MACD", "DNO_PREDICTOR", "OSC_PREDICTOR", "INVERSE_PREDICTOR"):
+    for fam in ("DMA", "STOCHASTIC", "MACD", "PURE_DNO", "DNO_QUANTILE", "OSC_PREDICTOR", "INVERSE_PREDICTOR"):
         sub = sel_df[sel_df["family"] == fam] if not sel_df.empty else pd.DataFrame()
         fam_verdict[fam] = "SELECTED" if not sub.empty else "NONE_SELECTED"
 
@@ -630,7 +632,8 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
         "DMA_VERDICT": fam_verdict.get("DMA"),
         "STOCH_VERDICT": fam_verdict.get("STOCHASTIC"),
         "MACD_VERDICT": fam_verdict.get("MACD"),
-        "DNO_PREDICTOR_VERDICT": fam_verdict.get("DNO_PREDICTOR"),
+        "DNO_PREDICTOR_VERDICT": fam_verdict.get("PURE_DNO"),
+        "DNO_QUANTILE_VERDICT": fam_verdict.get("DNO_QUANTILE"),
         "INVERSE_PREDICTOR_VERDICT": fam_verdict.get("INVERSE_PREDICTOR"),
         "SELECTED_5M": sel_by_tf.get("5m", 0),
         "SELECTED_15M": sel_by_tf.get("15m", 0),
