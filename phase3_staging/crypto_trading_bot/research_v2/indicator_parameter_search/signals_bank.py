@@ -22,6 +22,8 @@ from crypto_trading_bot.research_v2.oscillator_predictor.dynamic_predictor impor
 from crypto_trading_bot.research_v2.inverse_predictors.registry import PARAMETER_REGISTRY
 from crypto_trading_bot.research_v2.reversal_signal_study.signals import (
     _emit,
+    _trigger_price,
+    _usable_predicted_trigger_price,
     generate_price_baseline_signals,
 )
 
@@ -451,24 +453,6 @@ def _scan_predictor_payload(
                 available_at=bars[i]["close_time"],
             )
     return rows
-
-
-def _trigger_price(result: Any) -> float | None:
-    if result is None:
-        return None
-    if isinstance(result, list):
-        result = result[0] if result else None
-    if result is None:
-        return None
-    price = getattr(result, "trigger_price", None)
-    if price is None and isinstance(result, dict):
-        price = result.get("trigger_price") or result.get("predicted_trigger_price")
-    if price is None:
-        return None
-    try:
-        return float(price)
-    except (TypeError, ValueError):
-        return None
 
 
 def _generate_inverse_signals(

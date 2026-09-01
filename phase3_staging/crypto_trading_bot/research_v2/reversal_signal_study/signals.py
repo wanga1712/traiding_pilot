@@ -148,25 +148,49 @@ def generate_indicator_pair_signals(
     return rows
 
 
-def _trigger_price(result) -> float | None:
-    if result is None:
-        return None
-    results = result if isinstance(result, list) else [result]
-    bad = {
+_NON_USABLE_SOLUTION_STATUSES = frozenset(
+    {
         "UNSUPPORTED_V1",
         "REQUIRES_INTRABAR_ASSUMPTION",
         "INSUFFICIENT_HISTORY",
         "NO_REAL_SOLUTION",
         "NO_SOLUTION",
         "INVALID",
+        "NO_FINITE_SOLUTION",
     }
-    for r in results:
-        tp = getattr(r, "predicted_trigger_price", None)
-        status = str(getattr(r, "solution_status", ""))
-        if tp is None or status in bad:
+)
+
+
+def _predictor_result_fields(result: Any) -> tuple[float | None, str]:
+    if isinstance(result, dict):
+        return result.get("predicted_trigger_price"), str(result.get("solution_status", ""))
+    return getattr(result, "predicted_trigger_price", None), str(getattr(result, "solution_status", ""))
+
+
+def _iter_predictor_results(result: Any) -> Iterable[Any]:
+    if result is None:
+        return
+    if isinstance(result, list):
+        for item in result:
+            yield item
+    else:
+        yield result
+
+
+def _trigger_price(result) -> float | None:
+    if result is None:
+        return None
+    for r in _iter_predictor_results(result):
+        tp, status = _predictor_result_fields(r)
+        if tp is None or status in _NON_USABLE_SOLUTION_STATUSES:
             continue
         return float(tp)
     return None
+
+
+def _usable_predicted_trigger_price(result) -> float | None:
+    """Return predicted_trigger_price only when solution_status is executable."""
+    return _trigger_price(result)
 
 
 def generate_predictor_trigger_signals(

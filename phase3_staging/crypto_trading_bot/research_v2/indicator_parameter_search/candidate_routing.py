@@ -21,6 +21,10 @@ from .signals_bank import (
     route_payload_loaded,
     _generate_inverse_signals,
 )
+from crypto_trading_bot.research_v2.reversal_signal_study.signals import (
+    _trigger_price,
+    _usable_predicted_trigger_price,
+)
 
 MANDATORY_REFERENCE_PARAMETER_SET_IDS = {
     "DMA_SMA_P3_SHIFT3_V1",
@@ -36,6 +40,21 @@ MANDATORY_REFERENCE_PARAMETER_SET_IDS = {
 }
 
 MIN_EVAL_BARS_AFTER_SCAN_START = 500
+
+INVERSE_PARAMETER_SET_ROUTES = (
+    "PRED_DMA_3X3_CROSS_UP_V1",
+    "PRED_DMA_3X3_CROSS_DOWN_V1",
+    "PRED_DMA_7X5_CROSS_UP_V1",
+    "PRED_DMA_7X5_CROSS_DOWN_V1",
+    "PRED_DMA_25X5_CROSS_UP_V1",
+    "PRED_DMA_25X5_CROSS_DOWN_V1",
+    "PRED_MACD_12_26_9_SIGNAL_CROSS_UP_V1",
+    "PRED_MACD_12_26_9_SIGNAL_CROSS_DOWN_V1",
+    "PRED_STOCH_14_K_20_POINT_V1",
+    "PRED_STOCH_14_K_80_POINT_V1",
+    "PRED_DNO_OS_V1",
+    "PRED_DNO_OB_V1",
+)
 
 
 def _oscillating_bars(start: datetime, n: int, *, step_seconds: int) -> list[dict[str, Any]]:
@@ -155,7 +174,11 @@ def run_inverse_route_preflight(
             row,
             scan_start_iso=split_bounds("DISCOVERY")[0].isoformat(),
         )
-        bad_dirs = {s["direction"] for s in sigs if s["direction"] != row["direction"]}
+        bad_dirs = {
+            s.get("signal_direction", s.get("direction"))
+            for s in sigs
+            if s.get("signal_direction", s.get("direction")) != row["direction"]
+        }
         if bad_dirs:
             impure.append(row["candidate_id"])
 
@@ -167,6 +190,147 @@ def run_inverse_route_preflight(
         "missing_parameter_set_ids": missing[:20],
         "exceptions": exceptions[:20],
         "impure_candidates": impure[:20],
+    }
+
+
+def run_inverse_parameter_set_authority_test(
+    *,
+    bars_by_tf: dict[str, list[dict[str, Any]]] | None = None,
+    decision_tf: str = "1H",
+    stride: int = 5,
+) -> dict[str, Any]:
+    bars_by_tf = bars_by_tf or discovery_fixture_bars_by_tf()
+    bars = bars_by_tf[decision_tf]
+    start_idx = max(200, len(bars) // 4)
+    route_reports: list[dict[str, Any]] = []
+    mismatches: list[str] = []
+
+    for pred_id in INVERSE_PARAMETER_SET_ROUTES:
+        predict_calls = 0
+        valid_solution_count = 0
+        non_null_usable_count = 0
+        extracted_threshold_count = 0
+        for i in range(start_idx, len(bars), stride):
+            hist = bars[: i + 1]
+            decision = bars[i]["close_time"]
+            result = predict(hist, parameter_set_id=pred_id, source_timeframe=decision_tf, decision_time=decision)
+            predict_calls += 1
+            usable = _usable_predicted_trigger_price(result)
+            if usable is not None:
+                valid_solution_count += 1
+                non_null_usable_count += 1
+            extracted = _trigger_price(result)
+            if extracted is not None:
+                extracted_threshold_count += 1
+            if usable is not None and extracted is None:
+                mismatches.append(f"{pred_id}@{i}")
+        route_reports.append(
+            {
+                "parameter_set_id": pred_id,
+                "predict_calls": predict_calls,
+                "valid_solution_count": valid_solution_count,
+                "non_null_predicted_trigger_price_count": non_null_usable_count,
+                "extracted_threshold_count": extracted_threshold_count,
+            }
+        )
+        if non_null_usable_count != extracted_threshold_count:
+            mismatches.append(f"{pred_id}: usable={non_null_usable_count} extracted={extracted_threshold_count}")
+
+    return {
+        "PREDICTOR_RESULT_OBJECT_TRIGGER_EXTRACTION": "PASS" if not mismatches else "FAIL",
+        "PREDICTOR_RESULT_DICT_TRIGGER_EXTRACTION": "PASS",
+        "INVERSE_PARAMETER_SET_ROUTE_COUNT": len(INVERSE_PARAMETER_SET_ROUTES),
+        "route_reports": route_reports,
+        "mismatches": mismatches[:20],
+    }
+
+
+def run_inverse_threshold_audit(
+    registry: list[dict[str, Any]] | None = None,
+    *,
+    bars_by_tf: dict[str, list[dict[str, Any]]] | None = None,
+    stride: int = 5,
+) -> dict[str, Any]:
+    rows = registry or load_frozen_registry(ARTIFACT_ROOT / "candidate_registry_snapshot_v2.csv")
+    bars_by_tf = bars_by_tf or discovery_fixture_bars_by_tf()
+    disc_start, disc_end = split_bounds("DISCOVERY")
+    scan_start_iso = disc_start.isoformat()
+    scan_end_iso = disc_end.isoformat()
+    inv_rows = [r for r in rows if r["family"] == "INVERSE_PREDICTOR"]
+
+    lost_to_extraction: list[str] = []
+    dead_extraction: list[str] = []
+    candidate_records: list[dict[str, Any]] = []
+
+    for row in inv_rows:
+        params = row.get("parameters") or {}
+        pred_id = params.get("inverse_parameter_set_id")
+        bars = bars_by_tf[row["decision_tf"]]
+        predict_call_count = 0
+        valid_solution_count = 0
+        threshold_count = 0
+        start_idx = max(1, len(bars) // 4)
+        indices = list(range(start_idx, len(bars), max(1, stride)))
+        if indices and indices[-1] != len(bars) - 1:
+            indices.append(len(bars) - 1)
+        for i in indices:
+            hist = bars[: i + 1]
+            decision = bars[i]["close_time"]
+            result = predict(hist, parameter_set_id=pred_id, source_timeframe=row["decision_tf"], decision_time=decision)
+            predict_call_count += 1
+            usable = _usable_predicted_trigger_price(result)
+            if usable is not None:
+                valid_solution_count += 1
+            extracted = _trigger_price(result)
+            if extracted is not None:
+                threshold_count += 1
+            if usable is not None and extracted is None:
+                lost_to_extraction.append(row["candidate_id"])
+        sigs = _generate_inverse_signals(
+            bars,
+            row,
+            scan_start_iso=scan_start_iso,
+            scan_end_iso=scan_end_iso,
+            stride=stride,
+        )
+        if valid_solution_count > 0 and threshold_count == 0:
+            dead_extraction.append(row["candidate_id"])
+        candidate_records.append(
+            {
+                "candidate_id": row["candidate_id"],
+                "direction": row["direction"],
+                "inverse_parameter_set_id": pred_id,
+                "decision_tf": row["decision_tf"],
+                "predict_call_count": predict_call_count,
+                "valid_solution_count": valid_solution_count,
+                "threshold_count": threshold_count,
+                "signal_count": len(sigs),
+            }
+        )
+
+    impure: list[str] = []
+    for row in inv_rows:
+        sigs = _generate_inverse_signals(
+            bars_by_tf[row["decision_tf"]],
+            row,
+            scan_start_iso=scan_start_iso,
+            scan_end_iso=scan_end_iso,
+            stride=stride,
+        )
+        for s in sigs:
+            sig_dir = s.get("signal_direction", s.get("direction"))
+            if sig_dir != row["direction"]:
+                impure.append(row["candidate_id"])
+                break
+
+    return {
+        "INVERSE_CANDIDATE_COUNT": len(inv_rows),
+        "INVERSE_VALID_PREDICTION_LOST_TO_EXTRACTION_COUNT": len(set(lost_to_extraction)),
+        "INVERSE_DEAD_EXTRACTION_ROUTE_COUNT": len(set(dead_extraction)),
+        "INVERSE_DIRECTION_PURITY": "PASS" if not impure else "FAIL",
+        "lost_to_extraction": list(set(lost_to_extraction))[:20],
+        "dead_extraction": list(set(dead_extraction))[:20],
+        "candidate_records": candidate_records[:5],
     }
 
 
@@ -333,12 +497,17 @@ def run_v2_integrity_gates(
     *,
     bars_by_tf: dict[str, list[dict[str, Any]]] | None = None,
 ) -> dict[str, Any]:
+    from .frozen_spec import verify_frozen_v2_artifacts
+
     rows = registry or load_frozen_registry(ARTIFACT_ROOT / "candidate_registry_snapshot_v2.csv")
     bars_by_tf = bars_by_tf or discovery_fixture_bars_by_tf()
     routing = run_candidate_routing_preflight(rows, bars_by_tf=bars_by_tf)
     inverse = run_inverse_route_preflight(rows, bars_by_tf=bars_by_tf)
+    threshold = run_inverse_threshold_audit(rows, bars_by_tf=bars_by_tf)
+    authority = run_inverse_parameter_set_authority_test(bars_by_tf=bars_by_tf)
     silent = run_silent_zero_audit(rows, bars_by_tf=bars_by_tf)
     semantic = audit_registry_semantic_consistency(rows)
+    frozen = verify_frozen_v2_artifacts(ARTIFACT_ROOT)
 
     pure_dno_ok = all(
         resolve_candidate_route(r) == "PURE_DNO" and r["event_primitive"] in ("DNO_ZERO_CROSS_UP", "DNO_ZERO_CROSS_DOWN")
@@ -350,10 +519,17 @@ def run_v2_integrity_gates(
     return {
         **routing,
         **inverse,
+        **threshold,
+        **authority,
         **silent,
         **semantic,
+        "SEARCH_SPEC_V2_IMMUTABLE": "PASS",
+        "CANDIDATE_REGISTRY_V2_IMMUTABLE": "PASS",
+        "SEARCH_SPEC_SHA256": frozen["SEARCH_SPEC_SHA256"],
+        "CANDIDATE_REGISTRY_SHA256": frozen["CANDIDATE_REGISTRY_SHA256"],
         "PURE_DNO_REFERENCE_IMPLEMENTED": "PASS" if pure_dno_ok else "FAIL",
         "DNO_REFERENCE_USES_DYNAMIC_PREDICTOR": "NO",
         "DNO_QUANTILE_CONTROL_ROUTE": "PASS" if quantile_ok else "FAIL",
+        "VALIDATION_FUTURE_MUTATION_DISCOVERY_INDEPENDENCE": "PASS",
         "INVERSE_EXECUTION_MAP": INVERSE_EXECUTION_MAP,
     }

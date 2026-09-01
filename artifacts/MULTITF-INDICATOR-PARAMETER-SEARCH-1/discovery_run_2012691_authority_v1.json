@@ -1,0 +1,11 @@
+{
+  "wip_id": "MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "mode": "INVERSE-TRIGGER-EXTRACTION-INTEGRITY-FIX-1",
+  "DISCOVERY_RUN_2012691": "FAILED_INVALID_INVERSE_TRIGGER_EXTRACTION",
+  "FAILED_DISCOVERY_PID": 2012691,
+  "failure_reason": "_generate_inverse_signals used local _trigger_price reading trigger_price instead of predicted_trigger_price",
+  "search_spec_v2_freeze_commit": "eb561bc1298bd2b0ec5e21cc4ac6c690ec148bad",
+  "partial_results_discarded": true,
+  "validation_started": "NO",
+  "oos_access_count": 0
+}

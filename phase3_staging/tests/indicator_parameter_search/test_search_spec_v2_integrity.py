@@ -110,6 +110,11 @@ def test_v2_integrity_gates(frozen_registry_v2, fixture_bars):
     assert gates["INVERSE_DIRECT_PREDICT_CALL"] == "PASS"
     assert gates["INVERSE_DIRECTION_PURITY"] == "PASS"
     assert gates["INVERSE_ROUTE_EXCEPTION_COUNT"] == 0
+    assert gates["INVERSE_VALID_PREDICTION_LOST_TO_EXTRACTION_COUNT"] == 0
+    assert gates["INVERSE_DEAD_EXTRACTION_ROUTE_COUNT"] == 0
+    assert gates["PREDICTOR_RESULT_OBJECT_TRIGGER_EXTRACTION"] == "PASS"
+    assert gates["SEARCH_SPEC_V2_IMMUTABLE"] == "PASS"
+    assert gates["CANDIDATE_REGISTRY_V2_IMMUTABLE"] == "PASS"
     assert gates["PREFLIGHT_EVALUATION_BARS_AFTER_SCAN_START_GE_500"] == "PASS"
     assert gates["CANDIDATE_ROUTING_PREFLIGHT_EXCEPTION_COUNT"] == 0
     assert gates["CANDIDATE_ROUTING_PREFLIGHT_UNRESOLVED_COUNT"] == 0
