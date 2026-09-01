@@ -53,16 +53,20 @@ def generate_price_baseline_signals(
     kind: str,
     decision_tf: str,
     scan_start_iso: str | None = None,
+    scan_end_iso: str | None = None,
 ) -> list[dict[str, Any]]:
     closes = np.array([float(b["close"]) for b in bars], dtype=float)
     highs = np.array([float(b["high"]) for b in bars], dtype=float)
     lows = np.array([float(b["low"]) for b in bars], dtype=float)
     rows: list[dict[str, Any]] = []
     scan_start = parse_ts(scan_start_iso) if scan_start_iso else None
+    scan_end = parse_ts(scan_end_iso) if scan_end_iso else None
 
     for i in range(1, len(bars)):
         ct = parse_ts(bars[i]["close_time"])
         if scan_start and ct < scan_start:
+            continue
+        if scan_end and ct >= scan_end:
             continue
         direction = None
         if kind == "ONE_BAR_DIRECTION_CHANGE":
@@ -173,6 +177,7 @@ def generate_predictor_trigger_signals(
     down_param: str,
     decision_tf: str,
     scan_start_iso: str | None = None,
+    scan_end_iso: str | None = None,
     stride: int = 1,
     start_index: int | None = None,
 ) -> list[dict[str, Any]]:
@@ -184,6 +189,7 @@ def generate_predictor_trigger_signals(
     """
     rows: list[dict[str, Any]] = []
     scan_start = parse_ts(scan_start_iso) if scan_start_iso else None
+    scan_end = parse_ts(scan_end_iso) if scan_end_iso else None
     n = len(bars)
     if n < 3:
         return rows
@@ -222,6 +228,8 @@ def generate_predictor_trigger_signals(
     for i in range(max(1, i_begin), n):
         ct = parse_ts(bars[i]["close_time"])
         if scan_start and ct < scan_start:
+            continue
+        if scan_end and ct >= scan_end:
             continue
         prev_close = float(bars[i - 1]["close"])
         close = float(bars[i]["close"])

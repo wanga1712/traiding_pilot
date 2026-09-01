@@ -20,6 +20,14 @@ from crypto_trading_bot.research_v2.reversal_signal_study.metrics import benjami
 from .anti_leakage import run_anti_leakage_gates
 from .candidate_registry import build_candidate_registry, registry_summary
 from .config import ARTIFACT_ROOT, EVENT_DIR, SEARCH_TFS, discovery_fold_bounds, split_bounds
+from .data_isolation import (
+    build_discovery_access_audit,
+    count_bars_from,
+    count_valid_bars,
+    count_validation_timestamps,
+    discovery_event_set,
+    filter_signals_to_window,
+)
 from .evaluation import (
     add_baseline_deltas,
     block_bootstrap_pvalue,
@@ -31,11 +39,12 @@ from .evaluation import (
     select_discovery_shortlist,
     validation_candidate_hash,
 )
+from .frozen_spec import verify_frozen_artifacts
 from .search_spec import write_search_spec
 from .signals_bank import generate_frozen_price_baselines, generate_signals_for_row
 from .version import WIP_ID
 
-MODE = "ACTIVATE-IMPLEMENT-AND-RUN"
+MODE = "DISCOVERY-ISOLATION-INTEGRITY-FIX-1"
 
 
 def _git_sha() -> str:
@@ -45,9 +54,24 @@ def _git_sha() -> str:
         return "UNKNOWN"
 
 
-def _load_events() -> pd.DataFrame:
+def _load_events(*, partitions: tuple[str, ...] = ("DISCOVERY", "VALIDATION")) -> pd.DataFrame:
     ev = pd.read_parquet(EVENT_DIR / "reversal_events_v1.parquet")
-    return ev[(ev["partition"].isin(["DISCOVERY", "VALIDATION"])) & (ev["partition_usable"] == True)].reset_index(drop=True)  # noqa: E712
+    return ev[(ev["partition"].isin(partitions)) & (ev["partition_usable"] == True)].reset_index(drop=True)  # noqa: E712
+
+
+def _load_frozen_registry() -> list[dict[str, Any]]:
+    path = ARTIFACT_ROOT / "candidate_registry_snapshot_v1.csv"
+    return pd.read_csv(path).to_dict(orient="records")
+
+
+def _require_discovery_freeze_manifest() -> dict[str, Any]:
+    manifest_path = ARTIFACT_ROOT / "discovery_freeze_manifest_v1.json"
+    if not manifest_path.exists():
+        raise RuntimeError("VALIDATION_BEFORE_DISCOVERY_FREEZE_BLOCKED: missing discovery_freeze_manifest_v1.json")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if not manifest.get("DISCOVERY_FREEZE_COMMIT"):
+        raise RuntimeError("VALIDATION_BEFORE_DISCOVERY_FREEZE_BLOCKED: DISCOVERY_FREEZE_COMMIT missing in manifest")
+    return manifest
 
 
 def _load_bars(service, tf: str, start, end, *, warmup_bars: int = 500) -> list:
@@ -115,14 +139,15 @@ def run_freeze_spec_only() -> dict[str, Any]:
 
 
 def _run_validation_only() -> dict[str, Any]:
+    _require_discovery_freeze_manifest()
     frozen_path = ARTIFACT_ROOT / "frozen_validation_candidates_v1.json"
     if not frozen_path.exists():
         raise FileNotFoundError(f"Missing discovery freeze: {frozen_path}")
     frozen_payload = json.loads(frozen_path.read_text(encoding="utf-8"))
     frozen_ids = frozen_payload["candidate_ids"]
-    registry = build_candidate_registry()
+    registry = _load_frozen_registry()
     reg_map = {r["candidate_id"]: r for r in registry}
-    events = _load_events()
+    events = _load_events(partitions=("DISCOVERY", "VALIDATION"))
     service = make_bar_service()
     disc_start = split_bounds("DISCOVERY")[0]
     val_end = split_bounds("VALIDATION")[1]
@@ -133,10 +158,17 @@ def _run_validation_only() -> dict[str, Any]:
     for tf in SEARCH_TFS:
         bars = _load_bars(service, tf, disc_start, val_end, warmup_bars=500)
         bars_by_tf[tf] = bars
-        baselines_by_tf[tf] = generate_frozen_price_baselines(bars, decision_tf=tf, scan_start_iso=disc_start.isoformat())
+        baselines_by_tf[tf] = generate_frozen_price_baselines(
+            bars, decision_tf=tf, scan_start_iso=disc_start.isoformat(), scan_end_iso=split_bounds("VALIDATION")[1].isoformat()
+        )
     for cid in frozen_ids:
         row = reg_map[cid]
-        signals_by_cid[cid] = generate_signals_for_row(bars_by_tf[row["decision_tf"]], row, scan_start_iso=disc_start.isoformat())
+        signals_by_cid[cid] = generate_signals_for_row(
+            bars_by_tf[row["decision_tf"]],
+            row,
+            scan_start_iso=disc_start.isoformat(),
+            scan_end_iso=split_bounds("VALIDATION")[1].isoformat(),
+        )
     disc_df = pd.read_parquet(ARTIFACT_ROOT / "discovery_results_all_v1.parquet")
     baseline_cache: dict[tuple[str, str, str], dict] = {}
     val_rows = []
@@ -201,39 +233,61 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
     if phase == "freeze-spec":
         return run_freeze_spec_only()
 
-    skip_validation = phase in ("discovery", "discovery-only")
+    skip_validation = phase != "validation"
 
     if phase == "validation":
         return _run_validation_only()
 
     ARTIFACT_ROOT.mkdir(parents=True, exist_ok=True)
-    disc_start = split_bounds("DISCOVERY")[0]
+    disc_start, disc_end = split_bounds("DISCOVERY")
     val_end = split_bounds("VALIDATION")[1]
     folds = discovery_fold_bounds()
+    scan_start_iso = disc_start.isoformat()
+    scan_end_iso = disc_end.isoformat()
 
-    preflight = run_data_location_preflight(required_start=disc_start, required_end=val_end, artifact_root=ARTIFACT_ROOT)
+    frozen_hashes = verify_frozen_artifacts(ARTIFACT_ROOT)
+    registry = _load_frozen_registry()
+
+    preflight = run_data_location_preflight(
+        required_start=disc_start,
+        required_end=disc_end if skip_validation else val_end,
+        artifact_root=ARTIFACT_ROOT,
+    )
     if preflight.get("READY_FOR_HISTORICAL_EVENT_STUDY") != "YES":
         out = {**preflight, "WIP": WIP_ID, "ROADMAP_STATUS": "ACTIVE", "abort": True}
         (ARTIFACT_ROOT / "summary_v1.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
         return out
 
-    write_search_spec(ARTIFACT_ROOT)
-    registry = build_candidate_registry()
-    reg_df = pd.DataFrame(registry)
-    reg_df.to_csv(ARTIFACT_ROOT / "candidate_registry_snapshot_v1.csv", index=False)
-
-    events = _load_events()
+    events = _load_events(partitions=("DISCOVERY",))
     service = make_bar_service()
     bars_by_tf: dict[str, list] = {}
     baselines_by_tf: dict[str, list] = {}
     signals_by_cid: dict[str, list] = {}
 
-    print("[param-search] loading bars...", flush=True)
+    print("[param-search] loading discovery bars...", flush=True)
     for tf in SEARCH_TFS:
-        bars = _load_bars(service, tf, disc_start, val_end, warmup_bars=500)
+        bars = _load_bars(service, tf, disc_start, disc_end, warmup_bars=500)
         bars_by_tf[tf] = bars
-        baselines_by_tf[tf] = generate_frozen_price_baselines(bars, decision_tf=tf, scan_start_iso=disc_start.isoformat())
-        print(f"  {tf}: {len(bars)} bars", flush=True)
+        baselines_by_tf[tf] = generate_frozen_price_baselines(
+            bars, decision_tf=tf, scan_start_iso=scan_start_iso, scan_end_iso=scan_end_iso
+        )
+        val_bar_count = count_bars_from(bars, disc_end)
+        print(f"  {tf}: {len(bars)} bars loaded, validation_bars={val_bar_count}", flush=True)
+
+    access_audit = build_discovery_access_audit(
+        bars_by_tf=bars_by_tf,
+        events=events,
+        discovery_start=disc_start,
+        discovery_end=disc_end,
+    )
+    (ARTIFACT_ROOT / "discovery_data_access_audit_v1.json").write_text(
+        json.dumps(access_audit, indent=2), encoding="utf-8"
+    )
+    if access_audit["validation_bars_loaded"] != 0 or access_audit["validation_events_loaded"] != 0:
+        raise RuntimeError(
+            f"Discovery isolation failed: validation_bars={access_audit['validation_bars_loaded']} "
+            f"validation_events={access_audit['validation_events_loaded']}"
+        )
 
     # group rows by tf for progress
     by_tf: dict[str, list[dict]] = defaultdict(list)
@@ -243,7 +297,9 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
     discovery_rows: list[dict[str, Any]] = []
     fold_rows: list[dict[str, Any]] = []
     event_sets: dict[str, set[str]] = {}
-    baseline_cache: dict[tuple[str, str, str], dict] = {}
+    baseline_cache: dict[tuple, dict] = {}
+    discovery_valid_bars = {tf: count_valid_bars(bars_by_tf[tf], disc_start, disc_end) for tf in SEARCH_TFS}
+    signals_outside_split = 0
 
     for tf in SEARCH_TFS:
         bars = bars_by_tf[tf]
@@ -257,31 +313,86 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
             if last_key is not None and key != last_key:
                 sample_cache.clear()
             last_key = key
-            sigs = generate_signals_for_row(bars, row, scan_start_iso=disc_start.isoformat(), sample_cache=sample_cache)
+            sigs = generate_signals_for_row(
+                bars,
+                row,
+                scan_start_iso=scan_start_iso,
+                scan_end_iso=scan_end_iso,
+                sample_cache=sample_cache,
+            )
             idx += 1
             if idx % 25 == 0:
                 print(f"  {tf}: {idx}/{len(by_tf[tf])} candidates", flush=True)
             signals_by_cid[row["candidate_id"]] = sigs
-            event_sets[row["candidate_id"]] = {s["signal_time"] for s in sigs}
+            outside = [
+                s
+                for s in sigs
+                if parse_ts(s["available_at"]) < disc_start or parse_ts(s["available_at"]) >= disc_end
+            ]
+            signals_outside_split += len(outside)
+            event_sets[row["candidate_id"]] = discovery_event_set(
+                sigs, scan_start=disc_start, scan_end=disc_end
+            )
             bkey = (tf, row["direction"], "DISCOVERY")
             if bkey not in baseline_cache:
-                baseline_cache[bkey] = price_baseline_metrics(baselines_by_tf[tf], events, decision_tf=tf, direction=row["direction"], partition="DISCOVERY")
-            m_disc = evaluate_candidate(sigs, events, row, partition="DISCOVERY", valid_bars=len(bars))
+                baseline_cache[bkey] = price_baseline_metrics(
+                    baselines_by_tf[tf],
+                    events,
+                    decision_tf=tf,
+                    direction=row["direction"],
+                    partition="DISCOVERY",
+                    valid_bars=discovery_valid_bars[tf],
+                )
+            m_disc = evaluate_candidate(
+                sigs,
+                events,
+                row,
+                partition="DISCOVERY",
+                valid_bars=discovery_valid_bars[tf],
+            )
             m_disc = add_baseline_deltas(m_disc, baseline_cache[bkey])
             m_disc["decision_tf"] = tf
             m_disc["family"] = row["family"]
             discovery_rows.append(m_disc)
             fold_deltas = []
             for i, (fs, fe) in enumerate(folds):
+                fold_valid = count_valid_bars(bars, fs, fe)
+                fbkey = (tf, row["direction"], "DISCOVERY", i + 1)
+                if fbkey not in baseline_cache:
+                    baseline_cache[fbkey] = price_baseline_metrics(
+                        baselines_by_tf[tf],
+                        events,
+                        decision_tf=tf,
+                        direction=row["direction"],
+                        partition="DISCOVERY",
+                        fold_start=fs.isoformat(),
+                        fold_end=fe.isoformat(),
+                        valid_bars=fold_valid,
+                    )
                 mf = evaluate_candidate(
-                    sigs, events, row, partition="DISCOVERY", fold_start=fs.isoformat(), fold_end=fe.isoformat(), valid_bars=len(bars)
+                    sigs,
+                    events,
+                    row,
+                    partition="DISCOVERY",
+                    fold_start=fs.isoformat(),
+                    fold_end=fe.isoformat(),
+                    valid_bars=fold_valid,
                 )
-                mf = add_baseline_deltas(mf, baseline_cache[bkey])
+                mf = add_baseline_deltas(mf, baseline_cache[fbkey])
                 mf["fold"] = i + 1
                 mf["candidate_id"] = row["candidate_id"]
                 fold_rows.append(mf)
                 fold_deltas.append(mf.get("PRECISION_DELTA"))
             m_disc["discovery_fold_stability"] = fold_stability_class(fold_deltas)
+
+    validation_ts_in_event_sets = sum(
+        count_validation_timestamps(ts_set, discovery_end=disc_end) for ts_set in event_sets.values()
+    )
+    if signals_outside_split != 0 or validation_ts_in_event_sets != 0:
+        raise RuntimeError(
+            f"Discovery signal boundary failed: outside_split={signals_outside_split} "
+            f"validation_ts_in_event_sets={validation_ts_in_event_sets}"
+        )
 
     disc_df = pd.DataFrame(discovery_rows)
     fold_df = pd.DataFrame(fold_rows)
@@ -341,20 +452,62 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
     }
     (ARTIFACT_ROOT / "frozen_validation_candidates_v1.json").write_text(json.dumps(frozen_payload, indent=2), encoding="utf-8")
 
+    discovery_manifest = {
+        "discovery_complete_commit": _git_sha(),
+        "candidate_set_hash": frozen_payload["hash"],
+        "candidate_count": len(frozen_ids),
+        "frozen_at": frozen_payload["frozen_at"],
+        "SEARCH_SPEC_SHA256": frozen_hashes["SEARCH_SPEC_SHA256"],
+        "CANDIDATE_REGISTRY_SHA256": frozen_hashes["CANDIDATE_REGISTRY_SHA256"],
+        "SEARCH_SPEC_FREEZE_COMMIT": frozen_hashes["SEARCH_SPEC_FREEZE_COMMIT"],
+    }
+    (ARTIFACT_ROOT / "discovery_freeze_manifest_v1.json").write_text(
+        json.dumps(discovery_manifest, indent=2), encoding="utf-8"
+    )
+
     val_rows = []
     if not skip_validation:
+        _require_discovery_freeze_manifest()
         print("[param-search] validation...", flush=True)
+        val_events = _load_events(partitions=("DISCOVERY", "VALIDATION"))
+        val_bars_by_tf: dict[str, list] = {}
+        val_baselines_by_tf: dict[str, list] = {}
+        for tf in SEARCH_TFS:
+            val_bars = _load_bars(service, tf, disc_start, val_end, warmup_bars=500)
+            val_bars_by_tf[tf] = val_bars
+            val_baselines_by_tf[tf] = generate_frozen_price_baselines(
+                val_bars,
+                decision_tf=tf,
+                scan_start_iso=scan_start_iso,
+                scan_end_iso=val_end.isoformat(),
+            )
         reg_map = {r["candidate_id"]: r for r in registry}
         for cid in frozen_ids:
             row = reg_map[cid]
             tf = row["decision_tf"]
-            sigs = signals_by_cid.get(cid, [])
+            sigs = generate_signals_for_row(
+                val_bars_by_tf[tf],
+                row,
+                scan_start_iso=scan_start_iso,
+                scan_end_iso=val_end.isoformat(),
+            )
             bkey = (tf, row["direction"], "VALIDATION")
             if bkey not in baseline_cache:
                 baseline_cache[bkey] = price_baseline_metrics(
-                    baselines_by_tf[tf], events, decision_tf=tf, direction=row["direction"], partition="VALIDATION"
+                    val_baselines_by_tf[tf],
+                    val_events,
+                    decision_tf=tf,
+                    direction=row["direction"],
+                    partition="VALIDATION",
+                    valid_bars=count_valid_bars(val_bars_by_tf[tf], split_bounds("VALIDATION")[0], val_end),
                 )
-            m_val = evaluate_candidate(sigs, events, row, partition="VALIDATION", valid_bars=len(bars_by_tf[tf]))
+            m_val = evaluate_candidate(
+                sigs,
+                val_events,
+                row,
+                partition="VALIDATION",
+                valid_bars=count_valid_bars(val_bars_by_tf[tf], split_bounds("VALIDATION")[0], val_end),
+            )
             m_val = add_baseline_deltas(m_val, baseline_cache[bkey])
             disc_row = disc_df[disc_df["candidate_id"] == cid]
             d = disc_row.iloc[0].to_dict() if not disc_row.empty else {}
@@ -393,7 +546,11 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
 
     anti = run_anti_leakage_gates(bars_by_tf.get("1H", []), timeframe="1H")
     anti["S7_PROVENANCE"] = preflight.get("READY_FOR_HISTORICAL_EVENT_STUDY", "NO")
-    anti["VALIDATION_NOT_USED_IN_DISCOVERY_SELECTION"] = "PASS"
+    anti["VALIDATION_NOT_USED_IN_DISCOVERY_SELECTION"] = access_audit["VALIDATION_DATA_ACCESSED_DURING_DISCOVERY"]
+    anti["VALIDATION_BAR_COUNT_LOADED_DURING_DISCOVERY"] = access_audit["validation_bars_loaded"]
+    anti["VALIDATION_EVENT_COUNT_LOADED_DURING_DISCOVERY"] = access_audit["validation_events_loaded"]
+    anti["DISCOVERY_SIGNAL_OUTSIDE_SPLIT_COUNT"] = signals_outside_split
+    anti["VALIDATION_TIMESTAMP_IN_DISCOVERY_EVENT_SETS"] = validation_ts_in_event_sets
     anti["VALIDATION_CANDIDATE_SET_HASH_MATCH"] = "PASS"
     (ARTIFACT_ROOT / "anti_leakage_tests_v1.json").write_text(json.dumps(anti, indent=2), encoding="utf-8")
 
@@ -401,7 +558,9 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
 
     stable_any = bool(val_rows) and any(r.get("validation_stability") == "STABLE_POSITIVE" for r in val_rows)
     weak_only = bool(val_rows) and not stable_any and any(r.get("validation_stability") == "WEAK_POSITIVE" for r in val_rows)
-    if stable_any:
+    if skip_validation:
+        verdict = "DISCOVERY_COMPLETE"
+    elif stable_any:
         verdict = "STABLE_CONFIGS_FOUND"
     elif weak_only:
         verdict = "WEAK_CONFIGS_ONLY"
@@ -417,7 +576,18 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
     summary_out = {
         "WIP": WIP_ID,
         "MODE": MODE,
-        "ROADMAP_STATUS": "REVIEW",
+        "ROADMAP_STATUS": "ACTIVE" if skip_validation else "REVIEW",
+        "RUNTIME_INTEGRITY_FIX_COMMIT": _git_sha(),
+        "SEARCH_SPEC_SHA256": frozen_hashes["SEARCH_SPEC_SHA256"],
+        "CANDIDATE_REGISTRY_SHA256": frozen_hashes["CANDIDATE_REGISTRY_SHA256"],
+        "SEARCH_SPEC_IMMUTABLE": "PASS",
+        "CANDIDATE_REGISTRY_IMMUTABLE": "PASS",
+        "VALIDATION_BAR_COUNT_LOADED_DURING_DISCOVERY": access_audit["validation_bars_loaded"],
+        "VALIDATION_EVENT_COUNT_LOADED_DURING_DISCOVERY": access_audit["validation_events_loaded"],
+        "DISCOVERY_SIGNAL_OUTSIDE_SPLIT_COUNT": signals_outside_split,
+        "VALIDATION_TIMESTAMP_IN_DISCOVERY_EVENT_SETS": validation_ts_in_event_sets,
+        "VALIDATION_DATA_ACCESSED_DURING_DISCOVERY": access_audit["VALIDATION_DATA_ACCESSED_DURING_DISCOVERY"],
+        "VALIDATION_STARTED": "NO" if skip_validation else "YES",
         "ACTIVATION_COMMIT": _git_sha(),
         "CANONICAL_MARKET_DATA_HOST": "S7",
         "COMPUTE_HOST": "S13",

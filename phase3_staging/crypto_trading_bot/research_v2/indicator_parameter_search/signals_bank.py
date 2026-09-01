@@ -24,6 +24,7 @@ from crypto_trading_bot.research_v2.reversal_signal_study.signals import (
 )
 
 from .config import FROZEN_PREDICTOR_REFERENCE
+from .data_isolation import in_scan_window
 
 
 def _scan_primitive_series(
@@ -35,14 +36,16 @@ def _scan_primitive_series(
     direction: str,
     decision_tf: str,
     scan_start_iso: str | None,
+    scan_end_iso: str | None = None,
 ) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     scan_start = parse_ts(scan_start_iso) if scan_start_iso else None
+    scan_end = parse_ts(scan_end_iso) if scan_end_iso else None
     for i, sample in enumerate(samples):
         if not sample.valid:
             continue
         ct = parse_ts(bars[i]["close_time"])
-        if scan_start and ct < scan_start:
+        if not in_scan_window(ct, scan_start=scan_start, scan_end=scan_end):
             continue
         prim = sample.signal_primitives
         if not prim.get(primitive):
@@ -139,6 +142,7 @@ def generate_bank_family_signals(
     row: dict[str, Any],
     *,
     scan_start_iso: str | None = None,
+    scan_end_iso: str | None = None,
     sample_cache: dict[tuple, Any] | None = None,
 ) -> list[dict[str, Any]]:
     family = row["family"]
@@ -154,28 +158,38 @@ def generate_bank_family_signals(
 
     kind = payload[0]
     if kind == "engine":
-        return _scan_from_indicator_samples(payload[1], bars, row, scan_start_iso)
+        return _scan_from_indicator_samples(payload[1], bars, row, scan_start_iso, scan_end_iso)
     if kind == "predictor":
         preds = payload[1]
         if preds is None:
             return []
         arrays = bars_to_arrays(bars, timeframe=row["decision_tf"])
-        return _scan_predictor_payload(bars, row, arrays, preds, scan_start_iso=scan_start_iso)
+        return _scan_predictor_payload(bars, row, arrays, preds, scan_start_iso=scan_start_iso, scan_end_iso=scan_end_iso)
     samples = payload[1]
-    return _scan_primitive_series(bars, samples, candidate_id=cid, primitive=prim, direction=direction, decision_tf=tf, scan_start_iso=scan_start_iso)
+    return _scan_primitive_series(
+        bars,
+        samples,
+        candidate_id=cid,
+        primitive=prim,
+        direction=direction,
+        decision_tf=tf,
+        scan_start_iso=scan_start_iso,
+        scan_end_iso=scan_end_iso,
+    )
 
 
-def _scan_from_indicator_samples(samples, bars, row, scan_start_iso):
+def _scan_from_indicator_samples(samples, bars, row, scan_start_iso, scan_end_iso=None):
     """Fallback for DiNapoli reference engine routes."""
     rows = []
     scan_start = parse_ts(scan_start_iso) if scan_start_iso else None
+    scan_end = parse_ts(scan_end_iso) if scan_end_iso else None
     up, down = row["up_primitive"], row["down_primitive"]
     prim = row["event_primitive"]
     for i, sample in enumerate(samples):
         if not sample.valid:
             continue
         ct = parse_ts(bars[i]["close_time"])
-        if scan_start and ct < scan_start:
+        if not in_scan_window(ct, scan_start=scan_start, scan_end=scan_end):
             continue
         flag = None
         if prim == up and sample.signal_primitives.get(up):
@@ -219,16 +233,18 @@ def _scan_predictor_payload(
     preds: list[dict[str, Any]],
     *,
     scan_start_iso: str | None,
+    scan_end_iso: str | None = None,
 ) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     scan_start = parse_ts(scan_start_iso) if scan_start_iso else None
+    scan_end = parse_ts(scan_end_iso) if scan_end_iso else None
     prim = row["event_primitive"]
     tf = row["decision_tf"]
     for i, pred in enumerate(preds):
         if not pred.get("valid"):
             continue
         ct = parse_ts(bars[i]["close_time"])
-        if scan_start and ct < scan_start:
+        if not in_scan_window(ct, scan_start=scan_start, scan_end=scan_end):
             continue
         fire = False
         if prim == "CROSSED_OB_BAND_UP" and row["direction"] == "UP":
@@ -322,6 +338,7 @@ def generate_signals_for_row(
     row: dict[str, Any],
     *,
     scan_start_iso: str | None = None,
+    scan_end_iso: str | None = None,
     sample_cache: dict[tuple, Any] | None = None,
 ) -> list[dict[str, Any]]:
     if row["family"] == "INVERSE_PREDICTOR":
@@ -331,12 +348,19 @@ def generate_signals_for_row(
         return generate_predictor_trigger_signals(
             bars,
             candidate_id=row["candidate_id"],
-            up_trigger_id=up_id,
-            down_trigger_id=up_id,
+            up_param=up_id,
+            down_param=up_id,
             decision_tf=row["decision_tf"],
             scan_start_iso=scan_start_iso,
+            scan_end_iso=scan_end_iso,
         )
-    return generate_bank_family_signals(bars, row, scan_start_iso=scan_start_iso, sample_cache=sample_cache)
+    return generate_bank_family_signals(
+        bars,
+        row,
+        scan_start_iso=scan_start_iso,
+        scan_end_iso=scan_end_iso,
+        sample_cache=sample_cache,
+    )
 
 
 def generate_frozen_price_baselines(
@@ -344,6 +368,7 @@ def generate_frozen_price_baselines(
     *,
     decision_tf: str,
     scan_start_iso: str | None,
+    scan_end_iso: str | None = None,
 ) -> list[dict[str, Any]]:
     kinds = [
         "ONE_BAR_DIRECTION_CHANGE",
@@ -357,7 +382,12 @@ def generate_frozen_price_baselines(
         cid = f"PRICE_{kind}_{decision_tf}"
         out.extend(
             generate_price_baseline_signals(
-                bars, candidate_id=cid, kind=kind, decision_tf=decision_tf, scan_start_iso=scan_start_iso
+                bars,
+                candidate_id=cid,
+                kind=kind,
+                decision_tf=decision_tf,
+                scan_start_iso=scan_start_iso,
+                scan_end_iso=scan_end_iso,
             )
         )
     return out

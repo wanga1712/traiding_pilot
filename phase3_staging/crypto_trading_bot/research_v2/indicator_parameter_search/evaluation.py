@@ -108,6 +108,9 @@ def price_baseline_metrics(
     decision_tf: str,
     direction: str,
     partition: str,
+    fold_start: str | None = None,
+    fold_end: str | None = None,
+    valid_bars: int = 0,
 ) -> dict[str, float | None]:
     # Frozen primary baseline from REVERSAL-SIGNAL-EVENT-STUDY-1 semantics.
     cid = f"PRICE_ONE_BAR_DIRECTION_CHANGE_{decision_tf}"
@@ -120,7 +123,15 @@ def price_baseline_metrics(
         "parameter_set_id": "ONE_BAR_DIRECTION_CHANGE",
     }
     sigs = [s for s in baseline_signals if s["candidate_id"] == cid and s.get("signal_direction") == direction]
-    m = evaluate_candidate(sigs, events, row, partition=partition)
+    m = evaluate_candidate(
+        sigs,
+        events,
+        row,
+        partition=partition,
+        fold_start=fold_start,
+        fold_end=fold_end,
+        valid_bars=valid_bars,
+    )
     return {
         "PRECISION": m.get("PRECISION"),
         "EVENT_RECALL": m.get("EVENT_RECALL"),
