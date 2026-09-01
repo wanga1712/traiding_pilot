@@ -1,8 +1,12 @@
 """Candidate registry — bank IDs + references + controlled DNO sweeps."""
 from __future__ import annotations
 
+import ast
 import hashlib
+from pathlib import Path
 from typing import Any
+
+import pandas as pd
 
 from crypto_trading_bot.research_v2.multitf_feature_bank.registries import (
     DMA_REGISTRY,
@@ -27,6 +31,84 @@ MANDATORY_MACD_IDS = {
     "MACD_12_26_9_SHIFT0_V1",
     "DINAPOLI_MACD_REFERENCE_V1",
 }
+
+REGISTRY_COMPARE_FIELDS = (
+    "candidate_id",
+    "family",
+    "formula_variant",
+    "parameter_set_id",
+    "parameters",
+    "decision_tf",
+    "direction",
+    "event_primitive",
+    "up_primitive",
+    "down_primitive",
+    "reference_status",
+    "is_reference",
+    "version",
+    "comparison_scope",
+)
+
+
+def parse_registry_parameters(raw: Any) -> dict[str, Any]:
+    if isinstance(raw, dict):
+        return dict(raw)
+    if raw is None or (isinstance(raw, float) and pd.isna(raw)):
+        return {}
+    if isinstance(raw, str):
+        text = raw.strip()
+        if not text:
+            return {}
+        parsed = ast.literal_eval(text)
+        if not isinstance(parsed, dict):
+            raise ValueError(f"parameters must deserialize to dict, got {type(parsed).__name__}")
+        return parsed
+    raise ValueError(f"unsupported parameters value type: {type(raw).__name__}")
+
+
+def normalize_registry_row(row: dict[str, Any]) -> dict[str, Any]:
+    out = dict(row)
+    out["parameters"] = parse_registry_parameters(row.get("parameters"))
+    ref = row.get("is_reference")
+    if isinstance(ref, str):
+        out["is_reference"] = ref.strip().lower() in {"true", "1", "yes"}
+    else:
+        out["is_reference"] = bool(ref)
+    return out
+
+
+def load_frozen_registry(path: Path | str) -> list[dict[str, Any]]:
+    df = pd.read_csv(path)
+    return [normalize_registry_row(row) for row in df.to_dict(orient="records")]
+
+
+def registry_deserialization_stats(rows: list[dict[str, Any]]) -> dict[str, int]:
+    params_dict = sum(1 for r in rows if isinstance(r.get("parameters"), dict))
+    params_str = sum(1 for r in rows if isinstance(r.get("parameters"), str))
+    return {
+        "FROZEN_REGISTRY_ROW_COUNT": len(rows),
+        "FROZEN_REGISTRY_PARAMETERS_DICT_COUNT": params_dict,
+        "FROZEN_REGISTRY_PARAMETERS_STRING_COUNT": params_str,
+    }
+
+
+def compare_registry_semantics(built: list[dict[str, Any]], frozen: list[dict[str, Any]]) -> tuple[int, list[str]]:
+    built_by_id = {r["candidate_id"]: r for r in built}
+    frozen_by_id = {r["candidate_id"]: r for r in frozen}
+    mismatches: list[str] = []
+    for cid in sorted(built_by_id):
+        if cid not in frozen_by_id:
+            mismatches.append(f"missing_in_frozen:{cid}")
+            continue
+        b = built_by_id[cid]
+        f = frozen_by_id[cid]
+        for field in REGISTRY_COMPARE_FIELDS:
+            if b.get(field) != f.get(field):
+                mismatches.append(f"{cid}:{field}")
+    for cid in sorted(frozen_by_id):
+        if cid not in built_by_id:
+            mismatches.append(f"missing_in_built:{cid}")
+    return len(mismatches), mismatches
 
 
 def _cid(*parts: str) -> str:

@@ -1,0 +1,9 @@
+{
+  "wip_id": "MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "mode": "CANDIDATE-EXECUTION-INTEGRITY-FIX-1",
+  "DISCOVERY_RUN_1583070": "FAILED_INVALID",
+  "FAILED_DISCOVERY_PID": 1583070,
+  "failure_reason": "AttributeError: parameters CSV string not deserialized before predictor config parse",
+  "preserved_log": "_discovery_invalidated_validation_access.log",
+  "invalid_results_excluded": true
+}

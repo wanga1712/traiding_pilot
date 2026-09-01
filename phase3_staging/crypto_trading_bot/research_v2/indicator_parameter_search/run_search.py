@@ -18,7 +18,7 @@ from crypto_trading_bot.research_v2.reversal_signal_study.bar_io import load_con
 from crypto_trading_bot.research_v2.reversal_signal_study.metrics import benjamini_hochberg
 
 from .anti_leakage import run_anti_leakage_gates
-from .candidate_registry import build_candidate_registry, registry_summary
+from .candidate_registry import build_candidate_registry, load_frozen_registry, registry_summary
 from .config import ARTIFACT_ROOT, EVENT_DIR, SEARCH_TFS, discovery_fold_bounds, split_bounds
 from .data_isolation import (
     build_discovery_access_audit,
@@ -60,8 +60,7 @@ def _load_events(*, partitions: tuple[str, ...] = ("DISCOVERY", "VALIDATION")) -
 
 
 def _load_frozen_registry() -> list[dict[str, Any]]:
-    path = ARTIFACT_ROOT / "candidate_registry_snapshot_v1.csv"
-    return pd.read_csv(path).to_dict(orient="records")
+    return load_frozen_registry(ARTIFACT_ROOT / "candidate_registry_snapshot_v1.csv")
 
 
 def _require_discovery_freeze_manifest() -> dict[str, Any]:
