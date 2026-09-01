@@ -15,15 +15,15 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | *(none active)* |
-| **STATUS** | — |
-| **PHASE** | 8a complete for oscillator historical event study |
-| **Note** | Awaiting explicit user activation of next WIP. |
+| **WIP** | `MULTITF-INDICATOR-PARAMETER-SEARCH-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | 8a — Multi-TF indicator parameter search |
+| **Note** | Per-TF/direction parameter search (DMA, Stoch, MACD, DNO/predictor, inverse). Not composite search, not trading/PnL, OOS locked. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
-**Next planned (PLANNED — not activated):**  
+**Active:**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1`
 
 Previous CLOSED: `OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1` — final accepted `6c2d13f`; integrity impl `bf72753`; verdict `PREDICTOR_EFFECT_WEAK`; unique dynamic edge vs controls `NOT_ESTABLISHED`; OOS locked.
@@ -985,16 +985,28 @@ OOS_OPENED=NO
 OOS_ACCESS_COUNT=0
 
 NEXT_WIP:  
-`MULTITF-INDICATOR-PARAMETER-SEARCH-1` (PLANNED — do not activate without user acceptance)
+`MULTITF-COMPOSITE-SIGNAL-SEARCH-1` (PLANNED — do not activate without user acceptance)
 
 ### WIP=MULTITF-INDICATOR-PARAMETER-SEARCH-1
 
-STATUS=PLANNED
+STATUS=ACTIVE
 
 PHASE=8a — Multi-TF indicator parameter search
 
-NOTE:  
-Not activated. Do not start without explicit user authorization.
+GOAL:  
+Find stable indicator configurations separately for each timeframe and direction using registered DMA/Stoch/MACD/DNO-predictor families. Not composite search, not trading/PnL, OOS locked.
+
+DEPENDS_ON:  
+`OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1` (CLOSED), `MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1`, `REVERSAL-EVENT-DATASET-1`, `REVERSAL-SIGNAL-EVENT-STUDY-1`
+
+ARTIFACTS:  
+`artifacts/MULTITF-INDICATOR-PARAMETER-SEARCH-1/`
+
+GIT_COMMIT:  
+PENDING
+
+RESULT_SUMMARY:  
+PENDING
 
 ### WIP=PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
 
@@ -1476,7 +1488,7 @@ none (end of planned chain)
 | MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1 | CLOSED | 8a |
 | OSCILLATOR-PREDICTOR-REFERENCE-1 | CLOSED | 8a |
 | OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1 | CLOSED | 8a |
-| MULTITF-INDICATOR-PARAMETER-SEARCH-1 | PLANNED | 8a |
+| MULTITF-INDICATOR-PARAMETER-SEARCH-1 | ACTIVE | 8a |
 | PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | PLANNED (paused) | 8b |
 | TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1 | PLANNED | 8b |
 | TRADING-POLICY-MODEL-BAKEOFF-1 | PLANNED | 8b |
