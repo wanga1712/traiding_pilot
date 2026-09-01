@@ -1,6 +1,7 @@
 """Signal generation via feature bank + oscillator predictor."""
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import numpy as np
@@ -59,11 +60,86 @@ def _scan_primitive_series(
     return rows
 
 
+def _feature_cache_key(row: dict[str, Any]) -> tuple:
+    params = row.get("parameters") or {}
+    return (row["decision_tf"], row["family"], row["parameter_set_id"], json.dumps(params, sort_keys=True, default=str))
+
+
+def _load_feature_samples(
+    bars: list[dict[str, Any]],
+    row: dict[str, Any],
+    *,
+    sample_cache: dict[tuple, Any] | None,
+) -> Any:
+    key = _feature_cache_key(row)
+    if sample_cache is not None and key in sample_cache:
+        return sample_cache[key]
+
+    family = row["family"]
+    ps_id = row["parameter_set_id"]
+    tf = row["decision_tf"]
+    payload: Any = None
+
+    if family == "DMA" and ps_id in DMA_REGISTRY:
+        meta = DMA_REGISTRY[ps_id]
+        arrays = bars_to_arrays(bars, timeframe=tf)
+        atr = np.array(
+            [float(s.values["atr"]) if s.valid and s.values.get("atr") is not None else np.nan for s in compute_atr_series(arrays, period=14)],
+            dtype=float,
+        )
+        payload = ("dma", arrays, compute_dma_feature_series(
+            arrays, ma_type=meta["ma_type"], period=meta["period"], display_shift=meta["display_shift"], atr=atr
+        ))
+    elif family == "STOCHASTIC" and ps_id in STOCHASTIC_REGISTRY:
+        meta = STOCHASTIC_REGISTRY[ps_id]
+        if ps_id == "DINAPOLI_PREFERRED_STOCHASTIC_REFERENCE_V1":
+            from crypto_trading_bot.research_v2.indicator_engine.engine import compute_series
+
+            payload = ("engine", compute_series(bars, parameter_set_id="DINAPOLI_PREFERRED_STOCH_8_3_3_V1", source_timeframe=tf).samples)
+        else:
+            arrays = bars_to_arrays(bars, timeframe=tf)
+            payload = ("stoch", compute_stoch_feature_series(
+                arrays,
+                k_period=meta["k_period"],
+                k_smooth=meta.get("k_smooth", meta.get("slowing", 3)),
+                d_period=meta["d_period"],
+                display_shift=meta.get("display_shift", 0),
+            ))
+    elif family == "MACD" and ps_id in MACD_REGISTRY:
+        meta = MACD_REGISTRY[ps_id]
+        if ps_id == "DINAPOLI_MACD_REFERENCE_V1":
+            from crypto_trading_bot.research_v2.indicator_engine.engine import compute_series
+
+            payload = ("engine", compute_series(bars, parameter_set_id="DINAPOLI_MACD_REFERENCE_V1", source_timeframe=tf).samples)
+        else:
+            arrays = bars_to_arrays(bars, timeframe=tf)
+            payload = ("macd", compute_macd_feature_series(
+                arrays,
+                fast=meta["fast"],
+                slow=meta["slow"],
+                signal=meta["signal"],
+                display_shift=meta.get("display_shift", 0),
+            ))
+    elif family in ("OSC_PREDICTOR", "DNO_PREDICTOR"):
+        arrays = bars_to_arrays(bars, timeframe=tf)
+        atr = np.array(
+            [float(s.values["atr"]) if s.valid and s.values.get("atr") is not None else np.nan for s in compute_atr_series(arrays, period=14)],
+            dtype=float,
+        )
+        cfg = _predictor_config_from_row(row)
+        payload = ("predictor", arrays, compute_predictor_feature_series(arrays, config=cfg, atr=atr) if cfg else None)
+
+    if sample_cache is not None and payload is not None:
+        sample_cache[key] = payload
+    return payload
+
+
 def generate_bank_family_signals(
     bars: list[dict[str, Any]],
     row: dict[str, Any],
     *,
     scan_start_iso: str | None = None,
+    sample_cache: dict[tuple, Any] | None = None,
 ) -> list[dict[str, Any]]:
     family = row["family"]
     ps_id = row["parameter_set_id"]
@@ -72,56 +148,20 @@ def generate_bank_family_signals(
     direction = row["direction"]
     cid = row["candidate_id"]
 
-    if family == "DMA" and ps_id in DMA_REGISTRY:
-        meta = DMA_REGISTRY[ps_id]
-        arrays = bars_to_arrays(bars, timeframe=tf)
-        atr = np.array(
-            [float(s.values["atr"]) if s.valid and s.values.get("atr") is not None else np.nan for s in compute_atr_series(arrays, 14)],
-            dtype=float,
-        )
-        samples = compute_dma_feature_series(
-            arrays, ma_type=meta["ma_type"], period=meta["period"], display_shift=meta["display_shift"], atr=atr
-        )
-        return _scan_primitive_series(bars, samples, candidate_id=cid, primitive=prim, direction=direction, decision_tf=tf, scan_start_iso=scan_start_iso)
+    payload = _load_feature_samples(bars, row, sample_cache=sample_cache)
+    if payload is None:
+        return []
 
-    if family == "STOCHASTIC" and ps_id in STOCHASTIC_REGISTRY:
-        meta = STOCHASTIC_REGISTRY[ps_id]
-        arrays = bars_to_arrays(bars, timeframe=tf)
-        if ps_id == "DINAPOLI_PREFERRED_STOCHASTIC_REFERENCE_V1":
-            from crypto_trading_bot.research_v2.indicator_engine.engine import compute_series
-
-            result = compute_series(bars, parameter_set_id="DINAPOLI_PREFERRED_STOCH_8_3_3_V1", source_timeframe=tf)
-            return _scan_from_indicator_samples(result.samples, bars, row, scan_start_iso)
-        samples = compute_stoch_feature_series(
-            arrays,
-            k_period=meta["k_period"],
-            k_smooth=meta.get("k_smooth", meta.get("slowing", 3)),
-            d_period=meta["d_period"],
-            display_shift=meta.get("display_shift", 0),
-        )
-        return _scan_primitive_series(bars, samples, candidate_id=cid, primitive=prim, direction=direction, decision_tf=tf, scan_start_iso=scan_start_iso)
-
-    if family == "MACD" and ps_id in MACD_REGISTRY:
-        meta = MACD_REGISTRY[ps_id]
-        arrays = bars_to_arrays(bars, timeframe=tf)
-        if ps_id == "DINAPOLI_MACD_REFERENCE_V1":
-            from crypto_trading_bot.research_v2.indicator_engine.engine import compute_series
-
-            result = compute_series(bars, parameter_set_id="DINAPOLI_MACD_REFERENCE_V1", source_timeframe=tf)
-            return _scan_from_indicator_samples(result.samples, bars, row, scan_start_iso)
-        samples = compute_macd_feature_series(
-            arrays,
-            fast=meta["fast"],
-            slow=meta["slow"],
-            signal=meta["signal"],
-            display_shift=meta.get("display_shift", 0),
-        )
-        return _scan_primitive_series(bars, samples, candidate_id=cid, primitive=prim, direction=direction, decision_tf=tf, scan_start_iso=scan_start_iso)
-
-    if family in ("OSC_PREDICTOR", "DNO_PREDICTOR"):
-        return _generate_predictor_signals(bars, row, scan_start_iso=scan_start_iso)
-
-    return []
+    kind = payload[0]
+    if kind == "engine":
+        return _scan_from_indicator_samples(payload[1], bars, row, scan_start_iso)
+    if kind == "predictor":
+        arrays, preds = payload[1], payload[2]
+        if preds is None:
+            return []
+        return _scan_predictor_payload(bars, row, arrays, preds, scan_start_iso=scan_start_iso)
+    samples = payload[1] if kind != "dma" else payload[2]
+    return _scan_primitive_series(bars, samples, candidate_id=cid, primitive=prim, direction=direction, decision_tf=tf, scan_start_iso=scan_start_iso)
 
 
 def _scan_from_indicator_samples(samples, bars, row, scan_start_iso):
@@ -171,6 +211,55 @@ def _predictor_config_from_row(row: dict[str, Any]) -> PredictorConfig | None:
     return FROZEN_PREDICTOR_REFERENCE
 
 
+def _scan_predictor_payload(
+    bars: list[dict[str, Any]],
+    row: dict[str, Any],
+    arrays,
+    preds: list[dict[str, Any]],
+    *,
+    scan_start_iso: str | None,
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    scan_start = parse_ts(scan_start_iso) if scan_start_iso else None
+    prim = row["event_primitive"]
+    tf = row["decision_tf"]
+    for i, pred in enumerate(preds):
+        if not pred.get("valid"):
+            continue
+        ct = parse_ts(bars[i]["close_time"])
+        if scan_start and ct < scan_start:
+            continue
+        fire = False
+        if prim == "CROSSED_OB_BAND_UP" and row["direction"] == "UP":
+            fire = bool(pred.get("CROSSED_OB_BAND_UP"))
+        elif prim == "CROSSED_OS_BAND_DOWN" and row["direction"] == "DOWN":
+            fire = bool(pred.get("CROSSED_OS_BAND_DOWN"))
+        elif prim == "FORECAST_OB_CROSS" and row["direction"] == "UP" and i >= 1:
+            f_ob = preds[i - 1].get("PREDICTOR_OB_PRICE_NEXT_BAR")
+            if f_ob is not None:
+                pp = float(arrays.close[i - 1])
+                cp = float(arrays.close[i])
+                fire = pp <= float(f_ob) and cp > float(f_ob)
+        elif prim == "FORECAST_OS_CROSS" and row["direction"] == "DOWN" and i >= 1:
+            f_os = preds[i - 1].get("PREDICTOR_OS_PRICE_NEXT_BAR")
+            if f_os is not None:
+                pp = float(arrays.close[i - 1])
+                cp = float(arrays.close[i])
+                fire = pp >= float(f_os) and cp < float(f_os)
+        if fire:
+            _emit(
+                rows,
+                candidate_id=row["candidate_id"],
+                signal_time=bars[i]["close_time"],
+                signal_price=float(bars[i]["close"]),
+                direction=row["direction"],
+                decision_tf=tf,
+                calculated_at=bars[i]["close_time"],
+                available_at=bars[i]["close_time"],
+            )
+    return rows
+
+
 def _generate_predictor_signals(
     bars: list[dict[str, Any]],
     row: dict[str, Any],
@@ -180,7 +269,7 @@ def _generate_predictor_signals(
     tf = row["decision_tf"]
     arrays = bars_to_arrays(bars, timeframe=tf)
     atr = np.array(
-        [float(s.values["atr"]) if s.valid and s.values.get("atr") is not None else np.nan for s in compute_atr_series(arrays, 14)],
+        [float(s.values["atr"]) if s.valid and s.values.get("atr") is not None else np.nan for s in compute_atr_series(arrays, period=14)],
         dtype=float,
     )
     cfg = _predictor_config_from_row(row)
@@ -232,6 +321,7 @@ def generate_signals_for_row(
     row: dict[str, Any],
     *,
     scan_start_iso: str | None = None,
+    sample_cache: dict[tuple, Any] | None = None,
 ) -> list[dict[str, Any]]:
     if row["family"] == "INVERSE_PREDICTOR":
         from crypto_trading_bot.research_v2.reversal_signal_study.signals import generate_predictor_trigger_signals
@@ -245,7 +335,7 @@ def generate_signals_for_row(
             decision_tf=row["decision_tf"],
             scan_start_iso=scan_start_iso,
         )
-    return generate_bank_family_signals(bars, row, scan_start_iso=scan_start_iso)
+    return generate_bank_family_signals(bars, row, scan_start_iso=scan_start_iso, sample_cache=sample_cache)
 
 
 def generate_frozen_price_baselines(

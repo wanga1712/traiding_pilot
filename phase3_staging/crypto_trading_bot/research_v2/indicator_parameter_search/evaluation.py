@@ -23,6 +23,7 @@ from .config import (
     REDUNDANCY_JACCARD,
     TF_BAR_SECONDS,
     discovery_fold_bounds,
+    split_bounds,
 )
 
 
@@ -46,13 +47,15 @@ def evaluate_candidate(
     _patch_match_config()
     sig_df = pd.DataFrame(signals) if signals else pd.DataFrame()
     ev = events[events["partition"] == partition].copy()
+    ev = ev[ev["source_wave_tf"] == row["decision_tf"]]
     if fold_start and fold_end:
         fs, fe = parse_ts(fold_start), parse_ts(fold_end)
-        ev = ev[(pd.to_datetime(ev["true_pivot_time"], utc=True) >= fs) & (pd.to_datetime(ev["true_pivot_time"], utc=True) < fe)]
-        if not sig_df.empty:
-            st = pd.to_datetime(sig_df["signal_time"], utc=True)
-            sig_df = sig_df[(st >= fs) & (st < fe)]
-    ev = ev[ev["source_wave_tf"] == row["decision_tf"]]
+    else:
+        fs, fe = split_bounds(partition)
+    ev = ev[(pd.to_datetime(ev["true_pivot_time"], utc=True) >= fs) & (pd.to_datetime(ev["true_pivot_time"], utc=True) < fe)]
+    if not sig_df.empty:
+        st = pd.to_datetime(sig_df["signal_time"], utc=True)
+        sig_df = sig_df[(st >= fs) & (st < fe)]
     if sig_df.empty:
         return {
             "candidate_id": row["candidate_id"],
@@ -67,7 +70,8 @@ def evaluate_candidate(
         }
     matches = match_signals_to_events(sig_df, ev, decision_tf=row["decision_tf"])
     matches = enrich_matches_with_path_excursion(matches, ev)
-    years = years_covered(fold_start or str(ev["true_pivot_time"].min()), fold_end or str(ev["true_pivot_time"].max()))
+    year_inputs = sig_df["signal_time"].astype(str).tolist() if not sig_df.empty else ev["true_pivot_time"].astype(str).tolist()
+    years = years_covered(year_inputs)
     m = compute_directional_metrics(
         matches,
         ev,

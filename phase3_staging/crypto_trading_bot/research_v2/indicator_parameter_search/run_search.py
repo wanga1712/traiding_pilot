@@ -50,6 +50,13 @@ def _load_events() -> pd.DataFrame:
     return ev[(ev["partition"].isin(["DISCOVERY", "VALIDATION"])) & (ev["partition_usable"] == True)].reset_index(drop=True)  # noqa: E712
 
 
+def _load_bars(service, tf: str, start, end, *, warmup_bars: int = 500) -> list:
+    loaded = load_continuous_bars(service, tf, start, end, warmup_bars=warmup_bars)
+    if isinstance(loaded, tuple):
+        return loaded[0]
+    return loaded
+
+
 def _write_visual_audit(selected: pd.DataFrame, bars_by_tf: dict, signals_by_cid: dict, out_dir: Path) -> str:
     out_dir.mkdir(parents=True, exist_ok=True)
     tfs = ["5m", "30m", "1H", "4H"]
@@ -124,7 +131,7 @@ def _run_validation_only() -> dict[str, Any]:
     baselines_by_tf: dict[str, list] = {}
     signals_by_cid: dict[str, list] = {}
     for tf in SEARCH_TFS:
-        bars, _ = load_continuous_bars(service, tf, disc_start, val_end, warmup_bars=500)
+        bars = _load_bars(service, tf, disc_start, val_end, warmup_bars=500)
         bars_by_tf[tf] = bars
         baselines_by_tf[tf] = generate_frozen_price_baselines(bars, decision_tf=tf, scan_start_iso=disc_start.isoformat())
     for cid in frozen_ids:
@@ -223,7 +230,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
 
     print("[param-search] loading bars...", flush=True)
     for tf in SEARCH_TFS:
-        bars, _ = load_continuous_bars(service, tf, disc_start, val_end, warmup_bars=500)
+        bars = _load_bars(service, tf, disc_start, val_end, warmup_bars=500)
         bars_by_tf[tf] = bars
         baselines_by_tf[tf] = generate_frozen_price_baselines(bars, decision_tf=tf, scan_start_iso=disc_start.isoformat())
         print(f"  {tf}: {len(bars)} bars", flush=True)
@@ -241,8 +248,11 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
     for tf in SEARCH_TFS:
         bars = bars_by_tf[tf]
         print(f"[param-search] signals {tf} n_candidates={len(by_tf[tf])}", flush=True)
-        for row in by_tf[tf]:
-            sigs = generate_signals_for_row(bars, row, scan_start_iso=disc_start.isoformat())
+        sample_cache: dict[tuple, Any] = {}
+        for idx, row in enumerate(by_tf[tf]):
+            sigs = generate_signals_for_row(bars, row, scan_start_iso=disc_start.isoformat(), sample_cache=sample_cache)
+            if idx and idx % 25 == 0:
+                print(f"  {tf}: {idx}/{len(by_tf[tf])} candidates", flush=True)
             signals_by_cid[row["candidate_id"]] = sigs
             event_sets[row["candidate_id"]] = {s["signal_time"] for s in sigs}
             bkey = (tf, row["direction"], "DISCOVERY")
