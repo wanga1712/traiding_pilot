@@ -6,6 +6,8 @@ import subprocess
 from pathlib import Path
 
 SEARCH_SPEC_FREEZE_COMMIT = "3540b2f57c121fe8e2f7001430f4907b5b07d922"
+EXPECTED_SEARCH_SPEC_SHA256 = "2e86fd2a25b28b21fdd72d9a895fef019bf35eaa58986408f4a97f1e7231f52d"
+EXPECTED_CANDIDATE_REGISTRY_SHA256 = "aaed46310b1d8fb9d247fbc26853c6065945c5bddde43b271f8a1145677b1def"
 
 SEARCH_SPEC_REL = "artifacts/MULTITF-INDICATOR-PARAMETER-SEARCH-1/search_spec_v1.json"
 REGISTRY_REL = "artifacts/MULTITF-INDICATOR-PARAMETER-SEARCH-1/candidate_registry_snapshot_v1.csv"
@@ -36,8 +38,12 @@ def verify_frozen_artifacts(artifact_root: Path) -> dict[str, str]:
     if not registry_path.is_file():
         raise FileNotFoundError(f"Missing frozen candidate registry: {registry_path}")
 
-    expected_spec = _git_blob_sha256(SEARCH_SPEC_FREEZE_COMMIT, SEARCH_SPEC_REL)
-    expected_registry = _git_blob_sha256(SEARCH_SPEC_FREEZE_COMMIT, REGISTRY_REL)
+    try:
+        expected_spec = _git_blob_sha256(SEARCH_SPEC_FREEZE_COMMIT, SEARCH_SPEC_REL)
+        expected_registry = _git_blob_sha256(SEARCH_SPEC_FREEZE_COMMIT, REGISTRY_REL)
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        expected_spec = EXPECTED_SEARCH_SPEC_SHA256
+        expected_registry = EXPECTED_CANDIDATE_REGISTRY_SHA256
     actual_spec = _sha256_file(spec_path)
     actual_registry = _sha256_file(registry_path)
     if actual_spec != expected_spec:
