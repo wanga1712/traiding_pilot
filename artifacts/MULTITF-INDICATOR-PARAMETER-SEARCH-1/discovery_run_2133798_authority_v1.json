@@ -1,0 +1,12 @@
+{
+  "wip_id": "MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "mode": "INVERSE-BATCH-EXECUTION-PERFORMANCE-FIX-1",
+  "DISCOVERY_RUN_2133798": "ABORTED_NONSCALABLE_INVERSE_EXECUTOR",
+  "INVALIDATED_DISCOVERY_PID": 2133798,
+  "failure_reason": "_generate_inverse_signals() called predict(bars[:i+1]) per bar causing O(N^2) rebuild per inverse candidate on full 5m Discovery history",
+  "search_spec_v2_freeze_commit": "eb561bc1298bd2b0ec5e21cc4ac6c690ec148bad",
+  "runtime_commit_at_abort": "c843a2b96db1aa081ae844bd8434313d74929367",
+  "partial_results_discarded": true,
+  "validation_started": "NO",
+  "oos_access_count": 0
+}

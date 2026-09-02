@@ -309,6 +309,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
         idx = 0
         last_key = None
         sample_cache: dict[tuple, Any] = {}
+        inverse_threshold_cache: dict[tuple, Any] = {}
         for row in sorted_rows:
             key = (row["family"], row["parameter_set_id"])
             if last_key is not None and key != last_key:
@@ -320,6 +321,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
                 scan_start_iso=scan_start_iso,
                 scan_end_iso=scan_end_iso,
                 sample_cache=sample_cache,
+                inverse_threshold_cache=inverse_threshold_cache,
             )
             idx += 1
             if idx % 25 == 0:

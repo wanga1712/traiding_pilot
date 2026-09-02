@@ -455,7 +455,7 @@ def _scan_predictor_payload(
     return rows
 
 
-def _generate_inverse_signals(
+def _generate_inverse_signals_slow(
     bars: list[dict[str, Any]],
     row: dict[str, Any],
     *,
@@ -463,7 +463,7 @@ def _generate_inverse_signals(
     scan_end_iso: str | None = None,
     stride: int = 1,
 ) -> list[dict[str, Any]]:
-    """Direction-pure inverse signals using registered inverse_parameter_set_id."""
+    """Slow O(N^2) reference path using predict(bars[:i+1]) — tests/parity only."""
     from crypto_trading_bot.research_v2.inverse_predictors.engine import predict
 
     params = row_parameters(row)
@@ -521,6 +521,69 @@ def _generate_inverse_signals(
     return rows
 
 
+def _generate_inverse_signals(
+    bars: list[dict[str, Any]],
+    row: dict[str, Any],
+    *,
+    scan_start_iso: str | None,
+    scan_end_iso: str | None = None,
+    stride: int = 1,
+    threshold_cache: dict[tuple, Any] | None = None,
+) -> list[dict[str, Any]]:
+    """Direction-pure inverse signals via batch threshold series (O(N))."""
+    from crypto_trading_bot.research_v2.inverse_predictors.batch_thresholds import (
+        apply_stride_forward_fill,
+        compute_inverse_threshold_series,
+    )
+
+    params = row_parameters(row)
+    pred_id = params["inverse_parameter_set_id"]
+    direction = row["direction"]
+    decision_tf = row["decision_tf"]
+    cid = row["candidate_id"]
+    scan_start = parse_ts(scan_start_iso) if scan_start_iso else None
+    scan_end = parse_ts(scan_end_iso) if scan_end_iso else None
+    n = len(bars)
+    if n < 3:
+        return []
+
+    series = compute_inverse_threshold_series(
+        bars,
+        parameter_set_id=pred_id,
+        source_timeframe=decision_tf,
+        cache=threshold_cache,
+    )
+    thresholds = apply_stride_forward_fill(series.usable_thresholds, stride=max(1, stride))
+
+    rows: list[dict[str, Any]] = []
+    for i in range(1, n):
+        ct = parse_ts(bars[i]["close_time"])
+        if not in_scan_window(ct, scan_start=scan_start, scan_end=scan_end):
+            continue
+        prev_close = float(bars[i - 1]["close"])
+        close = float(bars[i]["close"])
+        thr = thresholds[i - 1]
+        if not np.isfinite(thr):
+            continue
+        fire = False
+        if direction == "UP" and prev_close < thr <= close:
+            fire = True
+        elif direction == "DOWN" and prev_close > thr >= close:
+            fire = True
+        if fire:
+            _emit(
+                rows,
+                candidate_id=cid,
+                signal_time=bars[i]["close_time"],
+                signal_price=close,
+                direction=direction,
+                decision_tf=decision_tf,
+                calculated_at=bars[i]["close_time"],
+                available_at=bars[i]["close_time"],
+            )
+    return rows
+
+
 def generate_signals_for_row(
     bars: list[dict[str, Any]],
     row: dict[str, Any],
@@ -528,6 +591,7 @@ def generate_signals_for_row(
     scan_start_iso: str | None = None,
     scan_end_iso: str | None = None,
     sample_cache: dict[tuple, Any] | None = None,
+    inverse_threshold_cache: dict[tuple, Any] | None = None,
 ) -> list[dict[str, Any]]:
     if row["family"] == "INVERSE_PREDICTOR":
         return _generate_inverse_signals(
@@ -535,6 +599,7 @@ def generate_signals_for_row(
             row,
             scan_start_iso=scan_start_iso,
             scan_end_iso=scan_end_iso,
+            threshold_cache=inverse_threshold_cache,
         )
     return generate_bank_family_signals(
         bars,

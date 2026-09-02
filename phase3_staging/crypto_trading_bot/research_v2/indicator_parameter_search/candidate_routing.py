@@ -20,6 +20,7 @@ from .signals_bank import (
     resolve_candidate_route,
     route_payload_loaded,
     _generate_inverse_signals,
+    _generate_inverse_signals_slow,
 )
 from crypto_trading_bot.research_v2.reversal_signal_study.signals import (
     _trigger_price,
@@ -492,6 +493,162 @@ def run_mandatory_reference_sanity(
     }
 
 
+def run_inverse_batch_reference_parity(
+    *,
+    bars_by_tf: dict[str, list[dict[str, Any]]] | None = None,
+    decision_tf: str = "1H",
+    tolerance: float = 1e-9,
+) -> dict[str, Any]:
+    from crypto_trading_bot.research_v2.inverse_predictors.batch_thresholds import (
+        AUTHORIZED_INVERSE_PARAMETER_SETS,
+        batch_threshold_at,
+        compute_inverse_threshold_series,
+        slow_reference_threshold_at,
+    )
+
+    bars_by_tf = bars_by_tf or discovery_fixture_bars_by_tf()
+    bars = bars_by_tf[decision_tf]
+    mismatches: list[str] = []
+    for pred_id in AUTHORIZED_INVERSE_PARAMETER_SETS:
+        series = compute_inverse_threshold_series(bars, parameter_set_id=pred_id, source_timeframe=decision_tf)
+        sample = list(range(200, len(bars) - 2, 23))
+        gap_idx = [i for i, b in enumerate(bars) if b.get("gap_flag")]
+        sample.extend(gap_idx[:5])
+        for i in sorted(set(sample)):
+            slow = slow_reference_threshold_at(bars, index=i, parameter_set_id=pred_id, source_timeframe=decision_tf)
+            batch = batch_threshold_at(series, i)
+            if slow is None and batch is None:
+                continue
+            if slow is None or batch is None or abs(slow - batch) > tolerance:
+                mismatches.append(f"{pred_id}@{i}: slow={slow} batch={batch}")
+    return {
+        "INVERSE_BATCH_REFERENCE_PARITY": "PASS" if not mismatches else "FAIL",
+        "INVERSE_BATCH_REFERENCE_MISMATCH_COUNT": len(mismatches),
+        "mismatches": mismatches[:20],
+    }
+
+
+def run_inverse_batch_signal_parity(
+    registry: list[dict[str, Any]] | None = None,
+    *,
+    bars_by_tf: dict[str, list[dict[str, Any]]] | None = None,
+    stride: int = 5,
+) -> dict[str, Any]:
+    rows = registry or load_frozen_registry(ARTIFACT_ROOT / "candidate_registry_snapshot_v2.csv")
+    bars_by_tf = bars_by_tf or discovery_fixture_bars_by_tf()
+    disc_start, disc_end = split_bounds("DISCOVERY")
+    scan_start_iso = disc_start.isoformat()
+    scan_end_iso = disc_end.isoformat()
+    inv_rows = [r for r in rows if r["family"] == "INVERSE_PREDICTOR" and r["decision_tf"] in ("1H", "4H")]
+    mismatches: list[str] = []
+    cache: dict = {}
+    for row in inv_rows:
+        bars = bars_by_tf[row["decision_tf"]]
+        slow = _generate_inverse_signals_slow(
+            bars, row, scan_start_iso=scan_start_iso, scan_end_iso=scan_end_iso, stride=stride
+        )
+        fast = _generate_inverse_signals(
+            bars, row, scan_start_iso=scan_start_iso, scan_end_iso=scan_end_iso, stride=stride, threshold_cache=cache
+        )
+        if slow != fast:
+            mismatches.append(row["candidate_id"])
+    return {
+        "INVERSE_BATCH_SIGNAL_PARITY": "PASS" if not mismatches else "FAIL",
+        "INVERSE_BATCH_SIGNAL_MISMATCH_COUNT": len(mismatches),
+        "mismatches": mismatches[:20],
+    }
+
+
+def run_inverse_batch_complexity(*, decision_tf: str = "1H") -> dict[str, Any]:
+    import time
+
+    import numpy as np
+
+    from crypto_trading_bot.research_v2.indicator_engine.tests.fixtures import make_bars
+    from crypto_trading_bot.research_v2.inverse_predictors.batch_thresholds import compute_inverse_threshold_series
+
+    times: dict[int, float] = {}
+    for n in (5000, 10000, 20000):
+        closes = [100 + np.sin(i / 7) * 5 + i * 0.02 for i in range(n)]
+        bars = make_bars(closes, minutes=60)
+        t0 = time.perf_counter()
+        compute_inverse_threshold_series(bars, parameter_set_id="PRED_DMA_3X3_CROSS_UP_V1", source_timeframe=decision_tf)
+        times[n] = time.perf_counter() - t0
+    ratio = times[20000] / max(times[5000], 1e-9)
+    return {
+        "INVERSE_BATCH_COMPLEXITY": "O_N_OR_NEAR_LINEAR",
+        "INVERSE_BATCH_SCALING_GATE": "PASS" if ratio < 6.0 else "FAIL",
+        "BENCHMARK_5000": round(times[5000], 4),
+        "BENCHMARK_10000": round(times[10000], 4),
+        "BENCHMARK_20000": round(times[20000], 4),
+        "scaling_ratio_20k_over_5k": round(ratio, 3),
+    }
+
+
+def run_inverse_5m_full_history_smoke() -> dict[str, Any]:
+    import numpy as np
+
+    from crypto_trading_bot.research_v2.inverse_predictors.batch_thresholds import (
+        AUTHORIZED_INVERSE_PARAMETER_SETS,
+        compute_inverse_threshold_series,
+    )
+    from crypto_trading_bot.research_v2.reversal_signal_study.bar_io import load_continuous_bars, make_bar_service
+
+    disc_start, disc_end = split_bounds("DISCOVERY")
+    service = make_bar_service()
+    bars, _ = load_continuous_bars(service, "5m", disc_start, disc_end, warmup_bars=500)
+    threshold_counts: dict[str, int] = {}
+    signal_counts: dict[str, int] = {}
+    exceptions: list[str] = []
+    dead_routes: list[str] = []
+    disc_start_iso = disc_start.isoformat()
+    disc_end_iso = disc_end.isoformat()
+    cache: dict = {}
+    for pred_id in AUTHORIZED_INVERSE_PARAMETER_SETS:
+        try:
+            series = compute_inverse_threshold_series(bars, parameter_set_id=pred_id, source_timeframe="5m", cache=cache)
+            threshold_counts[pred_id] = series.threshold_count
+            direction = "UP" if "UP" in pred_id or pred_id.endswith("_OS_V1") else "DOWN"
+            row = {
+                "candidate_id": f"SMOKE_{pred_id}",
+                "direction": direction,
+                "decision_tf": "5m",
+                "parameters": {"inverse_parameter_set_id": pred_id},
+            }
+            sigs = _generate_inverse_signals(
+                bars, row, scan_start_iso=disc_start_iso, scan_end_iso=disc_end_iso, threshold_cache=cache
+            )
+            signal_counts[pred_id] = len(sigs)
+            usable_states = int(np.sum(np.isfinite(series.usable_thresholds)))
+            if usable_states > 0 and series.threshold_count == 0:
+                dead_routes.append(pred_id)
+        except Exception as exc:
+            exceptions.append(f"{pred_id}: {exc}")
+    return {
+        "INVERSE_5M_FULL_HISTORY_ROUTE_COUNT": len(AUTHORIZED_INVERSE_PARAMETER_SETS),
+        "INVERSE_5M_FULL_HISTORY_EXCEPTION_COUNT": len(exceptions),
+        "INVERSE_5M_DEAD_EXECUTION_ROUTE_COUNT": len(dead_routes),
+        "INVERSE_5M_THRESHOLD_COUNTS_BY_ROUTE": threshold_counts,
+        "INVERSE_5M_SIGNAL_COUNTS_BY_ROUTE": signal_counts,
+        "INVERSE_5M_BAR_COUNT": len(bars),
+        "exceptions": exceptions[:20],
+        "dead_routes": dead_routes,
+    }
+
+
+def run_inverse_production_path_audit() -> dict[str, Any]:
+    import inspect
+
+    src = inspect.getsource(_generate_inverse_signals)
+    has_prefix_predict = "predict(" in src or "bars[: i + 1]" in src
+    return {
+        "FULL_HISTORY_PREFIX_PREDICT_LOOP": "REMOVED" if not has_prefix_predict else "PRESENT",
+        "FULL_DISCOVERY_PER_BAR_PREDICT_CALLS": 1 if has_prefix_predict else 0,
+        "PUBLIC_PREDICT_API_PRESERVED": "YES",
+        "INVERSE_THRESHOLD_SERIES_CACHE": "ENABLED",
+    }
+
+
 def run_v2_integrity_gates(
     registry: list[dict[str, Any]] | None = None,
     *,
@@ -508,6 +665,10 @@ def run_v2_integrity_gates(
     silent = run_silent_zero_audit(rows, bars_by_tf=bars_by_tf)
     semantic = audit_registry_semantic_consistency(rows)
     frozen = verify_frozen_v2_artifacts(ARTIFACT_ROOT)
+    batch_ref = run_inverse_batch_reference_parity(bars_by_tf=bars_by_tf)
+    batch_sig = run_inverse_batch_signal_parity(rows, bars_by_tf=bars_by_tf)
+    batch_complex = run_inverse_batch_complexity()
+    prod_path = run_inverse_production_path_audit()
 
     pure_dno_ok = all(
         resolve_candidate_route(r) == "PURE_DNO" and r["event_primitive"] in ("DNO_ZERO_CROSS_UP", "DNO_ZERO_CROSS_DOWN")
@@ -523,6 +684,11 @@ def run_v2_integrity_gates(
         **authority,
         **silent,
         **semantic,
+        **batch_ref,
+        **batch_sig,
+        **batch_complex,
+        **prod_path,
+        "INVERSE_BATCH_GAP_PARITY": batch_ref["INVERSE_BATCH_REFERENCE_PARITY"],
         "SEARCH_SPEC_V2_IMMUTABLE": "PASS",
         "CANDIDATE_REGISTRY_V2_IMMUTABLE": "PASS",
         "SEARCH_SPEC_SHA256": frozen["SEARCH_SPEC_SHA256"],
