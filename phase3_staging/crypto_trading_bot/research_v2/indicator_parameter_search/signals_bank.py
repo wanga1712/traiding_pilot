@@ -455,6 +455,34 @@ def _scan_predictor_payload(
     return rows
 
 
+def _inverse_signal_bar_range(
+    bars: list[dict[str, Any]],
+    *,
+    scan_start,
+    scan_end,
+) -> tuple[int, int]:
+    n = len(bars)
+    start_i = 1
+    end_i = n - 1
+    if scan_start is not None:
+        for i in range(1, n):
+            if parse_ts(bars[i]["close_time"]) >= scan_start:
+                start_i = i
+                break
+        else:
+            return 1, 0
+    if scan_end is not None:
+        for i in range(n - 1, 0, -1):
+            if parse_ts(bars[i]["close_time"]) < scan_end:
+                end_i = i
+                break
+        else:
+            return 1, 0
+    if start_i > end_i:
+        return 1, 0
+    return start_i, end_i
+
+
 def _generate_inverse_signals_slow(
     bars: list[dict[str, Any]],
     row: dict[str, Any],
@@ -493,10 +521,8 @@ def _generate_inverse_signals_slow(
         thresholds[i] = last_thr
 
     rows: list[dict[str, Any]] = []
-    for i in range(1, n):
-        ct = parse_ts(bars[i]["close_time"])
-        if not in_scan_window(ct, scan_start=scan_start, scan_end=scan_end):
-            continue
+    sig_start, sig_end = _inverse_signal_bar_range(bars, scan_start=scan_start, scan_end=scan_end)
+    for i in range(sig_start, sig_end + 1):
         prev_close = float(bars[i - 1]["close"])
         close = float(bars[i]["close"])
         thr = thresholds[i - 1]
@@ -556,10 +582,8 @@ def _generate_inverse_signals(
     thresholds = apply_stride_forward_fill(series.usable_thresholds, stride=max(1, stride))
 
     rows: list[dict[str, Any]] = []
-    for i in range(1, n):
-        ct = parse_ts(bars[i]["close_time"])
-        if not in_scan_window(ct, scan_start=scan_start, scan_end=scan_end):
-            continue
+    sig_start, sig_end = _inverse_signal_bar_range(bars, scan_start=scan_start, scan_end=scan_end)
+    for i in range(sig_start, sig_end + 1):
         prev_close = float(bars[i - 1]["close"])
         close = float(bars[i]["close"])
         thr = thresholds[i - 1]
