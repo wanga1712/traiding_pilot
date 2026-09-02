@@ -596,7 +596,7 @@ def run_inverse_5m_full_history_smoke() -> dict[str, Any]:
 
     disc_start, disc_end = split_bounds("DISCOVERY")
     service = make_bar_service()
-    bars, _ = load_continuous_bars(service, "5m", disc_start, disc_end, warmup_bars=500)
+    bars = load_continuous_bars(service, "5m", disc_start, disc_end, warmup_bars=500)
     threshold_counts: dict[str, int] = {}
     signal_counts: dict[str, int] = {}
     exceptions: list[str] = []

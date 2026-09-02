@@ -57,6 +57,9 @@ def main() -> int:
         src = ROOT / "crypto_trading_bot" / "research_v2" / pkg
         scp(src, f"{REMOTE_PKG}/crypto_trading_bot/research_v2/")
 
+    tests_src = ROOT / "tests" / "indicator_parameter_search"
+    scp(tests_src, f"{REMOTE_PKG}/tests/")
+
     art_local = REPO / "artifacts" / "MULTITF-INDICATOR-PARAMETER-SEARCH-1"
     for name in ("discovery_run_2133798_authority_v1.json",):
         run(
