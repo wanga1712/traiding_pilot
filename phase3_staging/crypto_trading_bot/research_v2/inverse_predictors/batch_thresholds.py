@@ -34,6 +34,7 @@ AUTHORIZED_INVERSE_PARAMETER_SETS = (
 )
 
 _THRESHOLD_CACHE: dict[tuple, "InverseThresholdSeries"] = {}
+_MACD_PRECOMPUTE: dict[tuple, tuple[Any, np.ndarray, np.ndarray]] = {}
 
 
 @dataclass(frozen=True)
@@ -51,6 +52,7 @@ class InverseThresholdSeries:
 
 def clear_threshold_cache() -> None:
     _THRESHOLD_CACHE.clear()
+    _MACD_PRECOMPUTE.clear()
 
 
 def _cache_key(bars: list[dict[str, Any]], *, parameter_set_id: str, source_timeframe: str) -> tuple:
@@ -105,7 +107,50 @@ def _batch_dma(closes: np.ndarray, *, period: int, direction: str) -> tuple[list
     return prices, statuses
 
 
+def _macd_precompute_key(
+    bars: list[dict[str, Any]],
+    *,
+    source_timeframe: str,
+    fast: int,
+    slow: int,
+    signal: int,
+) -> tuple:
+    return (
+        source_timeframe,
+        fast,
+        slow,
+        signal,
+        len(bars),
+        str(bars[0]["close_time"]),
+        str(bars[-1]["close_time"]),
+    )
+
+
+def _get_macd_precompute(
+    bars: list[dict[str, Any]],
+    arrays,
+    *,
+    source_timeframe: str,
+    fast: int,
+    slow: int,
+    signal: int,
+) -> tuple[Any, np.ndarray, np.ndarray]:
+    key = _macd_precompute_key(bars, source_timeframe=source_timeframe, fast=fast, slow=slow, signal=signal)
+    cached = _MACD_PRECOMPUTE.get(key)
+    if cached is not None:
+        return cached
+    closes = arrays.close
+    out = (
+        compute_macd_series(arrays, fast=fast, slow=slow, signal=signal, display_shift=0),
+        ema(closes, fast),
+        ema(closes, slow),
+    )
+    _MACD_PRECOMPUTE[key] = out
+    return out
+
+
 def _batch_macd(
+    bars: list[dict[str, Any]],
     closes: np.ndarray,
     *,
     fast: int,
@@ -118,9 +163,14 @@ def _batch_macd(
     n = len(closes)
     prices: list[float | None] = [None] * n
     statuses: list[str | None] = [None] * n
-    series = compute_macd_series(arrays, fast=fast, slow=slow, signal=signal, display_shift=0)
-    ef = ema(closes, fast)
-    es = ema(closes, slow)
+    series, ef, es = _get_macd_precompute(
+        bars,
+        arrays,
+        source_timeframe=source_timeframe,
+        fast=fast,
+        slow=slow,
+        signal=signal,
+    )
     a_f = 2.0 / (fast + 1.0)
     a_s = 2.0 / (slow + 1.0)
     coef = a_f - a_s
@@ -239,6 +289,7 @@ def compute_inverse_threshold_series(
         )
     elif pid in ("MACD_SIGNAL_CROSS_UP", "MACD_SIGNAL_CROSS_DOWN", "MACD_HIST_ZERO"):
         prices, statuses = _batch_macd(
+            bars,
             closes,
             fast=int(params["fast"]),
             slow=int(params["slow"]),
