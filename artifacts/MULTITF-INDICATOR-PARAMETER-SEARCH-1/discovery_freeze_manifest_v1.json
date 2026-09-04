@@ -1,0 +1,21 @@
+{
+  "search_spec_v2_freeze_commit": "eb561bc1298bd2b0ec5e21cc4ac6c690ec148bad",
+  "discovery_runtime_commit": "7eff0e741107a87cbcb436202dff095edbea625c",
+  "discovery_pid": 2432972,
+  "discovery_period": [
+    "2019-05-12T00:00:00+00:00",
+    "2022-06-10T04:36:00+00:00"
+  ],
+  "frozen_validation_candidate_count": 620,
+  "validation_candidate_set_hash": "99f50699587c0d2a189bef0346f8d74b5224c99fafda4fe16201773ce0c2d95c",
+  "SEARCH_SPEC_SHA256": "08ea6ee5d857317594691fa668ec8f41f4e32fd2f5df61defc0d3dbc7b601fac",
+  "CANDIDATE_REGISTRY_SHA256": "3940fe68ab87d54bf171ee119d40f4b2d23a81f0adcfb403bb361a5ffb620d15",
+  "VALIDATION_BAR_COUNT_LOADED_DURING_DISCOVERY": 0,
+  "VALIDATION_EVENT_COUNT_LOADED_DURING_DISCOVERY": 0,
+  "DISCOVERY_SIGNAL_OUTSIDE_SPLIT_COUNT": 0,
+  "VALIDATION_TIMESTAMP_IN_DISCOVERY_EVENT_SETS": 0,
+  "VALIDATION_DATA_ACCESSED_DURING_DISCOVERY": "NO",
+  "validation_started": "NO",
+  "oos_access_count": 0,
+  "frozen_at": "2026-09-04T06:02:00.829167+00:00"
+}

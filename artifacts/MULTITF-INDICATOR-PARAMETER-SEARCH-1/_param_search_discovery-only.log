@@ -1,0 +1,234 @@
+[param-search] loading discovery bars...
+  5m: 323829 bars loaded, validation_bars=0
+  15m: 108278 bars loaded, validation_bars=0
+  30m: 54393 bars loaded, validation_bars=0
+  1H: 27452 bars loaded, validation_bars=0
+  2H: 13983 bars loaded, validation_bars=0
+  4H: 7246 bars loaded, validation_bars=0
+  6H: 4999 bars loaded, validation_bars=0
+  8H: 3875 bars loaded, validation_bars=0
+  12H: 2750 bars loaded, validation_bars=0
+  1D: 1625 bars loaded, validation_bars=0
+[param-search] signals 5m n_candidates=320
+  5m: 25/320 candidates
+  5m: 50/320 candidates
+  5m: 75/320 candidates
+  5m: 100/320 candidates
+  5m: 125/320 candidates
+  5m: 150/320 candidates
+  5m: 175/320 candidates
+  5m: 200/320 candidates
+  5m: 225/320 candidates
+  5m: 250/320 candidates
+  5m: 275/320 candidates
+  5m: 300/320 candidates
+[param-search] signals 15m n_candidates=320
+  15m: 25/320 candidates
+  15m: 50/320 candidates
+  15m: 75/320 candidates
+  15m: 100/320 candidates
+  15m: 125/320 candidates
+  15m: 150/320 candidates
+  15m: 175/320 candidates
+  15m: 200/320 candidates
+  15m: 225/320 candidates
+  15m: 250/320 candidates
+  15m: 275/320 candidates
+  15m: 300/320 candidates
+[param-search] signals 30m n_candidates=320
+  30m: 25/320 candidates
+  30m: 50/320 candidates
+  30m: 75/320 candidates
+  30m: 100/320 candidates
+  30m: 125/320 candidates
+  30m: 150/320 candidates
+  30m: 175/320 candidates
+  30m: 200/320 candidates
+  30m: 225/320 candidates
+  30m: 250/320 candidates
+  30m: 275/320 candidates
+  30m: 300/320 candidates
+[param-search] signals 1H n_candidates=320
+  1H: 25/320 candidates
+  1H: 50/320 candidates
+  1H: 75/320 candidates
+  1H: 100/320 candidates
+  1H: 125/320 candidates
+  1H: 150/320 candidates
+  1H: 175/320 candidates
+  1H: 200/320 candidates
+  1H: 225/320 candidates
+  1H: 250/320 candidates
+  1H: 275/320 candidates
+  1H: 300/320 candidates
+[param-search] signals 2H n_candidates=320
+  2H: 25/320 candidates
+  2H: 50/320 candidates
+  2H: 75/320 candidates
+  2H: 100/320 candidates
+  2H: 125/320 candidates
+  2H: 150/320 candidates
+  2H: 175/320 candidates
+  2H: 200/320 candidates
+  2H: 225/320 candidates
+  2H: 250/320 candidates
+  2H: 275/320 candidates
+  2H: 300/320 candidates
+[param-search] signals 4H n_candidates=320
+  4H: 25/320 candidates
+  4H: 50/320 candidates
+  4H: 75/320 candidates
+  4H: 100/320 candidates
+  4H: 125/320 candidates
+  4H: 150/320 candidates
+  4H: 175/320 candidates
+  4H: 200/320 candidates
+  4H: 225/320 candidates
+  4H: 250/320 candidates
+  4H: 275/320 candidates
+  4H: 300/320 candidates
+[param-search] signals 6H n_candidates=320
+  6H: 25/320 candidates
+  6H: 50/320 candidates
+  6H: 75/320 candidates
+  6H: 100/320 candidates
+  6H: 125/320 candidates
+  6H: 150/320 candidates
+  6H: 175/320 candidates
+  6H: 200/320 candidates
+  6H: 225/320 candidates
+  6H: 250/320 candidates
+  6H: 275/320 candidates
+  6H: 300/320 candidates
+[param-search] signals 8H n_candidates=320
+  8H: 25/320 candidates
+  8H: 50/320 candidates
+  8H: 75/320 candidates
+  8H: 100/320 candidates
+  8H: 125/320 candidates
+  8H: 150/320 candidates
+  8H: 175/320 candidates
+  8H: 200/320 candidates
+  8H: 225/320 candidates
+  8H: 250/320 candidates
+  8H: 275/320 candidates
+  8H: 300/320 candidates
+[param-search] signals 12H n_candidates=320
+  12H: 25/320 candidates
+  12H: 50/320 candidates
+  12H: 75/320 candidates
+  12H: 100/320 candidates
+  12H: 125/320 candidates
+  12H: 150/320 candidates
+  12H: 175/320 candidates
+  12H: 200/320 candidates
+  12H: 225/320 candidates
+  12H: 250/320 candidates
+  12H: 275/320 candidates
+  12H: 300/320 candidates
+[param-search] signals 1D n_candidates=320
+  1D: 25/320 candidates
+  1D: 50/320 candidates
+  1D: 75/320 candidates
+  1D: 100/320 candidates
+  1D: 125/320 candidates
+  1D: 150/320 candidates
+  1D: 175/320 candidates
+  1D: 200/320 candidates
+  1D: 225/320 candidates
+  1D: 250/320 candidates
+  1D: 275/320 candidates
+  1D: 300/320 candidates
+fatal: не найден git репозиторий (или один из родительских каталогов): .git
+fatal: не найден git репозиторий (или один из родительских каталогов): .git
+fatal: не найден git репозиторий (или один из родительских каталогов): .git
+fatal: не найден git репозиторий (или один из родительских каталогов): .git
+{
+  "WIP": "MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "MODE": "SEARCH-SPEC-V2-ROUTE-AUTHORITY-CORRECTION-1",
+  "ROADMAP_STATUS": "ACTIVE",
+  "RUNTIME_INTEGRITY_FIX_COMMIT": "UNKNOWN",
+  "SEARCH_SPEC_SHA256": "08ea6ee5d857317594691fa668ec8f41f4e32fd2f5df61defc0d3dbc7b601fac",
+  "CANDIDATE_REGISTRY_SHA256": "3940fe68ab87d54bf171ee119d40f4b2d23a81f0adcfb403bb361a5ffb620d15",
+  "SEARCH_SPEC_IMMUTABLE": "PASS",
+  "CANDIDATE_REGISTRY_IMMUTABLE": "PASS",
+  "VALIDATION_BAR_COUNT_LOADED_DURING_DISCOVERY": 0,
+  "VALIDATION_EVENT_COUNT_LOADED_DURING_DISCOVERY": 0,
+  "DISCOVERY_SIGNAL_OUTSIDE_SPLIT_COUNT": 0,
+  "VALIDATION_TIMESTAMP_IN_DISCOVERY_EVENT_SETS": 0,
+  "VALIDATION_DATA_ACCESSED_DURING_DISCOVERY": "NO",
+  "VALIDATION_STARTED": "NO",
+  "ACTIVATION_COMMIT": "UNKNOWN",
+  "CANONICAL_MARKET_DATA_HOST": "S7",
+  "COMPUTE_HOST": "S13",
+  "DIRECT_EXCHANGE_DOWNLOAD_ON_S13": "NO",
+  "DISCOVERY_PERIOD": [
+    "2019-05-12T00:00:00+00:00",
+    "2022-06-10T04:36:00+00:00"
+  ],
+  "VALIDATION_PERIOD": [
+    "2022-06-10T04:36:00+00:00",
+    "2023-06-20T06:08:00+00:00"
+  ],
+  "DISCOVERY_FOLD_1": [
+    "2019-05-12T00:00:00+00:00",
+    "2020-05-21T01:32:00+00:00"
+  ],
+  "DISCOVERY_FOLD_2": [
+    "2020-05-21T01:32:00+00:00",
+    "2021-05-31T03:04:00+00:00"
+  ],
+  "DISCOVERY_FOLD_3": [
+    "2021-05-31T03:04:00+00:00",
+    "2022-06-10T04:36:00+00:00"
+  ],
+  "TOTAL_CANDIDATES_DISCOVERY": 3200,
+  "candidate_counts": {
+    "DMA": 1680,
+    "STOCHASTIC": 340,
+    "MACD": 520,
+    "PURE_DNO": 20,
+    "DNO_QUANTILE": 40,
+    "OSC_PREDICTOR": 480,
+    "INVERSE_PREDICTOR": 120
+  },
+  "FROZEN_VALIDATION_CANDIDATE_COUNT": 620,
+  "VALIDATION_CANDIDATE_SET_HASH": "99f50699587c0d2a189bef0346f8d74b5224c99fafda4fe16201773ce0c2d95c",
+  "VALIDATION_CANDIDATE_SET_HASH_MATCH": "PASS",
+  "SELECTED_CONFIG_COUNT": 0,
+  "RESEARCH_VERDICT": "DISCOVERY_COMPLETE",
+  "PRICE_BASELINE_BEATEN_BY_ANY_STABLE_CONFIG": "NO",
+  "PARAMETER_OPTIMIZATION_PERFORMED": "YES",
+  "PARAMETER_OPTIMIZATION_SCOPE": "DISCOVERY_ONLY",
+  "SIGNAL_COMBINATION_SEARCH_PERFORMED": "NO",
+  "TRADING_STRATEGY_PERFORMED": "NO",
+  "TRADING_PNL_PERFORMED": "NO",
+  "OOS_OPENED": "NO",
+  "OOS_ACCESS_COUNT": 0,
+  "TRUE_PIVOT_AS_FEATURE": "NO",
+  "AVAILABLE_AT_CAUSALITY": "PASS",
+  "FUTURE_PRICE_MUTATION": "PASS",
+  "BATCH_STREAMING_VALUE_PARITY": "PASS",
+  "REAL_EVENT_VISUAL_AUDIT": "PARTIAL",
+  "ARTIFACT_ROOT": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "git_commit": "UNKNOWN",
+  "READY_FOR_INDEPENDENT_REVIEW": "YES",
+  "NEXT_WIP_IF_ACCEPTED": "MULTITF-COMPOSITE-SIGNAL-SEARCH-1",
+  "NEXT_WIP_STATUS": "PLANNED",
+  "DMA_VERDICT": "NONE_SELECTED",
+  "STOCH_VERDICT": "NONE_SELECTED",
+  "MACD_VERDICT": "NONE_SELECTED",
+  "DNO_PREDICTOR_VERDICT": "NONE_SELECTED",
+  "DNO_QUANTILE_VERDICT": "NONE_SELECTED",
+  "INVERSE_PREDICTOR_VERDICT": "NONE_SELECTED",
+  "SELECTED_5M": 0,
+  "SELECTED_15M": 0,
+  "SELECTED_30M": 0,
+  "SELECTED_1H": 0,
+  "SELECTED_2H": 0,
+  "SELECTED_4H": 0,
+  "SELECTED_6H": 0,
+  "SELECTED_8H": 0,
+  "SELECTED_12H": 0,
+  "SELECTED_1D": 0
+}

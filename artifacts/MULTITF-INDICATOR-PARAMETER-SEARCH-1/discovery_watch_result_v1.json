@@ -1,0 +1,181 @@
+{
+  "DISCOVERY_STATUS": "COMPLETE",
+  "DISCOVERY_PROCESS_EXITED": "YES",
+  "DISCOVERY_CANDIDATES_EVALUATED": 3200,
+  "DISCOVERY_CANDIDATE_COUNTS_BY_TF": {
+    "12H": 320,
+    "15m": 320,
+    "1D": 320,
+    "1H": 320,
+    "2H": 320,
+    "30m": 320,
+    "4H": 320,
+    "5m": 320,
+    "6H": 320,
+    "8H": 320
+  },
+  "FROZEN_VALIDATION_CANDIDATE_COUNT": 620,
+  "VALIDATION_CANDIDATE_SET_HASH": "99f50699587c0d2a189bef0346f8d74b5224c99fafda4fe16201773ce0c2d95c",
+  "DISCOVERY_SHORTLIST_COUNTS_BY_FAMILY": {
+    "DMA": 160,
+    "DNO_QUANTILE": 40,
+    "INVERSE_PREDICTOR": 120,
+    "MACD": 120,
+    "OSC_PREDICTOR": 80,
+    "PURE_DNO": 20,
+    "STOCHASTIC": 80
+  },
+  "DISCOVERY_STABLE_COUNTS_BY_FAMILY": {
+    "DMA": 1511,
+    "DNO_QUANTILE": 36,
+    "INVERSE_PREDICTOR": 108,
+    "MACD": 468,
+    "OSC_PREDICTOR": 432,
+    "PURE_DNO": 18,
+    "STOCHASTIC": 306
+  },
+  "DISCOVERY_UNSTABLE_COUNTS_BY_FAMILY": {
+    "DMA": 168,
+    "DNO_QUANTILE": 4,
+    "INVERSE_PREDICTOR": 12,
+    "MACD": 52,
+    "OSC_PREDICTOR": 48,
+    "PURE_DNO": 2,
+    "STOCHASTIC": 34
+  },
+  "DISCOVERY_INSUFFICIENT_COUNTS_BY_FAMILY": {
+    "INVERSE_PREDICTOR": 2
+  },
+  "DISCOVERY_BEST_BY_TF_DIRECTION": {
+    "12H|DOWN": {
+      "candidate_id": "STOCH|DINAPOLI_PREFERRED_STOCHASTIC_REFERENCE_V1|K_CROSS_UP_D|K_CROSS_DOWN_D|12H|DOWN",
+      "family": "STOCHASTIC",
+      "PRECISION_DELTA": 0.36824994537906924,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "12H|UP": {
+      "candidate_id": "MACD|DINAPOLI_MACD_REFERENCE_V1|MACD_CROSS_UP_SIGNAL|MACD_CROSS_DOWN_SIGNAL|12H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.41679028530030704,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "15m|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|15m|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.013096400756599971,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "15m|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|15m|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.01332090692604843,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "1D|DOWN": {
+      "candidate_id": "STOCH|DINAPOLI_PREFERRED_STOCHASTIC_REFERENCE_V1|K_CROSS_UP_D|K_CROSS_DOWN_D|1D|DOWN",
+      "family": "STOCHASTIC",
+      "PRECISION_DELTA": 0.34669966996699675,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "1D|UP": {
+      "candidate_id": "DMA|DMA_SMA_P25_SHIFT5_V1|PRICE_CROSS_UP_MA|PRICE_CROSS_DOWN_MA|1D|UP",
+      "family": "DMA",
+      "PRECISION_DELTA": 0.3865265169612996,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "1H|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|1H|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.47046501885211567,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "1H|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|1H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.4860216097255726,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "2H|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|2H|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.4917691256830601,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "2H|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|2H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.5104111740362074,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "30m|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|30m|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.02745327359236889,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "30m|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|30m|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.026971380260134157,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "4H|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|4H|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.44729117180287736,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "4H|UP": {
+      "candidate_id": "MACD|DINAPOLI_MACD_REFERENCE_V1|MACD_CROSS_UP_SIGNAL|MACD_CROSS_DOWN_SIGNAL|4H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.4192962446669201,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "5m|DOWN": {
+      "candidate_id": "DMA|DMA_EMA_P10_SHIFT5_V1|MA_SLOPE_TURN_UP|MA_SLOPE_TURN_DOWN|5m|DOWN",
+      "family": "DMA",
+      "PRECISION_DELTA": 0.0,
+      "discovery_fold_stability": "UNSTABLE_DISCOVERY"
+    },
+    "5m|UP": {
+      "candidate_id": "DMA|DMA_EMA_P10_SHIFT5_V1|MA_SLOPE_TURN_UP|MA_SLOPE_TURN_DOWN|5m|UP",
+      "family": "DMA",
+      "PRECISION_DELTA": 0.0,
+      "discovery_fold_stability": "UNSTABLE_DISCOVERY"
+    },
+    "6H|DOWN": {
+      "candidate_id": "MACD|DINAPOLI_MACD_REFERENCE_V1|MACD_CROSS_UP_SIGNAL|MACD_CROSS_DOWN_SIGNAL|6H|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.36774884957247883,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "6H|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|6H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.3975531808648756,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "8H|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_8_21_5_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|8H|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.4218495045758744,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    },
+    "8H|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|8H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.42216435185185186,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS"
+    }
+  },
+  "PRICE_BASELINE_BEATEN_IN_DISCOVERY_BY_ANY_CANDIDATE": "YES",
+  "VALIDATION_BAR_COUNT_LOADED_DURING_DISCOVERY": 0,
+  "VALIDATION_EVENT_COUNT_LOADED_DURING_DISCOVERY": 0,
+  "DISCOVERY_SIGNAL_OUTSIDE_SPLIT_COUNT": 0,
+  "VALIDATION_TIMESTAMP_IN_DISCOVERY_EVENT_SETS": 0,
+  "VALIDATION_STARTED": "NO",
+  "OOS_ACCESS_COUNT": 0,
+  "READY_FOR_VALIDATION_REVIEW": "YES",
+  "summary_verdict": "DISCOVERY_COMPLETE",
+  "frozen_hash_from_run": "99f50699587c0d2a189bef0346f8d74b5224c99fafda4fe16201773ce0c2d95c"
+}

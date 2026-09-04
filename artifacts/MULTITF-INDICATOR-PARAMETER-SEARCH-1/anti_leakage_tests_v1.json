@@ -1,0 +1,36 @@
+{
+  "S7_PROVENANCE": "YES",
+  "DIRECT_EXCHANGE_DOWNLOAD_ON_S13": "NO",
+  "FUTURE_PRICE_MUTATION": "PASS",
+  "TRUE_PIVOT_AS_FEATURE": "PASS",
+  "AVAILABLE_AT_CAUSALITY": "PASS",
+  "HTF_COMPLETION_CAUSALITY": "INHERITED_FROM_PREDICTOR_AUTHORITY:6b1e34e4",
+  "GAP_SEGMENT_POLICY": "INHERITED_FROM_PREDICTOR_AUTHORITY:6b1e34e4",
+  "BATCH_STREAMING_VALUE_PARITY": "PASS",
+  "OOS_ACCESS_COUNT": 0,
+  "formula_authority": "b93f3ca5655ecd727b6f5345c41aa5c434f3bfd0",
+  "predictor_authority": "6b1e34e4dffb469e0b9392c33d20e5689a2cdfe2",
+  "future_outcome_evidence": {
+    "predictor_files_scanned": 11,
+    "forbidden_name_hits": [],
+    "forbidden_tokens": [
+      "forward_return",
+      "reversal_success",
+      "mfe_pct",
+      "mae_pct",
+      "mfe_atr",
+      "mae_atr",
+      "next_close_at_or_above",
+      "next_high_touch",
+      "next_low_touch"
+    ],
+    "method": "AST_NAME_ATTR_SCAN_PLUS_NO_EVENT_STUDY_IMPORT",
+    "FUTURE_EVENT_OUTCOME_NOT_IN_FEATURES": "PASS"
+  },
+  "VALIDATION_NOT_USED_IN_DISCOVERY_SELECTION": "NO",
+  "VALIDATION_BAR_COUNT_LOADED_DURING_DISCOVERY": 0,
+  "VALIDATION_EVENT_COUNT_LOADED_DURING_DISCOVERY": 0,
+  "DISCOVERY_SIGNAL_OUTSIDE_SPLIT_COUNT": 0,
+  "VALIDATION_TIMESTAMP_IN_DISCOVERY_EVENT_SETS": 0,
+  "VALIDATION_CANDIDATE_SET_HASH_MATCH": "PASS"
+}

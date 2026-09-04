@@ -1,0 +1,15 @@
+{
+  "phase": "DISCOVERY",
+  "bars_first": "2019-05-12T00:04:59.999999+00:00",
+  "bars_last": "2022-06-10T04:34:59.999999+00:00",
+  "discovery_start": "2019-05-12T00:00:00+00:00",
+  "discovery_end": "2022-06-10T04:36:00+00:00",
+  "evaluation_bar_count": 543431,
+  "non_evaluation_bar_count": 4999,
+  "validation_bars_loaded": 0,
+  "validation_events_loaded": 0,
+  "validation_signals_generated": 0,
+  "oos_bars_loaded": 0,
+  "oos_events_loaded": 0,
+  "VALIDATION_DATA_ACCESSED_DURING_DISCOVERY": "NO"
+}
