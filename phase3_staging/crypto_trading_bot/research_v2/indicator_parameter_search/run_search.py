@@ -64,13 +64,10 @@ def _load_frozen_registry() -> list[dict[str, Any]]:
 
 
 def _require_discovery_freeze_manifest() -> dict[str, Any]:
-    manifest_path = ARTIFACT_ROOT / "discovery_freeze_manifest_v1.json"
-    if not manifest_path.exists():
-        raise RuntimeError("VALIDATION_BEFORE_DISCOVERY_FREEZE_BLOCKED: missing discovery_freeze_manifest_v1.json")
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if not manifest.get("DISCOVERY_FREEZE_COMMIT"):
-        raise RuntimeError("VALIDATION_BEFORE_DISCOVERY_FREEZE_BLOCKED: DISCOVERY_FREEZE_COMMIT missing in manifest")
-    return manifest
+    """Prefer authority v2; keep historical v1 readable but Validation requires v2."""
+    from .validation_authority import verify_validation_entry_authority
+
+    return verify_validation_entry_authority(ARTIFACT_ROOT)
 
 
 def _load_bars(service, tf: str, start, end, *, warmup_bars: int = 500) -> list:
@@ -140,36 +137,62 @@ def run_freeze_spec_only() -> dict[str, Any]:
 
 
 def _run_validation_only() -> dict[str, Any]:
-    _require_discovery_freeze_manifest()
-    frozen_path = ARTIFACT_ROOT / "frozen_validation_candidates_v1.json"
-    if not frozen_path.exists():
-        raise FileNotFoundError(f"Missing discovery freeze: {frozen_path}")
-    frozen_payload = json.loads(frozen_path.read_text(encoding="utf-8"))
-    frozen_ids = frozen_payload["candidate_ids"]
+    from .validation_authority import build_final_selected_config
+
+    # Authority gate BEFORE any Validation market/event access.
+    authority = _require_discovery_freeze_manifest()
+    frozen_ids = authority["candidate_ids"]
     registry = _load_frozen_registry()
     reg_map = {r["candidate_id"]: r for r in registry}
-    events = _load_events(partitions=("DISCOVERY", "VALIDATION"))
+
+    val_start, val_end = split_bounds("VALIDATION")
+    val_start_iso = val_start.isoformat()
+    val_end_iso = val_end.isoformat()
+
+    # Warmup history may precede Validation start; evaluation window is Validation-only.
+    preflight = run_data_location_preflight(
+        required_start=val_start,
+        required_end=val_end,
+        artifact_root=ARTIFACT_ROOT,
+    )
+    events = _load_events(partitions=("VALIDATION",))
     service = make_bar_service()
-    disc_start = split_bounds("DISCOVERY")[0]
-    val_end = split_bounds("VALIDATION")[1]
-    preflight = run_data_location_preflight(required_start=disc_start, required_end=val_end, artifact_root=ARTIFACT_ROOT)
     bars_by_tf: dict[str, list] = {}
     baselines_by_tf: dict[str, list] = {}
     signals_by_cid: dict[str, list] = {}
+    validation_valid_bars = {}
+    signals_outside_split = 0
+
     for tf in SEARCH_TFS:
-        bars = _load_bars(service, tf, disc_start, val_end, warmup_bars=500)
+        bars = _load_bars(service, tf, val_start, val_end, warmup_bars=500)
         bars_by_tf[tf] = bars
+        validation_valid_bars[tf] = count_valid_bars(bars, val_start, val_end)
         baselines_by_tf[tf] = generate_frozen_price_baselines(
-            bars, decision_tf=tf, scan_start_iso=disc_start.isoformat(), scan_end_iso=split_bounds("VALIDATION")[1].isoformat()
+            bars,
+            decision_tf=tf,
+            scan_start_iso=val_start_iso,
+            scan_end_iso=val_end_iso,
         )
+
     for cid in frozen_ids:
         row = reg_map[cid]
-        signals_by_cid[cid] = generate_signals_for_row(
+        sigs = generate_signals_for_row(
             bars_by_tf[row["decision_tf"]],
             row,
-            scan_start_iso=disc_start.isoformat(),
-            scan_end_iso=split_bounds("VALIDATION")[1].isoformat(),
+            scan_start_iso=val_start_iso,
+            scan_end_iso=val_end_iso,
         )
+        outside = [
+            s
+            for s in sigs
+            if parse_ts(s["available_at"]) < val_start or parse_ts(s["available_at"]) >= val_end
+        ]
+        signals_outside_split += len(outside)
+        signals_by_cid[cid] = sigs
+
+    if signals_outside_split != 0:
+        raise RuntimeError(f"VALIDATION_SIGNAL_OUTSIDE_SPLIT_COUNT={signals_outside_split}")
+
     disc_df = pd.read_parquet(ARTIFACT_ROOT / "discovery_results_all_v1.parquet")
     baseline_cache: dict[tuple[str, str, str], dict] = {}
     val_rows = []
@@ -180,9 +203,22 @@ def _run_validation_only() -> dict[str, Any]:
         bkey = (tf, row["direction"], "VALIDATION")
         if bkey not in baseline_cache:
             baseline_cache[bkey] = price_baseline_metrics(
-                baselines_by_tf[tf], events, decision_tf=tf, direction=row["direction"], partition="VALIDATION", bars=bars_by_tf[tf]
+                baselines_by_tf[tf],
+                events,
+                decision_tf=tf,
+                direction=row["direction"],
+                partition="VALIDATION",
+                valid_bars=validation_valid_bars[tf],
+                bars=bars_by_tf[tf],
             )
-        m_val = evaluate_candidate(sigs, events, row, partition="VALIDATION", valid_bars=len(bars_by_tf[tf]), bars=bars_by_tf[tf])
+        m_val = evaluate_candidate(
+            sigs,
+            events,
+            row,
+            partition="VALIDATION",
+            valid_bars=validation_valid_bars[tf],
+            bars=bars_by_tf[tf],
+        )
         m_val = add_baseline_deltas(m_val, baseline_cache[bkey])
         disc_row = disc_df[disc_df["candidate_id"] == cid]
         d = disc_row.iloc[0].to_dict() if not disc_row.empty else {}
@@ -195,22 +231,19 @@ def _run_validation_only() -> dict[str, Any]:
     vdf = pd.DataFrame(val_rows)
     for _, r in vdf[vdf["validation_stability"].isin(["STABLE_POSITIVE", "WEAK_POSITIVE"])].iterrows():
         reg_row = next(x for x in registry if x["candidate_id"] == r["candidate_id"])
-        selected.append(
-            {
-                **reg_row,
-                "validation_precision_delta": r.get("PRECISION_DELTA"),
-                "stability_class": r.get("validation_stability"),
-                "validation_signals": int(r.get("TOTAL_SIGNALS") or 0),
-            }
-        )
+        disc_row = disc_df[disc_df["candidate_id"] == r["candidate_id"]]
+        d = disc_row.iloc[0].to_dict() if not disc_row.empty else {}
+        selected.append(build_final_selected_config(reg_row=reg_row, disc_row=d, val_row=r.to_dict()))
     sel_df = pd.DataFrame(selected)
     (ARTIFACT_ROOT / "final_selected_config_bank_v1.json").write_text(
-        json.dumps({"version": "FINAL_SELECTED_CONFIG_BANK_V1", "configs": selected}, indent=2), encoding="utf-8"
+        json.dumps({"version": "FINAL_SELECTED_CONFIG_BANK_V1", "configs": selected}, indent=2, default=str),
+        encoding="utf-8",
     )
     if not sel_df.empty:
         sel_df.to_csv(ARTIFACT_ROOT / "final_selected_config_bank_v1.csv", index=False)
     anti = run_anti_leakage_gates(bars_by_tf.get("1H", []), timeframe="1H")
     anti["S7_PROVENANCE"] = preflight.get("READY_FOR_HISTORICAL_EVENT_STUDY", "NO")
+    anti["VALIDATION_SIGNAL_OUTSIDE_SPLIT_COUNT"] = signals_outside_split
     (ARTIFACT_ROOT / "anti_leakage_tests_v1.json").write_text(json.dumps(anti, indent=2), encoding="utf-8")
     visual = _write_visual_audit(sel_df, bars_by_tf, signals_by_cid, ARTIFACT_ROOT / "visual_audit")
     stable_any = any(r.get("validation_stability") == "STABLE_POSITIVE" for r in val_rows)
@@ -221,12 +254,17 @@ def _run_validation_only() -> dict[str, Any]:
         "ROADMAP_STATUS": "REVIEW",
         "RESEARCH_VERDICT": verdict,
         "FROZEN_VALIDATION_CANDIDATE_COUNT": len(frozen_ids),
-        "VALIDATION_CANDIDATE_SET_HASH": frozen_payload["hash"],
+        "VALIDATION_CANDIDATE_SET_HASH": authority["VALIDATION_CANDIDATE_SET_HASH"],
+        "VALIDATION_CANDIDATE_SET_HASH_MATCH": "PASS",
+        "VALIDATION_SIGNAL_OUTSIDE_SPLIT_COUNT": signals_outside_split,
+        "VALIDATION_PERIOD": [val_start_iso, val_end_iso],
         "SELECTED_CONFIG_COUNT": len(selected),
         "REAL_EVENT_VISUAL_AUDIT": visual,
+        "OOS_OPENED": "NO",
+        "OOS_ACCESS_COUNT": 0,
         "git_commit": _git_sha(),
     }
-    (ARTIFACT_ROOT / "summary_v1.json").write_text(json.dumps(summary_out, indent=2, default=str), encoding="utf-8")
+    (ARTIFACT_ROOT / "summary_validation_v1.json").write_text(json.dumps(summary_out, indent=2, default=str), encoding="utf-8")
     return summary_out
 
 
@@ -476,17 +514,23 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
     if not skip_validation:
         _require_discovery_freeze_manifest()
         print("[param-search] validation...", flush=True)
-        val_events = _load_events(partitions=("DISCOVERY", "VALIDATION"))
+        val_start, val_end = split_bounds("VALIDATION")
+        val_start_iso = val_start.isoformat()
+        val_end_iso = val_end.isoformat()
+        val_events = _load_events(partitions=("VALIDATION",))
         val_bars_by_tf: dict[str, list] = {}
         val_baselines_by_tf: dict[str, list] = {}
+        validation_valid_bars = {}
+        val_signals_outside = 0
         for tf in SEARCH_TFS:
-            val_bars = _load_bars(service, tf, disc_start, val_end, warmup_bars=500)
+            val_bars = _load_bars(service, tf, val_start, val_end, warmup_bars=500)
             val_bars_by_tf[tf] = val_bars
+            validation_valid_bars[tf] = count_valid_bars(val_bars, val_start, val_end)
             val_baselines_by_tf[tf] = generate_frozen_price_baselines(
                 val_bars,
                 decision_tf=tf,
-                scan_start_iso=scan_start_iso,
-                scan_end_iso=val_end.isoformat(),
+                scan_start_iso=val_start_iso,
+                scan_end_iso=val_end_iso,
             )
         reg_map = {r["candidate_id"]: r for r in registry}
         for cid in frozen_ids:
@@ -495,9 +539,15 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
             sigs = generate_signals_for_row(
                 val_bars_by_tf[tf],
                 row,
-                scan_start_iso=scan_start_iso,
-                scan_end_iso=val_end.isoformat(),
+                scan_start_iso=val_start_iso,
+                scan_end_iso=val_end_iso,
             )
+            outside = [
+                s
+                for s in sigs
+                if parse_ts(s["available_at"]) < val_start or parse_ts(s["available_at"]) >= val_end
+            ]
+            val_signals_outside += len(outside)
             bkey = (tf, row["direction"], "VALIDATION")
             if bkey not in baseline_cache:
                 baseline_cache[bkey] = price_baseline_metrics(
@@ -506,7 +556,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
                     decision_tf=tf,
                     direction=row["direction"],
                     partition="VALIDATION",
-                    valid_bars=count_valid_bars(val_bars_by_tf[tf], split_bounds("VALIDATION")[0], val_end),
+                    valid_bars=validation_valid_bars[tf],
                     bars=val_bars_by_tf[tf],
                 )
             m_val = evaluate_candidate(
@@ -514,7 +564,7 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
                 val_events,
                 row,
                 partition="VALIDATION",
-                valid_bars=count_valid_bars(val_bars_by_tf[tf], split_bounds("VALIDATION")[0], val_end),
+                valid_bars=validation_valid_bars[tf],
                 bars=val_bars_by_tf[tf],
             )
             m_val = add_baseline_deltas(m_val, baseline_cache[bkey])
@@ -522,27 +572,22 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
             d = disc_row.iloc[0].to_dict() if not disc_row.empty else {}
             m_val["validation_stability"] = classify_validation_stability(d, m_val)
             val_rows.append(m_val)
+        if val_signals_outside != 0:
+            raise RuntimeError(f"VALIDATION_SIGNAL_OUTSIDE_SPLIT_COUNT={val_signals_outside}")
         pd.DataFrame(val_rows).to_parquet(ARTIFACT_ROOT / "validation_results_v1.parquet", index=False)
         pd.DataFrame(val_rows).to_csv(ARTIFACT_ROOT / "validation_stability_v1.csv", index=False)
 
-    # final selected bank — STABLE_POSITIVE only, not forced
+    # final selected bank — STABLE_POSITIVE / WEAK_POSITIVE only, not forced
     selected = []
     if val_rows:
+        from .validation_authority import build_final_selected_config
+
         vdf = pd.DataFrame(val_rows)
         for _, r in vdf[vdf["validation_stability"].isin(["STABLE_POSITIVE", "WEAK_POSITIVE"])].iterrows():
             reg_row = next(x for x in registry if x["candidate_id"] == r["candidate_id"])
-            selected.append(
-                {
-                    **reg_row,
-                    "discovery_precision_delta": r.get("PRECISION_DELTA"),
-                    "validation_precision_delta": r.get("PRECISION_DELTA"),
-                    "stability_class": r.get("validation_stability"),
-                    "discovery_signals": int(disc_df.loc[disc_df["candidate_id"] == r["candidate_id"], "TOTAL_SIGNALS"].iloc[0])
-                    if r["candidate_id"] in set(disc_df["candidate_id"])
-                    else 0,
-                    "validation_signals": int(r.get("TOTAL_SIGNALS") or 0),
-                }
-            )
+            disc_row = disc_df[disc_df["candidate_id"] == r["candidate_id"]]
+            d = disc_row.iloc[0].to_dict() if not disc_row.empty else {}
+            selected.append(build_final_selected_config(reg_row=reg_row, disc_row=d, val_row=r.to_dict()))
     sel_df = pd.DataFrame(selected)
     bank = {"version": "FINAL_SELECTED_CONFIG_BANK_V1", "configs": selected}
     (ARTIFACT_ROOT / "final_selected_config_bank_v1.json").write_text(json.dumps(bank, indent=2), encoding="utf-8")
@@ -613,7 +658,16 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
         "VALIDATION_CANDIDATE_SET_HASH_MATCH": "PASS",
         "SELECTED_CONFIG_COUNT": len(selected),
         "RESEARCH_VERDICT": verdict,
-        "PRICE_BASELINE_BEATEN_BY_ANY_STABLE_CONFIG": "YES" if stable_any else "NO",
+        "PRICE_BASELINE_BEATEN_BY_ANY_STABLE_CONFIG": "YES" if stable_any else ("N/A_DISCOVERY_ONLY" if skip_validation else "NO"),
+        "PRICE_BASELINE_BEATEN_IN_DISCOVERY_BY_ANY_CANDIDATE": (
+            "YES" if bool((disc_df["PRECISION_DELTA"].fillna(-999) > 0).any()) else "NO"
+        ),
+        "DISCOVERY_PRECISION_DELTA_POSITIVE_COUNT": int((disc_df["PRECISION_DELTA"].fillna(-999) > 0).sum()),
+        "DISCOVERY_PRECISION_DELTA_NONPOSITIVE_COUNT": int((disc_df["PRECISION_DELTA"].fillna(0) <= 0).sum()),
+        "DISCOVERY_STABLE_POSITIVE_FOLDS_COUNT": int((disc_df["discovery_fold_stability"] == "STABLE_POSITIVE_FOLDS").sum()),
+        "DISCOVERY_MOSTLY_POSITIVE_FOLDS_COUNT": int((disc_df["discovery_fold_stability"] == "MOSTLY_POSITIVE_FOLDS").sum()),
+        "DISCOVERY_UNSTABLE_COUNT": int((disc_df["discovery_fold_stability"] == "UNSTABLE_DISCOVERY").sum()),
+        "DISCOVERY_INSUFFICIENT_COUNT": int((disc_df["sample_flag"] == "INSUFFICIENT").sum()),
         "PARAMETER_OPTIMIZATION_PERFORMED": "YES",
         "PARAMETER_OPTIMIZATION_SCOPE": "DISCOVERY_ONLY",
         "SIGNAL_COMBINATION_SEARCH_PERFORMED": "NO",
@@ -628,9 +682,11 @@ def run_parameter_search(*, phase: str = "all") -> dict[str, Any]:
         "REAL_EVENT_VISUAL_AUDIT": visual,
         "ARTIFACT_ROOT": str(ARTIFACT_ROOT),
         "git_commit": _git_sha(),
-        "READY_FOR_INDEPENDENT_REVIEW": "YES",
-        "NEXT_WIP_IF_ACCEPTED": "MULTITF-COMPOSITE-SIGNAL-SEARCH-1",
-        "NEXT_WIP_STATUS": "PLANNED",
+        "READY_FOR_INDEPENDENT_REVIEW": "YES" if skip_validation else "NO",
+        "READY_FOR_VALIDATION_EXECUTION_REVIEW": "YES" if skip_validation else "NO",
+        "NEXT_STEP": "MULTITF-INDICATOR-PARAMETER-SEARCH-1 / VALIDATION" if skip_validation else "REVIEW",
+        "NEXT_WIP_IF_ACCEPTED": None if skip_validation else "MULTITF-COMPOSITE-SIGNAL-SEARCH-1",
+        "NEXT_WIP_STATUS": "BLOCKED_UNTIL_VALIDATION" if skip_validation else "PLANNED",
         "DMA_VERDICT": fam_verdict.get("DMA"),
         "STOCH_VERDICT": fam_verdict.get("STOCHASTIC"),
         "MACD_VERDICT": fam_verdict.get("MACD"),

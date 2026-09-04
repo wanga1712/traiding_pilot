@@ -1,0 +1,57 @@
+{
+  "artifact": "validation_protocol_v1",
+  "frozen_before_validation_access": true,
+  "WIP": "MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "NEXT_STEP": "MULTITF-INDICATOR-PARAMETER-SEARCH-1 / VALIDATION",
+  "candidate_pool_count": 620,
+  "candidate_pool_hash": "99f50699587c0d2a189bef0346f8d74b5224c99fafda4fe16201773ce0c2d95c",
+  "candidate_pool_status": "RAW_PRECOMMITTED_VALIDATION_POOL_V1",
+  "VALIDATION_START": "2022-06-10T04:36:00+00:00",
+  "VALIDATION_END": "2023-06-20T06:08:00+00:00",
+  "SEARCH_SPEC_V2_FREEZE_COMMIT": "eb561bc1298bd2b0ec5e21cc4ac6c690ec148bad",
+  "DISCOVERY_FREEZE_COMMIT": "58b47aa5a3df1f381c6a7e9900e24358b5a714d6",
+  "DISCOVERY_RUNTIME_COMMIT": "7eff0e741107a87cbcb436202dff095edbea625c",
+  "SEARCH_SPEC_SHA256": "08ea6ee5d857317594691fa668ec8f41f4e32fd2f5df61defc0d3dbc7b601fac",
+  "CANDIDATE_REGISTRY_SHA256": "3940fe68ab87d54bf171ee119d40f4b2d23a81f0adcfb403bb361a5ffb620d15",
+  "primary_metric": "PRECISION_DELTA vs frozen price baseline",
+  "secondary_metrics": [
+    "EVENT_RECALL",
+    "FALSE_POSITIVE_RATE",
+    "MEDIAN_DELAY_SECONDS",
+    "PRE_C_SIGNAL_RATE",
+    "MAE/MFE diagnostics where available"
+  ],
+  "sample_classes": {
+    "NORMAL": ">=100",
+    "LOW_SAMPLE": ">=30",
+    "INSUFFICIENT": "<30"
+  },
+  "validation_stability_classifier": {
+    "function": "classify_validation_stability",
+    "frozen": true,
+    "rules": [
+      "if validation sample_flag == INSUFFICIENT -> INSUFFICIENT_SAMPLE",
+      "if discovery or validation PRECISION_DELTA is null -> INSUFFICIENT_SAMPLE",
+      "if discovery PRECISION_DELTA > 0.02 and validation PRECISION_DELTA > 0 and abs(disc-val) <= max(0.05, 0.5*abs(disc)) -> STABLE_POSITIVE",
+      "if discovery PRECISION_DELTA > 0.02 and validation PRECISION_DELTA > 0 otherwise -> WEAK_POSITIVE",
+      "if validation PRECISION_DELTA > 0 -> WEAK_POSITIVE",
+      "if validation PRECISION_DELTA <= 0 -> NEGATIVE",
+      "else -> UNSTABLE"
+    ],
+    "no_parameter_changes_after_validation_observation": true
+  },
+  "DISCOVERY_FDR_VALID": "NO",
+  "DISCOVERY_REDUNDANCY_SELECTION_APPLIED": "NO",
+  "statistical_significance_claims_from_discovery": "FORBIDDEN",
+  "validation_role": "holdout stability test of the precommitted 620-candidate pool",
+  "signal_window_rules": {
+    "AVAILABLE_AT_gte": "VALIDATION_START",
+    "AVAILABLE_AT_lt": "VALIDATION_END",
+    "VALIDATION_SIGNAL_OUTSIDE_SPLIT_COUNT_required": 0,
+    "pre_validation_bars": "causal warmup/history only"
+  },
+  "oos": {
+    "OOS_OPENED": "NO",
+    "OOS_ACCESS_COUNT": 0
+  }
+}

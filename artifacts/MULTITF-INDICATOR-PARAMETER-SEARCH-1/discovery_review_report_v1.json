@@ -1,0 +1,156 @@
+{
+  "artifact": "discovery_review_report_v1",
+  "DISCOVERY_FREEZE_COMMIT": "58b47aa5a3df1f381c6a7e9900e24358b5a714d6",
+  "DISCOVERY_CORE_CALCULATION_STATUS": "ACCEPTED",
+  "DISCOVERY_PRECISION_DELTA_POSITIVE_COUNT": 2880,
+  "DISCOVERY_PRECISION_DELTA_NONPOSITIVE_COUNT": 320,
+  "DISCOVERY_STABLE_POSITIVE_FOLDS_COUNT": 2879,
+  "DISCOVERY_MOSTLY_POSITIVE_FOLDS_COUNT": 1,
+  "DISCOVERY_UNSTABLE_COUNT": 320,
+  "DISCOVERY_INSUFFICIENT_COUNT": 2,
+  "DISCOVERY_BEST_PRECISION_DELTA_BY_TF_DIRECTION": {
+    "12H|DOWN": {
+      "candidate_id": "STOCH|DINAPOLI_PREFERRED_STOCHASTIC_REFERENCE_V1|K_CROSS_UP_D|K_CROSS_DOWN_D|12H|DOWN",
+      "family": "STOCHASTIC",
+      "PRECISION_DELTA": 0.36824994537906924,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": true
+    },
+    "12H|UP": {
+      "candidate_id": "MACD|DINAPOLI_MACD_REFERENCE_V1|MACD_CROSS_UP_SIGNAL|MACD_CROSS_DOWN_SIGNAL|12H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.41679028530030704,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": true
+    },
+    "15m|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|15m|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.013096400756599971,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    },
+    "15m|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|15m|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.01332090692604843,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    },
+    "1D|DOWN": {
+      "candidate_id": "STOCH|DINAPOLI_PREFERRED_STOCHASTIC_REFERENCE_V1|K_CROSS_UP_D|K_CROSS_DOWN_D|1D|DOWN",
+      "family": "STOCHASTIC",
+      "PRECISION_DELTA": 0.34669966996699675,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": true
+    },
+    "1D|UP": {
+      "candidate_id": "DMA|DMA_SMA_P25_SHIFT5_V1|PRICE_CROSS_UP_MA|PRICE_CROSS_DOWN_MA|1D|UP",
+      "family": "DMA",
+      "PRECISION_DELTA": 0.3865265169612996,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": true
+    },
+    "1H|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|1H|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.47046501885211567,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    },
+    "1H|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|1H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.4860216097255726,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    },
+    "2H|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|2H|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.4917691256830601,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    },
+    "2H|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|2H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.5104111740362074,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    },
+    "30m|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|30m|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.02745327359236889,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    },
+    "30m|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|30m|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.026971380260134157,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    },
+    "4H|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|4H|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.44729117180287736,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    },
+    "4H|UP": {
+      "candidate_id": "MACD|DINAPOLI_MACD_REFERENCE_V1|MACD_CROSS_UP_SIGNAL|MACD_CROSS_DOWN_SIGNAL|4H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.4192962446669201,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": true
+    },
+    "5m|DOWN": {
+      "candidate_id": "DMA|DMA_EMA_P10_SHIFT5_V1|MA_SLOPE_TURN_UP|MA_SLOPE_TURN_DOWN|5m|DOWN",
+      "family": "DMA",
+      "PRECISION_DELTA": 0.0,
+      "discovery_fold_stability": "UNSTABLE_DISCOVERY",
+      "is_reference": false
+    },
+    "5m|UP": {
+      "candidate_id": "DMA|DMA_EMA_P10_SHIFT5_V1|MA_SLOPE_TURN_UP|MA_SLOPE_TURN_DOWN|5m|UP",
+      "family": "DMA",
+      "PRECISION_DELTA": 0.0,
+      "discovery_fold_stability": "UNSTABLE_DISCOVERY",
+      "is_reference": false
+    },
+    "6H|DOWN": {
+      "candidate_id": "MACD|DINAPOLI_MACD_REFERENCE_V1|MACD_CROSS_UP_SIGNAL|MACD_CROSS_DOWN_SIGNAL|6H|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.36774884957247883,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": true
+    },
+    "6H|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|6H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.3975531808648756,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    },
+    "8H|DOWN": {
+      "candidate_id": "MACD|DISPLACED_MACD_8_21_5_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|8H|DOWN",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.4218495045758744,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    },
+    "8H|UP": {
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT3_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|8H|UP",
+      "family": "MACD",
+      "PRECISION_DELTA": 0.42216435185185186,
+      "discovery_fold_stability": "STABLE_POSITIVE_FOLDS",
+      "is_reference": false
+    }
+  },
+  "PRICE_BASELINE_BEATEN_IN_DISCOVERY_BY_ANY_CANDIDATE": "YES",
+  "NOTE": "Discovery-only fields. Do not infer Validation performance. PRICE_BASELINE_BEATEN_BY_ANY_STABLE_CONFIG from empty Validation results is not a Discovery metric.",
+  "NEXT_STEP": "MULTITF-INDICATOR-PARAMETER-SEARCH-1 / VALIDATION"
+}
