@@ -1,0 +1,30 @@
+2026-09-04T13:15:44Z | PID=2118626 | alive=YES | ps=R 01:53 95.3 580912 00:01:48 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T13:16:22.729241+00:00 | PID=2118626 | alive=YES | ps=R       02:29 96.4 581364 00:02:23 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T13:30:44Z | PID=2118626 | alive=YES | ps=R 16:53 99.4 712684 00:16:47 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T13:31:29.837833+00:00 | PID=2118626 | alive=YES | ps=R       17:34 99.4 744464 00:17:29 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T13:45:44Z | PID=2118626 | alive=YES | ps=R 31:53 99.6 952400 00:31:47 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T13:46:35.280584+00:00 | PID=2118626 | alive=YES | ps=R       32:41 99.6 952400 00:32:35 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T14:00:44Z | PID=2118626 | alive=YES | ps=R 46:53 99.7 959020 00:46:47 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T14:01:41.758681+00:00 | PID=2118626 | alive=YES | ps=R       47:47 99.7 959020 00:47:41 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T14:15:44Z | PID=2118626 | alive=YES | ps=R 01:01:53 99.8 962872 01:01:46 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T14:16:47.728617+00:00 | PID=2118626 | alive=YES | ps=R    01:02:54 99.8 980376 01:02:47 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T14:30:44Z | PID=2118626 | alive=YES | ps=R 01:16:53 99.8 1121072 01:16:46 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T14:31:53.151367+00:00 | PID=2118626 | alive=YES | ps=R    01:17:59 99.8 983444 01:17:52 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T14:45:44Z | PID=2118626 | alive=YES | ps=R 01:31:53 99.8 1123932 01:31:46 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T14:46:58.268367+00:00 | PID=2118626 | alive=YES | ps=R    01:33:04 99.8 984416 01:32:57 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T15:00:44Z | PID=2118626 | alive=YES | ps=R 01:46:53 99.8 1093428 01:46:45 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T15:02:03.309410+00:00 | PID=2118626 | alive=YES | ps=R    01:48:09 99.8 1105372 01:48:01 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T15:15:44Z | PID=2118626 | alive=YES | ps=R 02:01:53 99.8 1056576 02:01:45 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T15:17:08.382406+00:00 | PID=2118626 | alive=YES | ps=R    02:03:14 99.8 1093148 02:03:06 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T15:30:44Z | PID=2118626 | alive=YES | ps=R 02:16:53 99.8 1157268 02:16:45 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T15:32:13.464967+00:00 | PID=2118626 | alive=YES | ps=R    02:18:20 99.8 1135420 02:18:11 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T15:45:44Z | PID=2118626 | alive=YES | ps=R 02:31:54 99.8 1154708 02:31:44 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T15:47:18.672422+00:00 | PID=2118626 | alive=YES | ps=R    02:33:25 99.8 1158672 02:33:15 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T16:00:44Z | PID=2118626 | alive=YES | ps=R 02:46:54 99.9 1139764 02:46:44 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T16:02:25.219074+00:00 | PID=2118626 | alive=YES | ps=R    02:48:30 99.9 1138740 02:48:21 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T16:15:44Z | PID=2118626 | alive=YES | ps=R 03:01:54 99.9 1173576 03:01:44 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T16:17:31.150770+00:00 | PID=2118626 | alive=YES | ps=R    03:03:37 99.9 1177376 03:03:27 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T16:30:44Z | PID=2118626 | alive=YES | ps=R 03:16:54 99.9 1140604 03:16:43 | tf=unknown | progress=silent_or_loading | log_mtime=1788527630
+"2026-09-04T16:32:36.468464+00:00 | PID=2118626 | alive=YES | ps=R    03:18:42 99.9 1143036 03:18:32 | tf=unknown | progress=unknown | log_mtime=1788527630"
+2026-09-04T16:45:45Z | PID=2118626 | alive=NO | ps=DEAD | tf=unknown | progress=exited | log_mtime=1788540256
+"2026-09-04T16:47:41.662946+00:00 | PID=2118626 | alive=NO | ps=DEAD | tf=unknown | progress=unknown | log_mtime=1788540256"
