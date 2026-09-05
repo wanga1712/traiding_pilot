@@ -1,0 +1,15 @@
+{
+  "artifact": "composite_spec_freeze_manifest_v1",
+  "WIP": "MULTITF-COMPOSITE-SIGNAL-SEARCH-1",
+  "START_AUTHORITY_COMMIT": "f2324229371507038c29695b2e145221680cbd16",
+  "SHA256": {
+    "development_corpus_manifest_v1.json": "505ecb91170b5286cb7a8da8f8dc24808cf18067317546e8246bfd2972201f95",
+    "composite_templates_v1.json": "22b52c33f60b8668721e6aab744e6bb22ea1b8b84c91de4e6637cbac3f08583f",
+    "composite_atomic_bank_v1.json": "2e6a4ad0328e902d8eda2b67bafe4f7ca804ac29fe6cb095fedc4ee53fab440a",
+    "composite_search_spec_v1.json": "d470350a0f3f44b8a64f4d681a8efa80241877d826ba76d96143b50c82c05323"
+  },
+  "ATOMIC_BANK_TOTAL": 582,
+  "OOS_OPENED": "NO",
+  "OOS_ACCESS_COUNT": 0,
+  "note": "Methodology frozen before composite result search. No methodology changes during execution."
+}

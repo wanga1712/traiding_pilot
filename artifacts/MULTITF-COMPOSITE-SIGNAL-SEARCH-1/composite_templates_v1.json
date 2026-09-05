@@ -1,0 +1,93 @@
+{
+  "artifact": "composite_templates_v1",
+  "MAX_COMPOSITE_COMPONENTS": 3,
+  "BOOLEAN_LOGIC": "CONTEXT_ALIGNED_AND_TRIGGER",
+  "templates": [
+    {
+      "template_id": "T1_DUAL_ANCHOR",
+      "context_tfs": [
+        "2H"
+      ],
+      "trigger_tfs": [
+        "1H"
+      ],
+      "n_context": 1,
+      "purpose": "Does 2H directional state improve the already-strong 1H signal?",
+      "diagnostic": false
+    },
+    {
+      "template_id": "T2_REGIME_ANCHOR",
+      "context_tfs": [
+        "4H",
+        "6H",
+        "8H",
+        "12H"
+      ],
+      "trigger_tfs": [
+        "1H",
+        "2H"
+      ],
+      "n_context": 1,
+      "purpose": "Does higher-TF regime improve 1H/2H triggers?",
+      "diagnostic": false
+    },
+    {
+      "template_id": "T3_ANCHOR_TRANSITION",
+      "context_tfs": [
+        "1H",
+        "2H"
+      ],
+      "trigger_tfs": [
+        "30m"
+      ],
+      "n_context": 1,
+      "purpose": "Can strong HTF context make 30m useful as a more precise entry signal?",
+      "diagnostic": false
+    },
+    {
+      "template_id": "T4_REGIME_ANCHOR_TRANSITION",
+      "context_tfs_1": [
+        "4H",
+        "6H",
+        "8H"
+      ],
+      "context_tfs_2": [
+        "1H",
+        "2H"
+      ],
+      "trigger_tfs": [
+        "30m"
+      ],
+      "n_context": 2,
+      "purpose": "Does HTF + anchor + 30m beat anchor + 30m?",
+      "diagnostic": false
+    },
+    {
+      "template_id": "T5_ANCHOR_MICRO",
+      "context_tfs": [
+        "1H",
+        "2H"
+      ],
+      "trigger_tfs": [
+        "15m",
+        "5m"
+      ],
+      "n_context": 1,
+      "purpose": "DIAGNOSTIC: weak low-TF conditional on HTF context",
+      "diagnostic": true
+    },
+    {
+      "template_id": "T6_CROSS_FAMILY_SAME_TF",
+      "tfs": [
+        "1H",
+        "2H",
+        "4H"
+      ],
+      "n_context": 1,
+      "same_tf": true,
+      "cross_family": true,
+      "purpose": "Cross-family incremental information",
+      "diagnostic": false
+    }
+  ]
+}

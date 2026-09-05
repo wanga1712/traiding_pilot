@@ -1,0 +1,160 @@
+{
+  "artifact": "composite_search_spec_v1",
+  "WIP": "MULTITF-COMPOSITE-SIGNAL-SEARCH-1",
+  "MODE": "COMPOSITE-SPEC-AND-DEVELOPMENT-SEARCH-1",
+  "STATUS": "ACTIVE",
+  "START_AUTHORITY_COMMIT": "f2324229371507038c29695b2e145221680cbd16",
+  "PARENT_WIP": "MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "PARENT_WIP_STATUS": "CLOSED",
+  "VALIDATION_RESULTS_COMMIT": "4b0c8143b30864ade5373dd306b876c3857f6eb5",
+  "DISCOVERY_FREEZE_COMMIT": "58b47aa5a3df1f381c6a7e9900e24358b5a714d6",
+  "PRE_VALIDATION_REVIEW_COMMIT": "954fdb6b84103636b0615fa83894090fa0c26f30",
+  "purpose": "Determine whether multi-TF/multi-family causal confluence improves reversal/directional information over trigger alone while preserving useful coverage.",
+  "NOT": [
+    "PnL",
+    "execution_simulation",
+    "leverage",
+    "model_training",
+    "OOS_evaluation",
+    "unrestricted_combinatorial_search"
+  ],
+  "DEVELOPMENT_CORPUS_ROLE": "MODEL_AND_COMPOSITE_DEVELOPMENT_ONLY",
+  "INDEPENDENT_HOLDOUT_AVAILABLE": "OOS_LOCKED",
+  "OOS_OPENED": "NO",
+  "OOS_ACCESS_COUNT": 0,
+  "development_corpus_ref": "development_corpus_manifest_v1.json",
+  "templates_ref": "composite_templates_v1.json",
+  "atomic_bank_ref": "composite_atomic_bank_v1.json",
+  "atomic_replay": {
+    "ATOMIC_INDICATOR_RECOMPUTE_PER_COMPOSITE": "NO",
+    "reuse_parent_frozen_indicator_engines": true,
+    "ATOMIC_VALIDATION_REPLAY_PARITY_REQUIRED": "PASS",
+    "parity_window": [
+      "2022-06-10T04:36:00+00:00",
+      "2023-06-20T06:08:00+00:00"
+    ]
+  },
+  "exact_dedup": {
+    "stream_hash_from": [
+      "TF",
+      "direction",
+      "ordered_AVAILABLE_AT"
+    ],
+    "EXACT_DUPLICATE_STREAMS_DEDUPED": "YES",
+    "representative_priority": [
+      "reference",
+      "lexicographically_smallest_candidate_id"
+    ],
+    "no_performance_based_exact_dup_choice": true
+  },
+  "near_redundancy": {
+    "scope": [
+      "TF",
+      "direction",
+      "family"
+    ],
+    "JACCARD": 0.95,
+    "ATOMIC_REPRESENTATIVE_CAP_PER_TF_DIRECTION_FAMILY": 2,
+    "nonidentical_score_primary": "min(discovery_precision_delta, validation_precision_delta)",
+    "tie_breakers": [
+      "higher_min_cross_period_EVENT_RECALL",
+      "lower_max_cross_period_FPR",
+      "higher_signal_count",
+      "candidate_id_lexical"
+    ],
+    "no_future_outcomes_for_clustering": true
+  },
+  "tf_roles": {
+    "4H": "REGIME_CONTEXT",
+    "6H": "REGIME_CONTEXT",
+    "8H": "REGIME_CONTEXT",
+    "12H": "REGIME_CONTEXT",
+    "1H": "DIRECTION_ANCHOR",
+    "2H": "DIRECTION_ANCHOR",
+    "30m": "TRANSITION_TRIGGER",
+    "15m": "MICRO_TRIGGER",
+    "5m": "MICRO_TRIGGER",
+    "1D": "DIAGNOSTIC_ONLY"
+  },
+  "context_state": {
+    "STATE": "direction of most recent AVAILABLE signal known at T",
+    "values": [
+      "UP",
+      "DOWN",
+      "UNKNOWN"
+    ],
+    "AVAILABLE_AT_only": true,
+    "gap_reset": "UNKNOWN",
+    "same_timestamp_up_down_conflict": "UNKNOWN"
+  },
+  "composite_semantics": {
+    "form": "CONTEXT_STATE(S) + ONE_TRIGGER_EVENT",
+    "COMPOSITE_SIGNAL_TIMESTAMP_SUBSET_OF_TRIGGER_TIMESTAMPS": "PASS",
+    "context_age_diagnostic_only": true,
+    "no_age_threshold_tuning_v1": true
+  },
+  "boolean_logic_only": true,
+  "MAX_COMPOSITE_COMPONENTS": 3,
+  "fair_comparison": {
+    "primary": "PRECISION_DELTA_VS_TRIGGER",
+    "also": [
+      "PRECISION_DELTA_VS_PRICE_BASELINE",
+      "RECALL_RETENTION_VS_TRIGGER",
+      "FPR_DELTA_VS_TRIGGER",
+      "MEDIAN_DELAY_DELTA_VS_TRIGGER",
+      "PRE_C_SIGNAL_RATE_DELTA_VS_TRIGGER",
+      "MFE",
+      "MAE",
+      "SIGNAL_RETENTION"
+    ]
+  },
+  "sample_classes": {
+    "NORMAL": ">=100",
+    "LOW_SAMPLE": ">=30 and <100",
+    "INSUFFICIENT": "<30"
+  },
+  "fold_stability": {
+    "usable_fold_min_signals": 5,
+    "require_usable_folds": 3,
+    "else": "FOLD_SAMPLE_INSUFFICIENT"
+  },
+  "composite_classes_frozen_before_results": {
+    "INCREMENTAL_BALANCED": {
+      "aggregate_sample_not": "INSUFFICIENT",
+      "PRECISION_DELTA_VS_TRIGGER": ">0",
+      "positive_delta_folds": ">=3 usable",
+      "RECALL_RETENTION_VS_TRIGGER": ">=0.50",
+      "FPR_DELTA_VS_TRIGGER": "<=0"
+    },
+    "INCREMENTAL_SELECTIVE": {
+      "aggregate_sample_not": "INSUFFICIENT",
+      "PRECISION_DELTA_VS_TRIGGER": ">=0.05",
+      "positive_delta_folds": ">=3 usable",
+      "RECALL_RETENTION_VS_TRIGGER": ">=0.20",
+      "FPR_DELTA_VS_TRIGGER": "<0"
+    },
+    "WEAK_INCREMENTAL": "aggregate PRECISION_DELTA_VS_TRIGGER > 0 but not BALANCED/SELECTIVE",
+    "NO_INCREMENTAL_EDGE": "PRECISION_DELTA_VS_TRIGGER <= 0",
+    "INSUFFICIENT": "sample or fold coverage insufficient"
+  },
+  "fdr_diagnostic": {
+    "status_if_unimplemented_or_unsafe": "NOT_USED",
+    "if_implemented": {
+      "method": "calendar/time block bootstrap",
+      "seed": 42,
+      "iterations": ">=2000",
+      "BH_q": 0.1,
+      "null": "PRECISION_DELTA_VS_TRIGGER <= 0",
+      "BOOTSTRAP_INPUT_IS_EVENT_OR_TIME_BLOCK_LEVEL": "PASS",
+      "BOOTSTRAP_NOT_FOUR_FOLD_SUMMARY": "PASS",
+      "selection_gate": "NO_DIAGNOSTIC_ONLY"
+    }
+  },
+  "search_complexity": "ATOMIC_PRECOMPUTE_PLUS_BOOLEAN_COMPOSITION",
+  "PNL_TESTED": "NO",
+  "NO_MODEL_TRAINING": true,
+  "NO_EXECUTION_SIMULATOR": true,
+  "hard_stop_after_results": true,
+  "ROADMAP_STATUS_AFTER": "REVIEW",
+  "READY_FOR_COMPOSITE_INDEPENDENT_REVIEW_AFTER": "YES"
+}

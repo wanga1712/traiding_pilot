@@ -1,0 +1,42 @@
+{
+  "artifact": "development_corpus_manifest_v1",
+  "DEVELOPMENT_CORPUS_V1": {
+    "START": "2019-05-12T00:00:00+00:00",
+    "END": "2023-06-20T06:08:00+00:00"
+  },
+  "DEVELOPMENT_CORPUS_ROLE": "MODEL_AND_COMPOSITE_DEVELOPMENT_ONLY",
+  "INDEPENDENT_HOLDOUT_AVAILABLE": "OOS_LOCKED",
+  "contains": [
+    "previous_DISCOVERY",
+    "previous_VALIDATION"
+  ],
+  "NOT_INDEPENDENT_VALIDATION": true,
+  "DEVELOPMENT_FOLDS": [
+    {
+      "fold_id": "FOLD_1",
+      "start": "2019-05-12T00:00:00+00:00",
+      "end": "2020-05-21T01:32:00+00:00"
+    },
+    {
+      "fold_id": "FOLD_2",
+      "start": "2020-05-21T01:32:00+00:00",
+      "end": "2021-05-31T03:04:00+00:00"
+    },
+    {
+      "fold_id": "FOLD_3",
+      "start": "2021-05-31T03:04:00+00:00",
+      "end": "2022-06-10T04:36:00+00:00"
+    },
+    {
+      "fold_id": "FOLD_4",
+      "start": "2022-06-10T04:36:00+00:00",
+      "end": "2023-06-20T06:08:00+00:00",
+      "note": "former_VALIDATION_period_now_DEVELOPMENT_fold_only"
+    }
+  ],
+  "OOS_OPENED": "NO",
+  "OOS_ACCESS_COUNT": 0,
+  "parent_wip": "MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "START_AUTHORITY_COMMIT": "f2324229371507038c29695b2e145221680cbd16",
+  "VALIDATION_RESULTS_COMMIT": "4b0c8143b30864ade5373dd306b876c3857f6eb5"
+}
