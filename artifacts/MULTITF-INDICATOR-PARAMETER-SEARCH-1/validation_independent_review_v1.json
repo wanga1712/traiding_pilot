@@ -1,0 +1,170 @@
+{
+  "artifact": "validation_independent_review_v1",
+  "WIP": "MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "MODE": "VALIDATION-INDEPENDENT-REVIEW-CLOSURE-1",
+  "VALIDATION_EXECUTION_STATUS": "ACCEPTED",
+  "PRE_VALIDATION_REVIEW_COMMIT": "954fdb6b84103636b0615fa83894090fa0c26f30",
+  "VALIDATION_RESULTS_COMMIT": "4b0c8143b30864ade5373dd306b876c3857f6eb5",
+  "DISCOVERY_FREEZE_COMMIT": "58b47aa5a3df1f381c6a7e9900e24358b5a714d6",
+  "numerical_results_altered": "NO",
+  "validation_rerun": "NO",
+  "historical_report_rewritten": "NO",
+  "historical_report_reference": "validation_execution_report_v1.json",
+  "VALIDATION_CANDIDATES_EVALUATED": 620,
+  "VALIDATION_STABLE_POSITIVE_COUNT": 406,
+  "VALIDATION_WEAK_POSITIVE_COUNT": 176,
+  "VALIDATION_INSUFFICIENT_SAMPLE_COUNT": 38,
+  "VALIDATION_NEGATIVE_COUNT": 0,
+  "VALIDATION_UNSTABLE_COUNT": 0,
+  "VALIDATION_SIGNAL_OUTSIDE_SPLIT_COUNT": 0,
+  "OOS_OPENED": "NO",
+  "OOS_ACCESS_COUNT": 0,
+  "STABLE_POSITIVE_MEANING": "STABLE_POSITIVE_PRECISION_DELTA_UNDER_FROZEN_CLASSIFIER",
+  "STABLE_POSITIVE_DOES_NOT_MEAN": [
+    "profitable",
+    "complete reversal detector",
+    "better on all metrics",
+    "production-ready trading signal"
+  ],
+  "SECONDARY_METRICS_DIAGNOSTIC_ONLY": [
+    "EVENT_RECALL",
+    "FALSE_POSITIVE_RATE",
+    "MEDIAN_DELAY_SECONDS",
+    "PRE_C_SIGNAL_RATE",
+    "MAE",
+    "MFE"
+  ],
+  "MULTIOBJECTIVE_DOMINANCE_CLAIM": "NO",
+  "PNL_TESTED": "NO",
+  "RESEARCH_FINDINGS": {
+    "HIGHER_TF_PRECISION_INFORMATION": "SUPPORTED",
+    "1H_INFORMATION": "STRONGLY_SUPPORTED",
+    "2H_INFORMATION": "STRONGLY_SUPPORTED",
+    "4H_INFORMATION": "SUPPORTED",
+    "6H_8H_INFORMATION": "SUPPORTED_BUT_MORE_SELECTIVE_AND_LOWER_SAMPLE",
+    "5M_STANDALONE_INFORMATION": "WEAK_NOT_SUPPORTED_AS_PRIMARY_TRIGGER",
+    "15M_STANDALONE_INFORMATION": "WEAK",
+    "30M_INFORMATION": "TRANSITIONAL",
+    "MACD_HIGHER_TF_FAMILY": "STRONGEST_VALIDATED_FAMILY_IN_THIS_STUDY",
+    "causal_claim": "NO"
+  },
+  "TERMINOLOGY": {
+    "historical_field_in_validation_execution_report_v1": "median_degradation",
+    "historical_field_definition": "candidate-level VALIDATION_PRECISION_DELTA - DISCOVERY_PRECISION_DELTA, then median within group",
+    "canonical_field_name_for_review": "MEDIAN_VALIDATION_MINUS_DISCOVERY_PRECISION_DELTA",
+    "note": "Existing median_degradation values in validation_execution_report_v1.json are not recomputed here; only renamed for clarity in this review document.",
+    "MEDIAN_VALIDATION_MINUS_DISCOVERY_PRECISION_DELTA_BY_TF_FROM_HISTORICAL_REPORT": {
+      "5m": 0.0024085901068713906,
+      "15m": 0.014134653354418788,
+      "30m": 0.00762479737978352,
+      "1H": 0.020479182164491114,
+      "2H": 0.036134299068144596,
+      "4H": 0.019558518933451605,
+      "6H": 0.012280377724831343,
+      "8H": -0.000974702643332076,
+      "12H": 0.010236486142663204,
+      "1D": 0.01707366021832224
+    }
+  },
+  "FINAL_SELECTED_CONFIG_BANK_V1_STATUS": "RAW_VALIDATION_SURVIVOR_BANK",
+  "FINAL_SELECTED_CONFIG_BANK_V1_REASON": {
+    "STABLE_POSITIVE": 406,
+    "WEAK_POSITIVE": 176,
+    "selected_count": 582,
+    "not_yet": [
+      "production predictor",
+      "trading strategy",
+      "composite model",
+      "execution policy"
+    ],
+    "sp_wp_distinction_preserved": "YES",
+    "bank_files_unmodified_by_this_closure": [
+      "final_selected_config_bank_v1.json",
+      "final_selected_config_bank_v1.csv"
+    ]
+  },
+  "PRECISION_RECALL_TRADEOFF_RECORDED": "YES",
+  "PRECISION_RECALL_TRADEOFF_NOTE": "Precision lift can trade against recall. Secondary metrics remain diagnostic; no multiobjective dominance is claimed.",
+  "PRECISION_RECALL_EXAMPLES_FROM_EXISTING_VALIDATION_ARTIFACTS": [
+    {
+      "regime": "1H_MACD",
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT2_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|1H|UP",
+      "note": "strong precision with still-material recall and low FPR",
+      "validation_stability": "STABLE_POSITIVE",
+      "PRECISION": 0.6851851851851852,
+      "PRECISION_DELTA": 0.5533537291985353,
+      "EVENT_RECALL": 0.7025316455696202,
+      "FALSE_POSITIVE_RATE": 0.046296296296296294,
+      "TOTAL_SIGNALS": 324,
+      "sample_flag": "NORMAL"
+    },
+    {
+      "regime": "2H_MACD",
+      "candidate_id": "MACD|DISPLACED_MACD_12_26_9_SHIFT2_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|2H|UP",
+      "note": "strong precision with still-material recall and low FPR",
+      "validation_stability": "STABLE_POSITIVE",
+      "PRECISION": 0.7655172413793103,
+      "PRECISION_DELTA": 0.6401127106349738,
+      "EVENT_RECALL": 0.7115384615384616,
+      "FALSE_POSITIVE_RATE": 0.06206896551724138,
+      "TOTAL_SIGNALS": 145,
+      "sample_flag": "NORMAL"
+    },
+    {
+      "regime": "6H_MACD",
+      "candidate_id": "MACD|MACD_12_26_9_SHIFT0_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|6H|DOWN",
+      "note": "often much higher precision but lower recall and smaller N",
+      "validation_stability": "STABLE_POSITIVE",
+      "PRECISION": 0.723404255319149,
+      "PRECISION_DELTA": 0.415151828134683,
+      "EVENT_RECALL": 0.25,
+      "FALSE_POSITIVE_RATE": 0.02127659574468085,
+      "TOTAL_SIGNALS": 47,
+      "sample_flag": "LOW_SAMPLE"
+    },
+    {
+      "regime": "8H_MACD",
+      "candidate_id": "MACD|DINAPOLI_MACD_REFERENCE_V1|HIST_CROSS_UP_ZERO|HIST_CROSS_DOWN_ZERO|8H|UP",
+      "note": "often much higher precision but lower recall and smaller N",
+      "validation_stability": "STABLE_POSITIVE",
+      "PRECISION": 0.7954545454545454,
+      "PRECISION_DELTA": 0.44981696156192796,
+      "EVENT_RECALL": 0.32710280373831774,
+      "FALSE_POSITIVE_RATE": 0.022727272727272728,
+      "TOTAL_SIGNALS": 44,
+      "sample_flag": "LOW_SAMPLE"
+    },
+    {
+      "regime": "5m",
+      "candidate_id": "INVERSE|INVERSE_MACD_12_26_9_SIGNAL_CROSS|MACD_12_26_9_SHIFT0_V1|5m|UP",
+      "note": "tiny precision lift with very high FPR",
+      "validation_stability": "WEAK_POSITIVE",
+      "PRECISION": 0.008089607965152458,
+      "PRECISION_DELTA": 0.006916691668724522,
+      "EVENT_RECALL": 0.7878787878787878,
+      "FALSE_POSITIVE_RATE": 0.9679527069072806,
+      "TOTAL_SIGNALS": 3214,
+      "sample_flag": "NORMAL"
+    }
+  ],
+  "DISCOVERY_METHODOLOGY_CAVEATS_PRESERVED": {
+    "DISCOVERY_FDR_VALID": "NO",
+    "DISCOVERY_REDUNDANCY_SELECTION_APPLIED": "NO",
+    "source": "discovery_methodology_audit_v1.json",
+    "validation_role": "Validation remains accepted as frozen holdout stability evidence despite Discovery FDR/redundancy caveats."
+  },
+  "ANTI_LEAKAGE_ARTIFACT_GOVERNANCE": {
+    "DISCOVERY_ANTI_LEAKAGE_ARTIFACT_RESTORED": "PASS",
+    "VALIDATION_ANTI_LEAKAGE_ARTIFACT_PRESERVED": "PASS",
+    "discovery_anti_leakage_path": "anti_leakage_tests_v1.json",
+    "discovery_anti_leakage_restored_from": "954fdb6b84103636b0615fa83894090fa0c26f30",
+    "validation_anti_leakage_path": "anti_leakage_validation_v1.json"
+  },
+  "ROADMAP": {
+    "WIP": "MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+    "ROADMAP_STATUS": "CLOSED",
+    "NEXT_WIP": "MULTITF-COMPOSITE-SIGNAL-SEARCH-1",
+    "NEXT_WIP_STATUS": "PLANNED",
+    "NEXT_WIP_ACTIVATED": "NO"
+  }
+}

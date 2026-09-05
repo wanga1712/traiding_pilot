@@ -1,0 +1,25 @@
+{
+  "artifact": "wip_closure_v1",
+  "WIP": "MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "MODE": "VALIDATION-INDEPENDENT-REVIEW-CLOSURE-1",
+  "ROADMAP_STATUS": "CLOSED",
+  "VALIDATION_EXECUTION_STATUS": "ACCEPTED",
+  "VALIDATION_RESULTS_COMMIT": "4b0c8143b30864ade5373dd306b876c3857f6eb5",
+  "PRE_VALIDATION_REVIEW_COMMIT": "954fdb6b84103636b0615fa83894090fa0c26f30",
+  "DISCOVERY_FREEZE_COMMIT": "58b47aa5a3df1f381c6a7e9900e24358b5a714d6",
+  "DISCOVERY_FDR_VALID": "NO",
+  "DISCOVERY_REDUNDANCY_SELECTION_APPLIED": "NO",
+  "PNL_TESTED": "NO",
+  "OOS_OPENED": "NO",
+  "OOS_ACCESS_COUNT": 0,
+  "NEXT_WIP": "MULTITF-COMPOSITE-SIGNAL-SEARCH-1",
+  "NEXT_WIP_STATUS": "PLANNED",
+  "NEXT_WIP_ACTIVATED": "NO",
+  "closure_artifacts": [
+    "validation_execution_authority_v1.json",
+    "validation_independent_review_v1.json",
+    "anti_leakage_validation_v1.json",
+    "anti_leakage_tests_v1.json",
+    "wip_closure_v1.json"
+  ]
+}

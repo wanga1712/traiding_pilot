@@ -1,0 +1,35 @@
+{
+  "artifact": "validation_execution_authority_v1",
+  "purpose": "Runtime and authority record for frozen Validation execution of MULTITF-INDICATOR-PARAMETER-SEARCH-1",
+  "PRE_VALIDATION_REVIEW_COMMIT": "954fdb6b84103636b0615fa83894090fa0c26f30",
+  "VALIDATION_RESULTS_COMMIT": "4b0c8143b30864ade5373dd306b876c3857f6eb5",
+  "DISCOVERY_FREEZE_COMMIT": "58b47aa5a3df1f381c6a7e9900e24358b5a714d6",
+  "SEARCH_SPEC_V2_FREEZE_COMMIT": "eb561bc1298bd2b0ec5e21cc4ac6c690ec148bad",
+  "VALIDATION_PID": 2118626,
+  "VALIDATION_EXIT_STATUS": 0,
+  "VALIDATION_PROCESS_EXITED": "YES",
+  "S13_VALIDATION_RUNTIME_SOURCE_MATCH": "PASS",
+  "S13_VALIDATION_RUNTIME_SOURCE_MISMATCH_COUNT": 0,
+  "VALIDATION_AUTHORITY_ARTIFACT_MATCH": "PASS",
+  "VALIDATION_ENTRY_AUTHORITY_GATE": "PASS",
+  "FROZEN_VALIDATION_CANDIDATE_COUNT": 620,
+  "VALIDATION_CANDIDATE_SET_HASH": "99f50699587c0d2a189bef0346f8d74b5224c99fafda4fe16201773ce0c2d95c",
+  "VALIDATION_PERIOD": [
+    "2022-06-10T04:36:00+00:00",
+    "2023-06-20T06:08:00+00:00"
+  ],
+  "OOS_OPENED": "NO",
+  "OOS_ACCESS_COUNT": 0,
+  "summary_validation_git_commit_field": "UNKNOWN",
+  "summary_validation_git_commit_interpretation": "BOOKKEEPING_CWD_DEFECT_NOT_CALCULATION_AUTHORITY",
+  "summary_validation_git_commit_notes": [
+    "summary_validation_v1.json records git_commit=UNKNOWN because the S13 process CWD was phase3_staging without a .git directory.",
+    "This is a bookkeeping/CWD defect in _git_sha() resolution during execution logging.",
+    "It is not evidence that calculation authority was unknown or altered.",
+    "Deployed runtime source was verified before Validation start against PRE_VALIDATION_REVIEW_COMMIT 954fdb6 with S13_VALIDATION_RUNTIME_SOURCE_MATCH=PASS and MISMATCH_COUNT=0.",
+    "Do not rerun Validation solely to rewrite git_commit in the historical summary artifact."
+  ],
+  "deploy_gate_evidence": "validation_deploy_gate_v1.json",
+  "watch_evidence": "validation_watch_result_v1.json",
+  "VALIDATION_EXECUTION_STATUS": "ACCEPTED"
+}
