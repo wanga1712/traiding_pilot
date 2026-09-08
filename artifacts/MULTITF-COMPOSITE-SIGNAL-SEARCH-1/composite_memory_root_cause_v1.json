@@ -1,0 +1,49 @@
+{
+  "artifact": "composite_memory_root_cause_v1",
+  "WIP": "MULTITF-COMPOSITE-SIGNAL-SEARCH-1",
+  "MODE": "COMPOSITE-BOUNDED-MEMORY-EXECUTION-REPAIR-1",
+  "OOM_PREVIOUS_RSS_APPROX_GB": 26,
+  "OOM_PREVIOUS_SWAP_PEAK_GB": 8.9,
+  "ATOMIC_CHECKPOINT_COUNT": 582,
+  "atomic_streams_cache_pickle_bytes": 262681651,
+  "atomic_stream_deserialized_maxrss_gb_probe": 1.002,
+  "atomic_total_events": 3670576,
+  "n_representatives": 459,
+  "ROOT_CAUSE": "E",
+  "ROOT_CAUSE_DETAIL": "Combination of (B) cumulative candidate retention via expand_all_templates materializing all composite definitions with embedded signals lists, (A) one large fixed allocation of all 582 atomic stream records (events + duplicate available_at strings) via load_stream_cache pickle, and (C/D) DataFrame.copy + merge_asof temps per evaluate call while bars_by_tf for all SEARCH_TFs remained resident.",
+  "retained_high_memory_objects": {
+    "atomic_stream_cache": {
+      "mechanism": "pickle.load(atomic_streams_cache_v1.pkl) into dict[cid]->record with events[] and available_at[]",
+      "approx_on_disk_bytes": 262681651,
+      "approx_deserialized_gb_order": "multi-GB (string timestamp duplication)",
+      "ALL_582_RESIDENT": true
+    },
+    "context_state_cache": {
+      "mechanism": "rebuilt per composite via build_state_timeline (list[StateEvent]); no bar matrix",
+      "FULL_CONTEXT_BAR_MATRIX_CREATED": false
+    },
+    "bars_by_tf": {
+      "mechanism": "all SEARCH_TFs loaded for DEVELOPMENT window at compose start",
+      "FULL_BARS_ALL_TFS_RESIDENT_DURING_COMPOSE": true
+    },
+    "event_evaluation_frames": {
+      "mechanism": "events.copy() twice per evaluate_signals_window + merge_asof temps"
+    },
+    "candidate_definitions": {
+      "mechanism": "expand_all_templates returns full list; each entry embeds signals[]"
+    },
+    "composite_event_streams": {
+      "mechanism": "retained on every composite dict until end of evaluate loop"
+    },
+    "results_accumulated_in_memory": {
+      "mechanism": "result_rows + fold_rows lists until all composites finish; then DataFrame"
+    },
+    "dedup_jaccard_structures": {
+      "mechanism": "pre-compose only; avail_sets for all active configs during representative write"
+    }
+  },
+  "MEMORY_COMPLEXITY_BEFORE": "O(ALL_ATOMICS + ALL_COMPOSITES + ALL_BARS)",
+  "MEMORY_COMPLEXITY_AFTER_TARGET": "O(ACTIVE_STREAMS + CURRENT_BATCH + SMALL_LOOKUPS)",
+  "STEADY_STATE_RSS_TARGET_GB": 8,
+  "RSS_WARNING_GB": 9
+}

@@ -1,0 +1,20 @@
+{
+  "n_streams": 582,
+  "pickle_bytes": 262681651,
+  "deserialized_maxrss_kb": 1050384,
+  "deserialized_maxrss_gb": 1.002,
+  "total_events": 3670576,
+  "total_available_at_strings": 3670576,
+  "sample_keys": [
+    "ATOMIC_INDICATOR_RECOMPUTE_PER_COMPOSITE",
+    "available_at",
+    "candidate_id",
+    "decision_tf",
+    "direction",
+    "events",
+    "n_signals",
+    "stream_hash"
+  ],
+  "n_representatives": 459,
+  "load_sec": 2.46
+}

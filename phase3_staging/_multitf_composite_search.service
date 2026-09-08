@@ -1,0 +1,24 @@
+[Unit]
+Description=MULTITF Composite Signal Search (bounded-memory compose)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sergey
+Group=sergey
+WorkingDirectory=/var/tmp/traiding_pilot_ui_workspace/phase3_staging
+Environment=ATOMIC_REPLAY_WORKERS=1
+Environment=MEMORY_GUARD_THRESHOLD_GB=9
+Environment=RSS_WARNING_GB=9
+# Shared host containment — do not starve other workloads.
+MemoryHigh=10G
+MemoryMax=12G
+# Controlled behavior during repair: no OOM restart loop.
+Restart=no
+ExecStart=/usr/local/bin/multitf-composite-search-run.sh
+TimeoutStopSec=180
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
