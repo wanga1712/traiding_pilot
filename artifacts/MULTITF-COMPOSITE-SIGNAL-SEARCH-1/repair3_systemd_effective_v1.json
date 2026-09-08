@@ -1,0 +1,10 @@
+{
+  "Restart": "no",
+  "MemoryHigh": "10737418240",
+  "MemoryMax": "12884901888",
+  "MemoryHigh_human": "10G",
+  "MemoryMax_human": "12G",
+  "MEMORY_GUARD_THRESHOLD_GB": 9,
+  "source": "systemctl show multitf-composite-search.service",
+  "verified_at": "repair-3"
+}

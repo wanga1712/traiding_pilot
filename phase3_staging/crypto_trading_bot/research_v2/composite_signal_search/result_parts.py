@@ -1,6 +1,9 @@
 """Append-only parquet part writers — never re-read previous parts during flush."""
 from __future__ import annotations
 
+import re
+import shutil
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -8,6 +11,43 @@ import pandas as pd
 
 RESULTS_PARTS_DIR = "composite_results_partial_parts_v1"
 FOLDS_PARTS_DIR = "composite_fold_partial_parts_v1"
+_PART_RE = re.compile(r"^part-(\d{6})\.parquet$")
+
+
+def part_index(path: Path) -> int | None:
+    m = _PART_RE.match(path.name)
+    return int(m.group(1)) if m else None
+
+
+def reconcile_orphan_parts(
+    parts_dir: Path,
+    *,
+    committed_next_part: int,
+    quarantine_dir: Path,
+) -> list[str]:
+    """
+    RESULT_PART_RESUME_CRASH_SAFE=YES
+
+    Parts with index >= committed_next_part are uncommitted orphans from a
+    crash between part write and checkpoint commit. Move them aside; never
+    overwrite a committed part.
+    """
+    parts_dir = Path(parts_dir)
+    if not parts_dir.exists():
+        return []
+    quarantine_dir = Path(quarantine_dir)
+    quarantine_dir.mkdir(parents=True, exist_ok=True)
+    moved: list[str] = []
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    for path in sorted(parts_dir.glob("part-*.parquet")):
+        idx = part_index(path)
+        if idx is None:
+            continue
+        if idx >= int(committed_next_part):
+            dest = quarantine_dir / f"{stamp}__{path.name}"
+            shutil.move(str(path), str(dest))
+            moved.append(path.name)
+    return moved
 
 
 class AppendOnlyPartWriter:

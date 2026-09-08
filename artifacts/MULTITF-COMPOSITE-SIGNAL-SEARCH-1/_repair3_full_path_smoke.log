@@ -1,0 +1,18 @@
+shard_gate {'SHARD_INTEGRITY_GATE': 'PASS', 'n_streams': 582, 'FULL_COMPOSE_MONOLITHIC_PICKLE_FALLBACK': 'NO', 'SHARD_CANDIDATE_SET_MATCH': 'PASS', 'SHARD_UNKNOWN_CANDIDATE_COUNT': 0, 'SHARD_MISSING_CANDIDATE_COUNT': 0}
+enumeration 200829 397533c24eb48bd7e0c1f18dedc4d94393c5965107cc6165eb59ecad592f7b3e
+[bounded-compose] evaluated=50 completed_count=50 rss_gb=0.31 active_streams=5
+[bounded-compose] evaluated=100 completed_count=100 rss_gb=0.32 active_streams=5
+[bounded-compose] evaluated=150 completed_count=150 rss_gb=0.32 active_streams=5
+[bounded-compose] evaluated=200 completed_count=200 rss_gb=0.32 active_streams=5
+[bounded-compose] evaluated=250 completed_count=250 rss_gb=0.32 active_streams=5
+[bounded-compose] evaluated=300 completed_count=300 rss_gb=0.32 active_streams=5
+clean300 300 peak 0.3238716125488281 guard False
+[bounded-compose] evaluated=50 completed_count=50 rss_gb=0.32 active_streams=5
+[bounded-compose] evaluated=100 completed_count=100 rss_gb=0.33 active_streams=5
+[bounded-compose] evaluated=150 completed_count=150 rss_gb=0.33 active_streams=5
+[bounded-compose] resume completed_count=150 next_index=150 result_part=3
+[bounded-compose] evaluated=50 completed_count=200 rss_gb=0.34 active_streams=5
+[bounded-compose] evaluated=100 completed_count=250 rss_gb=0.34 active_streams=5
+[bounded-compose] evaluated=150 completed_count=300 rss_gb=0.34 active_streams=5
+resume_ids 300 r1_eval 150 r2_eval 150
+FULL_PATH_RESUME_PARITY=PASS

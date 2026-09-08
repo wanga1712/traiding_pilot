@@ -161,10 +161,13 @@ def verify_shard_integrity(artifact_root: Path, *, expected_n: int = 582) -> dic
     """
     FULL_COMPOSE_MONOLITHIC_PICKLE_FALLBACK=NO
     SHARD_INTEGRITY_GATE — require manifest + all shard files before compose.
+
+    Also require manifest candidate IDs == frozen composite_atomic_bank_v1.json IDs.
     """
     root = Path(artifact_root)
     manifest_path = root / SHARD_MANIFEST
     shard_dir = root / SHARD_DIR_NAME
+    bank_path = root / "composite_atomic_bank_v1.json"
     if not manifest_path.exists():
         raise ShardIntegrityError(
             "atomic_streams_shard_manifest_v1.json missing. "
@@ -173,6 +176,16 @@ def verify_shard_integrity(artifact_root: Path, *, expected_n: int = 582) -> dic
         )
     if not shard_dir.is_dir():
         raise ShardIntegrityError(f"shard dir missing: {shard_dir}")
+    if not bank_path.exists():
+        raise ShardIntegrityError(f"frozen atomic bank missing: {bank_path.name}")
+    bank = json.loads(bank_path.read_text(encoding="utf-8"))
+    bank_ids = [c["candidate_id"] for c in bank.get("configs") or []]
+    bank_set = set(bank_ids)
+    if len(bank_ids) != len(bank_set):
+        raise ShardIntegrityError("duplicate candidate_id in composite_atomic_bank_v1.json")
+    if len(bank_set) != expected_n:
+        raise ShardIntegrityError(f"atomic bank n={len(bank_set)} expected={expected_n}")
+
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     entries = list(manifest.get("streams") or [])
     if len(entries) != expected_n:
@@ -188,16 +201,31 @@ def verify_shard_integrity(artifact_root: Path, *, expected_n: int = 582) -> dic
             raise ShardIntegrityError(f"missing shard file for {cid}: {path.name}")
         data = np.load(path)
         ns = np.asarray(data["available_at_ns"])
+        prices = np.asarray(data["signal_price"])
         if ns.dtype != np.int64:
             raise ShardIntegrityError(f"non-int64 timestamps for {cid}: {ns.dtype}")
-        if int(e["n_signals"]) != int(ns.size):
+        n_meta = int(e["n_signals"])
+        if n_meta != int(ns.size):
             raise ShardIntegrityError(
-                f"n_signals mismatch for {cid}: meta={e['n_signals']} array={ns.size}"
+                f"n_signals mismatch for {cid}: meta={n_meta} available_at={ns.size}"
             )
+        if int(prices.size) != n_meta:
+            raise ShardIntegrityError(
+                f"signal_price length mismatch for {cid}: meta={n_meta} prices={prices.size}"
+            )
+    unknown = sorted(ids - bank_set)
+    missing = sorted(bank_set - ids)
+    if unknown or missing:
+        raise ShardIntegrityError(
+            f"shard candidate set mismatch unknown={len(unknown)} missing={len(missing)}"
+        )
     return {
         "SHARD_INTEGRITY_GATE": "PASS",
         "n_streams": len(entries),
         "FULL_COMPOSE_MONOLITHIC_PICKLE_FALLBACK": "NO",
+        "SHARD_CANDIDATE_SET_MATCH": "PASS",
+        "SHARD_UNKNOWN_CANDIDATE_COUNT": 0,
+        "SHARD_MISSING_CANDIDATE_COUNT": 0,
     }
 
 

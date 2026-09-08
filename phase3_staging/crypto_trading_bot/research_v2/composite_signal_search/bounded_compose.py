@@ -59,9 +59,20 @@ from .memory_guard import (
     read_vms_bytes,
     save_json,
 )
+from .enumeration_authority import (
+    EnumerationAuthorityError,
+    build_enumeration_authority,
+    load_enumeration_authority,
+)
 from .oos_guard import assert_events_exclude_oos, guard_partition_iterable
-from .result_parts import AppendOnlyPartWriter
+from .result_parts import AppendOnlyPartWriter, reconcile_orphan_parts
 from .stream_store import AtomicStreamStore, verify_shard_integrity
+
+
+PRODUCTION_CHECKPOINT = COMPOSITE_CHECKPOINT
+PRODUCTION_RESULTS_DIR = RESULTS_PARTS_DIR
+PRODUCTION_FOLDS_DIR = FOLDS_PARTS_DIR
+ORPHAN_QUARANTINE_DIR = "_orphan_parts_quarantine_v1"
 
 
 def _load_events() -> pd.DataFrame:
@@ -175,18 +186,25 @@ def run_bounded_compose(
     definitions: list[dict[str, Any]] | None = None,
     resume: bool = True,
     require_shards: bool = True,
+    runtime_subdir: str | None = None,
 ) -> dict[str, Any]:
     """
     Streaming compose with disk-backed streams, incremental flush, memory guard.
 
     Does not change frozen methodology — only execution memory profile.
+
+    runtime_subdir: when set (tests/smoke), checkpoint + result parts write under
+    artifact_root/runtime_subdir/ and never touch production compose paths.
     """
     root = artifact_root or ARTIFACT_ROOT
     root.mkdir(parents=True, exist_ok=True)
+    full_mode = definitions is None
+    work_root = (root / runtime_subdir) if runtime_subdir else root
+    work_root.mkdir(parents=True, exist_ok=True)
     guard = default_memory_guard()
     assert OOS_OPENED == "NO"
 
-    # Authorities (frozen artifacts — read-only integrity)
+    # Authorities (frozen artifacts — read-only integrity; always from root)
     spec_path = root / "composite_search_spec_v1.json"
     tmpl_path = root / "composite_templates_v1.json"
     bank_path = root / "composite_atomic_bank_v1.json"
@@ -198,6 +216,12 @@ def run_bounded_compose(
         "DEVELOPMENT_CORPUS_SHA": _file_sha256(corpus_path) if corpus_path.exists() else None,
         "SPEC_FREEZE_COMMIT": "476927817e21ef6869261a0114b27864fdf2d789",
     }
+
+    enum_auth: dict[str, Any] | None = None
+    if full_mode:
+        enum_auth = load_enumeration_authority(root)
+        if enum_auth.get("GLOBAL_ENUMERATION_AUTHORITY") != "PASS":
+            enum_auth = build_enumeration_authority(artifact_root=root, force=True)
 
     shard_gate = verify_shard_integrity(root, expected_n=582) if require_shards else {"SHARD_INTEGRITY_GATE": "SKIPPED"}
     store = AtomicStreamStore(root, max_active=5, require_shards=require_shards)
@@ -219,30 +243,72 @@ def run_bounded_compose(
     _ = preflight
     bars = LazyBars(max_cached=2)
 
-    ckpt_path = root / COMPOSITE_CHECKPOINT
-    completed: set[str] = set()
+    ckpt_path = work_root / COMPOSITE_CHECKPOINT
     next_index = 0
     next_result_part = 0
     next_fold_part = 0
+    completed_count = 0
+    last_completed_composite_id: str | None = None
+    # Finite definitions= mode only — never used for production full enumeration.
+    completed_local: set[str] | None = set() if not full_mode else None
+
     if resume and ckpt_path.exists():
         ckpt = json.loads(ckpt_path.read_text(encoding="utf-8"))
-        if ckpt.get("authorities") == authorities:
-            completed = set(ckpt.get("completed_composite_ids") or [])
-            next_index = int(ckpt.get("next_candidate_index") or 0)
-            next_result_part = int(ckpt.get("next_result_part") or 0)
-            next_fold_part = int(ckpt.get("next_fold_part") or 0)
-            print(
-                f"[bounded-compose] resume completed={len(completed)} next_index={next_index} "
-                f"result_part={next_result_part}",
-                flush=True,
+        if ckpt.get("authorities") != authorities:
+            raise EnumerationAuthorityError(
+                "checkpoint frozen-authority mismatch — refuse resume (fail closed)"
             )
-        else:
-            print("[bounded-compose] checkpoint authority mismatch — starting fresh compose results", flush=True)
-            completed = set()
-            next_index = 0
+        if full_mode:
+            if enum_auth is None:
+                raise EnumerationAuthorityError("enumeration authority missing")
+            if ckpt.get("COMPOSITE_ENUMERATION_SHA256") != enum_auth["COMPOSITE_ENUMERATION_SHA256"]:
+                raise EnumerationAuthorityError(
+                    "checkpoint COMPOSITE_ENUMERATION_SHA256 mismatch — refuse resume"
+                )
+            if int(ckpt.get("TOTAL_COMPOSITE_CANDIDATE_COUNT") or -1) != int(
+                enum_auth["TOTAL_COMPOSITE_CANDIDATE_COUNT"]
+            ):
+                raise EnumerationAuthorityError(
+                    "checkpoint TOTAL_COMPOSITE_CANDIDATE_COUNT mismatch — refuse resume"
+                )
+            if ckpt.get("completed_composite_ids"):
+                raise EnumerationAuthorityError(
+                    "full-run checkpoint still contains completed_composite_ids — refuse"
+                )
+        next_index = int(ckpt.get("next_candidate_index") or 0)
+        next_result_part = int(ckpt.get("next_result_part") or 0)
+        next_fold_part = int(ckpt.get("next_fold_part") or 0)
+        completed_count = int(ckpt.get("completed_count") or ckpt.get("n_completed") or 0)
+        last_completed_composite_id = ckpt.get("last_completed_composite_id")
+        print(
+            f"[bounded-compose] resume completed_count={completed_count} next_index={next_index} "
+            f"result_part={next_result_part}",
+            flush=True,
+        )
+    elif resume is False and ckpt_path.exists() and not full_mode:
+        # Fresh finite-mode run on isolated runtime: ignore prior ckpt unless resume.
+        pass
 
-    result_writer = AppendOnlyPartWriter(root, dirname=RESULTS_PARTS_DIR, next_part=next_result_part)
-    fold_writer = AppendOnlyPartWriter(root, dirname=FOLDS_PARTS_DIR, next_part=next_fold_part)
+    # Crash-safe: quarantine parts newer than committed checkpoint indices.
+    orphan_q = work_root / ORPHAN_QUARANTINE_DIR
+    orphans_r = reconcile_orphan_parts(
+        work_root / RESULTS_PARTS_DIR,
+        committed_next_part=next_result_part,
+        quarantine_dir=orphan_q / "results",
+    )
+    orphans_f = reconcile_orphan_parts(
+        work_root / FOLDS_PARTS_DIR,
+        committed_next_part=next_fold_part,
+        quarantine_dir=orphan_q / "folds",
+    )
+    if orphans_r or orphans_f:
+        print(
+            f"[bounded-compose] quarantined orphan parts results={orphans_r} folds={orphans_f}",
+            flush=True,
+        )
+
+    result_writer = AppendOnlyPartWriter(work_root, dirname=RESULTS_PARTS_DIR, next_part=next_result_part)
+    fold_writer = AppendOnlyPartWriter(work_root, dirname=FOLDS_PARTS_DIR, next_part=next_fold_part)
 
     result_batch: list[dict[str, Any]] = []
     fold_batch: list[dict[str, Any]] = []
@@ -258,6 +324,7 @@ def run_bounded_compose(
     skipped = 0
     memory_guard_stop = False
     stop_reason = ""
+    stopped_at_unprocessed_index: int | None = None
 
     templates_doc = load_templates(root=root)
     if template_filter:
@@ -293,37 +360,47 @@ def run_bounded_compose(
         gc.collect()
 
     def _write_ckpt(idx: int) -> None:
-        save_json(
-            ckpt_path,
-            {
-                "artifact": "composite_execution_checkpoint_v1",
-                "WIP": WIP_ID,
-                "MODE": "COMPOSITE-BOUNDED-MEMORY-INDEPENDENT-REVIEW-REPAIR-2",
-                "authorities": authorities,
-                "next_candidate_index": idx,
-                "completed_composite_ids": sorted(completed),
-                "n_completed": len(completed),
-                "next_result_part": result_writer.next_part,
-                "next_fold_part": fold_writer.next_part,
-                "RESULT_WRITER_APPEND_ONLY": "YES",
-                "PREVIOUS_RESULT_ROWS_READ_DURING_FLUSH": "NO",
-                "OOS_OPENED": OOS_OPENED,
-                "OOS_ACCESS_COUNT": oos_access_count,
-                "COMPOSITE_FDR_STATUS": COMPOSITE_FDR_STATUS,
-                "ATOMIC_STREAM_LAZY_LOAD": "YES",
-                "updated_at": datetime.now(timezone.utc).isoformat(),
-            },
-        )
+        payload: dict[str, Any] = {
+            "artifact": "composite_execution_checkpoint_v1",
+            "WIP": WIP_ID,
+            "MODE": MODE,
+            "authorities": authorities,
+            "next_candidate_index": idx,
+            "completed_count": completed_count,
+            "last_completed_composite_id": last_completed_composite_id,
+            "next_result_part": result_writer.next_part,
+            "next_fold_part": fold_writer.next_part,
+            "RESULT_WRITER_APPEND_ONLY": "YES",
+            "PREVIOUS_RESULT_ROWS_READ_DURING_FLUSH": "NO",
+            "RESULT_PART_RESUME_CRASH_SAFE": "YES",
+            "FULL_RUN_COMPLETED_ID_SET_IN_RAM": "NO" if full_mode else "N/A",
+            "FULL_RUN_CHECKPOINT_COMPLETED_ID_LIST": "NO" if full_mode else "N/A",
+            "CHECKPOINT_MEMORY_COMPLEXITY": "O(1)" if full_mode else "O(N_TEST)",
+            "FULL_COMPOSE_DEFINITION_STREAMING": "YES" if full_mode else "N/A",
+            "ALL_COMPOSITE_DEFINITIONS_IN_RAM": "NO",
+            "COMPOSITE_DEFINITION_GENERATOR": "YES",
+            "runtime_subdir": runtime_subdir,
+            "OOS_OPENED": OOS_OPENED,
+            "OOS_ACCESS_COUNT": oos_access_count,
+            "COMPOSITE_FDR_STATUS": COMPOSITE_FDR_STATUS,
+            "ATOMIC_STREAM_LAZY_LOAD": "YES",
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+        }
+        if enum_auth is not None:
+            payload["COMPOSITE_ENUMERATION_SHA256"] = enum_auth["COMPOSITE_ENUMERATION_SHA256"]
+            payload["TOTAL_COMPOSITE_CANDIDATE_COUNT"] = enum_auth["TOTAL_COMPOSITE_CANDIDATE_COUNT"]
+            payload["GLOBAL_ENUMERATION_AUTHORITY"] = "PASS"
+        # Never serialize completed_composite_ids in full mode.
+        save_json(ckpt_path, payload)
 
     if definitions is not None:
         def_iter: Any = definitions
     else:
-        def_iter = list(
-            iter_all_template_definitions(
-                representatives=reps,
-                all_configs_for_pairs=all_configs,
-                templates_doc=templates_doc,
-            )
+        # True streaming — no list()/tuple() materialization.
+        def_iter = iter_all_template_definitions(
+            representatives=reps,
+            all_configs_for_pairs=all_configs,
+            templates_doc=templates_doc,
         )
 
     idx = max(next_index - 1, -1)
@@ -332,10 +409,11 @@ def run_bounded_compose(
             skipped += 1
             continue
         cid = comp["composite_id"]
-        if cid in completed:
+        if completed_local is not None and cid in completed_local:
             skipped += 1
             continue
         if max_candidates is not None and evaluated >= max_candidates:
+            stopped_at_unprocessed_index = idx
             break
 
         try:
@@ -345,6 +423,7 @@ def run_bounded_compose(
             _write_ckpt(idx)
             memory_guard_stop = True
             stop_reason = str(exc)
+            stopped_at_unprocessed_index = idx
             break
 
         tf = comp["decision_tf"]
@@ -527,7 +606,10 @@ def run_bounded_compose(
 
         # Discard composite stream immediately (metrics already captured).
         del sigs
-        completed.add(cid)
+        if completed_local is not None:
+            completed_local.add(cid)
+        last_completed_composite_id = cid
+        completed_count += 1
         evaluated += 1
 
         now = time.time()
@@ -551,7 +633,7 @@ def run_bounded_compose(
             _flush()
             _write_ckpt(idx + 1)
             print(
-                f"[bounded-compose] evaluated={evaluated} completed={len(completed)} "
+                f"[bounded-compose] evaluated={evaluated} completed_count={completed_count} "
                 f"rss_gb={guard.rss_gb():.2f} active_streams={store.active_count}",
                 flush=True,
             )
@@ -565,10 +647,14 @@ def run_bounded_compose(
             _write_ckpt(idx + 1)
             memory_guard_stop = True
             stop_reason = str(exc)
+            stopped_at_unprocessed_index = idx + 1
             break
 
     _flush()
-    final_idx = idx + 1 if evaluated or skipped or memory_guard_stop else next_index
+    if stopped_at_unprocessed_index is not None:
+        final_idx = stopped_at_unprocessed_index
+    else:
+        final_idx = idx + 1 if evaluated or skipped or memory_guard_stop else next_index
     _write_ckpt(final_idx)
 
     if smoke_rss_csv is not None:
@@ -576,10 +662,11 @@ def run_bounded_compose(
 
     out = {
         "WIP": WIP_ID,
-        "MODE": "COMPOSITE-BOUNDED-MEMORY-INDEPENDENT-REVIEW-REPAIR-2",
+        "MODE": MODE,
         "n_evaluated": evaluated,
         "n_skipped": skipped,
-        "n_completed_total": len(completed),
+        "n_completed_total": completed_count,
+        "last_completed_composite_id": last_completed_composite_id,
         "memory_guard_stop": memory_guard_stop,
         "stop_reason": stop_reason,
         "rss_gb": guard.rss_gb(),
@@ -591,10 +678,19 @@ def run_bounded_compose(
         "ATOMIC_STREAM_LAZY_LOAD": "YES",
         "ALL_582_STREAMS_RESIDENT_SIMULTANEOUSLY": "NO",
         "COMPOSITE_DEFINITION_GENERATOR": "YES",
+        "FULL_COMPOSE_DEFINITION_STREAMING": "YES" if full_mode else "N/A",
+        "ALL_COMPOSITE_DEFINITIONS_IN_RAM": "NO",
+        "FULL_RUN_COMPLETED_ID_SET_IN_RAM": "NO" if full_mode else "N/A",
+        "FULL_RUN_CHECKPOINT_COMPLETED_ID_LIST": "NO" if full_mode else "N/A",
+        "CHECKPOINT_MEMORY_COMPLEXITY": "O(1)" if full_mode else "O(N_TEST)",
         "RESULT_INCREMENTAL_FLUSH": "YES",
         "RESULT_WRITER_APPEND_ONLY": "YES",
         "PREVIOUS_RESULT_ROWS_READ_DURING_FLUSH": "NO",
         "RESULT_MEMORY_COMPLEXITY": "O(CURRENT_BATCH)",
+        "RESULT_PART_RESUME_CRASH_SAFE": "YES",
+        "runtime_subdir": runtime_subdir,
+        "SMOKE_USES_PRODUCTION_CHECKPOINT": "NO" if runtime_subdir else "N/A",
+        "SMOKE_USES_PRODUCTION_RESULT_PARTS": "NO" if runtime_subdir else "N/A",
         "next_result_part": result_writer.next_part,
         "next_fold_part": fold_writer.next_part,
         "APPLICATION_MEMORY_GUARD": "YES",
@@ -602,5 +698,9 @@ def run_bounded_compose(
         "FULL_COMPOSE_MONOLITHIC_PICKLE_FALLBACK": "NO",
         **shard_gate,
     }
-    save_json(root / "bounded_compose_run_status_v1.json", out)
+    if enum_auth is not None:
+        out["COMPOSITE_ENUMERATION_SHA256"] = enum_auth["COMPOSITE_ENUMERATION_SHA256"]
+        out["TOTAL_COMPOSITE_CANDIDATE_COUNT"] = enum_auth["TOTAL_COMPOSITE_CANDIDATE_COUNT"]
+        out["GLOBAL_ENUMERATION_AUTHORITY"] = "PASS"
+    save_json(work_root / "bounded_compose_run_status_v1.json", out)
     return out

@@ -654,13 +654,18 @@ def main(argv: list[str] | None = None) -> int:
     elif args.phase == "memory-smoke":
         from .bounded_compose import run_bounded_compose
 
-        smoke_csv = ARTIFACT_ROOT / "composite_memory_smoke_v1.csv"
+        smoke_root = ARTIFACT_ROOT / "_memory_smoke_runtime"
+        smoke_root.mkdir(parents=True, exist_ok=True)
+        smoke_csv = smoke_root / "composite_memory_smoke_v1.csv"
         out = run_bounded_compose(
             max_candidates=args.max_candidates or 120,
             smoke_rss_csv=smoke_csv,
             resume=False,
+            runtime_subdir="_memory_smoke_runtime",
         )
         out["smoke_csv"] = str(smoke_csv)
+        out["SMOKE_USES_PRODUCTION_CHECKPOINT"] = "NO"
+        out["SMOKE_USES_PRODUCTION_RESULT_PARTS"] = "NO"
     else:
         # all: atomic+parity+reps then bounded compose (never unbounded expand)
         from .bounded_compose import run_bounded_compose

@@ -1,0 +1,12 @@
+{
+  "artifact": "repair3_production_clean_v1",
+  "REPAIR2_SMOKE_CHECKPOINT_FOUND": "YES",
+  "REPAIR2_SMOKE_CHECKPOINT_PRESERVED": "YES",
+  "PRODUCTION_COMPOSE_CHECKPOINT_CLEAN": "YES",
+  "PRODUCTION_COMPOSE_RESULT_PARTS_CLEAN": "YES",
+  "ATOMIC_CHECKPOINT_PRESERVED": "YES",
+  "ATOMIC_CHECKPOINT_COUNT": 582,
+  "atomic_checkpoint_sha256": "f6c14fd30b6d7f3ab56cbf8170d83a7a96d248824ad355b82b5eec810ea1d18d",
+  "atomic_cache_sha256": "f6c14fd30b6d7f3ab56cbf8170d83a7a96d248824ad355b82b5eec810ea1d18d",
+  "audit_dir": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/_repair2_smoke_contamination_audit_v1"
+}

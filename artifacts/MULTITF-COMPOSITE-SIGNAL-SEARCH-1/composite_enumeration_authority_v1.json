@@ -1,0 +1,12 @@
+{
+  "artifact": "composite_enumeration_authority_v1",
+  "WIP": "MULTITF-COMPOSITE-SIGNAL-SEARCH-1",
+  "SPEC_FREEZE_COMMIT": "476927817e21ef6869261a0114b27864fdf2d789",
+  "representative_bank_sha256": "1ef99aa799787356368c8d0fb6a12682d0510e07b8ce3e528ad636ca8e252fa4",
+  "COMPOSITE_TEMPLATES_SHA": "22b52c33f60b8668721e6aab744e6bb22ea1b8b84c91de4e6637cbac3f08583f",
+  "COMPOSITE_ATOMIC_BANK_SHA": "2e6a4ad0328e902d8eda2b67bafe4f7ca804ac29fe6cb095fedc4ee53fab440a",
+  "TOTAL_COMPOSITE_CANDIDATE_COUNT": 200829,
+  "COMPOSITE_ENUMERATION_SHA256": "397533c24eb48bd7e0c1f18dedc4d94393c5965107cc6165eb59ecad592f7b3e",
+  "GLOBAL_ENUMERATION_AUTHORITY": "PASS",
+  "note": "SHA256 over ordered composite_id lines (utf-8 + newline), streamed once."
+}

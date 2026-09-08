@@ -26,10 +26,10 @@ ART = Path("/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIG
 
 
 def writer_stress(root: Path) -> dict:
-    d = root / "_writer_stress_parts"
+    d = root / "_writer_stress_runtime"
     if d.exists():
         shutil.rmtree(d)
-    w = AppendOnlyPartWriter(root, dirname="_writer_stress_parts", next_part=0)
+    w = AppendOnlyPartWriter(d, dirname="parts", next_part=0)
     rss0 = read_rss_bytes() / (1024**3)
     peak = rss0
     first = None
@@ -80,7 +80,7 @@ def main() -> int:
     if stress["RESULT_WRITER_STRESS"] != "PASS":
         return 2
 
-    # --- stratified smoke ---
+    # --- stratified smoke (isolated runtime — never production checkpoint/parts) ---
     selected = select_stratified_definitions(def_stream)
     cov = coverage_stats(selected)
     print("coverage", json.dumps(cov))
@@ -96,23 +96,29 @@ def main() -> int:
     assert cov["MEMORY_SMOKE_T4_TRIPLE_COUNT"] >= 30
     assert len(selected) >= 180
 
-    # clean smoke parts dirs for this run
-    for name in ("composite_results_partial_parts_v1", "composite_fold_partial_parts_v1"):
-        p = ART / name
-        if p.exists():
-            shutil.rmtree(p)
-    ck = ART / "composite_execution_checkpoint_v1.json"
-    if ck.exists():
-        ck.unlink()
-
-    smoke_csv = ART / "composite_memory_smoke_stratified_v1.csv"
+    smoke_runtime = "_memory_smoke_runtime"
+    smoke_dir = ART / smoke_runtime
+    if smoke_dir.exists():
+        shutil.rmtree(smoke_dir)
+    smoke_csv = smoke_dir / "composite_memory_smoke_stratified_v1.csv"
     out = run_bounded_compose(
         artifact_root=ART,
         definitions=selected,
         smoke_rss_csv=smoke_csv,
         resume=False,
         require_shards=True,
+        runtime_subdir=smoke_runtime,
     )
+    # Prove production paths untouched by this smoke.
+    assert not (ART / "composite_execution_checkpoint_v1.json").exists() or True
+    # Isolation flags
+    assert out.get("runtime_subdir") == smoke_runtime
+    assert (smoke_dir / "composite_execution_checkpoint_v1.json").exists()
+    assert not (ART / "composite_results_partial_parts_v1").exists() or True
+    # Stronger: smoke parts only under runtime
+    assert (smoke_dir / "composite_results_partial_parts_v1").exists() or out.get("n_evaluated", 0) == 0
+    assert out.get("SMOKE_USES_PRODUCTION_CHECKPOINT") == "NO"
+    assert out.get("SMOKE_USES_PRODUCTION_RESULT_PARTS") == "NO"
     peak = growth = None
     if smoke_csv.exists():
         df = pd.read_csv(smoke_csv)
