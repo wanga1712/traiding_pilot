@@ -77,10 +77,12 @@ def save_json(path: Path, obj: Any) -> None:
 
 
 COMPOSITE_CHECKPOINT = "composite_execution_checkpoint_v1.json"
-COMPOSITE_RESULT_PARTIAL = "composite_results_partial_v1.parquet"
-COMPOSITE_FOLD_PARTIAL = "composite_fold_stability_partial_v1.parquet"
+COMPOSITE_RESULT_PARTIAL = "composite_results_partial_v1.parquet"  # legacy; unused by append-only writer
+COMPOSITE_FOLD_PARTIAL = "composite_fold_stability_partial_v1.parquet"  # legacy
 COMPOSITE_RESULT_BATCH_SIZE = 100
 COMPOSITE_CHECKPOINT_EVERY = 50
+RESULTS_PARTS_DIR = "composite_results_partial_parts_v1"
+FOLDS_PARTS_DIR = "composite_fold_partial_parts_v1"
 
 
 def default_memory_guard() -> MemoryGuard:

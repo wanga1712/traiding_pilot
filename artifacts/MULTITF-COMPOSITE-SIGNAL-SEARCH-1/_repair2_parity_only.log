@@ -1,0 +1,9 @@
+parity_n 70 {'MEMORY_SMOKE_BY_TEMPLATE': {'T1_DUAL_ANCHOR': 10, 'T2_REGIME_ANCHOR': 10, 'T3_ANCHOR_TRANSITION': 10, 'T4_REGIME_ANCHOR_TRANSITION': 10, 'T5_ANCHOR_MICRO': 20, 'T6_CROSS_FAMILY_SAME_TF': 10}, 'MEMORY_SMOKE_5M_COUNT': 10, 'MEMORY_SMOKE_15M_COUNT': 10, 'MEMORY_SMOKE_T4_TRIPLE_COUNT': 10, 'total': 70}
+[parity] 10/70 ts_fail=0 metric_fail=0 class_fail=0
+[parity] 20/70 ts_fail=0 metric_fail=0 class_fail=0
+[parity] 30/70 ts_fail=0 metric_fail=0 class_fail=0
+[parity] 40/70 ts_fail=0 metric_fail=0 class_fail=0
+[parity] 50/70 ts_fail=0 metric_fail=0 class_fail=0
+[parity] 60/70 ts_fail=0 metric_fail=0 class_fail=0
+[parity] 70/70 ts_fail=0 metric_fail=0 class_fail=0
+parity {'artifact': 'composite_old_new_parity_summary_v1', 'REAL_PARITY_SAMPLE_COUNT': 70, 'REAL_PARITY_ALL_TEMPLATES': 'YES', 'COMPOSITE_TIMESTAMP_PARITY': 'PASS', 'COMPOSITE_METRIC_PARITY': 'PASS', 'COMPOSITE_CLASS_INPUT_PARITY': 'PASS', 'timestamp_failures': 0, 'metric_failures': 0, 'class_failures': 0, 'OOS_OPENED': 'NO', 'OOS_ACCESS_COUNT': 0}

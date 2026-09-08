@@ -50,17 +50,18 @@ from .evaluate_window import evaluate_signals_window
 from .memory_guard import (
     COMPOSITE_CHECKPOINT,
     COMPOSITE_CHECKPOINT_EVERY,
-    COMPOSITE_FOLD_PARTIAL,
     COMPOSITE_RESULT_BATCH_SIZE,
-    COMPOSITE_RESULT_PARTIAL,
+    FOLDS_PARTS_DIR,
+    RESULTS_PARTS_DIR,
     MemoryGuardStop,
     default_memory_guard,
     read_rss_bytes,
     read_vms_bytes,
     save_json,
 )
-from .oos_guard import assert_events_exclude_oos, assert_oos_locked, guard_partition_iterable
-from .stream_store import AtomicStreamStore, materialize_shards_from_pickle
+from .oos_guard import assert_events_exclude_oos, guard_partition_iterable
+from .result_parts import AppendOnlyPartWriter
+from .stream_store import AtomicStreamStore, verify_shard_integrity
 
 
 def _load_events() -> pd.DataFrame:
@@ -165,23 +166,15 @@ class LazyBars:
         return self._baselines[tf]
 
 
-def _append_parquet(path: Path, rows: list[dict[str, Any]]) -> None:
-    if not rows:
-        return
-    df = pd.DataFrame(rows)
-    if path.exists():
-        prev = pd.read_parquet(path)
-        df = pd.concat([prev, df], ignore_index=True)
-    df.to_parquet(path, index=False)
-
-
 def run_bounded_compose(
     *,
     artifact_root: Path | None = None,
     max_candidates: int | None = None,
     smoke_rss_csv: Path | None = None,
     template_filter: set[str] | None = None,
+    definitions: list[dict[str, Any]] | None = None,
     resume: bool = True,
+    require_shards: bool = True,
 ) -> dict[str, Any]:
     """
     Streaming compose with disk-backed streams, incremental flush, memory guard.
@@ -191,7 +184,6 @@ def run_bounded_compose(
     root = artifact_root or ARTIFACT_ROOT
     root.mkdir(parents=True, exist_ok=True)
     guard = default_memory_guard()
-    # OOS remains locked; refuse via event/partition guards below (never call assert_oos_locked preemptively).
     assert OOS_OPENED == "NO"
 
     # Authorities (frozen artifacts — read-only integrity)
@@ -207,12 +199,11 @@ def run_bounded_compose(
         "SPEC_FREEZE_COMMIT": "476927817e21ef6869261a0114b27864fdf2d789",
     }
 
-    materialize_shards_from_pickle(artifact_root=root)
-    store = AtomicStreamStore(root, max_active=5)
+    shard_gate = verify_shard_integrity(root, expected_n=582) if require_shards else {"SHARD_INTEGRITY_GATE": "SKIPPED"}
+    store = AtomicStreamStore(root, max_active=5, require_shards=require_shards)
     assert len(store) == 582, f"expected 582 shards, got {len(store)}"
 
     events = _load_events()
-    # Prefilter events once — avoid events.copy() storm in evaluate hot path.
     events_dev = events.copy()
     reps_bank = json.loads((root / "atomic_representative_bank_v1.json").read_text(encoding="utf-8"))
     reps = list(reps_bank["configs"])
@@ -231,16 +222,27 @@ def run_bounded_compose(
     ckpt_path = root / COMPOSITE_CHECKPOINT
     completed: set[str] = set()
     next_index = 0
+    next_result_part = 0
+    next_fold_part = 0
     if resume and ckpt_path.exists():
         ckpt = json.loads(ckpt_path.read_text(encoding="utf-8"))
         if ckpt.get("authorities") == authorities:
             completed = set(ckpt.get("completed_composite_ids") or [])
             next_index = int(ckpt.get("next_candidate_index") or 0)
-            print(f"[bounded-compose] resume completed={len(completed)} next_index={next_index}", flush=True)
+            next_result_part = int(ckpt.get("next_result_part") or 0)
+            next_fold_part = int(ckpt.get("next_fold_part") or 0)
+            print(
+                f"[bounded-compose] resume completed={len(completed)} next_index={next_index} "
+                f"result_part={next_result_part}",
+                flush=True,
+            )
         else:
             print("[bounded-compose] checkpoint authority mismatch — starting fresh compose results", flush=True)
             completed = set()
             next_index = 0
+
+    result_writer = AppendOnlyPartWriter(root, dirname=RESULTS_PARTS_DIR, next_part=next_result_part)
+    fold_writer = AppendOnlyPartWriter(root, dirname=FOLDS_PARTS_DIR, next_part=next_fold_part)
 
     result_batch: list[dict[str, Any]] = []
     fold_batch: list[dict[str, Any]] = []
@@ -284,8 +286,8 @@ def run_bounded_compose(
 
     def _flush() -> None:
         nonlocal result_batch, fold_batch
-        _append_parquet(root / COMPOSITE_RESULT_PARTIAL, result_batch)
-        _append_parquet(root / COMPOSITE_FOLD_PARTIAL, fold_batch)
+        result_writer.flush(result_batch)
+        fold_writer.flush(fold_batch)
         result_batch = []
         fold_batch = []
         gc.collect()
@@ -296,11 +298,15 @@ def run_bounded_compose(
             {
                 "artifact": "composite_execution_checkpoint_v1",
                 "WIP": WIP_ID,
-                "MODE": "COMPOSITE-BOUNDED-MEMORY-EXECUTION-REPAIR-1",
+                "MODE": "COMPOSITE-BOUNDED-MEMORY-INDEPENDENT-REVIEW-REPAIR-2",
                 "authorities": authorities,
                 "next_candidate_index": idx,
                 "completed_composite_ids": sorted(completed),
                 "n_completed": len(completed),
+                "next_result_part": result_writer.next_part,
+                "next_fold_part": fold_writer.next_part,
+                "RESULT_WRITER_APPEND_ONLY": "YES",
+                "PREVIOUS_RESULT_ROWS_READ_DURING_FLUSH": "NO",
                 "OOS_OPENED": OOS_OPENED,
                 "OOS_ACCESS_COUNT": oos_access_count,
                 "COMPOSITE_FDR_STATUS": COMPOSITE_FDR_STATUS,
@@ -309,14 +315,19 @@ def run_bounded_compose(
             },
         )
 
-    definitions = iter_all_template_definitions(
-        representatives=reps,
-        all_configs_for_pairs=all_configs,
-        templates_doc=templates_doc,
-    )
+    if definitions is not None:
+        def_iter: Any = definitions
+    else:
+        def_iter = list(
+            iter_all_template_definitions(
+                representatives=reps,
+                all_configs_for_pairs=all_configs,
+                templates_doc=templates_doc,
+            )
+        )
 
     idx = max(next_index - 1, -1)
-    for idx, comp in enumerate(definitions):
+    for idx, comp in enumerate(def_iter):
         if idx < next_index:
             skipped += 1
             continue
@@ -565,7 +576,7 @@ def run_bounded_compose(
 
     out = {
         "WIP": WIP_ID,
-        "MODE": "COMPOSITE-BOUNDED-MEMORY-EXECUTION-REPAIR-1",
+        "MODE": "COMPOSITE-BOUNDED-MEMORY-INDEPENDENT-REVIEW-REPAIR-2",
         "n_evaluated": evaluated,
         "n_skipped": skipped,
         "n_completed_total": len(completed),
@@ -581,8 +592,15 @@ def run_bounded_compose(
         "ALL_582_STREAMS_RESIDENT_SIMULTANEOUSLY": "NO",
         "COMPOSITE_DEFINITION_GENERATOR": "YES",
         "RESULT_INCREMENTAL_FLUSH": "YES",
+        "RESULT_WRITER_APPEND_ONLY": "YES",
+        "PREVIOUS_RESULT_ROWS_READ_DURING_FLUSH": "NO",
+        "RESULT_MEMORY_COMPLEXITY": "O(CURRENT_BATCH)",
+        "next_result_part": result_writer.next_part,
+        "next_fold_part": fold_writer.next_part,
         "APPLICATION_MEMORY_GUARD": "YES",
         "MEMORY_GUARD_THRESHOLD_GB": guard.threshold_gb,
+        "FULL_COMPOSE_MONOLITHIC_PICKLE_FALLBACK": "NO",
+        **shard_gate,
     }
     save_json(root / "bounded_compose_run_status_v1.json", out)
     return out

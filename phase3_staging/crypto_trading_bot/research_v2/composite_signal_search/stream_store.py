@@ -153,16 +153,75 @@ def materialize_shards_from_pickle(
     return manifest
 
 
+class ShardIntegrityError(RuntimeError):
+    """Raised when required disk shards are missing or corrupt — fail closed."""
+
+
+def verify_shard_integrity(artifact_root: Path, *, expected_n: int = 582) -> dict[str, Any]:
+    """
+    FULL_COMPOSE_MONOLITHIC_PICKLE_FALLBACK=NO
+    SHARD_INTEGRITY_GATE — require manifest + all shard files before compose.
+    """
+    root = Path(artifact_root)
+    manifest_path = root / SHARD_MANIFEST
+    shard_dir = root / SHARD_DIR_NAME
+    if not manifest_path.exists():
+        raise ShardIntegrityError(
+            "atomic_streams_shard_manifest_v1.json missing. "
+            "Run materialize_shards_from_pickle() offline first; "
+            "full compose will not load the monolithic pickle."
+        )
+    if not shard_dir.is_dir():
+        raise ShardIntegrityError(f"shard dir missing: {shard_dir}")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    entries = list(manifest.get("streams") or [])
+    if len(entries) != expected_n:
+        raise ShardIntegrityError(f"manifest n_streams={len(entries)} expected={expected_n}")
+    ids: set[str] = set()
+    for e in entries:
+        cid = e["candidate_id"]
+        if cid in ids:
+            raise ShardIntegrityError(f"duplicate candidate_id in manifest: {cid}")
+        ids.add(cid)
+        path = shard_dir / e["shard_file"]
+        if not path.exists():
+            raise ShardIntegrityError(f"missing shard file for {cid}: {path.name}")
+        data = np.load(path)
+        ns = np.asarray(data["available_at_ns"])
+        if ns.dtype != np.int64:
+            raise ShardIntegrityError(f"non-int64 timestamps for {cid}: {ns.dtype}")
+        if int(e["n_signals"]) != int(ns.size):
+            raise ShardIntegrityError(
+                f"n_signals mismatch for {cid}: meta={e['n_signals']} array={ns.size}"
+            )
+    return {
+        "SHARD_INTEGRITY_GATE": "PASS",
+        "n_streams": len(entries),
+        "FULL_COMPOSE_MONOLITHIC_PICKLE_FALLBACK": "NO",
+    }
+
+
 class AtomicStreamStore:
     """LRU lazy loader — never holds all 582 streams simultaneously."""
 
-    def __init__(self, artifact_root: Path, *, max_active: int = MAX_ACTIVE_DEFAULT) -> None:
+    def __init__(
+        self,
+        artifact_root: Path,
+        *,
+        max_active: int = MAX_ACTIVE_DEFAULT,
+        require_shards: bool = True,
+        expected_n: int = 582,
+    ) -> None:
         self.root = Path(artifact_root)
         self.shard_dir = self.root / SHARD_DIR_NAME
         self.max_active = max(1, int(max_active))
         manifest_path = self.root / SHARD_MANIFEST
-        if not manifest_path.exists():
-            materialize_shards_from_pickle(artifact_root=self.root)
+        if require_shards:
+            verify_shard_integrity(self.root, expected_n=expected_n)
+        elif not manifest_path.exists():
+            raise ShardIntegrityError(
+                "shards required but missing; refuse monolithic pickle fallback"
+            )
         self.manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         self._by_id = {e["candidate_id"]: e for e in self.manifest["streams"]}
         self._lock = threading.Lock()
