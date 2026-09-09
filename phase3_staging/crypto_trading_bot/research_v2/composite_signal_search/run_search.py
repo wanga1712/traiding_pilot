@@ -408,7 +408,7 @@ def run_compose_phase(
     fold_df.to_csv(root / "composite_fold_stability_v1.csv", index=False)
 
     _write_summaries(results_df, root)
-    survivors = results_df[results_df["composite_class"].isin(["INCREMENTAL_BALANCED", "SELECTIVE"])]
+    survivors = results_df[results_df["composite_class"].isin(["INCREMENTAL_BALANCED", "INCREMENTAL_SELECTIVE", "SELECTIVE"])]
     survivor_bank = _freeze_survivors(survivors, root)
     handoff = _write_model_handoff(survivor_bank, root)
     summary = _write_summary(results_df, survivors, root)
@@ -484,7 +484,9 @@ def _freeze_survivors(survivors: pd.DataFrame, root: Path) -> dict[str, Any]:
         "artifact": "frozen_composite_survivor_bank_v1",
         "COMPOSITE_SURVIVOR_SET_HASH": digest,
         "n_survivors": len(ids),
-        "survivor_classes": ["INCREMENTAL_BALANCED", "SELECTIVE"],
+        "survivor_classes": ["INCREMENTAL_BALANCED", "INCREMENTAL_SELECTIVE"],
+        "CANONICAL_SELECTIVE_CLASS": "INCREMENTAL_SELECTIVE",
+        "SELECTIVE_THRESHOLD_CHANGED": "NO",
         "OOS_OPENED": OOS_OPENED,
         "COMPOSITE_FDR_STATUS": COMPOSITE_FDR_STATUS,
         "configs": survivors.to_dict(orient="records") if not survivors.empty else [],
@@ -531,7 +533,8 @@ def _write_summary(results_df: pd.DataFrame, survivors: pd.DataFrame, root: Path
         "N_SURVIVORS": int(len(survivors)),
         "CLASS_COUNTS": class_counts,
         "N_INCREMENTAL_BALANCED": int(class_counts.get("INCREMENTAL_BALANCED", 0)),
-        "N_SELECTIVE": int(class_counts.get("SELECTIVE", 0)),
+        "N_INCREMENTAL_SELECTIVE": int(class_counts.get("INCREMENTAL_SELECTIVE", 0) + class_counts.get("SELECTIVE", 0)),
+        "N_SELECTIVE": int(class_counts.get("SELECTIVE", 0)),  # legacy alias count (audit only)
         "N_WEAK_INCREMENTAL": int(class_counts.get("WEAK_INCREMENTAL", 0)),
         "N_NO_INCREMENTAL_EDGE": int(class_counts.get("NO_INCREMENTAL_EDGE", 0)),
         "N_INSUFFICIENT": int(class_counts.get("INSUFFICIENT", 0)),

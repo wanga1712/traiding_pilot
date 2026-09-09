@@ -1,0 +1,15 @@
+{
+  "artifact": "composite_full_runtime_projection_v1",
+  "TOTAL_COMPOSITE_CANDIDATE_COUNT": 200829,
+  "COMPOSITE_ENUMERATION_SHA256": "397533c24eb48bd7e0c1f18dedc4d94393c5965107cc6165eb59ecad592f7b3e",
+  "evidence": {
+    "repair3_full_path_smoke_count": 300,
+    "repair3_observed_candidates_per_minute_approx": 15.0,
+    "repair2_stratified_190_per_minute_approx": 7.916666666666667,
+    "note": "Operational only \u2014 do not prune the 200829 set based on runtime."
+  },
+  "CANDIDATES_PER_MINUTE": 15.0,
+  "PROJECTED_FULL_RUNTIME_HOURS": 223.14333333333335,
+  "blended_conservative_cpm": 7.916666666666667,
+  "blended_projected_hours": 422.79789473684207
+}

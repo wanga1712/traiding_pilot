@@ -25,8 +25,10 @@ from .classify import (
     classification_payload,
     count_positive_precision_delta_folds,
     count_usable_folds,
+    is_survivor_class,
 )
 from .compose import compose_signals_from_compact, iter_all_template_definitions
+from .composite_stream_hash import hash_composite_signals
 from .config import (
     ARTIFACT_ROOT,
     COMPOSITE_FDR_STATUS,
@@ -67,6 +69,7 @@ from .enumeration_authority import (
 from .oos_guard import assert_events_exclude_oos, guard_partition_iterable
 from .result_parts import AppendOnlyPartWriter, reconcile_orphan_parts
 from .stream_store import AtomicStreamStore, verify_shard_integrity
+from .survivor_store import SurvivorStreamStore
 
 
 PRODUCTION_CHECKPOINT = COMPOSITE_CHECKPOINT
@@ -309,6 +312,7 @@ def run_bounded_compose(
 
     result_writer = AppendOnlyPartWriter(work_root, dirname=RESULTS_PARTS_DIR, next_part=next_result_part)
     fold_writer = AppendOnlyPartWriter(work_root, dirname=FOLDS_PARTS_DIR, next_part=next_fold_part)
+    survivor_store = SurvivorStreamStore(work_root)
 
     result_batch: list[dict[str, Any]] = []
     fold_batch: list[dict[str, Any]] = []
@@ -567,6 +571,20 @@ def run_bounded_compose(
             composite_class=cclass, usable_folds=usable, positive_delta_folds=pos_folds
         )
 
+        stream_sha, stream_ns = hash_composite_signals(sigs, direction=direction, decision_tf=tf)
+        if is_survivor_class(cclass):
+            survivor_store.persist(
+                composite_id=cid,
+                template_id=comp["template_id"],
+                decision_tf=tf,
+                direction=direction,
+                trigger_candidate_id=trig_id,
+                context_candidate_ids=ctx_ids,
+                available_at_ns=stream_ns,
+                stream_sha256=stream_sha,
+                composite_class=cclass,
+            )
+
         result_batch.append(
             {
                 "composite_id": cid,
@@ -601,11 +619,13 @@ def run_bounded_compose(
                 "positive_delta_folds": pos_folds,
                 "composite_class": cclass,
                 "is_survivor": payload["is_survivor"],
+                "COMPOSITE_STREAM_SHA256": stream_sha,
             }
         )
 
         # Discard composite stream immediately (metrics already captured).
         del sigs
+        del stream_ns
         if completed_local is not None:
             completed_local.add(cid)
         last_completed_composite_id = cid
@@ -688,6 +708,9 @@ def run_bounded_compose(
         "PREVIOUS_RESULT_ROWS_READ_DURING_FLUSH": "NO",
         "RESULT_MEMORY_COMPLEXITY": "O(CURRENT_BATCH)",
         "RESULT_PART_RESUME_CRASH_SAFE": "YES",
+        "COMPOSITE_STREAM_HASH_RECORDED": "YES",
+        "SURVIVOR_STREAM_STORAGE": "DISK_BACKED",
+        "ALL_SURVIVOR_STREAMS_IN_RAM": "NO",
         "runtime_subdir": runtime_subdir,
         "SMOKE_USES_PRODUCTION_CHECKPOINT": "NO" if runtime_subdir else "N/A",
         "SMOKE_USES_PRODUCTION_RESULT_PARTS": "NO" if runtime_subdir else "N/A",

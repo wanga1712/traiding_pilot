@@ -1,0 +1,86 @@
+{
+  "FINALIZER_DRY_TEST": "PASS",
+  "FINALIZER_DRY_TEST_PEAK_RSS_GB": 0.0,
+  "n_results": 500,
+  "n_folds": 2000,
+  "CANONICAL_SELECTIVE_CLASS": "INCREMENTAL_SELECTIVE",
+  "SELECTIVE_THRESHOLD_CHANGED": "NO",
+  "FINAL_RESULT_ASSEMBLY_BOUNDED": "YES",
+  "COMPOSITE_STREAM_HASH_RECORDED": "YES",
+  "SURVIVOR_STREAM_STORAGE": "DISK_BACKED",
+  "COMPOSITE_REDUNDANCY_METHOD": "EVENT_STREAM_JACCARD",
+  "COMPOSITE_REDUNDANCY_THRESHOLD": 0.95,
+  "finalization": {
+    "gate": {
+      "FINALIZATION_ALLOWED": "YES",
+      "mode": "DRY_TEST"
+    },
+    "assemble": {
+      "FINAL_RESULT_ASSEMBLY_BOUNDED": "YES",
+      "n_result_rows": 500,
+      "n_fold_rows": 2000,
+      "FINAL_RESULT_ASSEMBLY_PEAK_RSS_GB": 0.0,
+      "results_parquet": "C:\\Users\\Lenovo\\Documents\\ChatGPT\\\u043a\u0440\u0435\u0434\u0438\u0442\u043d\u044b\u0439 \u0431\u043e\u0442\\artifacts\\MULTITF-COMPOSITE-SIGNAL-SEARCH-1\\_finalizer_dry_runtime\\composite_results_all_v1.parquet",
+      "results_csv": "C:\\Users\\Lenovo\\Documents\\ChatGPT\\\u043a\u0440\u0435\u0434\u0438\u0442\u043d\u044b\u0439 \u0431\u043e\u0442\\artifacts\\MULTITF-COMPOSITE-SIGNAL-SEARCH-1\\_finalizer_dry_runtime\\composite_results_all_v1.csv",
+      "folds_csv": "C:\\Users\\Lenovo\\Documents\\ChatGPT\\\u043a\u0440\u0435\u0434\u0438\u0442\u043d\u044b\u0439 \u0431\u043e\u0442\\artifacts\\MULTITF-COMPOSITE-SIGNAL-SEARCH-1\\_finalizer_dry_runtime\\composite_fold_stability_v1.csv",
+      "schema_fields": [
+        "composite_id",
+        "template_id",
+        "direction",
+        "decision_tf",
+        "diagnostic",
+        "trigger_candidate_id",
+        "context_candidate_ids",
+        "TOTAL_SIGNALS",
+        "PRECISION",
+        "EVENT_RECALL",
+        "FALSE_POSITIVE_RATE",
+        "MEDIAN_DELAY_SECONDS",
+        "MEDIAN_MFE_AFTER_SIGNAL",
+        "MEDIAN_MAE_AFTER_SIGNAL",
+        "PRE_C_SIGNAL_RATE",
+        "sample_flag",
+        "trigger_PRECISION",
+        "trigger_EVENT_RECALL",
+        "trigger_TOTAL_SIGNALS",
+        "trigger_FALSE_POSITIVE_RATE",
+        "price_PRECISION",
+        "PRECISION_DELTA_VS_TRIGGER",
+        "PRECISION_DELTA_VS_PRICE_BASELINE",
+        "RECALL_RETENTION_VS_TRIGGER",
+        "FPR_DELTA_VS_TRIGGER",
+        "MEDIAN_DELAY_DELTA_VS_TRIGGER",
+        "PRE_C_SIGNAL_RATE_DELTA_VS_TRIGGER",
+        "SIGNAL_RETENTION",
+        "usable_folds",
+        "positive_delta_folds",
+        "composite_class",
+        "is_survivor",
+        "COMPOSITE_STREAM_SHA256"
+      ]
+    },
+    "exact": {
+      "COMPOSITE_EXACT_DUPLICATE_COUNT": 4,
+      "COMPOSITE_EXACT_DUPLICATE_CLUSTER_COUNT": 1,
+      "path": "C:\\Users\\Lenovo\\Documents\\ChatGPT\\\u043a\u0440\u0435\u0434\u0438\u0442\u043d\u044b\u0439 \u0431\u043e\u0442\\artifacts\\MULTITF-COMPOSITE-SIGNAL-SEARCH-1\\_finalizer_dry_runtime\\composite_exact_duplicate_clusters_v1.csv"
+    },
+    "banks": {
+      "RAW_COMPOSITE_SURVIVOR_SET_HASH": "2bdddb60c65d2f7e91ef8476fda7bf2f4f5462081484ab4fbc05e397b6947cd7",
+      "COMPOSITE_SURVIVOR_SET_HASH": "1448e39d6d140cb60189b4d981979f2b4f7929b90f0ecf7afdccdab92645ecc9",
+      "n_raw": 203,
+      "n_model": 198
+    },
+    "report_verdict": "COMPOSITE_INCREMENTAL_INFORMATION_SUPPORTED",
+    "handoff": {
+      "MODEL_FEATURE_HANDOFF_READY": "YES"
+    },
+    "COMPOSITE_REDUNDANCY_METHOD": "EVENT_STREAM_JACCARD",
+    "COMPOSITE_REDUNDANCY_THRESHOLD": 0.95,
+    "COMPOSITE_FDR_STATUS": "NOT_USED",
+    "CANONICAL_SELECTIVE_CLASS": "INCREMENTAL_SELECTIVE",
+    "SELECTIVE_THRESHOLD_CHANGED": "NO",
+    "SURVIVOR_CLASSES": "INCREMENTAL_BALANCED,INCREMENTAL_SELECTIVE",
+    "FINAL_RESULT_ASSEMBLY_BOUNDED": "YES"
+  },
+  "runtime": "C:\\Users\\Lenovo\\Documents\\ChatGPT\\\u043a\u0440\u0435\u0434\u0438\u0442\u043d\u044b\u0439 \u0431\u043e\u0442\\artifacts\\MULTITF-COMPOSITE-SIGNAL-SEARCH-1\\_finalizer_dry_runtime"
+}
