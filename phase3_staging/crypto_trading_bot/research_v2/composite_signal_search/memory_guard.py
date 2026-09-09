@@ -71,9 +71,10 @@ class MemoryGuard:
 
 
 def save_json(path: Path, obj: Any) -> None:
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(json.dumps(obj, indent=2, default=str), encoding="utf-8")
-    tmp.replace(path)
+    """Atomic JSON write with fsync (checkpoint-safe)."""
+    from .durable_io import save_json_durable
+
+    save_json_durable(path, obj)
 
 
 COMPOSITE_CHECKPOINT = "composite_execution_checkpoint_v1.json"

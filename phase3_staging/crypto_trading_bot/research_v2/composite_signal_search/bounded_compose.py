@@ -4,6 +4,7 @@ from __future__ import annotations
 import gc
 import hashlib
 import json
+import signal
 import time
 from collections import OrderedDict
 from datetime import datetime, timezone
@@ -20,6 +21,7 @@ from crypto_trading_bot.research_v2.market_data.research_access import run_data_
 from crypto_trading_bot.research_v2.reversal_signal_study.bar_io import load_continuous_bars, make_bar_service
 
 from . import MODE, WIP_ID
+from .boot_authority import assert_boot_resume_authority
 from .classify import (
     classify_composite,
     classification_payload,
@@ -48,6 +50,7 @@ from .context_state import (
     pair_configs_by_stream,
     pair_key_from_config,
 )
+from .durable_io import save_json_durable
 from .evaluate_window import evaluate_signals_window
 from .memory_guard import (
     COMPOSITE_CHECKPOINT,
@@ -69,13 +72,22 @@ from .enumeration_authority import (
 from .oos_guard import assert_events_exclude_oos, guard_partition_iterable
 from .result_parts import AppendOnlyPartWriter, reconcile_orphan_parts
 from .stream_store import AtomicStreamStore, verify_shard_integrity
-from .survivor_store import SurvivorStreamStore
+from .survivor_store import SurvivorStreamStore, reconcile_orphan_survivor_meta_parts
 
 
 PRODUCTION_CHECKPOINT = COMPOSITE_CHECKPOINT
 PRODUCTION_RESULTS_DIR = RESULTS_PARTS_DIR
 PRODUCTION_FOLDS_DIR = FOLDS_PARTS_DIR
 ORPHAN_QUARANTINE_DIR = "_orphan_parts_quarantine_v1"
+
+# Process-local graceful stop flag (SIGTERM/SIGINT).
+STOP_REQUESTED = False
+
+
+def _request_stop(signum: int, _frame: Any) -> None:
+    global STOP_REQUESTED
+    STOP_REQUESTED = True
+    print(f"[bounded-compose] STOP_REQUESTED=true signal={signum}", flush=True)
 
 
 def _load_events() -> pd.DataFrame:
@@ -207,6 +219,17 @@ def run_bounded_compose(
     guard = default_memory_guard()
     assert OOS_OPENED == "NO"
 
+    global STOP_REQUESTED
+    STOP_REQUESTED = False
+    prev_term = signal.getsignal(signal.SIGTERM)
+    prev_int = signal.getsignal(signal.SIGINT)
+    signal.signal(signal.SIGTERM, _request_stop)
+    signal.signal(signal.SIGINT, _request_stop)
+
+    # Production full compose: fail closed if code/artifacts drifted since authority.
+    if full_mode and runtime_subdir is None:
+        assert_boot_resume_authority(root)
+
     # Authorities (frozen artifacts — read-only integrity; always from root)
     spec_path = root / "composite_search_spec_v1.json"
     tmpl_path = root / "composite_templates_v1.json"
@@ -250,6 +273,7 @@ def run_bounded_compose(
     next_index = 0
     next_result_part = 0
     next_fold_part = 0
+    next_survivor_meta_part = 0
     completed_count = 0
     last_completed_composite_id: str | None = None
     # Finite definitions= mode only — never used for production full enumeration.
@@ -281,6 +305,11 @@ def run_bounded_compose(
         next_index = int(ckpt.get("next_candidate_index") or 0)
         next_result_part = int(ckpt.get("next_result_part") or 0)
         next_fold_part = int(ckpt.get("next_fold_part") or 0)
+        if "next_survivor_meta_part" in ckpt:
+            next_survivor_meta_part = int(ckpt.get("next_survivor_meta_part") or 0)
+        else:
+            # Legacy checkpoints predate survivor-meta index — treat on-disk parts as committed.
+            next_survivor_meta_part = SurvivorStreamStore(work_root)._detect_next_meta_part()
         completed_count = int(ckpt.get("completed_count") or ckpt.get("n_completed") or 0)
         last_completed_composite_id = ckpt.get("last_completed_composite_id")
         print(
@@ -304,15 +333,21 @@ def run_bounded_compose(
         committed_next_part=next_fold_part,
         quarantine_dir=orphan_q / "folds",
     )
-    if orphans_r or orphans_f:
+    orphans_s = reconcile_orphan_survivor_meta_parts(
+        work_root / "composite_survivor_metadata_parts_v1",
+        committed_next_part=next_survivor_meta_part,
+        quarantine_dir=orphan_q / "survivor_meta",
+    )
+    if orphans_r or orphans_f or orphans_s:
         print(
-            f"[bounded-compose] quarantined orphan parts results={orphans_r} folds={orphans_f}",
+            f"[bounded-compose] quarantined orphan parts results={orphans_r} "
+            f"folds={orphans_f} survivor_meta={orphans_s}",
             flush=True,
         )
 
     result_writer = AppendOnlyPartWriter(work_root, dirname=RESULTS_PARTS_DIR, next_part=next_result_part)
     fold_writer = AppendOnlyPartWriter(work_root, dirname=FOLDS_PARTS_DIR, next_part=next_fold_part)
-    survivor_store = SurvivorStreamStore(work_root)
+    survivor_store = SurvivorStreamStore(work_root, next_meta_part=next_survivor_meta_part)
 
     result_batch: list[dict[str, Any]] = []
     fold_batch: list[dict[str, Any]] = []
@@ -335,6 +370,7 @@ def run_bounded_compose(
     memory_guard_stop = False
     stop_reason = ""
     stopped_at_unprocessed_index: int | None = None
+    graceful_stop = False
 
     templates_doc = load_templates(root=root)
     if template_filter:
@@ -362,6 +398,7 @@ def run_bounded_compose(
         return times, codes
 
     def _flush() -> None:
+        """Durable data flush before any checkpoint claim."""
         nonlocal result_batch, fold_batch
         result_writer.flush(result_batch)
         fold_writer.flush(fold_batch)
@@ -369,6 +406,55 @@ def run_bounded_compose(
         result_batch = []
         fold_batch = []
         gc.collect()
+
+    def _write_ckpt(idx: int, *, graceful_stop: bool = False) -> None:
+        """
+        CHECKPOINT_AFTER_DATA_DURABILITY=YES
+        next_candidate_index = first candidate not durably committed.
+        """
+        payload: dict[str, Any] = {
+            "artifact": "composite_execution_checkpoint_v1",
+            "WIP": WIP_ID,
+            "MODE": MODE,
+            "authorities": authorities,
+            "next_candidate_index": idx,
+            "completed_count": completed_count,
+            "last_completed_composite_id": last_completed_composite_id,
+            "next_result_part": result_writer.next_part,
+            "next_fold_part": fold_writer.next_part,
+            "next_survivor_meta_part": survivor_store.next_meta_part,
+            "RESULT_WRITER_APPEND_ONLY": "YES",
+            "PREVIOUS_RESULT_ROWS_READ_DURING_FLUSH": "NO",
+            "RESULT_PART_RESUME_CRASH_SAFE": "YES",
+            "CHECKPOINT_AFTER_DATA_DURABILITY": "YES",
+            "CHECKPOINT_ATOMIC_REPLACE": "YES",
+            "FULL_RUN_COMPLETED_ID_SET_IN_RAM": "NO" if full_mode else "N/A",
+            "FULL_RUN_CHECKPOINT_COMPLETED_ID_LIST": "NO" if full_mode else "N/A",
+            "CHECKPOINT_MEMORY_COMPLEXITY": "O(1)" if full_mode else "O(N_TEST)",
+            "FULL_COMPOSE_DEFINITION_STREAMING": "YES" if full_mode else "N/A",
+            "ALL_COMPOSITE_DEFINITIONS_IN_RAM": "NO",
+            "COMPOSITE_DEFINITION_GENERATOR": "YES",
+            "runtime_subdir": runtime_subdir,
+            "OOS_OPENED": OOS_OPENED,
+            "OOS_ACCESS_COUNT": oos_access_count,
+            "COMPOSITE_FDR_STATUS": COMPOSITE_FDR_STATUS,
+            "ATOMIC_STREAM_LAZY_LOAD": "YES",
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+        }
+        if graceful_stop:
+            payload["GRACEFUL_STOP"] = "YES"
+            payload["STOP_REQUESTED"] = "YES"
+        if enum_auth is not None:
+            payload["COMPOSITE_ENUMERATION_SHA256"] = enum_auth["COMPOSITE_ENUMERATION_SHA256"]
+            payload["TOTAL_COMPOSITE_CANDIDATE_COUNT"] = enum_auth["TOTAL_COMPOSITE_CANDIDATE_COUNT"]
+            payload["GLOBAL_ENUMERATION_AUTHORITY"] = "PASS"
+        # Never serialize completed_composite_ids in full mode.
+        save_json_durable(ckpt_path, payload)
+
+    def _durable_checkpoint(idx: int, *, graceful_stop: bool = False) -> None:
+        """Flush data parts first, then atomically write checkpoint."""
+        _flush()
+        _write_ckpt(idx, graceful_stop=graceful_stop)
 
     def _trigger_signal_dicts(trig_id: str, direction: str, trig_cfg: dict[str, Any]) -> list[dict[str, Any]]:
         key = (trig_id, direction)
@@ -427,40 +513,6 @@ def run_bounded_compose(
         )
         return trigger_fold_cache[key]
 
-    def _write_ckpt(idx: int) -> None:
-        payload: dict[str, Any] = {
-            "artifact": "composite_execution_checkpoint_v1",
-            "WIP": WIP_ID,
-            "MODE": MODE,
-            "authorities": authorities,
-            "next_candidate_index": idx,
-            "completed_count": completed_count,
-            "last_completed_composite_id": last_completed_composite_id,
-            "next_result_part": result_writer.next_part,
-            "next_fold_part": fold_writer.next_part,
-            "RESULT_WRITER_APPEND_ONLY": "YES",
-            "PREVIOUS_RESULT_ROWS_READ_DURING_FLUSH": "NO",
-            "RESULT_PART_RESUME_CRASH_SAFE": "YES",
-            "FULL_RUN_COMPLETED_ID_SET_IN_RAM": "NO" if full_mode else "N/A",
-            "FULL_RUN_CHECKPOINT_COMPLETED_ID_LIST": "NO" if full_mode else "N/A",
-            "CHECKPOINT_MEMORY_COMPLEXITY": "O(1)" if full_mode else "O(N_TEST)",
-            "FULL_COMPOSE_DEFINITION_STREAMING": "YES" if full_mode else "N/A",
-            "ALL_COMPOSITE_DEFINITIONS_IN_RAM": "NO",
-            "COMPOSITE_DEFINITION_GENERATOR": "YES",
-            "runtime_subdir": runtime_subdir,
-            "OOS_OPENED": OOS_OPENED,
-            "OOS_ACCESS_COUNT": oos_access_count,
-            "COMPOSITE_FDR_STATUS": COMPOSITE_FDR_STATUS,
-            "ATOMIC_STREAM_LAZY_LOAD": "YES",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
-        }
-        if enum_auth is not None:
-            payload["COMPOSITE_ENUMERATION_SHA256"] = enum_auth["COMPOSITE_ENUMERATION_SHA256"]
-            payload["TOTAL_COMPOSITE_CANDIDATE_COUNT"] = enum_auth["TOTAL_COMPOSITE_CANDIDATE_COUNT"]
-            payload["GLOBAL_ENUMERATION_AUTHORITY"] = "PASS"
-        # Never serialize completed_composite_ids in full mode.
-        save_json(ckpt_path, payload)
-
     if definitions is not None:
         def_iter: Any = definitions
     else:
@@ -473,6 +525,12 @@ def run_bounded_compose(
 
     idx = max(next_index - 1, -1)
     for idx, comp in enumerate(def_iter):
+        if STOP_REQUESTED:
+            # Do not start a new candidate after stop request.
+            stopped_at_unprocessed_index = max(idx, next_index)
+            graceful_stop = True
+            stop_reason = "GRACEFUL_STOP"
+            break
         if idx < next_index:
             skipped += 1
             continue
@@ -487,8 +545,7 @@ def run_bounded_compose(
         try:
             guard.check(context=f"before {cid}")
         except MemoryGuardStop as exc:
-            _flush()
-            _write_ckpt(idx)
+            _durable_checkpoint(idx)
             memory_guard_stop = True
             stop_reason = str(exc)
             stopped_at_unprocessed_index = idx
@@ -685,8 +742,7 @@ def run_bounded_compose(
         if len(result_batch) >= COMPOSITE_RESULT_BATCH_SIZE:
             _flush()
         if evaluated % COMPOSITE_CHECKPOINT_EVERY == 0:
-            _flush()
-            _write_ckpt(idx + 1)
+            _durable_checkpoint(idx + 1)
             print(
                 f"[bounded-compose] evaluated={evaluated} completed_count={completed_count} "
                 f"rss_gb={guard.rss_gb():.2f} active_streams={store.active_count}",
@@ -698,20 +754,37 @@ def run_bounded_compose(
         try:
             guard.check(context=f"after {cid}")
         except MemoryGuardStop as exc:
-            _flush()
-            _write_ckpt(idx + 1)
+            _durable_checkpoint(idx + 1)
             memory_guard_stop = True
             stop_reason = str(exc)
             stopped_at_unprocessed_index = idx + 1
             break
 
-    _flush()
-    survivor_store.close()
-    if stopped_at_unprocessed_index is not None:
-        final_idx = stopped_at_unprocessed_index
+        if STOP_REQUESTED:
+            # Finish current candidate (already committed above), then stop before next.
+            stopped_at_unprocessed_index = idx + 1
+            graceful_stop = True
+            stop_reason = "GRACEFUL_STOP"
+            break
+
+    if graceful_stop:
+        survivor_store.close()
+        _durable_checkpoint(
+            stopped_at_unprocessed_index if stopped_at_unprocessed_index is not None else (idx + 1),
+            graceful_stop=True,
+        )
     else:
-        final_idx = idx + 1 if evaluated or skipped or memory_guard_stop else next_index
-    _write_ckpt(final_idx)
+        _flush()
+        survivor_store.close()
+        if stopped_at_unprocessed_index is not None:
+            final_idx = stopped_at_unprocessed_index
+        else:
+            final_idx = idx + 1 if evaluated or skipped or memory_guard_stop else next_index
+        _write_ckpt(final_idx)
+
+    # Restore previous signal handlers.
+    signal.signal(signal.SIGTERM, prev_term)
+    signal.signal(signal.SIGINT, prev_int)
 
     if smoke_rss_csv is not None:
         pd.DataFrame(smoke_rows).to_csv(smoke_rss_csv, index=False)
@@ -728,6 +801,8 @@ def run_bounded_compose(
         "last_completed_composite_id": last_completed_composite_id,
         "memory_guard_stop": memory_guard_stop,
         "stop_reason": stop_reason,
+        "GRACEFUL_STOP": "YES" if graceful_stop else "NO",
+        "STOP_REQUESTED": "YES" if STOP_REQUESTED or graceful_stop else "NO",
         "rss_gb": guard.rss_gb(),
         "active_stream_count": store.active_count,
         "OOS_OPENED": OOS_OPENED,
@@ -747,6 +822,13 @@ def run_bounded_compose(
         "PREVIOUS_RESULT_ROWS_READ_DURING_FLUSH": "NO",
         "RESULT_MEMORY_COMPLEXITY": "O(CURRENT_BATCH)",
         "RESULT_PART_RESUME_CRASH_SAFE": "YES",
+        "RESULT_PART_ATOMIC_COMMIT": "YES",
+        "FOLD_PART_ATOMIC_COMMIT": "YES",
+        "SURVIVOR_METADATA_PART_ATOMIC_COMMIT": "YES",
+        "CHECKPOINT_AFTER_DATA_DURABILITY": "YES",
+        "CHECKPOINT_ATOMIC_REPLACE": "YES",
+        "SIGTERM_GRACEFUL_CHECKPOINT": "YES",
+        "SIGINT_GRACEFUL_CHECKPOINT": "YES",
         "COMPOSITE_STREAM_HASH_RECORDED": "YES",
         "SURVIVOR_STREAM_STORAGE": "DISK_BACKED",
         "ALL_SURVIVOR_STREAMS_IN_RAM": "NO",

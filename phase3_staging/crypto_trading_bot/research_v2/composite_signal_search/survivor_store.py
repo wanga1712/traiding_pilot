@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any, Iterator
@@ -13,6 +14,40 @@ SURVIVOR_STREAM_DIR = "composite_survivor_streams_v1"
 SURVIVOR_META_PARTS_DIR = "composite_survivor_metadata_parts_v1"
 SURVIVOR_MANIFEST = "composite_survivor_stream_manifest_v1.json"
 SURVIVOR_META_BATCH_SIZE = 100
+_META_PART_RE = re.compile(r"^part-(\d{6})\.jsonl$")
+
+
+def reconcile_orphan_survivor_meta_parts(
+    parts_dir: Path,
+    *,
+    committed_next_part: int,
+    quarantine_dir: Path,
+) -> list[str]:
+    """Quarantine uncommitted survivor metadata parts / *.tmp after crash."""
+    import shutil
+    from datetime import datetime, timezone
+
+    parts_dir = Path(parts_dir)
+    if not parts_dir.exists():
+        return []
+    quarantine_dir = Path(quarantine_dir)
+    quarantine_dir.mkdir(parents=True, exist_ok=True)
+    moved: list[str] = []
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    for path in sorted(parts_dir.glob("part-*.jsonl.tmp")):
+        dest = quarantine_dir / f"{stamp}__{path.name}"
+        shutil.move(str(path), str(dest))
+        moved.append(path.name)
+    for path in sorted(parts_dir.glob("part-*.jsonl")):
+        m = _META_PART_RE.match(path.name)
+        if not m:
+            continue
+        idx = int(m.group(1))
+        if idx >= int(committed_next_part):
+            dest = quarantine_dir / f"{stamp}__{path.name}"
+            shutil.move(str(path), str(dest))
+            moved.append(path.name)
+    return moved
 
 
 class SurvivorStreamMismatchError(RuntimeError):
@@ -44,7 +79,13 @@ class SurvivorStreamStore:
     SURVIVOR_METADATA_MEMORY_COMPLEXITY=O(CURRENT_BATCH)
     """
 
-    def __init__(self, root: Path, *, dirname: str = SURVIVOR_STREAM_DIR) -> None:
+    def __init__(
+        self,
+        root: Path,
+        *,
+        dirname: str = SURVIVOR_STREAM_DIR,
+        next_meta_part: int | None = None,
+    ) -> None:
         self.root = Path(root)
         self.dir = self.root / dirname
         self.dir.mkdir(parents=True, exist_ok=True)
@@ -52,9 +93,17 @@ class SurvivorStreamStore:
         self.meta_parts_dir.mkdir(parents=True, exist_ok=True)
         self.manifest_path = self.root / SURVIVOR_MANIFEST
         self._batch: list[dict[str, Any]] = []
-        self._next_meta_part = self._detect_next_meta_part()
+        self._next_meta_part = (
+            max(0, int(next_meta_part))
+            if next_meta_part is not None
+            else self._detect_next_meta_part()
+        )
         self._persisted_this_run = 0
         self._reused_idempotent = 0
+
+    @property
+    def next_meta_part(self) -> int:
+        return self._next_meta_part
 
     def _detect_next_meta_part(self) -> int:
         existing = sorted(self.meta_parts_dir.glob("part-*.jsonl"))
@@ -127,9 +176,17 @@ class SurvivorStreamStore:
         if not self._batch:
             return None
         part = self.meta_parts_dir / f"part-{self._next_meta_part:06d}.jsonl"
-        with part.open("w", encoding="utf-8") as fh:
+        tmp = part.with_name(part.name + ".tmp")
+        with tmp.open("w", encoding="utf-8") as fh:
             for row in self._batch:
                 fh.write(json.dumps(row, separators=(",", ":")) + "\n")
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(str(tmp), str(part))
+        from .durable_io import fsync_dir, fsync_path
+
+        fsync_path(part)
+        fsync_dir(self.meta_parts_dir)
         self._next_meta_part += 1
         self._batch = []
         return part

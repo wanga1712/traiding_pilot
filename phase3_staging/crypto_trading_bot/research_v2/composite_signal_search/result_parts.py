@@ -1,6 +1,7 @@
 """Append-only parquet part writers — never re-read previous parts during flush."""
 from __future__ import annotations
 
+import os
 import re
 import shutil
 from datetime import datetime, timezone
@@ -8,6 +9,8 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+
+from .durable_io import fsync_dir, fsync_path
 
 RESULTS_PARTS_DIR = "composite_results_partial_parts_v1"
 FOLDS_PARTS_DIR = "composite_fold_partial_parts_v1"
@@ -31,6 +34,7 @@ def reconcile_orphan_parts(
     Parts with index >= committed_next_part are uncommitted orphans from a
     crash between part write and checkpoint commit. Move them aside; never
     overwrite a committed part.
+    Also quarantine leftover *.tmp part files.
     """
     parts_dir = Path(parts_dir)
     if not parts_dir.exists():
@@ -39,6 +43,10 @@ def reconcile_orphan_parts(
     quarantine_dir.mkdir(parents=True, exist_ok=True)
     moved: list[str] = []
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    for path in sorted(parts_dir.glob("part-*.parquet.tmp")):
+        dest = quarantine_dir / f"{stamp}__{path.name}"
+        shutil.move(str(path), str(dest))
+        moved.append(path.name)
     for path in sorted(parts_dir.glob("part-*.parquet")):
         idx = part_index(path)
         if idx is None:
@@ -55,8 +63,9 @@ class AppendOnlyPartWriter:
     RESULT_WRITER_APPEND_ONLY=YES
     PREVIOUS_RESULT_ROWS_READ_DURING_FLUSH=NO
     RESULT_MEMORY_COMPLEXITY=O(CURRENT_BATCH)
+    RESULT_PART_ATOMIC_COMMIT=YES
 
-    Each flush writes ONLY the current batch to part-NNNNNN.parquet.
+    Each flush writes ONLY the current batch via temp → fsync → rename.
     """
 
     def __init__(self, root: Path, *, dirname: str, next_part: int = 0) -> None:
@@ -73,7 +82,15 @@ class AppendOnlyPartWriter:
         path = self.dir / f"part-{self.next_part:06d}.parquet"
         if path.exists():
             raise FileExistsError(f"refusing to overwrite completed part: {path}")
-        pd.DataFrame(rows).to_parquet(path, index=False)
+        tmp = path.with_name(path.name + ".tmp")
+        pd.DataFrame(rows).to_parquet(tmp, index=False)
+        # Re-open for fsync (parquet writers may not expose fd).
+        with open(tmp, "rb+") as fh:
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(str(tmp), str(path))
+        fsync_path(path)
+        fsync_dir(self.dir)
         self.next_part += 1
         return path
 

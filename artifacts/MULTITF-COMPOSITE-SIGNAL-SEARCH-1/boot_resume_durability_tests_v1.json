@@ -1,0 +1,35 @@
+{
+  "WIP": "MULTITF-COMPOSITE-SIGNAL-SEARCH-1",
+  "MODE": "FULL-EXECUTION-BOOT-RESUME-DURABILITY-PREFLIGHT-1",
+  "reboot_resume": {
+    "REBOOT_RESUME_TEST_COUNT": 300,
+    "phase1_completed": 151,
+    "phase1_next": 151,
+    "GRACEFUL_CHECKPOINT_NEXT_INDEX_CORRECT": "PASS",
+    "phase2_n_evaluated": 149,
+    "n_result_ids": 300,
+    "n_unique": 300,
+    "dup": 0,
+    "missing_vs_ref": 0,
+    "extra_vs_ref": 0,
+    "fold_rows": 1200,
+    "bad_fold_counts": 0,
+    "REBOOT_RESUME_RESULT_PARITY": "PASS",
+    "REBOOT_RESUME_NO_SKIPPED_CANDIDATES": "PASS",
+    "REBOOT_RESUME_NO_DUPLICATE_CANDIDATES": "PASS",
+    "REBOOT_RESUME_FOLD_PARITY": "PASS",
+    "helper_rc": 0
+  },
+  "abrupt_crash": {
+    "ABRUPT_CRASH_RESUME": "PASS",
+    "DUPLICATE_ROWS_AFTER_CRASH": 0,
+    "MISSING_ROWS_AFTER_CRASH": 0,
+    "orphan_id_present": false,
+    "n_ids": 5,
+    "uniq": 5,
+    "fold_rows": 20,
+    "n_evaluated": 3
+  },
+  "OOS_OPENED": "NO",
+  "OOS_ACCESS_COUNT": 0
+}
