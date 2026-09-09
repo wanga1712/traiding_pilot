@@ -613,6 +613,7 @@ def main(argv: list[str] | None = None) -> int:
             "parity",
             "compose",
             "compose-bounded",
+            "finalize-bounded",
             "memory-smoke",
             "all",
         ),
@@ -654,6 +655,17 @@ def main(argv: list[str] | None = None) -> int:
             max_candidates=args.max_candidates,
             resume=not args.no_resume,
         )
+    elif args.phase == "finalize-bounded":
+        from .finalize import FinalizationGateError, run_finalization
+
+        # Production finalizer — never silently finalize partial results.
+        try:
+            out = run_finalization(ARTIFACT_ROOT, allow_partial_test=False)
+        except FinalizationGateError as exc:
+            print(f"PARTIAL_FINALIZATION_FAIL_CLOSED=YES error={exc}", flush=True)
+            raise SystemExit(2) from exc
+        out["PRODUCTION_FINALIZER_CLI"] = "YES"
+        out["PARTIAL_FINALIZATION_FAIL_CLOSED"] = "YES"
     elif args.phase == "memory-smoke":
         from .bounded_compose import run_bounded_compose
 

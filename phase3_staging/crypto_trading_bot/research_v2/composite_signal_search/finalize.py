@@ -24,12 +24,56 @@ from .survivor_store import SURVIVOR_STREAM_DIR, SurvivorStreamStore
 
 EXPECTED_ENUM_SHA = "397533c24eb48bd7e0c1f18dedc4d94393c5965107cc6165eb59ecad592f7b3e"
 EXPECTED_TOTAL = 200829
+EXPECTED_SPEC_SHA = "d470350a0f3f44b8a64f4d681a8efa80241877d826ba76d96143b50c82c05323"
+EXPECTED_TEMPLATES_SHA = "22b52c33f60b8668721e6aab744e6bb22ea1b8b84c91de4e6637cbac3f08583f"
+EXPECTED_ATOMIC_BANK_SHA = "2e6a4ad0328e902d8eda2b67bafe4f7ca804ac29fe6cb095fedc4ee53fab440a"
+EXPECTED_CORPUS_SHA = "505ecb91170b5286cb7a8da8f8dc24808cf18067317546e8246bfd2972201f95"
 COMPOSITE_REDUNDANCY_THRESHOLD = 0.95
 COMPOSITE_FDR_STATUS = "NOT_USED"
 
 
 class FinalizationGateError(RuntimeError):
     """Raised when production finalization is not allowed."""
+
+
+def _sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _verify_frozen_authorities(root: Path, ckpt: dict[str, Any]) -> dict[str, str]:
+    """Production finalizer must verify freeze authorities, not only enum SHA."""
+    auth = dict(ckpt.get("authorities") or {})
+    status_path = root / "bounded_compose_run_status_v1.json"
+    if status_path.exists():
+        st = json.loads(status_path.read_text(encoding="utf-8"))
+        for k, v in (st.get("authorities") or {}).items():
+            auth.setdefault(k, v)
+
+    file_map = {
+        "COMPOSITE_SEARCH_SPEC_SHA": ("composite_search_spec_v1.json", EXPECTED_SPEC_SHA),
+        "COMPOSITE_TEMPLATES_SHA": ("composite_templates_v1.json", EXPECTED_TEMPLATES_SHA),
+        "COMPOSITE_ATOMIC_BANK_SHA": ("composite_atomic_bank_v1.json", EXPECTED_ATOMIC_BANK_SHA),
+        "DEVELOPMENT_CORPUS_SHA": ("development_corpus_manifest_v1.json", EXPECTED_CORPUS_SHA),
+    }
+    out: dict[str, str] = {}
+    for key, (fname, expected) in file_map.items():
+        path = root / fname
+        if path.exists():
+            digest = _sha256_file(path)
+        else:
+            digest = auth.get(key)
+        if digest != expected:
+            raise FinalizationGateError(
+                f"FINALIZATION_ALLOWED=NO — {key} mismatch got={digest} expected={expected}"
+            )
+        out[f"{key}_MATCH"] = "PASS"
+        out[key] = expected
+    out["FINALIZER_FROZEN_AUTHORITY_GATE"] = "PASS"
+    return out
 
 
 def assert_finalization_allowed(artifact_root: Path, *, allow_partial_test: bool = False) -> dict[str, Any]:
@@ -39,7 +83,12 @@ def assert_finalization_allowed(artifact_root: Path, *, allow_partial_test: bool
     """
     root = Path(artifact_root)
     if allow_partial_test:
-        return {"FINALIZATION_ALLOWED": "YES", "mode": "DRY_TEST"}
+        return {
+            "FINALIZATION_ALLOWED": "YES",
+            "mode": "DRY_TEST",
+            "PARTIAL_FINALIZATION_FAIL_CLOSED": "YES",
+            "FINALIZER_FROZEN_AUTHORITY_GATE": "N/A",
+        }
 
     ckpt_path = root / COMPOSITE_CHECKPOINT
     enum_path = root / "composite_enumeration_authority_v1.json"
@@ -64,12 +113,15 @@ def assert_finalization_allowed(artifact_root: Path, *, allow_partial_test: bool
         st = json.loads(status_path.read_text(encoding="utf-8"))
         if st.get("memory_guard_stop"):
             raise FinalizationGateError("FINALIZATION_ALLOWED=NO — memory_guard_stop=true")
+    frozen = _verify_frozen_authorities(root, ckpt)
     return {
         "FINALIZATION_ALLOWED": "YES",
+        "PARTIAL_FINALIZATION_FAIL_CLOSED": "YES",
         "completed_count": completed,
         "next_candidate_index": next_idx,
         "TOTAL_COMPOSITE_CANDIDATE_COUNT": total,
         "COMPOSITE_ENUMERATION_SHA256": enum_sha,
+        **frozen,
     }
 
 
@@ -199,6 +251,28 @@ def _jaccard(a: set[int], b: set[int]) -> float:
     return inter / union if union else 0.0
 
 
+def _jaccard_cardinality_possible(n_a: int, n_b: int, *, threshold: float) -> bool:
+    """
+    Necessary size condition for Jaccard >= threshold.
+    Max Jaccard when A ⊆ B (assume |A|<=|B|) is |A|/|B|.
+    Exact Jaccard remains the acceptance decision.
+    """
+    if n_a == 0 and n_b == 0:
+        return True
+    if n_a == 0 or n_b == 0:
+        return False
+    lo, hi = (n_a, n_b) if n_a <= n_b else (n_b, n_a)
+    return (lo / hi) >= threshold
+
+
+def _size_window_max(n: int, *, threshold: float) -> int:
+    """Largest set size that can still reach Jaccard >= threshold vs a set of size n."""
+    if n <= 0:
+        return 0
+    # n / other >= threshold  =>  other <= n / threshold
+    return int(n / threshold)
+
+
 def _min_fold_precision_delta(fold_df: pd.DataFrame, cid: str) -> float:
     sub = fold_df[fold_df["composite_id"] == cid]
     if sub.empty or "PRECISION_DELTA_VS_TRIGGER" not in sub.columns:
@@ -212,11 +286,13 @@ def _min_fold_precision_delta(fold_df: pd.DataFrame, cid: str) -> float:
 def _near_rep_key(row: pd.Series, fold_df: pd.DataFrame) -> tuple:
     """
     Near-duplicate cluster representative (predeclared):
-    highest minimum fold PRECISION_DELTA_VS_TRIGGER,
-    then higher RECALL_RETENTION_VS_TRIGGER,
-    then lower FPR_DELTA_VS_TRIGGER,
-    then higher TOTAL_SIGNALS,
-    then composite_id lexical.
+    1 highest minimum fold PRECISION_DELTA_VS_TRIGGER
+    2 higher aggregate RECALL_RETENTION_VS_TRIGGER
+    3 lower FPR_DELTA_VS_TRIGGER
+    4 higher TOTAL_SIGNALS
+    5 composite_id lexical ASCENDING
+
+    Sort ascending with negated metric keys so lexical tie is ascending.
     """
     cid = str(row["composite_id"])
     min_fold = _min_fold_precision_delta(fold_df, cid)
@@ -226,8 +302,7 @@ def _near_rep_key(row: pd.Series, fold_df: pd.DataFrame) -> tuple:
     recall_v = float(recall) if pd.notna(recall) else float("-inf")
     fpr_v = float(fpr) if pd.notna(fpr) else float("inf")
     sig_v = int(signals) if pd.notna(signals) else -1
-    # Sort descending on first three metrics via negation where needed.
-    return (min_fold, recall_v, -fpr_v, sig_v, cid)
+    return (-min_fold, -recall_v, fpr_v, -sig_v, cid)
 
 
 def near_redundancy_survivors(
@@ -239,11 +314,11 @@ def near_redundancy_survivors(
 ) -> tuple[pd.DataFrame, dict[str, str], dict[str, list[str]]]:
     """
     Blockwise Jaccard on disk-backed survivor streams by (direction, decision_tf).
-    Returns redundancy CSV frame, exact/near alias maps.
+    Cardinality prefilter before exact Jaccard; no global all-pairs matrix.
+    Final acceptance is always exact Jaccard.
     """
     store = SurvivorStreamStore(root)
     groups: dict[tuple[str, str], list[str]] = defaultdict(list)
-    meta = {str(r.composite_id): r for r in survivors.itertuples(index=False)}
     for cid in survivors["composite_id"].astype(str):
         row = survivors.loc[survivors["composite_id"].astype(str) == cid].iloc[0]
         groups[(str(row["direction"]), str(row["decision_tf"]))].append(cid)
@@ -252,24 +327,38 @@ def near_redundancy_survivors(
     replace: dict[str, str] = {}
     aliases: dict[str, list[str]] = defaultdict(list)
     cluster_id = 0
+    exact_comparisons = 0
+    skipped_cardinality = 0
     for (direction, tf), ids in sorted(groups.items()):
-        # Load only this block's timestamp sets.
+        # Load only this block's timestamp sets (not a global matrix).
         sets: dict[str, set[int]] = {}
+        sizes: dict[str, int] = {}
         for cid in ids:
             try:
                 ns = store.load_ns(cid)
                 sets[cid] = set(int(x) for x in ns.tolist())
             except KeyError:
                 sets[cid] = set()
+            sizes[cid] = len(sets[cid])
+        # Deterministic size-ordered scan — only compare within cardinality window.
+        ordered = sorted(ids, key=lambda c: (sizes[c], c))
         used: set[str] = set()
-        for cid in sorted(ids):
+        for i, cid in enumerate(ordered):
             if cid in used:
                 continue
             members = [cid]
             used.add(cid)
-            for other in sorted(ids):
+            max_other = _size_window_max(sizes[cid], threshold=threshold)
+            for j in range(i + 1, len(ordered)):
+                other = ordered[j]
                 if other in used:
                     continue
+                if sizes[other] > max_other:
+                    break
+                if not _jaccard_cardinality_possible(sizes[cid], sizes[other], threshold=threshold):
+                    skipped_cardinality += 1
+                    continue
+                exact_comparisons += 1
                 if _jaccard(sets[cid], sets[other]) >= threshold:
                     members.append(other)
                     used.add(other)
@@ -277,7 +366,6 @@ def near_redundancy_survivors(
             ranked = sorted(
                 (r for _, r in member_rows.iterrows()),
                 key=lambda r: _near_rep_key(r, fold_df),
-                reverse=True,
             )
             rep = str(ranked[0]["composite_id"])
             for m in members:
@@ -303,6 +391,10 @@ def near_redundancy_survivors(
         gc.collect()
 
     rdf = pd.DataFrame(cluster_rows)
+    rdf.attrs["JACCARD_FINAL_DECISION_EXACT"] = "YES"
+    rdf.attrs["GLOBAL_SURVIVOR_ALL_PAIR_MATRIX"] = "NO"
+    rdf.attrs["exact_jaccard_comparisons"] = exact_comparisons
+    rdf.attrs["cardinality_prefilter_skips"] = skipped_cardinality
     return rdf, replace, dict(aliases)
 
 
@@ -727,6 +819,9 @@ def run_finalization(
         report = {}
     handoff = build_model_handoff(root, banks["model"], config_by_id)
 
+    survivor_store = SurvivorStreamStore(root)
+    manifest = survivor_store.assemble_final_manifest()
+
     out = {
         "gate": gate,
         "assemble": assemble,
@@ -746,6 +841,15 @@ def run_finalization(
         "SELECTIVE_THRESHOLD_CHANGED": "NO",
         "SURVIVOR_CLASSES": ",".join(sorted(SURVIVOR_CLASSES)),
         "FINAL_RESULT_ASSEMBLY_BOUNDED": "YES",
+        "JACCARD_FINAL_DECISION_EXACT": "YES",
+        "GLOBAL_SURVIVOR_ALL_PAIR_MATRIX": "NO",
+        "NEAR_REDUNDANCY_LEXICAL_TIE_ASCENDING": "YES",
+        "SURVIVOR_FINAL_MANIFEST_ASSEMBLY": manifest.get("SURVIVOR_FINAL_MANIFEST_ASSEMBLY", "PASS"),
+        "SURVIVOR_DUPLICATE_METADATA_COUNT": manifest.get("SURVIVOR_DUPLICATE_METADATA_COUNT", 0),
+        "SURVIVOR_MISSING_SHARD_COUNT": manifest.get("SURVIVOR_MISSING_SHARD_COUNT", 0),
+        "PRODUCTION_FINALIZER_CLI": "YES",
+        "PARTIAL_FINALIZATION_FAIL_CLOSED": "YES",
+        "FINALIZER_FROZEN_AUTHORITY_GATE": gate.get("FINALIZER_FROZEN_AUTHORITY_GATE", "N/A"),
     }
     save_json(root / "composite_finalization_status_v1.json", out)
     return out

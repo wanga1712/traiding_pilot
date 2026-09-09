@@ -13,6 +13,7 @@ from .classify import (
     classify_composite,
     count_positive_precision_delta_folds,
     count_usable_folds,
+    is_survivor_class,
 )
 from .compose import _stream_events, _timeline_for_config, compose_signals, compose_signals_from_compact
 from .config import (
@@ -24,6 +25,7 @@ from .config import (
     load_atomic_bank,
 )
 from .context_state import build_compact_state_arrays, pair_configs_by_stream, pair_key_from_config
+from .composite_stream_hash import hash_composite_signals
 from .memory_guard import save_json
 from .stream_store import AtomicStreamStore
 
@@ -36,6 +38,13 @@ METRIC_KEYS = (
     "PRE_C_SIGNAL_RATE",
     "MEDIAN_MAE_AFTER_SIGNAL",
     "MEDIAN_MFE_AFTER_SIGNAL",
+)
+
+FOLD_METRIC_KEYS = (
+    "PRECISION",
+    "EVENT_RECALL",
+    "FALSE_POSITIVE_RATE",
+    "TOTAL_SIGNALS",
 )
 
 
@@ -171,6 +180,7 @@ def _metric_bundle(sigs, events, bars, comp, config_by_id, store, price_cache: d
     price_m = price_cache[pk]
     fold_prec = []
     fold_counts = []
+    fold_metrics = []
     for _fid, fs, fe in DEVELOPMENT_FOLDS:
         fm = _evaluate_bundle(
             sigs, events, candidate_id=cid, decision_tf=tf, direction=direction, family="COMPOSITE", start=fs, end=fe, bars=bars.get(tf)
@@ -188,6 +198,7 @@ def _metric_bundle(sigs, events, bars, comp, config_by_id, store, price_cache: d
         )
         fold_prec.append(_delta(fm.get("PRECISION"), tm.get("PRECISION")))
         fold_counts.append(int(fm.get("TOTAL_SIGNALS") or 0))
+        fold_metrics.append({k: fm.get(k) for k in FOLD_METRIC_KEYS})
     usable = count_usable_folds(fold_counts)
     pos = count_positive_precision_delta_folds(fold_prec, fold_counts)
     cclass = classify_composite(
@@ -198,6 +209,7 @@ def _metric_bundle(sigs, events, bars, comp, config_by_id, store, price_cache: d
         fold_precision_deltas=fold_prec,
         fold_signal_counts=fold_counts,
     )
+    stream_sha, _ = hash_composite_signals(sigs, direction=direction, decision_tf=tf)
     return {
         "agg": agg,
         "trig": trig_m,
@@ -209,6 +221,10 @@ def _metric_bundle(sigs, events, bars, comp, config_by_id, store, price_cache: d
         "positive_delta_folds": pos,
         "sample_flag": agg.get("sample_flag"),
         "composite_class": cclass,
+        "fold_metrics": fold_metrics,
+        "COMPOSITE_STREAM_SHA256": stream_sha,
+        "TOTAL_SIGNALS": agg.get("TOTAL_SIGNALS"),
+        "is_survivor": is_survivor_class(cclass),
     }
 
 
@@ -235,7 +251,7 @@ def run_old_new_parity(
     bars = LazyBars(max_cached=2)
 
     rows = []
-    ts_fail = metric_fail = class_fail = 0
+    ts_fail = metric_fail = class_fail = fold_fail = stream_fail = 0
     price_cache: dict = {}
     for i, comp in enumerate(definitions):
         ref_sigs = _compose_reference(comp, store=store, config_by_id=config_by_id, pair_mates=pair_mates, bars=bars)
@@ -249,8 +265,18 @@ def run_old_new_parity(
         ref_m = _metric_bundle(ref_sigs, events, bars, comp, config_by_id, store, price_cache)
         new_m = _metric_bundle(new_sigs, events, bars, comp, config_by_id, store, price_cache)
         metric_ok = all(_float_close(ref_m["agg"].get(k), new_m["agg"].get(k)) for k in METRIC_KEYS)
+        metric_ok = metric_ok and _float_close(ref_m.get("TOTAL_SIGNALS"), new_m.get("TOTAL_SIGNALS"))
         if not metric_ok:
             metric_fail += 1
+        fold_ok = len(ref_m["fold_metrics"]) == len(new_m["fold_metrics"]) and all(
+            all(_float_close(a.get(k), b.get(k)) for k in FOLD_METRIC_KEYS)
+            for a, b in zip(ref_m["fold_metrics"], new_m["fold_metrics"])
+        )
+        if not fold_ok:
+            fold_fail += 1
+        stream_ok = ref_m["COMPOSITE_STREAM_SHA256"] == new_m["COMPOSITE_STREAM_SHA256"]
+        if not stream_ok:
+            stream_fail += 1
         class_ok = (
             _float_close(ref_m["PRECISION_DELTA_VS_TRIGGER"], new_m["PRECISION_DELTA_VS_TRIGGER"])
         ) and (
@@ -259,7 +285,7 @@ def run_old_new_parity(
             _float_close(ref_m["RECALL_RETENTION_VS_TRIGGER"], new_m["RECALL_RETENTION_VS_TRIGGER"])
         ) and (
             _float_close(ref_m["FPR_DELTA_VS_TRIGGER"], new_m["FPR_DELTA_VS_TRIGGER"])
-        ) and ref_m["usable_folds"] == new_m["usable_folds"] and ref_m["positive_delta_folds"] == new_m["positive_delta_folds"] and ref_m["sample_flag"] == new_m["sample_flag"] and ref_m["composite_class"] == new_m["composite_class"]
+        ) and ref_m["usable_folds"] == new_m["usable_folds"] and ref_m["positive_delta_folds"] == new_m["positive_delta_folds"] and ref_m["sample_flag"] == new_m["sample_flag"] and ref_m["composite_class"] == new_m["composite_class"] and ref_m["is_survivor"] == new_m["is_survivor"]
         if not class_ok:
             class_fail += 1
 
@@ -273,11 +299,19 @@ def run_old_new_parity(
                 "n_signals_new": len(new_sigs),
                 "timestamp_parity": ts_ok,
                 "metric_parity": metric_ok,
+                "fold_parity": fold_ok,
+                "stream_hash_parity": stream_ok,
                 "class_input_parity": class_ok,
+                "COMPOSITE_STREAM_SHA256": new_m["COMPOSITE_STREAM_SHA256"],
+                "composite_class": new_m["composite_class"],
             }
         )
         if (i + 1) % 10 == 0:
-            print(f"[parity] {i + 1}/{len(definitions)} ts_fail={ts_fail} metric_fail={metric_fail} class_fail={class_fail}", flush=True)
+            print(
+                f"[parity] {i + 1}/{len(definitions)} ts_fail={ts_fail} metric_fail={metric_fail} "
+                f"fold_fail={fold_fail} stream_fail={stream_fail} class_fail={class_fail}",
+                flush=True,
+            )
         store.release()
 
     df = pd.DataFrame(rows)
@@ -291,8 +325,15 @@ def run_old_new_parity(
         "COMPOSITE_TIMESTAMP_PARITY": "PASS" if ts_fail == 0 else "FAIL",
         "COMPOSITE_METRIC_PARITY": "PASS" if metric_fail == 0 else "FAIL",
         "COMPOSITE_CLASS_INPUT_PARITY": "PASS" if class_fail == 0 else "FAIL",
+        "REPAIR5_TIMESTAMP_PARITY": "PASS" if ts_fail == 0 else "FAIL",
+        "REPAIR5_METRIC_PARITY": "PASS" if metric_fail == 0 else "FAIL",
+        "REPAIR5_FOLD_PARITY": "PASS" if fold_fail == 0 else "FAIL",
+        "REPAIR5_CLASS_PARITY": "PASS" if class_fail == 0 else "FAIL",
+        "REPAIR5_STREAM_HASH_PARITY": "PASS" if stream_fail == 0 else "FAIL",
         "timestamp_failures": ts_fail,
         "metric_failures": metric_fail,
+        "fold_failures": fold_fail,
+        "stream_hash_failures": stream_fail,
         "class_failures": class_fail,
         "OOS_OPENED": OOS_OPENED,
         "OOS_ACCESS_COUNT": 0,

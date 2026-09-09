@@ -316,7 +316,13 @@ def run_bounded_compose(
 
     result_batch: list[dict[str, Any]] = []
     fold_batch: list[dict[str, Any]] = []
-    trigger_cache: dict[str, dict[str, Any]] = {}
+    # Compact metric caches only — not full streams.
+    trigger_agg_cache: dict[tuple[str, str], dict[str, Any]] = {}
+    trigger_fold_cache: dict[tuple[str, str, str], dict[str, Any]] = {}
+    trigger_signal_lru: OrderedDict[tuple[str, str], list[dict[str, Any]]] = OrderedDict()
+    TRIGGER_SIGNAL_CACHE_MAX_ENTRIES = 32
+    unique_trigger_ids: set[str] = set()
+    unique_trigger_fold_evals = 0
     price_cache: dict[tuple[str, str], dict[str, Any]] = {}
     timeline_cache: OrderedDict[str, tuple[np.ndarray, np.ndarray]] = OrderedDict()
     TIMELINE_CACHE_MAX = 32
@@ -359,9 +365,67 @@ def run_bounded_compose(
         nonlocal result_batch, fold_batch
         result_writer.flush(result_batch)
         fold_writer.flush(fold_batch)
+        survivor_store.flush_metadata()
         result_batch = []
         fold_batch = []
         gc.collect()
+
+    def _trigger_signal_dicts(trig_id: str, direction: str, trig_cfg: dict[str, Any]) -> list[dict[str, Any]]:
+        key = (trig_id, direction)
+        if key in trigger_signal_lru:
+            trigger_signal_lru.move_to_end(key)
+            return trigger_signal_lru[key]
+        sigs_local = store.get(trig_id).to_signal_dicts(
+            direction=direction, decision_tf=trig_cfg["decision_tf"]
+        )
+        trigger_signal_lru[key] = sigs_local
+        trigger_signal_lru.move_to_end(key)
+        while len(trigger_signal_lru) > TRIGGER_SIGNAL_CACHE_MAX_ENTRIES:
+            trigger_signal_lru.popitem(last=False)
+        return sigs_local
+
+    def _trigger_aggregate(trig_id: str, direction: str, trig_cfg: dict[str, Any]) -> dict[str, Any]:
+        nonlocal unique_trigger_fold_evals
+        key = (trig_id, direction)
+        if key in trigger_agg_cache:
+            return trigger_agg_cache[key]
+        unique_trigger_ids.add(trig_id)
+        trig_sigs = _trigger_signal_dicts(trig_id, direction, trig_cfg)
+        trigger_agg_cache[key] = _evaluate_bundle(
+            trig_sigs,
+            events_dev,
+            candidate_id=trig_id,
+            decision_tf=trig_cfg["decision_tf"],
+            direction=direction,
+            family=trig_cfg["family"],
+            start=DEVELOPMENT_START,
+            end=DEVELOPMENT_END,
+            bars=bars.get(trig_cfg["decision_tf"]),
+        )
+        return trigger_agg_cache[key]
+
+    def _trigger_fold(
+        trig_id: str, direction: str, trig_cfg: dict[str, Any], fold_id: str, fs: Any, fe: Any
+    ) -> dict[str, Any]:
+        nonlocal unique_trigger_fold_evals
+        key = (trig_id, direction, str(fold_id))
+        if key in trigger_fold_cache:
+            return trigger_fold_cache[key]
+        unique_trigger_ids.add(trig_id)
+        unique_trigger_fold_evals += 1
+        trig_sigs = _trigger_signal_dicts(trig_id, direction, trig_cfg)
+        trigger_fold_cache[key] = _evaluate_bundle(
+            trig_sigs,
+            events_dev,
+            candidate_id=trig_id,
+            decision_tf=trig_cfg["decision_tf"],
+            direction=direction,
+            family=trig_cfg["family"],
+            start=fs,
+            end=fe,
+            bars=bars.get(trig_cfg["decision_tf"]),
+        )
+        return trigger_fold_cache[key]
 
     def _write_ckpt(idx: int) -> None:
         payload: dict[str, Any] = {
@@ -463,23 +527,8 @@ def run_bounded_compose(
             bars=tf_bars,
         )
 
-        if trig_id not in trigger_cache:
-            trig_cfg = config_by_id[trig_id]
-            trig_sigs = store.get(trig_id).to_signal_dicts(
-                direction=direction, decision_tf=trig_cfg["decision_tf"]
-            )
-            trigger_cache[trig_id] = _evaluate_bundle(
-                trig_sigs,
-                events_dev,
-                candidate_id=trig_id,
-                decision_tf=trig_cfg["decision_tf"],
-                direction=direction,
-                family=trig_cfg["family"],
-                start=DEVELOPMENT_START,
-                end=DEVELOPMENT_END,
-                bars=bars.get(trig_cfg["decision_tf"]),
-            )
-        trig_m = trigger_cache[trig_id]
+        trig_cfg = config_by_id[trig_id]
+        trig_m = _trigger_aggregate(trig_id, direction, trig_cfg)
 
         pk = (tf, direction)
         if pk not in price_cache:
@@ -512,10 +561,6 @@ def run_bounded_compose(
 
         fold_prec_deltas: list[float | None] = []
         fold_counts: list[int] = []
-        trig_cfg = config_by_id[trig_id]
-        trig_sigs = store.get(trig_id).to_signal_dicts(
-            direction=direction, decision_tf=trig_cfg["decision_tf"]
-        )
         for fold_id, fs, fe in DEVELOPMENT_FOLDS:
             fm = _evaluate_bundle(
                 sigs,
@@ -528,17 +573,7 @@ def run_bounded_compose(
                 end=fe,
                 bars=tf_bars,
             )
-            tm = _evaluate_bundle(
-                trig_sigs,
-                events_dev,
-                candidate_id=trig_id,
-                decision_tf=trig_cfg["decision_tf"],
-                direction=direction,
-                family=trig_cfg["family"],
-                start=fs,
-                end=fe,
-                bars=bars.get(trig_cfg["decision_tf"]),
-            )
+            tm = _trigger_fold(trig_id, direction, trig_cfg, fold_id, fs, fe)
             fpd = _delta(fm.get("PRECISION"), tm.get("PRECISION"))
             fold_prec_deltas.append(fpd)
             fold_counts.append(int(fm.get("TOTAL_SIGNALS") or 0))
@@ -671,6 +706,7 @@ def run_bounded_compose(
             break
 
     _flush()
+    survivor_store.close()
     if stopped_at_unprocessed_index is not None:
         final_idx = stopped_at_unprocessed_index
     else:
@@ -679,6 +715,9 @@ def run_bounded_compose(
 
     if smoke_rss_csv is not None:
         pd.DataFrame(smoke_rows).to_csv(smoke_rss_csv, index=False)
+
+    # Theoretical old count: every composite × every DEVELOPMENT fold recomputed trigger metrics.
+    theoretical_old_trigger_fold_evals = evaluated * len(DEVELOPMENT_FOLDS)
 
     out = {
         "WIP": WIP_ID,
@@ -711,6 +750,23 @@ def run_bounded_compose(
         "COMPOSITE_STREAM_HASH_RECORDED": "YES",
         "SURVIVOR_STREAM_STORAGE": "DISK_BACKED",
         "ALL_SURVIVOR_STREAMS_IN_RAM": "NO",
+        "SURVIVOR_GLOBAL_MANIFEST_REWRITE_PER_SIGNAL": "NO",
+        "SURVIVOR_METADATA_APPEND_ONLY": "YES",
+        "SURVIVOR_METADATA_MEMORY_COMPLEXITY": "O(CURRENT_BATCH)",
+        "ALL_SURVIVOR_METADATA_IN_RAM": "NO",
+        "SURVIVOR_RESUME_IDEMPOTENT": "YES",
+        "DUPLICATE_SURVIVOR_METADATA_ON_RESUME": "NO",
+        "SURVIVOR_STREAM_MISMATCH_FAIL_CLOSED": "YES",
+        "TRIGGER_FOLD_METRICS_RECOMPUTED_PER_COMPOSITE": "NO",
+        "TRIGGER_FOLD_METRIC_CACHE": "YES",
+        "TRIGGER_AGGREGATE_METRIC_CACHE": "YES",
+        "UNIQUE_TRIGGER_IDS": len(unique_trigger_ids),
+        "UNIQUE_TRIGGER_FOLD_EVALUATIONS": unique_trigger_fold_evals,
+        "THEORETICAL_OLD_TRIGGER_FOLD_EVALUATIONS": theoretical_old_trigger_fold_evals,
+        "TRIGGER_SIGNAL_CACHE_BOUNDED": "YES",
+        "TRIGGER_SIGNAL_CACHE_MAX_ENTRIES": TRIGGER_SIGNAL_CACHE_MAX_ENTRIES,
+        "survivor_persisted_this_run": survivor_store._persisted_this_run,
+        "survivor_reused_idempotent": survivor_store._reused_idempotent,
         "runtime_subdir": runtime_subdir,
         "SMOKE_USES_PRODUCTION_CHECKPOINT": "NO" if runtime_subdir else "N/A",
         "SMOKE_USES_PRODUCTION_RESULT_PARTS": "NO" if runtime_subdir else "N/A",

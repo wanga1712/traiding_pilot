@@ -48,9 +48,17 @@ def test_survivor_store_disk_backed(tmp_path: Path):
         stream_sha256="deadbeef",
         composite_class="INCREMENTAL_BALANCED",
     )
+    store.flush_metadata()
     loaded = store.load_ns("COMP|T1|UP|abc")
     assert np.array_equal(loaded, ns)
+    assert not (tmp_path / "composite_survivor_stream_manifest_v1.json").exists()
+    parts = list((tmp_path / "composite_survivor_metadata_parts_v1").glob("part-*.jsonl"))
+    assert parts
+    doc = store.assemble_final_manifest()
+    assert doc["SURVIVOR_FINAL_MANIFEST_ASSEMBLY"] == "PASS"
     assert (tmp_path / "composite_survivor_stream_manifest_v1.json").exists()
+    assert doc["SURVIVOR_DUPLICATE_METADATA_COUNT"] == 0
+    assert doc["SURVIVOR_MISSING_SHARD_COUNT"] == 0
 
 
 def test_finalization_gate_fail_closed(tmp_path: Path):
@@ -58,3 +66,4 @@ def test_finalization_gate_fail_closed(tmp_path: Path):
         assert_finalization_allowed(tmp_path, allow_partial_test=False)
     g = assert_finalization_allowed(tmp_path, allow_partial_test=True)
     assert g["FINALIZATION_ALLOWED"] == "YES"
+    assert g["PARTIAL_FINALIZATION_FAIL_CLOSED"] == "YES"

@@ -1,0 +1,94 @@
+artifact_root /var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1
+=== finalizer memory ===
+[finalizer-mem] i=0 peak_rss_gb=0.103
+[finalizer-mem] i=5000 peak_rss_gb=0.119
+[finalizer-mem] i=10000 peak_rss_gb=0.119
+[finalizer-mem] i=15000 peak_rss_gb=0.119
+[finalizer-mem] i=20000 peak_rss_gb=0.119
+[finalizer-mem] i=25000 peak_rss_gb=0.119
+[finalizer-mem] i=30000 peak_rss_gb=0.119
+[finalizer-mem] i=35000 peak_rss_gb=0.119
+[finalizer-mem] i=40000 peak_rss_gb=0.119
+[finalizer-mem] i=45000 peak_rss_gb=0.119
+{
+  "S13_FINALIZER_MEMORY_TEST": "PASS",
+  "S13_FINALIZER_TEST_RESULT_ROWS": 50000,
+  "S13_FINALIZER_TEST_FOLD_ROWS": 200000,
+  "S13_FINALIZER_PEAK_RSS_GB": 0.3389854431152344,
+  "JACCARD_FINAL_DECISION_EXACT": "YES",
+  "GLOBAL_SURVIVOR_ALL_PAIR_MATRIX": "NO",
+  "SURVIVOR_FINAL_MANIFEST_ASSEMBLY": "PASS",
+  "SURVIVOR_DUPLICATE_METADATA_COUNT": 0,
+  "SURVIVOR_MISSING_SHARD_COUNT": 0,
+  "runtime": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/_finalizer_s13_memory_runtime"
+}
+=== parity >=100 ===
+parity_n 126 {'MEMORY_SMOKE_BY_TEMPLATE': {'T1_DUAL_ANCHOR': 18, 'T2_REGIME_ANCHOR': 18, 'T3_ANCHOR_TRANSITION': 18, 'T4_REGIME_ANCHOR_TRANSITION': 18, 'T5_ANCHOR_MICRO': 36, 'T6_CROSS_FAMILY_SAME_TF': 18}, 'MEMORY_SMOKE_5M_COUNT': 18, 'MEMORY_SMOKE_15M_COUNT': 18, 'MEMORY_SMOKE_T4_TRIPLE_COUNT': 18, 'total': 126}
+[parity] 10/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+[parity] 20/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+[parity] 30/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+[parity] 40/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+[parity] 50/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+[parity] 60/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+[parity] 70/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+[parity] 80/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+[parity] 90/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+[parity] 100/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+[parity] 110/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+[parity] 120/126 ts_fail=0 metric_fail=0 fold_fail=0 stream_fail=0 class_fail=0
+{
+  "REAL_PARITY_SAMPLE_COUNT": 126,
+  "REAL_PARITY_ALL_TEMPLATES": "YES",
+  "COMPOSITE_TIMESTAMP_PARITY": "PASS",
+  "COMPOSITE_METRIC_PARITY": "PASS",
+  "COMPOSITE_CLASS_INPUT_PARITY": "PASS",
+  "REPAIR5_TIMESTAMP_PARITY": "PASS",
+  "REPAIR5_METRIC_PARITY": "PASS",
+  "REPAIR5_FOLD_PARITY": "PASS",
+  "REPAIR5_CLASS_PARITY": "PASS",
+  "REPAIR5_STREAM_HASH_PARITY": "PASS"
+}
+=== perf smoke 1000 ===
+[bounded-compose] evaluated=50 completed_count=50 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=100 completed_count=100 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=150 completed_count=150 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=200 completed_count=200 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=250 completed_count=250 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=300 completed_count=300 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=350 completed_count=350 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=400 completed_count=400 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=450 completed_count=450 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=500 completed_count=500 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=550 completed_count=550 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=600 completed_count=600 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=650 completed_count=650 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=700 completed_count=700 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=750 completed_count=750 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=800 completed_count=800 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=850 completed_count=850 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=900 completed_count=900 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=950 completed_count=950 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=1000 completed_count=1000 rss_gb=0.55 active_streams=5
+[bounded-compose] evaluated=50 completed_count=50 rss_gb=0.61 active_streams=5
+{
+  "REPAIR5_CANDIDATES_PER_MINUTE": 26.825179463855267,
+  "OLD_CANDIDATES_PER_MINUTE": 15.0,
+  "PROJECTED_FULL_RUNTIME_HOURS": 124.77642524293307,
+  "CONSERVATIVE_PROJECTED_FULL_RUNTIME_HOURS": 223.14333333333335,
+  "n_evaluated": 1000,
+  "templates_seen": [
+    "T1_DUAL_ANCHOR",
+    "T2_REGIME_ANCHOR",
+    "T3_ANCHOR_TRANSITION",
+    "T4_REGIME_ANCHOR_TRANSITION"
+  ],
+  "ALL_TEMPLATES_COVERED": "NO",
+  "TRIGGER_FOLD_METRIC_CACHE": "YES",
+  "UNIQUE_TRIGGER_IDS": 49,
+  "UNIQUE_TRIGGER_FOLD_EVALUATIONS": 196,
+  "THEORETICAL_OLD_TRIGGER_FOLD_EVALUATIONS": 4000,
+  "SURVIVOR_GLOBAL_MANIFEST_REWRITE_PER_SIGNAL": "NO",
+  "SURVIVOR_METADATA_APPEND_ONLY": "YES",
+  "rss_gb": 0.5484428405761719,
+  "OOS_OPENED": "NO"
+}
