@@ -64,6 +64,8 @@
   },
   "suspend_resume_notes": "HOST_NIGHT_MODE=SUSPEND: process remains the same PID and pauses in RAM; sleep hook systemctl start is no-op while active. No separate restart-on-resume required for calculation continuity.",
   "premature_compose_preserved": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/_audit_pre_durability_preflight_20260909T144933Z",
+  "BOOT_RESUME_DURABILITY_COMMIT": "d0201b1e0d58afd419bbeef8e1c953200909ae2a",
+  "PUSHED_TO_GITHUB": "YES",
   "FULL_COMPOSITE_EXECUTION_AUTHORIZED": "YES",
   "methodology_unchanged": "YES"
 }

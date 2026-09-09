@@ -1,0 +1,14 @@
+{
+  "crypto_trading_bot/research_v2/composite_signal_search/bounded_compose.py": "729fe3264db0250de040d80667afc9e5bd1387a54165703586607432d369a409",
+  "crypto_trading_bot/research_v2/composite_signal_search/boot_authority.py": "4b26e18d36c54202dbc1774de3e130f59ac981399e5815cf410c6cc9079446b1",
+  "crypto_trading_bot/research_v2/composite_signal_search/durable_io.py": "1c3c9c24c53e788a5162210a3f31d86c942791f7a6fdcb77d682661d70728eaf",
+  "crypto_trading_bot/research_v2/composite_signal_search/result_parts.py": "f52dd555d2ddee005c82e837a12b8036b9ab5a3b1159577994e0996de4b0bca1",
+  "crypto_trading_bot/research_v2/composite_signal_search/survivor_store.py": "dbdbd4e0379a465486958b014d2b207ebf2c0c3a917f3177a325067c200c8ca8",
+  "crypto_trading_bot/research_v2/composite_signal_search/run_search.py": "a137326252cd5e7333d917edda6a08bdb857599ffe9758ae55124ceed5f2f5df",
+  "crypto_trading_bot/research_v2/composite_signal_search/finalize.py": "03e46beb81f4dc0b58249fc87ad172f1fbf0ba9e70fdab82edf585e4c4dbe3f2",
+  "crypto_trading_bot/research_v2/composite_signal_search/classify.py": "b86ef49bb06ffeaa17074919dee3c181eda72c4b33d68572da9c8e5e91104705",
+  "crypto_trading_bot/research_v2/composite_signal_search/compose.py": "e97d934dfb2e2a6a8d706eed6e5843954d733e7ff261f01fa433160882cd1449",
+  "crypto_trading_bot/research_v2/composite_signal_search/memory_guard.py": "959a5f66c2525dde040cee39d87964db1c60e12f01949d4f8f875545b84fa660",
+  "crypto_trading_bot/research_v2/composite_signal_search/enumeration_authority.py": "eb6f9418fefd816530f19be3c0421c122593ffe9f29d6cb2e807fa4391d54882",
+  "crypto_trading_bot/research_v2/composite_signal_search/__init__.py": "f7a44a66520d41525a0bb45f085aea8a2164d97e8cb40e78d5b33af6bb4e40f5"
+}
