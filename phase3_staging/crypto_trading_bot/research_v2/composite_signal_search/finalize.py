@@ -572,10 +572,14 @@ def write_summaries(root: Path, results: pd.DataFrame) -> None:
 
     _summary(["template_id"], root / "composite_summary_by_template_v1.csv")
     _summary(["decision_tf", "direction"], root / "composite_summary_by_tf_direction_v1.csv")
-    # family proxy: trigger id prefix / leave trigger column
+    # Keep the existing column name, but use the frozen family authority.
     if "trigger_candidate_id" in df.columns:
         df2 = df.copy()
-        df2["trigger_family_proxy"] = df2["trigger_candidate_id"].astype(str).str.split("_").str[0]
+        family_by_id = {c['candidate_id']: c['family']
+                        for c in load_atomic_bank(root=root)['configs']}
+        df2["trigger_family_proxy"] = df2['trigger_candidate_id'].map(family_by_id)
+        if df2['trigger_family_proxy'].isna().any():
+            raise FinalizationGateError('Unknown trigger ID in family summary')
         rows = []
         for keys, g in df2.groupby(["trigger_family_proxy"], dropna=False):
             if not isinstance(keys, tuple):

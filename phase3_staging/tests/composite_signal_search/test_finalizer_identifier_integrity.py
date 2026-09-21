@@ -4,6 +4,7 @@ import pytest
 from crypto_trading_bot.research_v2.composite_signal_search.finalize import (
     exact_duplicate_clusters, build_survivor_banks, build_model_handoff,
     _atomic_id_decoder, _exact_survivor_maps, FinalizationGateError,
+    write_summaries,
 )
 
 
@@ -55,3 +56,14 @@ def test_exact_then_near_keeps_a_representative_and_transitive_aliases(tmp_path)
     assert banks['n_model']==1
     assert banks['model']['survivors'][0]['composite_id']==c
     assert banks['model']['survivors'][0]['alias_composite_ids']==[a,b]
+
+
+def test_family_summary_groups_full_ids_by_frozen_family(tmp_path):
+    ids=['DMA|DMA_A|1H|UP','DMA|DMA_B|2H|UP','MACD|MACD_A|1H|UP']
+    configs=[dict(candidate_id=cid,family=cid.split('|')[0]) for cid in ids]
+    (tmp_path/'composite_atomic_bank_v1.json').write_text(json.dumps({'configs':configs}))
+    rows=pd.DataFrame([dict(trigger_candidate_id=cid,template_id='T1',decision_tf='1H',
+        direction='UP',composite_class='INCREMENTAL_BALANCED') for cid in ids])
+    write_summaries(tmp_path,rows)
+    summary=pd.read_csv(tmp_path/'composite_summary_by_family_v1.csv')
+    assert dict(zip(summary['trigger_family_proxy'],summary['n']))=={'DMA':2,'MACD':1}
