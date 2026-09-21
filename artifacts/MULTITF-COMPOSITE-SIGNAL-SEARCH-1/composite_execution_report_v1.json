@@ -1,0 +1,379 @@
+{
+  "artifact": "composite_execution_report_v1",
+  "DEVELOPMENT_ONLY": "YES",
+  "OOS_OPENED": "NO",
+  "COMPOSITE_FDR_STATUS": "NOT_USED",
+  "CANONICAL_SELECTIVE_CLASS": "INCREMENTAL_SELECTIVE",
+  "DUAL_ANCHOR_INCREMENTAL_BALANCED_COUNT": 77,
+  "DUAL_ANCHOR_INCREMENTAL_SELECTIVE_COUNT": 158,
+  "DUAL_ANCHOR_BEST_BY_DIRECTION": {
+    "UP": {
+      "composite_id": "COMP|T1_DUAL_ANCHOR|UP|fe1478a38843743e",
+      "template_id": "T1_DUAL_ANCHOR",
+      "direction": "UP",
+      "decision_tf": "1H",
+      "PRECISION": 0.5985477178423236,
+      "PRECISION_DELTA_VS_TRIGGER": 0.1457772692935109,
+      "EVENT_RECALL": 0.4893977947413062,
+      "FALSE_POSITIVE_RATE": 0.0674273858921161,
+      "TOTAL_SIGNALS": "964",
+      "RECALL_RETENTION_VS_TRIGGER": 0.6724941724941725,
+      "SIGNAL_RETENTION": 0.5087071240105541,
+      "MEDIAN_MFE_AFTER_SIGNAL": 2.1642355181006296,
+      "MEDIAN_MAE_AFTER_SIGNAL": 0.6323452296492797,
+      "usable_folds": "4",
+      "positive_delta_folds": "4",
+      "composite_class": "INCREMENTAL_SELECTIVE",
+      "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+    },
+    "DOWN": {
+      "composite_id": "COMP|T1_DUAL_ANCHOR|DOWN|d3ac28e39ef5e585",
+      "template_id": "T1_DUAL_ANCHOR",
+      "direction": "DOWN",
+      "decision_tf": "1H",
+      "PRECISION": 0.5646551724137931,
+      "PRECISION_DELTA_VS_TRIGGER": 0.1353330494500517,
+      "EVENT_RECALL": 0.5560271646859083,
+      "FALSE_POSITIVE_RATE": 0.0896551724137931,
+      "TOTAL_SIGNALS": "1160",
+      "RECALL_RETENTION_VS_TRIGGER": 0.8017135862913096,
+      "SIGNAL_RETENTION": 0.6095638465580662,
+      "MEDIAN_MFE_AFTER_SIGNAL": 1.9332789379061224,
+      "MEDIAN_MAE_AFTER_SIGNAL": 0.6131692729004934,
+      "usable_folds": "4",
+      "positive_delta_folds": "4",
+      "composite_class": "INCREMENTAL_SELECTIVE",
+      "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+    }
+  },
+  "REGIME_ANCHOR_INCREMENTAL_COUNT": 335,
+  "REGIME_ANCHOR_BEST_BY_TF_DIRECTION": {
+    "1H|UP": {
+      "composite_id": "COMP|T2_REGIME_ANCHOR|UP|babed34851619068",
+      "template_id": "T2_REGIME_ANCHOR",
+      "direction": "UP",
+      "decision_tf": "1H",
+      "PRECISION": 0.5760266370699223,
+      "PRECISION_DELTA_VS_TRIGGER": 0.1232561885211096,
+      "EVENT_RECALL": 0.4402035623409669,
+      "FALSE_POSITIVE_RATE": 0.0843507214206437,
+      "TOTAL_SIGNALS": "901",
+      "RECALL_RETENTION_VS_TRIGGER": 0.6048951048951049,
+      "SIGNAL_RETENTION": 0.4754617414248021,
+      "MEDIAN_MFE_AFTER_SIGNAL": 2.1530990179655425,
+      "MEDIAN_MAE_AFTER_SIGNAL": 0.6204010965228721,
+      "usable_folds": "4",
+      "positive_delta_folds": "4",
+      "composite_class": "INCREMENTAL_SELECTIVE",
+      "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+    },
+    "1H|DOWN": {
+      "composite_id": "COMP|T2_REGIME_ANCHOR|DOWN|da43e7fbbb34523d",
+      "template_id": "T2_REGIME_ANCHOR",
+      "direction": "DOWN",
+      "decision_tf": "1H",
+      "PRECISION": 0.5366922234392114,
+      "PRECISION_DELTA_VS_TRIGGER": 0.1073701004754699,
+      "EVENT_RECALL": 0.4159592529711375,
+      "FALSE_POSITIVE_RATE": 0.0876232201533406,
+      "TOTAL_SIGNALS": "913",
+      "RECALL_RETENTION_VS_TRIGGER": 0.5997552019583843,
+      "SIGNAL_RETENTION": 0.4797687861271676,
+      "MEDIAN_MFE_AFTER_SIGNAL": 2.133984355785266,
+      "MEDIAN_MAE_AFTER_SIGNAL": 0.6229471549617727,
+      "usable_folds": "4",
+      "positive_delta_folds": "4",
+      "composite_class": "INCREMENTAL_SELECTIVE",
+      "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+    },
+    "2H|UP": {
+      "composite_id": "COMP|T2_REGIME_ANCHOR|UP|3e48cd50db56315d",
+      "template_id": "T2_REGIME_ANCHOR",
+      "direction": "UP",
+      "decision_tf": "2H",
+      "PRECISION": 0.6259541984732825,
+      "PRECISION_DELTA_VS_TRIGGER": 0.1948164739223842,
+      "EVENT_RECALL": 0.1418685121107266,
+      "FALSE_POSITIVE_RATE": 0.0687022900763358,
+      "TOTAL_SIGNALS": "131",
+      "RECALL_RETENTION_VS_TRIGGER": 0.2277777777777778,
+      "SIGNAL_RETENTION": 0.1568862275449102,
+      "MEDIAN_MFE_AFTER_SIGNAL": 4.930240566663056,
+      "MEDIAN_MAE_AFTER_SIGNAL": 0.8765962711696166,
+      "usable_folds": "4",
+      "positive_delta_folds": "4",
+      "composite_class": "INCREMENTAL_SELECTIVE",
+      "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+    },
+    "2H|DOWN": {
+      "composite_id": "COMP|T2_REGIME_ANCHOR|DOWN|da6333a5a944b718",
+      "template_id": "T2_REGIME_ANCHOR",
+      "direction": "DOWN",
+      "decision_tf": "2H",
+      "PRECISION": 0.5555555555555556,
+      "PRECISION_DELTA_VS_TRIGGER": 0.1837009423216319,
+      "EVENT_RECALL": 0.1733102253032929,
+      "FALSE_POSITIVE_RATE": 0.1,
+      "TOTAL_SIGNALS": "180",
+      "RECALL_RETENTION_VS_TRIGGER": 0.2506265664160401,
+      "SIGNAL_RETENTION": 0.1677539608574091,
+      "MEDIAN_MFE_AFTER_SIGNAL": 3.555056237837551,
+      "MEDIAN_MAE_AFTER_SIGNAL": 0.8587695803083598,
+      "usable_folds": "4",
+      "positive_delta_folds": "4",
+      "composite_class": "INCREMENTAL_SELECTIVE",
+      "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+    }
+  },
+  "TRANSITION_30M_INCREMENTAL_COUNT": 632,
+  "TRANSITION_30M_BEST_BY_DIRECTION": {
+    "UP": {
+      "composite_id": "COMP|T3_ANCHOR_TRANSITION|UP|d2b2a12ca71d7643",
+      "template_id": "T3_ANCHOR_TRANSITION",
+      "direction": "UP",
+      "decision_tf": "30m",
+      "PRECISION": 0.0648298217179902,
+      "PRECISION_DELTA_VS_TRIGGER": 0.0273298217179902,
+      "EVENT_RECALL": 0.6779661016949152,
+      "FALSE_POSITIVE_RATE": 0.8630470016207455,
+      "TOTAL_SIGNALS": "1234",
+      "RECALL_RETENTION_VS_TRIGGER": 0.7843137254901961,
+      "SIGNAL_RETENTION": 0.4536764705882353,
+      "MEDIAN_MFE_AFTER_SIGNAL": 12.407332599964604,
+      "MEDIAN_MAE_AFTER_SIGNAL": 1.037452843600184,
+      "usable_folds": "4",
+      "positive_delta_folds": "4",
+      "composite_class": "INCREMENTAL_BALANCED",
+      "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+    },
+    "DOWN": {
+      "composite_id": "COMP|T3_ANCHOR_TRANSITION|DOWN|886fc7e510b8fe66",
+      "template_id": "T3_ANCHOR_TRANSITION",
+      "direction": "DOWN",
+      "decision_tf": "30m",
+      "PRECISION": 0.04,
+      "PRECISION_DELTA_VS_TRIGGER": 0.0220717131474103,
+      "EVENT_RECALL": 0.8559322033898306,
+      "FALSE_POSITIVE_RATE": 0.900990099009901,
+      "TOTAL_SIGNALS": "2525",
+      "RECALL_RETENTION_VS_TRIGGER": 0.8632478632478633,
+      "SIGNAL_RETENTION": 0.3869138829298192,
+      "MEDIAN_MFE_AFTER_SIGNAL": 10.560567529735945,
+      "MEDIAN_MAE_AFTER_SIGNAL": 1.0815244006773632,
+      "usable_folds": "4",
+      "positive_delta_folds": "4",
+      "composite_class": "INCREMENTAL_BALANCED",
+      "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+    }
+  },
+  "TRIPLE_COMPOSITE_INCREMENTAL_COUNT": 10019,
+  "15M_CONDITIONAL_INCREMENTAL_COUNT": 356,
+  "5M_CONDITIONAL_INCREMENTAL_COUNT": 0,
+  "CROSS_FAMILY_INCREMENTAL_COUNT": 880,
+  "CROSS_FAMILY_BEST_PAIRS": {
+    "UP": {
+      "composite_id": "COMP|T6_CROSS_FAMILY_SAME_TF|UP|b4079b37458a3c33",
+      "template_id": "T6_CROSS_FAMILY_SAME_TF",
+      "direction": "UP",
+      "decision_tf": "2H",
+      "PRECISION": 0.6211453744493393,
+      "PRECISION_DELTA_VS_TRIGGER": 0.2076944372938817,
+      "EVENT_RECALL": 0.4878892733564013,
+      "FALSE_POSITIVE_RATE": 0.1145374449339207,
+      "TOTAL_SIGNALS": "454",
+      "RECALL_RETENTION_VS_TRIGGER": 0.752,
+      "SIGNAL_RETENTION": 0.5005512679162073,
+      "MEDIAN_MFE_AFTER_SIGNAL": 3.15338546428319,
+      "MEDIAN_MAE_AFTER_SIGNAL": 0.9537600003291338,
+      "usable_folds": "4",
+      "positive_delta_folds": "4",
+      "composite_class": "INCREMENTAL_SELECTIVE",
+      "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+    },
+    "DOWN": {
+      "composite_id": "COMP|T6_CROSS_FAMILY_SAME_TF|DOWN|58af8b29531dc621",
+      "template_id": "T6_CROSS_FAMILY_SAME_TF",
+      "direction": "DOWN",
+      "decision_tf": "2H",
+      "PRECISION": 0.630071599045346,
+      "PRECISION_DELTA_VS_TRIGGER": 0.1972163187324386,
+      "EVENT_RECALL": 0.4575389948006932,
+      "FALSE_POSITIVE_RATE": 0.1479713603818615,
+      "TOTAL_SIGNALS": "419",
+      "RECALL_RETENTION_VS_TRIGGER": 0.7951807228915663,
+      "SIGNAL_RETENTION": 0.546284224250326,
+      "MEDIAN_MFE_AFTER_SIGNAL": 3.3793891546451764,
+      "MEDIAN_MAE_AFTER_SIGNAL": 0.970303446298744,
+      "usable_folds": "4",
+      "positive_delta_folds": "4",
+      "composite_class": "INCREMENTAL_SELECTIVE",
+      "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+    }
+  },
+  "MACD_TRIGGER_WITH_NON_MACD_CONTEXT_COUNT": 15902,
+  "MACD_TRIGGER_WITH_NON_MACD_INCREMENTAL_BALANCED": 380,
+  "MACD_TRIGGER_WITH_NON_MACD_INCREMENTAL_SELECTIVE": 30,
+  "NON_MACD_TRIGGER_WITH_MACD_CONTEXT_COUNT": 29808,
+  "COMPOSITE_CLASS_COUNTS_BY_TEMPLATE": {
+    "T1_DUAL_ANCHOR": {
+      "INCREMENTAL_BALANCED": 77,
+      "INCREMENTAL_SELECTIVE": 158,
+      "WEAK_INCREMENTAL": 754,
+      "NO_INCREMENTAL_EDGE": 212,
+      "INSUFFICIENT": 0
+    },
+    "T2_REGIME_ANCHOR": {
+      "INCREMENTAL_BALANCED": 142,
+      "INCREMENTAL_SELECTIVE": 193,
+      "WEAK_INCREMENTAL": 5033,
+      "NO_INCREMENTAL_EDGE": 4141,
+      "INSUFFICIENT": 1
+    },
+    "T3_ANCHOR_TRANSITION": {
+      "INCREMENTAL_BALANCED": 632,
+      "INCREMENTAL_SELECTIVE": 0,
+      "WEAK_INCREMENTAL": 1009,
+      "NO_INCREMENTAL_EDGE": 809,
+      "INSUFFICIENT": 0
+    },
+    "T4_REGIME_ANCHOR_TRANSITION": {
+      "INCREMENTAL_BALANCED": 9994,
+      "INCREMENTAL_SELECTIVE": 25,
+      "WEAK_INCREMENTAL": 39146,
+      "NO_INCREMENTAL_EDGE": 130983,
+      "INSUFFICIENT": 2
+    },
+    "T5_ANCHOR_MICRO": {
+      "INCREMENTAL_BALANCED": 356,
+      "INCREMENTAL_SELECTIVE": 0,
+      "WEAK_INCREMENTAL": 1767,
+      "NO_INCREMENTAL_EDGE": 2483,
+      "INSUFFICIENT": 0
+    },
+    "T6_CROSS_FAMILY_SAME_TF": {
+      "INCREMENTAL_BALANCED": 322,
+      "INCREMENTAL_SELECTIVE": 558,
+      "WEAK_INCREMENTAL": 1552,
+      "NO_INCREMENTAL_EDGE": 480,
+      "INSUFFICIENT": 0
+    }
+  },
+  "COMPOSITE_CLASS_COUNTS_BY_TF": {
+    "15m": {
+      "INCREMENTAL_BALANCED": 356,
+      "INCREMENTAL_SELECTIVE": 0,
+      "WEAK_INCREMENTAL": 998,
+      "NO_INCREMENTAL_EDGE": 1096,
+      "INSUFFICIENT": 0
+    },
+    "1H": {
+      "INCREMENTAL_BALANCED": 198,
+      "INCREMENTAL_SELECTIVE": 416,
+      "WEAK_INCREMENTAL": 4257,
+      "NO_INCREMENTAL_EDGE": 2049,
+      "INSUFFICIENT": 0
+    },
+    "2H": {
+      "INCREMENTAL_BALANCED": 241,
+      "INCREMENTAL_SELECTIVE": 348,
+      "WEAK_INCREMENTAL": 2668,
+      "NO_INCREMENTAL_EDGE": 2461,
+      "INSUFFICIENT": 1
+    },
+    "30m": {
+      "INCREMENTAL_BALANCED": 10626,
+      "INCREMENTAL_SELECTIVE": 25,
+      "WEAK_INCREMENTAL": 40155,
+      "NO_INCREMENTAL_EDGE": 131792,
+      "INSUFFICIENT": 2
+    },
+    "4H": {
+      "INCREMENTAL_BALANCED": 102,
+      "INCREMENTAL_SELECTIVE": 145,
+      "WEAK_INCREMENTAL": 414,
+      "NO_INCREMENTAL_EDGE": 323,
+      "INSUFFICIENT": 0
+    },
+    "5m": {
+      "INCREMENTAL_BALANCED": 0,
+      "INCREMENTAL_SELECTIVE": 0,
+      "WEAK_INCREMENTAL": 769,
+      "NO_INCREMENTAL_EDGE": 1387,
+      "INSUFFICIENT": 0
+    }
+  },
+  "COMPOSITE_CLASS_COUNTS_BY_DIRECTION": {
+    "DOWN": {
+      "INCREMENTAL_BALANCED": 6544,
+      "INCREMENTAL_SELECTIVE": 458,
+      "WEAK_INCREMENTAL": 27897,
+      "NO_INCREMENTAL_EDGE": 69530,
+      "INSUFFICIENT": 0
+    },
+    "UP": {
+      "INCREMENTAL_BALANCED": 4979,
+      "INCREMENTAL_SELECTIVE": 476,
+      "WEAK_INCREMENTAL": 21364,
+      "NO_INCREMENTAL_EDGE": 69578,
+      "INSUFFICIENT": 3
+    }
+  },
+  "LOW_TF_T5_5M": {
+    "incremental_count": 0,
+    "best_by_direction": {
+      "UP": null,
+      "DOWN": null
+    }
+  },
+  "LOW_TF_T5_15M": {
+    "incremental_count": 356,
+    "best_by_direction": {
+      "UP": {
+        "composite_id": "COMP|T5_ANCHOR_MICRO|UP|5b8037b1d1dcb6bb",
+        "template_id": "T5_ANCHOR_MICRO",
+        "direction": "UP",
+        "decision_tf": "15m",
+        "PRECISION": 0.0396353547364248,
+        "PRECISION_DELTA_VS_TRIGGER": 0.0231389863996035,
+        "EVENT_RECALL": 0.6802721088435374,
+        "FALSE_POSITIVE_RATE": 0.8993261989694807,
+        "TOTAL_SIGNALS": "2523",
+        "RECALL_RETENTION_VS_TRIGGER": 0.7462686567164178,
+        "SIGNAL_RETENTION": 0.3105995321925397,
+        "MEDIAN_MFE_AFTER_SIGNAL": 8.664689094125478,
+        "MEDIAN_MAE_AFTER_SIGNAL": 0.8530757353541354,
+        "usable_folds": "4",
+        "positive_delta_folds": "3",
+        "composite_class": "INCREMENTAL_BALANCED",
+        "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+      },
+      "DOWN": {
+        "composite_id": "COMP|T5_ANCHOR_MICRO|DOWN|8165ad6bab36ac7f",
+        "template_id": "T5_ANCHOR_MICRO",
+        "direction": "DOWN",
+        "decision_tf": "15m",
+        "PRECISION": 0.0375510204081632,
+        "PRECISION_DELTA_VS_TRIGGER": 0.0202114117879006,
+        "EVENT_RECALL": 0.6258503401360545,
+        "FALSE_POSITIVE_RATE": 0.8893877551020408,
+        "TOTAL_SIGNALS": "2450",
+        "RECALL_RETENTION_VS_TRIGGER": 0.6571428571428573,
+        "SIGNAL_RETENTION": 0.303443150854595,
+        "MEDIAN_MFE_AFTER_SIGNAL": 9.022809513579176,
+        "MEDIAN_MAE_AFTER_SIGNAL": 0.7486465327088011,
+        "usable_folds": "4",
+        "positive_delta_folds": "3",
+        "composite_class": "INCREMENTAL_BALANCED",
+        "note": "Best-by-metrics within DEVELOPMENT survivors; small lift is not automatically useful."
+      }
+    }
+  },
+  "DEVELOPMENT_VERDICT": "COMPOSITE_INCREMENTAL_INFORMATION_SUPPORTED",
+  "DEVELOPMENT_VERDICT_COUNTS": {
+    "INCREMENTAL_BALANCED": 11523,
+    "INCREMENTAL_SELECTIVE": 934,
+    "WEAK_INCREMENTAL": 49261
+  },
+  "PNL_TESTED": "NO",
+  "OOS_VALIDATED": "NO"
+}

@@ -15,16 +15,19 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `MULTITF-INDICATOR-PARAMETER-SEARCH-1` |
-| **STATUS** | ACTIVE |
-| **PHASE** | 8a — Multi-TF indicator parameter search |
-| **Note** | Per-TF/direction parameter search (DMA, Stoch, MACD, DNO/predictor, inverse). Not composite search, not trading/PnL, OOS locked. |
+| **WIP** | `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` |
+| **STATUS** | REVIEW |
+| **PHASE** | 8b — Multi-TF composite signal search |
+| **Note** | DEVELOPMENT compose and bounded finalization complete; evidence awaits independent review/user acceptance. OOS locked; no PnL or model training. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
-**Active:**  
-`MULTITF-INDICATOR-PARAMETER-SEARCH-1`
+**Current:**  
+`MULTITF-COMPOSITE-SIGNAL-SEARCH-1` (REVIEW)
+
+**Next WIP (PLANNED):**  
+`PROBABILITY-MODEL-TRAINING-DATASET-1`
 
 Previous CLOSED: `OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1` — final accepted `6c2d13f`; integrity impl `bf72753`; verdict `PREDICTOR_EFFECT_WEAK`; unique dynamic edge vs controls `NOT_ESTABLISHED`; OOS locked.
 

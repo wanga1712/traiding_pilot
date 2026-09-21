@@ -1,0 +1,214 @@
+{
+  "GITHUB_MAIN_SHA": "092103991a18d0044289def6b67c8774f195baf6",
+  "S13_RUNTIME_SOURCE_MATCH": "PASS",
+  "S13_RUNTIME_SOURCE_MISMATCH_COUNT": 0,
+  "files": [
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__init__.py",
+      "git_sha256": "f7a44a66520d41525a0bb45f085aea8a2164d97e8cb40e78d5b33af6bb4e40f5",
+      "git_blob": "9b03c267e74fdeb92ad38204a4512b0604f43912",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__init__.py",
+      "S13_SHA256": "f7a44a66520d41525a0bb45f085aea8a2164d97e8cb40e78d5b33af6bb4e40f5",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/atomic_replay.py",
+      "git_sha256": "c1ac6a51f20903d5b00cf91c23f54822601a57acc77a1139975c58fa5080b7c8",
+      "git_blob": "3ebe6e8905fef144acf6ff9f407e7f1fe7563338",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/atomic_replay.py",
+      "S13_SHA256": "c1ac6a51f20903d5b00cf91c23f54822601a57acc77a1139975c58fa5080b7c8",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/boot_authority.py",
+      "git_sha256": "481784e6c718d44a75e6ded933b3e2396362ee94b317c37d7c26717f762969a4",
+      "git_blob": "6629a2d6b02ccc2201ec76cc3451b7583344d96e",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/boot_authority.py",
+      "S13_SHA256": "481784e6c718d44a75e6ded933b3e2396362ee94b317c37d7c26717f762969a4",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/bounded_compose.py",
+      "git_sha256": "729fe3264db0250de040d80667afc9e5bd1387a54165703586607432d369a409",
+      "git_blob": "6685ad74f99c545546059fdebf906944d472668e",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/bounded_compose.py",
+      "S13_SHA256": "729fe3264db0250de040d80667afc9e5bd1387a54165703586607432d369a409",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/classify.py",
+      "git_sha256": "b86ef49bb06ffeaa17074919dee3c181eda72c4b33d68572da9c8e5e91104705",
+      "git_blob": "05f73f7c7e1b4681670e0a6452388cd53d5fdc98",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/classify.py",
+      "S13_SHA256": "b86ef49bb06ffeaa17074919dee3c181eda72c4b33d68572da9c8e5e91104705",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/compose.py",
+      "git_sha256": "e97d934dfb2e2a6a8d706eed6e5843954d733e7ff261f01fa433160882cd1449",
+      "git_blob": "23e43ff1eff6b100faef19b4d9a547453ba45719",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/compose.py",
+      "S13_SHA256": "e97d934dfb2e2a6a8d706eed6e5843954d733e7ff261f01fa433160882cd1449",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/composite_stream_hash.py",
+      "git_sha256": "b3f3f24c44fcc461012f7217886b1063eb87e62045fc6f39cfcbe5a32dbd7a33",
+      "git_blob": "26a162cc45f7e5179820b8e3e86590c73f63de5c",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/composite_stream_hash.py",
+      "S13_SHA256": "b3f3f24c44fcc461012f7217886b1063eb87e62045fc6f39cfcbe5a32dbd7a33",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/config.py",
+      "git_sha256": "8c6275883b5935ff9f26904616b9370ca7dda13d58ecb8d45ae89e7e904c92aa",
+      "git_blob": "5aee002fbb9f5a5545db84cf8d448c0bdb370cd8",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/config.py",
+      "S13_SHA256": "8c6275883b5935ff9f26904616b9370ca7dda13d58ecb8d45ae89e7e904c92aa",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/context_state.py",
+      "git_sha256": "af3e01171b84f43cfa05e22f556557d6fee2b8954877bf8b72a1e3a94609567c",
+      "git_blob": "cfc42c05a587f7e05819c1b81f14e75e23d62830",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/context_state.py",
+      "S13_SHA256": "af3e01171b84f43cfa05e22f556557d6fee2b8954877bf8b72a1e3a94609567c",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/durable_io.py",
+      "git_sha256": "105e080b895864ab61cc0086d47cd7d9b97c52ea2c16c310546123738b68ce3b",
+      "git_blob": "73fda5097fcbbaa7b1c4e8b54cf58fa9d9d395cf",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/durable_io.py",
+      "S13_SHA256": "105e080b895864ab61cc0086d47cd7d9b97c52ea2c16c310546123738b68ce3b",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/enumeration_authority.py",
+      "git_sha256": "eb6f9418fefd816530f19be3c0421c122593ffe9f29d6cb2e807fa4391d54882",
+      "git_blob": "ec3c98b2d1662dab51df6c9f3cbc895699950f33",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/enumeration_authority.py",
+      "S13_SHA256": "eb6f9418fefd816530f19be3c0421c122593ffe9f29d6cb2e807fa4391d54882",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/evaluate_window.py",
+      "git_sha256": "d425183753eaee7a368f4e1032930839d88dd36ee33c0f7a09a31bb099eb41df",
+      "git_blob": "c9f1c23d5aa6be29b03fab758efcb90a88ef2733",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/evaluate_window.py",
+      "S13_SHA256": "d425183753eaee7a368f4e1032930839d88dd36ee33c0f7a09a31bb099eb41df",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/finalize.py",
+      "git_sha256": "0fbf0e5ae72b0af7867cf26b1d45d10b442baadc0001490530ea4a6379f5ad2a",
+      "git_blob": "6b22953d63a6bde0eaba7bfa2a8f03dce547e9e7",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/finalize.py",
+      "S13_SHA256": "0fbf0e5ae72b0af7867cf26b1d45d10b442baadc0001490530ea4a6379f5ad2a",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/memory_guard.py",
+      "git_sha256": "fd7c51dbf35e13614f5656748ebaa3e86447d8fd3aa9ca3c6bbc26291b0fad44",
+      "git_blob": "712a1bca6cd4d5457c5e11348e824658a7fe548d",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/memory_guard.py",
+      "S13_SHA256": "fd7c51dbf35e13614f5656748ebaa3e86447d8fd3aa9ca3c6bbc26291b0fad44",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/oos_guard.py",
+      "git_sha256": "4932b5fdf34ebff598b9f9e8b38f15205eda367609d62fa3c7c654334bee54e3",
+      "git_blob": "ebc290e58ec453b550798531a2198d9226a309d3",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/oos_guard.py",
+      "S13_SHA256": "4932b5fdf34ebff598b9f9e8b38f15205eda367609d62fa3c7c654334bee54e3",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/parity_runner.py",
+      "git_sha256": "01aa122dad45e6a3fece2aaeafc13254a866fcdb3c098d177797e50c6c84a9fe",
+      "git_blob": "cdb4033dd379edb5414f44eaaa1ad6da6e7ad0c9",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/parity_runner.py",
+      "S13_SHA256": "01aa122dad45e6a3fece2aaeafc13254a866fcdb3c098d177797e50c6c84a9fe",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/result_parts.py",
+      "git_sha256": "f52dd555d2ddee005c82e837a12b8036b9ab5a3b1159577994e0996de4b0bca1",
+      "git_blob": "1cb116581647c7f17b19c87d6112275593ad5b0c",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/result_parts.py",
+      "S13_SHA256": "f52dd555d2ddee005c82e837a12b8036b9ab5a3b1159577994e0996de4b0bca1",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/run_search.py",
+      "git_sha256": "a137326252cd5e7333d917edda6a08bdb857599ffe9758ae55124ceed5f2f5df",
+      "git_blob": "cc44b0ba0bf9ef298eb8611a3bef80aedd7dc683",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/run_search.py",
+      "S13_SHA256": "a137326252cd5e7333d917edda6a08bdb857599ffe9758ae55124ceed5f2f5df",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/smoke_selection.py",
+      "git_sha256": "5b6b50471e721ef0ab9f5dad387ed0146e34a20062a1b4bc54601b573946777a",
+      "git_blob": "5bc0fb1482dd9fe68caf843aca8cdbdaff251f03",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/smoke_selection.py",
+      "S13_SHA256": "5b6b50471e721ef0ab9f5dad387ed0146e34a20062a1b4bc54601b573946777a",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/stream_store.py",
+      "git_sha256": "5f95a117d575a6fc102cae0383a543eb1224ecbd93e55e5cefcdf96a4d5dcec2",
+      "git_blob": "dd7b5f6161299caeb377ec188880b93ee9902eb8",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/stream_store.py",
+      "S13_SHA256": "5f95a117d575a6fc102cae0383a543eb1224ecbd93e55e5cefcdf96a4d5dcec2",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/survivor_store.py",
+      "git_sha256": "4fd648578a674e3563e8fad8a832384e65bd1adc52bcc3982cd94b3b847c526d",
+      "git_blob": "26e921bc59f715c5590f381e1b1becb86a629bb9",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/survivor_store.py",
+      "S13_SHA256": "4fd648578a674e3563e8fad8a832384e65bd1adc52bcc3982cd94b3b847c526d",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/_multitf_composite_search.service",
+      "git_sha256": "26f80c57d1f106c6396383fe9f016e4054b022b72dc306977dc035589bb46266",
+      "git_blob": "0de679f65e2b341c982e1de19e5cf4e16e783b3e",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/_multitf_composite_search.service",
+      "S13_SHA256": "26f80c57d1f106c6396383fe9f016e4054b022b72dc306977dc035589bb46266",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    },
+    {
+      "path": "phase3_staging/_multitf_composite_search_run.sh",
+      "git_sha256": "3c245b310959dedd7d7d86dca53b66d5714a5e4c3845d026639295dfec8f9cb1",
+      "git_blob": "4965016de7be2ea466b0c203ec9736e0224c367e",
+      "S13_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/_multitf_composite_search_run.sh",
+      "S13_SHA256": "3c245b310959dedd7d7d86dca53b66d5714a5e4c3845d026639295dfec8f9cb1",
+      "status": "MATCH",
+      "reason": "Exact source byte match with GitHub main (checkout LF normalized)"
+    }
+  ]
+}

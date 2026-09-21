@@ -1,0 +1,16 @@
+{
+  "commit": "b280bfa49a0337c541386f689f654b5002a7fe26",
+  "deployed_utc": "2026-09-21T05:03:32.660665+00:00",
+  "files": [
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/finalize.py",
+      "sha256": "7524697bafc6d128e80dc848ca25189bbae40f54a3aa55aac3a10919183eaca4"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/tests/composite_signal_search/test_finalizer_identifier_integrity.py",
+      "sha256": "9bc7a23215bfdc17907d2c6efca366a8ed56faf274d09de3f51686b49bd87ac8"
+    }
+  ],
+  "operation": "Regenerated summary tables from completed canonical results; no compose or signal evaluation",
+  "NO_S13_ONLY_PRODUCTION_FIXES": "YES"
+}

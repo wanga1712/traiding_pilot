@@ -1,0 +1,7 @@
+sergey-System-Product-Name
+sergey
+/home/sergey
+Traceback (most recent call last):
+  File "<stdin>", line 35, in <module>
+  File "<stdin>", line 26, in test_real_pipe_ids_survive_exact_dedup_and_model_handoff
+AssertionError

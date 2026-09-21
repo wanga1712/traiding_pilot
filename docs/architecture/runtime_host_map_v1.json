@@ -1,0 +1,64 @@
+{
+  "artifact": "runtime_host_map_v1",
+  "verified_date": "2026-09-21",
+  "S13": {
+    "ip": "10.8.0.13",
+    "user": "sergey",
+    "hostname": "sergey-System-Product-Name",
+    "role": "COMPUTE_RESEARCH_BACKTEST_UI_DISPOSABLE_CACHE",
+    "ssh_route": "ssh mint-vpn",
+    "ssh_identity_path_on_windows": "C:/Users/Lenovo/.ssh/id_vpn_home",
+    "workspace": "/var/tmp/traiding_pilot_ui_workspace",
+    "git_root": "/opt/traiding_pilot",
+    "git_head_at_takeover": "d320702a55d219efab6d4e39271f1b0e7ff1f1af",
+    "git_branch_at_takeover": "wip/dinapoli-rolling-geometry-eth-1",
+    "git_status_at_takeover": [
+      " D crypto_trading_bot/research_v2/visualization/assets/manual_click.js",
+      "?? tests/research_v2/test_geometry_discovery.py"
+    ],
+    "git_checkout_note": "Separate stale dirty checkout; not the deployed source authority. Preserved without reset or modification.",
+    "code_root": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging",
+    "runtime_has_dot_git": false,
+    "artifact_root": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1",
+    "python": "/var/tmp/traiding_pilot_ui_workspace/.venv/bin/python",
+    "market_cache": "/var/tmp/traiding_pilot_market_cache",
+    "compose_service": "multitf-composite-search.service",
+    "compose_unit": "/etc/systemd/system/multitf-composite-search.service",
+    "compose_wrapper": "/usr/local/bin/multitf-composite-search-run.sh",
+    "compose_resource_override": "/etc/systemd/system/multitf-composite-search.service.d/50pct-compute-today.conf",
+    "compose_effective_memory_at_takeover": {
+      "MemoryHigh": "16G",
+      "MemoryMax": "18G",
+      "Restart": "no"
+    },
+    "finalizer_service": "multitf-composite-finalize-repaired-20260921.service",
+    "finalizer_memory": {
+      "MemoryHigh": "10G",
+      "MemoryMax": "12G"
+    },
+    "runtime_implementation_commit": "b280bfa49a0337c541386f689f654b5002a7fe26"
+  },
+  "S7": {
+    "ip": "10.8.0.7",
+    "user": "wanga",
+    "hostname": "nyx",
+    "role": "SOURCE_OF_TRUTH_CANONICAL_MARKET_DATA_STORAGE_POSTGRESQL",
+    "ssh_route_from_s13": "ssh -i /home/sergey/.ssh/id_to_nyx wanga@10.8.0.7",
+    "data_root": "/srv/traiding_pilot",
+    "canonical_eth1m_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+    "layout": "year directories containing monthly parquet files",
+    "source_of_truth_confirmed": true,
+    "postgres": {
+      "host": "10.8.0.7",
+      "port": 5432,
+      "database": "traiding_pilot",
+      "verified_query_role": "postgres",
+      "application_database_user": null,
+      "detail_verified": "PARTIAL",
+      "configuration_source": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/annotations/persistence.py",
+      "evidence": "Runtime defaults confirm SSH host wanga@10.8.0.7 and database traiding_pilot; pg_lsclusters confirms 17/main online at 5432; SELECT current_database(), current_user via sudo -u postgres returns traiding_pilot|postgres. Live application role not independently proven."
+    }
+  },
+  "data_direction": "INTERNET/EXCHANGE -> S7 canonical storage -> S13 compute/cache",
+  "secrets_included": false
+}

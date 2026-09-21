@@ -1,0 +1,457 @@
+{
+  "artifact": "composite_publication_manifest_v1",
+  "format": "Concatenate decompressed gzip chunks in manifest order to reconstruct exact canonical bytes. Unchunked files are exact copies.",
+  "files": [
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_results_all_v1.parquet",
+      "bytes": 78349505,
+      "sha256": "70bb3f27e516a2466b3130ffd0aa6660f5f84efd50d8b2b0229b69063513e114",
+      "row_count": 200829,
+      "schema": "composite_id: large_string\ntemplate_id: large_string\ndirection: large_string\ndecision_tf: large_string\ndiagnostic: bool\ntrigger_candidate_id: large_string\ncontext_candidate_ids: large_string\nTOTAL_SIGNALS: int64\nPRECISION: double\nEVENT_RECALL: double\nFALSE_POSITIVE_RATE: double\nMEDIAN_DELAY_SECONDS: double\nMEDIAN_MFE_AFTER_SIGNAL: double\nMEDIAN_MAE_AFTER_SIGNAL: double\nPRE_C_SIGNAL_RATE: double\nsample_flag: large_string\ntrigger_PRECISION: double\ntrigger_EVENT_RECALL: double\ntrigger_TOTAL_SIGNALS: int64\ntrigger_FALSE_POSITIVE_RATE: double\nprice_PRECISION: double\nPRECISION_DELTA_VS_TRIGGER: double\nPRECISION_DELTA_VS_PRICE_BASELINE: double\nRECALL_RETENTION_VS_TRIGGER: double\nFPR_DELTA_VS_TRIGGER: double\nMEDIAN_DELAY_DELTA_VS_TRIGGER: double\nPRE_C_SIGNAL_RATE_DELTA_VS_TRIGGER: double\nSIGNAL_RETENTION: double\nusable_folds: int64\npositive_delta_folds: int64\ncomposite_class: large_string\nis_survivor: bool\nCOMPOSITE_STREAM_SHA256: large_string\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 4567",
+      "chunks": [],
+      "publication_path": "composite_results_all_v1.parquet"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_results_all_v1.csv",
+      "bytes": 150096601,
+      "sha256": "990e5b1d8a8b2aaf045b751a3b9f080a7a1e199694090408c5f79e81ecd2808d",
+      "schema": [
+        "composite_id",
+        "template_id",
+        "direction",
+        "decision_tf",
+        "diagnostic",
+        "trigger_candidate_id",
+        "context_candidate_ids",
+        "TOTAL_SIGNALS",
+        "PRECISION",
+        "EVENT_RECALL",
+        "FALSE_POSITIVE_RATE",
+        "MEDIAN_DELAY_SECONDS",
+        "MEDIAN_MFE_AFTER_SIGNAL",
+        "MEDIAN_MAE_AFTER_SIGNAL",
+        "PRE_C_SIGNAL_RATE",
+        "sample_flag",
+        "trigger_PRECISION",
+        "trigger_EVENT_RECALL",
+        "trigger_TOTAL_SIGNALS",
+        "trigger_FALSE_POSITIVE_RATE",
+        "price_PRECISION",
+        "PRECISION_DELTA_VS_TRIGGER",
+        "PRECISION_DELTA_VS_PRICE_BASELINE",
+        "RECALL_RETENTION_VS_TRIGGER",
+        "FPR_DELTA_VS_TRIGGER",
+        "MEDIAN_DELAY_DELTA_VS_TRIGGER",
+        "PRE_C_SIGNAL_RATE_DELTA_VS_TRIGGER",
+        "SIGNAL_RETENTION",
+        "usable_folds",
+        "positive_delta_folds",
+        "composite_class",
+        "is_survivor",
+        "COMPOSITE_STREAM_SHA256"
+      ],
+      "row_count": 200829,
+      "chunks": [
+        {
+          "path": "composite_results_all_v1.csv.part-0000.gz",
+          "bytes": 8131225,
+          "sha256": "f7c20c8ef266a49c91c356f8dda3c51171bd03930d79cab92a825f0fc1d8eb7b",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "5222e4e6599aa8b41001eefff83287b77404944b1f0aeb7e4e0cf0a35570ea4d"
+        },
+        {
+          "path": "composite_results_all_v1.csv.part-0001.gz",
+          "bytes": 7749611,
+          "sha256": "452117ed9fb50b5231ac3ca236fa5675d7fb0b8dc65e5ccbb4f9e62058235350",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "9c420ea85e4be5789554bf8be44fa9e7fcda26342e5164fad9e791c2c59cfd2a"
+        },
+        {
+          "path": "composite_results_all_v1.csv.part-0002.gz",
+          "bytes": 7627973,
+          "sha256": "43bb27bc95fbe616dd74fe0e6d5d845fec3600ea20a7a1cde612b2fe9ab685ab",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "0a249397a4923a3b67be63326e4c3af20f2351a700e15fcc442275584c7bc1ce"
+        },
+        {
+          "path": "composite_results_all_v1.csv.part-0003.gz",
+          "bytes": 7660894,
+          "sha256": "6102115adeaf46d3339d8caaa2abf977c1ca495785f718882ef3305d7db9fa1a",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "f6a5e653d20d2a2cf2228ede4ba29b6c75672536145d8519bd28ecf9a1888fa3"
+        },
+        {
+          "path": "composite_results_all_v1.csv.part-0004.gz",
+          "bytes": 3824640,
+          "sha256": "f5e022f41c300fa540d99367f4798a53684b227a90b371d5c768ff1522ff96af",
+          "uncompressed_bytes": 15878873,
+          "uncompressed_sha256": "af53982407781d212926f43f89907974b7d4dad7da9485b6fa20d9deb6fe0af7"
+        }
+      ]
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_fold_stability_v1.csv",
+      "bytes": 134984917,
+      "sha256": "0cd36b0186192542f65cc97661200ede1302d71629d15670db8716c1151a2e42",
+      "schema": [
+        "composite_id",
+        "fold_id",
+        "TOTAL_SIGNALS",
+        "PRECISION",
+        "PRECISION_DELTA_VS_TRIGGER",
+        "EVENT_RECALL",
+        "FALSE_POSITIVE_RATE",
+        "sample_flag",
+        "trigger_TOTAL_SIGNALS",
+        "trigger_PRECISION"
+      ],
+      "row_count": 803316,
+      "chunks": [
+        {
+          "path": "composite_fold_stability_v1.csv.part-0000.gz",
+          "bytes": 7253797,
+          "sha256": "2cd7c658139e429560685a782cc2ce9cb9be45c247b8863e461e4b41f43ecdf9",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "2808e25d5f5e3968c746bb59b18de6052e37f1d1e49b6303fbf0c1c70590ec95"
+        },
+        {
+          "path": "composite_fold_stability_v1.csv.part-0001.gz",
+          "bytes": 7208820,
+          "sha256": "8a2ffa935df0c93ea3c866c1deca0c040a98e2909216df8988be1e58e85b4a64",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "6590fada47359a06d283e855322943fed1e4fc62562462a54fc3850dd92d6c93"
+        },
+        {
+          "path": "composite_fold_stability_v1.csv.part-0002.gz",
+          "bytes": 6943226,
+          "sha256": "af1beebf87db7260ff2826538640b6a24fa9a73d4897a27df325c7054ea2cccf",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "acac968d4c27000a2fc48209ba0db04e147e998638c99f92fc7399e4f5920c8e"
+        },
+        {
+          "path": "composite_fold_stability_v1.csv.part-0003.gz",
+          "bytes": 7171333,
+          "sha256": "60280aa20426d54aaf959416b70d8eee7d3aa839499d3694026e6055e1ac205f",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "d286a540351271b0e4a8246fd48b5e5ecb12522f8b0eb3d0e42d953a13f0d45f"
+        },
+        {
+          "path": "composite_fold_stability_v1.csv.part-0004.gz",
+          "bytes": 166191,
+          "sha256": "100827f0541a699a4b95a16e726c27e10357961064eb58c11b83f81b2d6925c2",
+          "uncompressed_bytes": 767189,
+          "uncompressed_sha256": "8609ea1c8c97cf8064fea8458d365125527f46c04f56c5525d2ac4c58d9307ba"
+        }
+      ]
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_exact_duplicate_clusters_v1.csv",
+      "bytes": 4045859,
+      "sha256": "19abc153da330a698077e80842090c3ad63a30bfd5b63dca7a62ed203df59ff4",
+      "schema": [
+        "COMPOSITE_STREAM_SHA256",
+        "cluster_size",
+        "representative_composite_id",
+        "alias_composite_ids",
+        "members"
+      ],
+      "row_count": 11949,
+      "chunks": [],
+      "publication_path": "composite_exact_duplicate_clusters_v1.csv"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_redundancy_v1.csv",
+      "bytes": 711004,
+      "sha256": "0e3ff7d9ba329196caf6b7cf334a1a88bca47ced14bbc029d88be7be20c07e77",
+      "schema": [
+        "redundancy_cluster_id",
+        "direction",
+        "decision_tf",
+        "size",
+        "jaccard_threshold",
+        "representative_composite_id",
+        "alias_composite_ids",
+        "members",
+        "COMPOSITE_REDUNDANCY_METHOD"
+      ],
+      "row_count": 877,
+      "chunks": [],
+      "publication_path": "composite_redundancy_v1.csv"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/frozen_composite_survivor_bank_raw_v1.json",
+      "bytes": 20931445,
+      "sha256": "e82225e057cfbbcb6ffb89d281173ddfb9bc11a6f7bd750b058a602c7946db1c",
+      "schema": [
+        "artifact",
+        "n_survivors",
+        "RAW_COMPOSITE_SURVIVOR_SET_HASH",
+        "survivor_classes",
+        "CANONICAL_SELECTIVE_CLASS",
+        "survivors",
+        "DEVELOPMENT_ONLY",
+        "OOS_OPENED"
+      ],
+      "chunks": [],
+      "publication_path": "frozen_composite_survivor_bank_raw_v1.json"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/frozen_composite_survivor_bank_v1.json",
+      "bytes": 9588314,
+      "sha256": "47ed8186376d9e23647034f89ef5aef4d150770681c012cb0a751e7c9df3848b",
+      "schema": [
+        "artifact",
+        "n_survivors",
+        "COMPOSITE_SURVIVOR_SET_HASH",
+        "RAW_COMPOSITE_SURVIVOR_SET_HASH",
+        "survivor_classes",
+        "CANONICAL_SELECTIVE_CLASS",
+        "survivors",
+        "DEVELOPMENT_ONLY",
+        "OOS_OPENED",
+        "COMPOSITE_REDUNDANCY_METHOD",
+        "COMPOSITE_REDUNDANCY_THRESHOLD"
+      ],
+      "chunks": [],
+      "publication_path": "frozen_composite_survivor_bank_v1.json"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_survivor_stream_manifest_v1.json",
+      "bytes": 9535667,
+      "sha256": "933d0e108baaf8a1640d1bcbed3488831f989fb9e41992f0678be836c4519be8",
+      "schema": [
+        "artifact",
+        "SURVIVOR_STREAM_STORAGE",
+        "ALL_SURVIVOR_STREAMS_IN_RAM",
+        "SURVIVOR_GLOBAL_MANIFEST_REWRITE_PER_SIGNAL",
+        "SURVIVOR_METADATA_APPEND_ONLY",
+        "SURVIVOR_FINAL_MANIFEST_ASSEMBLY",
+        "SURVIVOR_DUPLICATE_METADATA_COUNT",
+        "SURVIVOR_MISSING_SHARD_COUNT",
+        "n_streams",
+        "streams"
+      ],
+      "chunks": [],
+      "publication_path": "composite_survivor_stream_manifest_v1.json"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_summary_by_template_v1.csv",
+      "bytes": 384,
+      "sha256": "960dd6bbc48ba1a43860668f68b5e517a65a9b7e644d69eba79b94b61c8f961c",
+      "schema": [
+        "template_id",
+        "n",
+        "n_INCREMENTAL_BALANCED",
+        "n_INCREMENTAL_SELECTIVE",
+        "n_WEAK_INCREMENTAL",
+        "n_NO_INCREMENTAL_EDGE",
+        "n_INSUFFICIENT"
+      ],
+      "row_count": 6,
+      "chunks": [],
+      "publication_path": "composite_summary_by_template_v1.csv"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_summary_by_tf_direction_v1.csv",
+      "bytes": 487,
+      "sha256": "65af266691032167cedc5de908b2fda72959d93f1962411f74ea214d6908c2d9",
+      "schema": [
+        "decision_tf",
+        "direction",
+        "n",
+        "n_INCREMENTAL_BALANCED",
+        "n_INCREMENTAL_SELECTIVE",
+        "n_WEAK_INCREMENTAL",
+        "n_NO_INCREMENTAL_EDGE",
+        "n_INSUFFICIENT"
+      ],
+      "row_count": 12,
+      "chunks": [],
+      "publication_path": "composite_summary_by_tf_direction_v1.csv"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_summary_by_family_v1.csv",
+      "bytes": 388,
+      "sha256": "182af3c7ded29be18c9a8c95462442b04937b6e96db00190294b4220c44326d3",
+      "schema": [
+        "trigger_family_proxy",
+        "n",
+        "n_INCREMENTAL_BALANCED",
+        "n_INCREMENTAL_SELECTIVE",
+        "n_WEAK_INCREMENTAL",
+        "n_NO_INCREMENTAL_EDGE",
+        "n_INSUFFICIENT"
+      ],
+      "row_count": 7,
+      "chunks": [],
+      "publication_path": "composite_summary_by_family_v1.csv"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_negative_results_v1.csv",
+      "bytes": 137586370,
+      "sha256": "fe3d22b3f1a066f4ed87d81decc78476f7996c33a1868427d6f207be300b8764",
+      "schema": [
+        "composite_id",
+        "template_id",
+        "direction",
+        "decision_tf",
+        "diagnostic",
+        "trigger_candidate_id",
+        "context_candidate_ids",
+        "TOTAL_SIGNALS",
+        "PRECISION",
+        "EVENT_RECALL",
+        "FALSE_POSITIVE_RATE",
+        "MEDIAN_DELAY_SECONDS",
+        "MEDIAN_MFE_AFTER_SIGNAL",
+        "MEDIAN_MAE_AFTER_SIGNAL",
+        "PRE_C_SIGNAL_RATE",
+        "sample_flag",
+        "trigger_PRECISION",
+        "trigger_EVENT_RECALL",
+        "trigger_TOTAL_SIGNALS",
+        "trigger_FALSE_POSITIVE_RATE",
+        "price_PRECISION",
+        "PRECISION_DELTA_VS_TRIGGER",
+        "PRECISION_DELTA_VS_PRICE_BASELINE",
+        "RECALL_RETENTION_VS_TRIGGER",
+        "FPR_DELTA_VS_TRIGGER",
+        "MEDIAN_DELAY_DELTA_VS_TRIGGER",
+        "PRE_C_SIGNAL_RATE_DELTA_VS_TRIGGER",
+        "SIGNAL_RETENTION",
+        "usable_folds",
+        "positive_delta_folds",
+        "composite_class",
+        "is_survivor",
+        "COMPOSITE_STREAM_SHA256"
+      ],
+      "row_count": 188372,
+      "chunks": [
+        {
+          "path": "composite_negative_results_v1.csv.part-0000.gz",
+          "bytes": 7909908,
+          "sha256": "0d96093770dfb5d7749c586f255a1d22ec5ee9a23e71471bbc74c1d420132991",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "ac56449600168dc68f7ba58dde6ec29a5c195f201d76104955c64b1299dd5747"
+        },
+        {
+          "path": "composite_negative_results_v1.csv.part-0001.gz",
+          "bytes": 7654689,
+          "sha256": "ce7ea89d32ecf3f0ed25abe38ee7a00bcdb65904d574a67fa4e556247aece5c1",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "c54eb728d4f66d78879824e8a2ae33119d4ca30e24d3df12cbddb07a11364e82"
+        },
+        {
+          "path": "composite_negative_results_v1.csv.part-0002.gz",
+          "bytes": 7528048,
+          "sha256": "c7d3340c67ce09cddfa0f639ed16c445ad9b88af4516d6ad150004d185d221f9",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "d801245ddddf2aed63e2416f7874d3e05d93df024243c66cbc04c0ae07e95309"
+        },
+        {
+          "path": "composite_negative_results_v1.csv.part-0003.gz",
+          "bytes": 7545694,
+          "sha256": "73b5af7d74a58e8dac5f86058e8877a2ad0fc46b4468055c44f5ff02c863e1a5",
+          "uncompressed_bytes": 33554432,
+          "uncompressed_sha256": "1fab4f75d5b0a003328b94883f3223b7313f6751c970f6b77d6871e1316c6890"
+        },
+        {
+          "path": "composite_negative_results_v1.csv.part-0004.gz",
+          "bytes": 906477,
+          "sha256": "7a726d0a5b3ea482e09f21fdf35a6a7c7c782d45e560d2516727d21e6b267ce3",
+          "uncompressed_bytes": 3368642,
+          "uncompressed_sha256": "4c0b10213fd0ed495ed371891a831404f85a400cb0d5af2862e89bf69181df13"
+        }
+      ]
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_execution_report_v1.json",
+      "bytes": 14096,
+      "sha256": "7605be72c78b15efecb0572cdd75140c1d95fdb468b2d8695efb498f8e4c2b00",
+      "schema": [
+        "artifact",
+        "DEVELOPMENT_ONLY",
+        "OOS_OPENED",
+        "COMPOSITE_FDR_STATUS",
+        "CANONICAL_SELECTIVE_CLASS",
+        "DUAL_ANCHOR_INCREMENTAL_BALANCED_COUNT",
+        "DUAL_ANCHOR_INCREMENTAL_SELECTIVE_COUNT",
+        "DUAL_ANCHOR_BEST_BY_DIRECTION",
+        "REGIME_ANCHOR_INCREMENTAL_COUNT",
+        "REGIME_ANCHOR_BEST_BY_TF_DIRECTION",
+        "TRANSITION_30M_INCREMENTAL_COUNT",
+        "TRANSITION_30M_BEST_BY_DIRECTION",
+        "TRIPLE_COMPOSITE_INCREMENTAL_COUNT",
+        "15M_CONDITIONAL_INCREMENTAL_COUNT",
+        "5M_CONDITIONAL_INCREMENTAL_COUNT",
+        "CROSS_FAMILY_INCREMENTAL_COUNT",
+        "CROSS_FAMILY_BEST_PAIRS",
+        "MACD_TRIGGER_WITH_NON_MACD_CONTEXT_COUNT",
+        "MACD_TRIGGER_WITH_NON_MACD_INCREMENTAL_BALANCED",
+        "MACD_TRIGGER_WITH_NON_MACD_INCREMENTAL_SELECTIVE",
+        "NON_MACD_TRIGGER_WITH_MACD_CONTEXT_COUNT",
+        "COMPOSITE_CLASS_COUNTS_BY_TEMPLATE",
+        "COMPOSITE_CLASS_COUNTS_BY_TF",
+        "COMPOSITE_CLASS_COUNTS_BY_DIRECTION",
+        "LOW_TF_T5_5M",
+        "LOW_TF_T5_15M",
+        "DEVELOPMENT_VERDICT",
+        "DEVELOPMENT_VERDICT_COUNTS",
+        "PNL_TESTED",
+        "OOS_VALIDATED"
+      ],
+      "chunks": [],
+      "publication_path": "composite_execution_report_v1.json"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/model_feature_handoff_v1.json",
+      "bytes": 2773727,
+      "sha256": "5ef3cc5bb06d1971e29607ab1e2bb22dcb2a21e4b8b810ec9499c7c33e12ead7",
+      "schema": [
+        "artifact",
+        "MODEL_FEATURE_HANDOFF_READY",
+        "DEVELOPMENT_ONLY",
+        "OOS_VALIDATED",
+        "PNL_TESTED",
+        "atomic_feature_ids",
+        "composite_feature_ids",
+        "features",
+        "continuous_fields_planned_for_model_dataset",
+        "COMPOSITE_SURVIVOR_SET_HASH"
+      ],
+      "chunks": [],
+      "publication_path": "model_feature_handoff_v1.json"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/MULTITF-COMPOSITE-SIGNAL-SEARCH-1/composite_finalization_status_v1.json",
+      "bytes": 3878,
+      "sha256": "ce789cced05cbd60b6586fbb72e7e017314cc51a5979f1532cdbc12e82eee510",
+      "schema": [
+        "gate",
+        "assemble",
+        "exact",
+        "banks",
+        "report_verdict",
+        "handoff",
+        "COMPOSITE_REDUNDANCY_METHOD",
+        "COMPOSITE_REDUNDANCY_THRESHOLD",
+        "COMPOSITE_FDR_STATUS",
+        "CANONICAL_SELECTIVE_CLASS",
+        "SELECTIVE_THRESHOLD_CHANGED",
+        "SURVIVOR_CLASSES",
+        "FINAL_RESULT_ASSEMBLY_BOUNDED",
+        "JACCARD_FINAL_DECISION_EXACT",
+        "GLOBAL_SURVIVOR_ALL_PAIR_MATRIX",
+        "NEAR_REDUNDANCY_LEXICAL_TIE_ASCENDING",
+        "SURVIVOR_FINAL_MANIFEST_ASSEMBLY",
+        "SURVIVOR_DUPLICATE_METADATA_COUNT",
+        "SURVIVOR_MISSING_SHARD_COUNT",
+        "PRODUCTION_FINALIZER_CLI",
+        "PARTIAL_FINALIZATION_FAIL_CLOSED",
+        "FINALIZER_FROZEN_AUTHORITY_GATE"
+      ],
+      "chunks": [],
+      "publication_path": "composite_finalization_status_v1.json"
+    }
+  ]
+}

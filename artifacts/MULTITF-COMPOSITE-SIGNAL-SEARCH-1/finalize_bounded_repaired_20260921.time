@@ -1,0 +1,23 @@
+	Command being timed: "/var/tmp/traiding_pilot_ui_workspace/.venv/bin/python -u -B -m crypto_trading_bot.research_v2.composite_signal_search.run_search --phase finalize-bounded"
+	User time (seconds): 664.12
+	System time (seconds): 9.84
+	Percent of CPU this job got: 96%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 11:39.18
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1757652
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 42
+	Minor (reclaiming a frame) page faults: 729432
+	Voluntary context switches: 520591
+	Involuntary context switches: 6517
+	Swaps: 0
+	File system inputs: 1344656
+	File system outputs: 1071768
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

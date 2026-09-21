@@ -1,0 +1,7 @@
+timestamp=2026-09-21T05:45:33Z
+results_commit=b280bfa49a0337c541386f689f654b5002a7fe26
+candidate_count=200829
+raw_survivor_set_hash=dda22dcdc757aa01e899fcd6bb0f97bb4cbfa8664ff867600614013d7952ca27
+model_survivor_set_hash=9b7a2f04adc7234b75a4d4c20e1998be6dfed13a5ed86ae49cc4b96cee4027e9
+finalization_status=PASS
+oos_opened=NO

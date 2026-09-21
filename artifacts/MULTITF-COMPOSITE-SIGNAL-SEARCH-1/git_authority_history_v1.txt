@@ -1,0 +1,10 @@
+71ce2ecf6d53e8dd18c7edd073b5cc4eb963f39e Fix composite finalizer identifier decoding and deduplication handoff
+092103991a18d0044289def6b67c8774f195baf6 Authorize full composite DEVELOPMENT execution after durability preflight.
+d0201b1e0d58afd419bbeef8e1c953200909ae2a Harden composite compose for boot/resume durability before full run.
+e6e663f00144b61c19172430dfbb17f0bc2745bd Cut composite compose cost and harden finalizer integrity before full run.
+5ae2c5dcd45fdafa3c01d3a53ae4977a8bcfaf02 Add bounded composite finalization plumbing before full search.
+d7916ee9c9a0dcdb5e9bed6400d7ab253948f5f4 Harden full composite execution integrity before authorization.
+2951216533575b3d6b13d515de632ad6d62714b4 Close independent-review blockers on bounded composite execution.
+ea53329c1479b8f904f0e83c3b370c71092a4a49 Bound composite compose memory to survive S13 execution without OOM.
+476927817e21ef6869261a0114b27864fdf2d789 Freeze MULTITF composite signal search V1 development methodology.
+f2324229371507038c29695b2e145221680cbd16 Close MULTITF indicator parameter search after accepted Validation review.

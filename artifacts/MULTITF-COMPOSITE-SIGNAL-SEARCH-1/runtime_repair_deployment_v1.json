@@ -1,0 +1,15 @@
+{
+  "commit": "71ce2ecf6d53e8dd18c7edd073b5cc4eb963f39e",
+  "deployed_utc": "2026-09-21T04:50:06.115524+00:00",
+  "files": [
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/finalize.py",
+      "sha256": "0a209ae358144131858fc8290fd22b7cf4d026e5c24b2ef304e3f7c3be533d6b"
+    },
+    {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/tests/composite_signal_search/test_finalizer_identifier_integrity.py",
+      "sha256": "b69ae5eb6ba567a71bb66e46b40e284dad53d90ffa6de7b4e28775ffa3744e90"
+    }
+  ],
+  "NO_S13_ONLY_PRODUCTION_FIXES": "YES"
+}
