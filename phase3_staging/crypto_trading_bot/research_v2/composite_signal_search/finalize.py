@@ -4,6 +4,8 @@ from __future__ import annotations
 import gc
 import hashlib
 import json
+import re
+from functools import lru_cache
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterator
@@ -34,6 +36,36 @@ COMPOSITE_FDR_STATUS = "NOT_USED"
 
 class FinalizationGateError(RuntimeError):
     """Raised when production finalization is not allowed."""
+
+
+def _atomic_id_decoder(config_by_id):
+    """Decode legacy joined IDs against the frozen registry, never split an ID."""
+    pattern = re.compile('(' + '|'.join(re.escape(c) for c in
+        sorted(config_by_id, key=lambda c: (-len(c), c))) + r')(?:\||$)')
+
+    @lru_cache(maxsize=16384)
+    def decode(value):
+        text = '' if value is None or pd.isna(value) else str(value)
+        ids, pos = [], 0
+        while pos < len(text):
+            match = pattern.match(text, pos)
+            if match is None:
+                raise FinalizationGateError('Unknown frozen atomic ID in context list')
+            ids.append(match.group(1))
+            pos = match.end()
+        return tuple(ids)
+    return decode
+
+
+def _exact_survivor_maps(survivors):
+    """Exact representatives must themselves be eligible survivors."""
+    replace, aliases = {}, {}
+    for _, group in survivors.groupby('COMPOSITE_STREAM_SHA256', sort=True):
+        ids = sorted(group['composite_id'].astype(str))
+        if len(ids) > 1:
+            aliases[ids[0]] = ids[1:]
+            replace.update({cid: ids[0] for cid in ids[1:]})
+    return replace, aliases
 
 
 def _sha256_file(path: Path) -> str:
@@ -229,8 +261,8 @@ def exact_duplicate_clusters(results_csv: Path, out_csv: Path) -> dict[str, Any]
                 "COMPOSITE_STREAM_SHA256": sha,
                 "cluster_size": len(uniq),
                 "representative_composite_id": rep,
-                "alias_composite_ids": "|".join(u for u in uniq if u != rep),
-                "members": "|".join(uniq),
+                "alias_composite_ids": json.dumps([u for u in uniq if u != rep]),
+                "members": json.dumps(uniq),
             }
         )
     pd.DataFrame(rows).to_csv(out_csv, index=False)
@@ -381,8 +413,8 @@ def near_redundancy_survivors(
                         "size": len(members),
                         "jaccard_threshold": threshold,
                         "representative_composite_id": rep,
-                        "alias_composite_ids": "|".join(sorted(m for m in members if m != rep)),
-                        "members": "|".join(sorted(members)),
+                        "alias_composite_ids": json.dumps(sorted(m for m in members if m != rep)),
+                        "members": json.dumps(sorted(members)),
                         "COMPOSITE_REDUNDANCY_METHOD": "EVENT_STREAM_JACCARD",
                     }
                 )
@@ -413,19 +445,12 @@ def build_survivor_banks(
     survivors["composite_class"] = survivors["composite_class"].map(normalize_class_name)
 
     # Exact duplicate: map aliases -> lex smallest rep
-    exact_replace: dict[str, str] = {}
-    exact_aliases: dict[str, list[str]] = defaultdict(list)
-    if not exact_clusters.empty:
-        for _, row in exact_clusters.iterrows():
-            rep = str(row["representative_composite_id"])
-            for alias in str(row.get("alias_composite_ids") or "").split("|"):
-                if alias:
-                    exact_replace[alias] = rep
-                    exact_aliases[rep].append(alias)
+    exact_replace, exact_aliases = _exact_survivor_maps(survivors)
+    decode_context = _atomic_id_decoder(config_by_id)
 
     def enrich(row: pd.Series, *, cluster_id: str | None, aliases: list[str]) -> dict[str, Any]:
         trig = config_by_id.get(str(row["trigger_candidate_id"]), {})
-        ctx_ids = [x for x in str(row.get("context_candidate_ids") or "").split("|") if x]
+        ctx_ids = list(decode_context(row.get("context_candidate_ids")))
         ctx_families = [config_by_id.get(c, {}).get("family") for c in ctx_ids]
         return {
             "composite_id": str(row["composite_id"]),
@@ -475,13 +500,15 @@ def build_survivor_banks(
     if not near_df.empty:
         for _, row in near_df.iterrows():
             cluster_for[str(row["representative_composite_id"])] = str(row["redundancy_cluster_id"])
-            for m in str(row["members"]).split("|"):
+            for m in json.loads(row["members"]):
                 cluster_for[m] = str(row["redundancy_cluster_id"])
 
     model_entries = []
     for _, r in model_survivors.iterrows():
         cid = str(r["composite_id"])
         als = sorted(set(exact_aliases.get(cid, []) + near_aliases.get(cid, [])))
+        als = sorted(set(als + [alias for near in near_aliases.get(cid, [])
+                                for alias in exact_aliases.get(near, [])]))
         model_entries.append(enrich(r, cluster_id=cluster_for.get(cid), aliases=als))
     model_ids = sorted(e["composite_id"] for e in model_entries)
     model_hash = hashlib.sha256(json.dumps(model_ids, separators=(",", ":")).encode()).hexdigest()
@@ -633,15 +660,17 @@ def build_execution_report(
     def _family(cid: Any) -> str:
         return str(config_by_id.get(str(cid), {}).get("family") or "")
 
+    decode_context = _atomic_id_decoder(config_by_id)
+
     trig_fam = df["trigger_candidate_id"].map(_family) if "trigger_candidate_id" in df.columns else pd.Series([""] * len(df))
     # context families: any non-matching
     def _ctx_has_non_macd(row) -> bool:
-        ids = [x for x in str(row.get("context_candidate_ids") or "").split("|") if x]
+        ids = decode_context(row.get("context_candidate_ids"))
         fams = {_family(i) for i in ids}
         return bool(fams - {"MACD"}) if fams else False
 
     def _ctx_has_macd(row) -> bool:
-        ids = [x for x in str(row.get("context_candidate_ids") or "").split("|") if x]
+        ids = decode_context(row.get("context_candidate_ids"))
         return any(_family(i) == "MACD" for i in ids)
 
     macd_trig_non_macd_ctx = df[(trig_fam == "MACD") & df.apply(_ctx_has_non_macd, axis=1)]
@@ -799,7 +828,9 @@ def run_finalization(
     fold_df = pd.read_csv(fold_path) if fold_path.exists() else pd.DataFrame()
 
     survivors = results[results["composite_class"].map(is_survivor_class)] if not results.empty else pd.DataFrame()
-    near_df, near_replace, near_aliases = near_redundancy_survivors(root, survivors, fold_df) if not survivors.empty else (pd.DataFrame(), {}, {})
+    exact_replace, _ = _exact_survivor_maps(survivors) if not survivors.empty else ({}, {})
+    exact_reps = survivors[~survivors['composite_id'].isin(exact_replace)] if not survivors.empty else survivors
+    near_df, near_replace, near_aliases = near_redundancy_survivors(root, exact_reps, fold_df) if not exact_reps.empty else (pd.DataFrame(), {}, {})
     near_df.to_csv(root / "composite_redundancy_v1.csv", index=False)
 
     banks = build_survivor_banks(
