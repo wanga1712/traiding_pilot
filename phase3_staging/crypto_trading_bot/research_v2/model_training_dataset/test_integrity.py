@@ -1,5 +1,6 @@
 import unittest, numpy as np
-from .integrity import map_events_to_rows, target_window_indices
+try: from .integrity import map_events_to_rows, target_window_indices
+except ImportError: from integrity import map_events_to_rows, target_window_indices
 
 class IntegrityTests(unittest.TestCase):
     def setUp(self): self.g=np.array([100,200,300],dtype=np.int64)
