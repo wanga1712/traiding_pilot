@@ -1,6 +1,7 @@
 """Study constants — partition boundaries from REVERSAL_EVENT_DATASET_V1."""
 from __future__ import annotations
 
+import os
 from datetime import datetime, timezone
 
 STUDY_VERSION = "REVERSAL_SIGNAL_EVENT_STUDY_V1"
@@ -56,5 +57,5 @@ EVENT_DIR = "/var/tmp/traiding_pilot_ui_workspace/reversal_event_dataset_v1"
 WAVE_DIR = "/var/tmp/traiding_pilot_ui_workspace/wave_dataset_v1"
 MARKET_CACHE = "/var/tmp/traiding_pilot_market_cache"
 CANONICAL_1M = "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m"
-SSH_HOST = "wanga@10.8.0.7"
+SSH_HOST = os.environ.get("TRAIDING_PILOT_SSH_HOST", "wanga@s7")
 SSH_KEY = "/home/sergey/.ssh/id_to_nyx"

@@ -22,7 +22,7 @@ def main() -> int:
         symbol="ETHUSDT",
         canonical_root=Path("/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m"),
         cache_root=Path("/var/tmp/traiding_pilot_market_cache"),
-        ssh_host="wanga@10.8.0.7",
+        ssh_host="wanga@s7",
         ssh_key=Path("/home/sergey/.ssh/id_to_nyx"),
     )
     report = {}

@@ -20,7 +20,7 @@ S13_RESEARCH_CACHE_PATH = Path(
         "/var/tmp/traiding_pilot_market_cache" if os.name != "nt" else "C:/var/tmp/traiding_pilot_market_cache",
     )
 )
-SSH_HOST = os.environ.get("TRAIDING_PILOT_SSH_HOST", "wanga@10.8.0.7")
+SSH_HOST = os.environ.get("TRAIDING_PILOT_SSH_HOST", "wanga@s7")
 SSH_KEY_CANDIDATES = (
     Path(os.environ.get("TRAIDING_PILOT_SSH_KEY", "")),
     Path.home() / ".ssh" / "id_to_nyx",

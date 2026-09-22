@@ -31,7 +31,7 @@ from .config import ARTIFACT_ROOT, STUDY_TFS, WARMUP_BARS, split_bounds
 SAMPLE_MONTHS = ("2019-05", "2021-06", "2022-06", "2023-06")
 CACHE_MANIFEST_PATH = S13_RESEARCH_CACHE_PATH / "cache_manifest.json"
 OOS_START = PARTITION_BOUNDS["OOS"][0]
-SSH_S7_HOST = os.environ.get("TRAIDING_PILOT_SSH_HOST", "wanga@10.8.0.7")
+SSH_S7_HOST = os.environ.get("TRAIDING_PILOT_SSH_HOST", "wanga@s7")
 
 
 def _partition_path(token: str) -> Path:

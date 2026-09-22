@@ -1,7 +1,8 @@
 # Project operating rules
 
-Read `docs/architecture/TRADING_PROJECT_HANDOFF_V1.md`, `RUNTIME_HOST_MAP_V1.md`,
-`CURRENT_RESEARCH_STATE_V1.md`, and `OPERATIONS_RUNBOOK_V1.md` before acting.
+Read `docs/architecture/TRADING_PROJECT_HANDOFF_V2.md`, `RUNTIME_HOST_MAP_V2.md`,
+`CURRENT_RESEARCH_STATE_V2.md`, and `OPERATIONS_RUNBOOK_V2.md` first. V1 documents
+are historical evidence and remain available for provenance only.
 Read `ROADMAP.md` for research governance. These instructions apply to Codex,
 Antigravity, Cursor, and future IDE agents.
 

@@ -15,19 +15,19 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | 8b — Multi-TF composite signal search |
-| **Note** | DEVELOPMENT compose and bounded finalization complete; evidence awaits independent review/user acceptance. OOS locked; no PnL or model training. |
+| **WIP** | `PROBABILITY-MODEL-TRAINING-DATASET-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | 9 — Causal development training dataset |
+| **Note** | Parent composite WIP accepted and closed at `a5816ad7a42c131fe8e38d95e96cdecafe5eddb1`; this WIP builds development-only rows/features/targets. OOS and training remain locked. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
 **Current:**  
-`MULTITF-COMPOSITE-SIGNAL-SEARCH-1` (REVIEW)
+`PROBABILITY-MODEL-TRAINING-DATASET-1` (ACTIVE)
 
-**Next WIP (PLANNED):**  
-`PROBABILITY-MODEL-TRAINING-DATASET-1`
+**Previous CLOSED:**  
+`MULTITF-COMPOSITE-SIGNAL-SEARCH-1` — accepted final composite authority `a5816ad7a42c131fe8e38d95e96cdecafe5eddb1`; OOS locked; no model training.
 
 Previous CLOSED: `OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1` — final accepted `6c2d13f`; integrity impl `bf72753`; verdict `PREDICTOR_EFFECT_WEAK`; unique dynamic edge vs controls `NOT_ESTABLISHED`; OOS locked.
 

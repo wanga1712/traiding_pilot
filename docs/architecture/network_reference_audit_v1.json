@@ -1,0 +1,22 @@
+{
+  "audit_version": "NETWORK_REFERENCE_AUDIT_V1",
+  "audited_at_utc": "2026-09-22T00:00:00Z",
+  "authority": "S7_S13_EIS_ROLLOUT.md plus live Tailscale checks",
+  "current_hosts": {
+    "s7": {"user": "wanga", "tailscale_ip": "100.80.226.124", "role": "market_data_postgres"},
+    "s13": {"user": "sergey", "tailscale_ip": "100.113.185.90", "role": "compute_research_ui"}
+  },
+  "route_state": {"s7_route_all": false, "s13_route_all": false, "exit_node": null},
+  "verified_routes": [
+    "workstation -> s13 via rollout ssh config",
+    "workstation -> s7 via rollout ssh config",
+    "s13 -> s7 via /home/sergey/.ssh/id_to_nyx and wanga@s7"
+  ],
+  "active_runtime_migration": {
+    "old_reference": "10.8.x / mint-vpn / Amnezia",
+    "new_reference": "s7 / s13 Tailscale DNS aliases",
+    "status": "migrated_defaults"
+  },
+  "historical_files_preserved": ["docs/architecture/*_V1.md", "docs/architecture/*_v1.json"],
+  "sensitive_data_policy": "No key contents or row-level market data exported"
+}

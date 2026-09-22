@@ -861,7 +861,7 @@ def main():
     parser.add_argument("--symbol", default="ETHUSDT")
     parser.add_argument("--canonical-root", type=Path, default=Path("/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m"))
     parser.add_argument("--cache-root", type=Path, default=Path("/var/tmp/traiding_pilot_market_cache"))
-    parser.add_argument("--ssh-host", default="wanga@10.8.0.7")
+    parser.add_argument("--ssh-host", default="wanga@s7")
     parser.add_argument("--ssh-key", type=Path, default=Path("/home/sergey/.ssh/id_to_nyx"))
     parser.add_argument("--initial-end", default="2024-06-30")
     parser.add_argument("--oos-blind", action="store_true", default=True)
