@@ -1,0 +1,86 @@
+{
+  "artifact": "probability_model_target_spec_v1",
+  "development_model_metrics_independent_oos": "NO",
+  "development_reuse_bias": "YES",
+  "frozen": true,
+  "horizons": [
+    {
+      "censor_rule": "exclude censor_30m=true",
+      "excluded_censored_count": 52,
+      "excluded_zero_count": 313,
+      "horizon_minutes": 30,
+      "label_rule": "1 if return>0; 0 if return<0",
+      "negative_count": 70987,
+      "positive_count": 72427,
+      "source_target": "fwd_return_30m",
+      "zero_return_rule": "exclude exactly zero"
+    },
+    {
+      "censor_rule": "exclude censor_60m=true",
+      "excluded_censored_count": 96,
+      "excluded_zero_count": 241,
+      "horizon_minutes": 60,
+      "label_rule": "1 if return>0; 0 if return<0",
+      "negative_count": 70980,
+      "positive_count": 72462,
+      "source_target": "fwd_return_60m",
+      "zero_return_rule": "exclude exactly zero"
+    },
+    {
+      "censor_rule": "exclude censor_120m=true",
+      "excluded_censored_count": 181,
+      "excluded_zero_count": 181,
+      "horizon_minutes": 120,
+      "label_rule": "1 if return>0; 0 if return<0",
+      "negative_count": 70332,
+      "positive_count": 73085,
+      "source_target": "fwd_return_120m",
+      "zero_return_rule": "exclude exactly zero"
+    },
+    {
+      "censor_rule": "exclude censor_240m=true",
+      "excluded_censored_count": 349,
+      "excluded_zero_count": 132,
+      "horizon_minutes": 240,
+      "label_rule": "1 if return>0; 0 if return<0",
+      "negative_count": 69646,
+      "positive_count": 73652,
+      "source_target": "fwd_return_240m",
+      "zero_return_rule": "exclude exactly zero"
+    },
+    {
+      "censor_rule": "exclude censor_480m=true",
+      "excluded_censored_count": 685,
+      "excluded_zero_count": 71,
+      "horizon_minutes": 480,
+      "label_rule": "1 if return>0; 0 if return<0",
+      "negative_count": 69234,
+      "positive_count": 73789,
+      "source_target": "fwd_return_480m",
+      "zero_return_rule": "exclude exactly zero"
+    },
+    {
+      "censor_rule": "exclude censor_720m=true",
+      "excluded_censored_count": 1021,
+      "excluded_zero_count": 66,
+      "horizon_minutes": 720,
+      "label_rule": "1 if return>0; 0 if return<0",
+      "negative_count": 69281,
+      "positive_count": 73411,
+      "source_target": "fwd_return_720m",
+      "zero_return_rule": "exclude exactly zero"
+    },
+    {
+      "censor_rule": "exclude censor_1440m=true",
+      "excluded_censored_count": 2029,
+      "excluded_zero_count": 53,
+      "horizon_minutes": 1440,
+      "label_rule": "1 if return>0; 0 if return<0",
+      "negative_count": 67636,
+      "positive_count": 74061,
+      "source_target": "fwd_return_1440m",
+      "zero_return_rule": "exclude exactly zero"
+    }
+  ],
+  "target_spec_hash": "c9880376ee6d268933f6c655f428732dfb836e4ff2eba2ab4499fd269c4c752e"
+}
