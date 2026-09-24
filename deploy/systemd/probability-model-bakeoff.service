@@ -1,0 +1,22 @@
+[Unit]
+Description=Probability model DEVELOPMENT walk-forward bakeoff
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=!/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-MODEL-BAKEOFF-1/probability_model_bakeoff_summary_v1.json
+
+[Service]
+Type=simple
+User=sergey
+WorkingDirectory=/var/tmp/traiding_pilot_ui_workspace
+Environment=OMP_NUM_THREADS=2
+Environment=OPENBLAS_NUM_THREADS=2
+Environment=MKL_NUM_THREADS=2
+ExecStart=/usr/bin/nice -n 10 /var/tmp/traiding_pilot_ui_workspace/.venv_bakeoff/bin/python /var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2/model_bakeoff/run_bakeoff.py full
+Restart=on-failure
+RestartSec=60
+CPUQuota=200%
+MemoryHigh=10G
+MemoryMax=12G
+
+[Install]
+WantedBy=multi-user.target
