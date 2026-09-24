@@ -15,16 +15,19 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `PROBABILITY-MODEL-TRAINING-DATASET-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | 9 — Causal development training dataset |
-| **Note** | Causal DEVELOPMENT dataset V2 completed with optimized target engine and all integrity gates PASS. `TRAINING_DATASET_READY=YES`; independent acceptance remains required. OOS and model training remain locked. |
+| **WIP** | `PROBABILITY-MODEL-BAKEOFF-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | 10 — DEVELOPMENT walk-forward probability-model bakeoff |
+| **Note** | Train fixed Logistic L2, LightGBM, and CatBoost candidates on frozen DEVELOPMENT V2 only. DEVELOPMENT reuse bias is explicit; OOS and PnL remain locked. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
 **Current:**  
-`PROBABILITY-MODEL-TRAINING-DATASET-1` (REVIEW)
+`PROBABILITY-MODEL-BAKEOFF-1` (ACTIVE)
+
+**Previous CLOSED:**  
+`PROBABILITY-MODEL-TRAINING-DATASET-1` — accepted dataset authority `201efd1e1b98056d526baced8042a51887c0218e`; 143779 causal DEVELOPMENT rows; OOS locked.
 
 **Previous CLOSED:**  
 `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` — accepted final composite authority `a5816ad7a42c131fe8e38d95e96cdecafe5eddb1`; OOS locked; no model training.
