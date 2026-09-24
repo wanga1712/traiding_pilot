@@ -1,0 +1,6 @@
+{
+  "reason": "STOPPED_FOR_CPU_PERFORMANCE",
+  "model_training_started": false,
+  "oos_opened": false,
+  "superseded_by_mode": "TARGET-ENGINE-PERFORMANCE-AND-EVIDENCE-REPAIR-1"
+}
