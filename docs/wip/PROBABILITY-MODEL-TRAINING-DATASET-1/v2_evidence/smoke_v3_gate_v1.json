@@ -1,0 +1,12 @@
+{
+  "row_id_unique": "PASS",
+  "chronology": "PASS",
+  "atomic_feature_count": 284,
+  "composite_feature_count": 5478,
+  "pre_window_event_to_row0_count": 0,
+  "event_available_after_decision_count": 0,
+  "optimized_target_reference_parity": "PASS",
+  "causal_trace_audit": "PASS",
+  "oos_rows_materialized": 0,
+  "status": "PASS"
+}

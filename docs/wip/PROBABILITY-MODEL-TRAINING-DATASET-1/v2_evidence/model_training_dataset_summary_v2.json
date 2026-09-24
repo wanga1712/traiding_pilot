@@ -1,0 +1,17 @@
+{
+  "rows": 143779,
+  "dense": 15,
+  "atomic": 284,
+  "composite": 5478,
+  "context_included": 4,
+  "context_overlaps_dense": true,
+  "feature_count_total": 5777,
+  "target_primitives": 63,
+  "target_windows_complete": 1002040,
+  "target_windows_censored_gap": 4207,
+  "target_windows_censored_boundary": 206,
+  "optimized_target_reference_parity": "PASS",
+  "pre_window_event_to_row0_count": 0,
+  "pre_window_events_discarded": 3,
+  "oos_rows": 0
+}

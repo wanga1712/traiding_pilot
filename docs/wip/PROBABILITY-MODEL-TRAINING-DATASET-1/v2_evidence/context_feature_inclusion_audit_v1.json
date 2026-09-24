@@ -1,0 +1,34 @@
+{
+  "families": {
+    "wave_structure": {
+      "status": "EXCLUDED_WITH_REASON",
+      "reason": "no causal reconstruction added in V2"
+    },
+    "rolling_geometry": {
+      "status": "EXCLUDED_WITH_REASON",
+      "reason": "frozen geometry timestamps not joined in this repair"
+    },
+    "volatility_atr": {
+      "status": "INCLUDED",
+      "features": [
+        "mean_high_low_range_14"
+      ]
+    },
+    "volume_accumulation": {
+      "status": "INCLUDED",
+      "features": [
+        "volume_mean_32",
+        "volume_std_32",
+        "volume_z_32"
+      ]
+    },
+    "oscillator_predictor": {
+      "status": "EXCLUDED_WITH_REASON",
+      "reason": "no causal frozen authority join"
+    },
+    "inverse_indicator_context": {
+      "status": "EXCLUDED_WITH_REASON",
+      "reason": "no causal frozen authority join"
+    }
+  }
+}

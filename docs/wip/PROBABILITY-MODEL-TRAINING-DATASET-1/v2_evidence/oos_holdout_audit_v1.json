@@ -1,0 +1,11 @@
+{
+  "development_start": "2019-05-12 00:00:00+00:00",
+  "development_end": "2023-06-20 06:08:00+00:00",
+  "source_oos_rows_materialized": 0,
+  "source_files_strictly_after_dev_end_opened_for_data": 0,
+  "max_15m_decision_at_materialized": "2023-06-20 05:59:59.999999+00:00",
+  "max_1m_close_time_materialized": "2023-06-20 06:07:59.999000+00:00",
+  "oos_used_for_feature_stats": "NO",
+  "oos_used_for_targets": "NO",
+  "status": "PASS"
+}

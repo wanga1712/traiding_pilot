@@ -1,0 +1,12 @@
+{
+  "sha256": "105c4424049f255b015633c50992fc33201ac823c7cf17a9630d449d5a8eddfe",
+  "shape": [
+    143779,
+    284
+  ],
+  "nnz": 1161488,
+  "pre_window_events_discarded": 3,
+  "pre_window_event_to_row0_count": 0,
+  "post_window_events_discarded": 0,
+  "post_window_event_count_materialized": 0
+}

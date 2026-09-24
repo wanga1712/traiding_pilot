@@ -1,0 +1,15 @@
+{
+  "row_id_unique": "PASS",
+  "chronology": "PASS",
+  "atomic_feature_count": 284,
+  "composite_feature_count": 5478,
+  "atomic_dense_row_alignment": "PASS",
+  "composite_dense_row_alignment": "PASS",
+  "optimized_target_reference_parity": "PASS",
+  "target_feature_leakage_count": 0,
+  "causal_trace_audit": "PASS",
+  "oos_rows_materialized": 0,
+  "max_source_time_within_dev": "PASS",
+  "reproducibility": "PASS",
+  "status": "PASS"
+}
