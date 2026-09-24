@@ -1,0 +1,11 @@
+{
+  "status": "INTERRUPTED_BEFORE_S13_SHUTDOWN",
+  "completed_candidate_shards": 165,
+  "expected_model_fold_runs": 252,
+  "frozen_dataset_intact": true,
+  "model_training_started": true,
+  "oos_opened": false,
+  "pnl_tested": false,
+  "resume_repair_required": true,
+  "reason": "S13 scheduled power-off; per-candidate metrics persisted but prediction blocks require resumable persistence before restart"
+}
