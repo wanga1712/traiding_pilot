@@ -15,16 +15,19 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `PROBABILITY-MODEL-BAKEOFF-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | 10 — DEVELOPMENT walk-forward probability-model bakeoff |
-| **Note** | Train fixed Logistic L2, LightGBM, and CatBoost candidates on frozen DEVELOPMENT V2 only. DEVELOPMENT reuse bias is explicit; OOS and PnL remain locked. |
+| **WIP** | `INDEPENDENT-OOS-MODEL-EVALUATION-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | 11 — One-shot frozen probability-model OOS exam |
+| **Note** | Score only the frozen 30m and 60m CatBoost/FS_FULL RAW candidates on one fixed independent OOS period. No retraining, calibration, selection, execution, or PnL. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
 **Current:**  
-`PROBABILITY-MODEL-BAKEOFF-1` (REVIEW) — 252/252 DEVELOPMENT model-fold runs complete. CatBoost/FS_FULL selected for 30m and 60m only; OOS and PnL remain locked. Result evidence commit `860c4683bd93593e204656a903c29776b0e75225`.
+`INDEPENDENT-OOS-MODEL-EVALUATION-1` (ACTIVE) — one-shot independent exam of the frozen 30m and 60m CatBoost/FS_FULL RAW candidates. OOS boundaries and methodology must be frozen before payload access. Execution and PnL remain locked.
+
+**Previous CLOSED:**
+`PROBABILITY-MODEL-BAKEOFF-1` — accepted model authority `860c4683bd93593e204656a903c29776b0e75225`; CatBoost/FS_FULL RAW selected for 30m and 60m only; all other horizons rejected; no OOS or PnL used.
 
 **Previous CLOSED:**  
 `PROBABILITY-MODEL-TRAINING-DATASET-1` — accepted dataset authority `201efd1e1b98056d526baced8042a51887c0218e`; 143779 causal DEVELOPMENT rows; OOS locked.
