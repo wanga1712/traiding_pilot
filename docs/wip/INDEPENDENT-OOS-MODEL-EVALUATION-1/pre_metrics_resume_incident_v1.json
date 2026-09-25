@@ -1,0 +1,20 @@
+{
+  "artifact": "pre_metrics_resume_incident_v1",
+  "logical_oos_run_count": 1,
+  "oos_opened": "YES",
+  "failure_stage": "dense feature materialization before atomic/composite replay and model scoring",
+  "error": "trade_count was omitted by the shared indicator bar normalizer",
+  "predictions_emitted": "NO",
+  "metrics_emitted": "NO",
+  "metrics_observed": "NO",
+  "model_changed": "NO",
+  "feature_definition_changed": "NO",
+  "feature_order_changed": "NO",
+  "target_changed": "NO",
+  "oos_boundary_changed": "NO",
+  "baseline_changed": "NO",
+  "methodology_changed": "NO",
+  "repair": "read trade_count from the already frozen canonical 15m resampled parquet while preserving all frozen dense formulas",
+  "resume_policy": "same logical run; resume is permitted only while no prediction or metric artifact exists",
+  "oos_exam_compromised": "NO"
+}

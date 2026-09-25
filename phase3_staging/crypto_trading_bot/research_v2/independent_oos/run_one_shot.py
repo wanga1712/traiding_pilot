@@ -235,7 +235,7 @@ def _load_target_minutes(start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame
     return pd.concat(tables, ignore_index=True).sort_values("close_time_utc").reset_index(drop=True)
 
 
-def run() -> dict[str, Any]:
+def run(*, resume_pre_metrics: bool = False) -> dict[str, Any]:
     started = time.time()
     OUT.mkdir(parents=True, exist_ok=True)
     if (OUT / "oos_model_evaluation_summary_v1.json").exists():
@@ -244,13 +244,29 @@ def run() -> dict[str, Any]:
     verify_staged_source(ctx["inventory"])
     access_path = OUT / "oos_access_manifest_v1.json"
     access = jload(access_path)
-    if access.get("OOS_OPENED") == "YES":
-        raise RuntimeError("OOS was already opened; refuse a second logical run")
     runner_hash = sha256(Path(__file__))
-    access.update({
-        "OOS_OPENED": "YES", "OOS_EVALUATION_RUN_COUNT": 1,
-        "first_payload_read_at": datetime.now(timezone.utc).isoformat(), "runner_sha256": runner_hash,
-    })
+    if access.get("OOS_OPENED") == "YES":
+        emitted = [
+            "oos_predictions_v1.parquet", "oos_metrics_v1.csv", "oos_temporal_blocks_v1.csv",
+            "oos_bootstrap_v1.csv", "oos_model_evaluation_summary_v1.json",
+        ]
+        if not resume_pre_metrics or any((OUT / name).exists() for name in emitted):
+            raise RuntimeError("OOS was already opened; pre-metrics resume gate failed")
+        access.update({
+            "OOS_EVALUATION_RUN_COUNT": 1,
+            "PRE_METRICS_RESUME_COUNT": int(access.get("PRE_METRICS_RESUME_COUNT", 0)) + 1,
+            "METRICS_OBSERVED_BEFORE_RESUME": "NO",
+            "METHODOLOGY_CHANGED": "NO",
+            "PREPROCESSING_ADAPTER_FIX": "preserve frozen trade_count from canonical resampled parquet",
+            "previous_runner_sha256": access.get("runner_sha256"),
+            "runner_sha256": runner_hash,
+            "resumed_at": datetime.now(timezone.utc).isoformat(),
+        })
+    else:
+        access.update({
+            "OOS_OPENED": "YES", "OOS_EVALUATION_RUN_COUNT": 1,
+            "first_payload_read_at": datetime.now(timezone.utc).isoformat(), "runner_sha256": runner_hash,
+        })
     jdump(access, access_path)
 
     period = ctx["period"]
@@ -270,9 +286,11 @@ def run() -> dict[str, Any]:
     required_configs = [bank_by_id[cid] for cid in sorted(required)]
 
     bars_by_tf = _load_bars_by_tf(start, end_exclusive, required_configs)
-    all_15m = pd.DataFrame(bars_by_tf["15m"])
-    all_15m["open_time_utc"] = pd.to_datetime(all_15m["open_time"], utc=True)
-    all_15m["close_time_utc"] = pd.to_datetime(all_15m["close_time"], utc=True)
+    all_15m = pd.read_parquet(SOURCE_CACHE / "resampled/ETHUSDT_15m.parquet")
+    all_15m["open_time_utc"] = pd.to_datetime(all_15m["open_time_utc"], utc=True)
+    all_15m["close_time_utc"] = pd.to_datetime(all_15m["close_time_utc"], utc=True)
+    first_loaded_15m = pd.Timestamp(parse_ts(bars_by_tf["15m"][0]["close_time"]))
+    all_15m = all_15m[(all_15m["close_time_utc"] >= first_loaded_15m) & (all_15m["close_time_utc"] <= pd.Timestamp(end))]
     all_15m = all_15m.sort_values("close_time_utc").reset_index(drop=True)
     dense_all = _dense_frame(all_15m)
     visible = (all_15m["close_time_utc"] >= pd.Timestamp(start)) & (all_15m["close_time_utc"] <= pd.Timestamp(end))
@@ -415,9 +433,10 @@ def run() -> dict[str, Any]:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--preflight-only", action="store_true")
+    parser.add_argument("--resume-pre-metrics", action="store_true")
     args = parser.parse_args()
     if args.preflight_only:
         context = preflight()
         print(json.dumps({"status": "PASS", "model_gates": context["model_gates"], "feature_count": len(context["feature_columns"])}))
     else:
-        print(json.dumps(run(), indent=2, default=str))
+        print(json.dumps(run(resume_pre_metrics=args.resume_pre_metrics), indent=2, default=str))
