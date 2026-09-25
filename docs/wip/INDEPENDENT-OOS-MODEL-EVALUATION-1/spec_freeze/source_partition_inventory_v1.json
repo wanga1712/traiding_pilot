@@ -1,0 +1,242 @@
+{
+  "artifact": "source_partition_inventory_v1",
+  "source_host": "s7",
+  "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+  "selection": "all partitions required for frozen 500-bar causal warmup and OOS, 2022-10 through last available month",
+  "partition_count": 46,
+  "first_partition": "2022/ETHUSDT-1m-2022-10.parquet",
+  "last_partition": "2026/ETHUSDT-1m-2026-07.parquet",
+  "manifest_sha256": "e025d34e282b56d8defc4febcbb23cf66c93ad2515c756e93e29fc68b6a07d19",
+  "partitions": [
+    {
+      "relative_path": "2022/ETHUSDT-1m-2022-10.parquet",
+      "bytes": 3010700,
+      "mtime_ns": 1787931221927836586
+    },
+    {
+      "relative_path": "2022/ETHUSDT-1m-2022-11.parquet",
+      "bytes": 3020954,
+      "mtime_ns": 1787931228346011022
+    },
+    {
+      "relative_path": "2022/ETHUSDT-1m-2022-12.parquet",
+      "bytes": 2909798,
+      "mtime_ns": 1787931228788023036
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-01.parquet",
+      "bytes": 3040183,
+      "mtime_ns": 1787931232757130922
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-02.parquet",
+      "bytes": 2711326,
+      "mtime_ns": 1787931238616290196
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-03.parquet",
+      "bytes": 3174295,
+      "mtime_ns": 1787931244662454570
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-04.parquet",
+      "bytes": 2936854,
+      "mtime_ns": 1787931245270471101
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-05.parquet",
+      "bytes": 2914623,
+      "mtime_ns": 1787931249162576923
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-06.parquet",
+      "bytes": 2849437,
+      "mtime_ns": 1787931253428692924
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-07.parquet",
+      "bytes": 2874755,
+      "mtime_ns": 1787931259852867620
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-08.parquet",
+      "bytes": 2920370,
+      "mtime_ns": 1787931261487912085
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-09.parquet",
+      "bytes": 2693516,
+      "mtime_ns": 1787931265649025253
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-10.parquet",
+      "bytes": 3058989,
+      "mtime_ns": 1787931269272123796
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-11.parquet",
+      "bytes": 2979897,
+      "mtime_ns": 1787931276825329250
+    },
+    {
+      "relative_path": "2023/ETHUSDT-1m-2023-12.parquet",
+      "bytes": 3053833,
+      "mtime_ns": 1787931277819356290
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-01.parquet",
+      "bytes": 3232383,
+      "mtime_ns": 1787931281319451506
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-02.parquet",
+      "bytes": 3094891,
+      "mtime_ns": 1787931285977578233
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-03.parquet",
+      "bytes": 3335279,
+      "mtime_ns": 1787931293528783688
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-04.parquet",
+      "bytes": 3150521,
+      "mtime_ns": 1787931294409807661
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-05.parquet",
+      "bytes": 3218551,
+      "mtime_ns": 1787931298304913651
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-06.parquet",
+      "bytes": 3096984,
+      "mtime_ns": 1787931299928957844
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-07.parquet",
+      "bytes": 3266135,
+      "mtime_ns": 1787931306845146062
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-08.parquet",
+      "bytes": 3212011,
+      "mtime_ns": 1787931308656195351
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-09.parquet",
+      "bytes": 3055564,
+      "mtime_ns": 1787931310783253242
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-10.parquet",
+      "bytes": 3165827,
+      "mtime_ns": 1787931313571329127
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-11.parquet",
+      "bytes": 3319253,
+      "mtime_ns": 1787931321837554134
+    },
+    {
+      "relative_path": "2024/ETHUSDT-1m-2024-12.parquet",
+      "bytes": 3307457,
+      "mtime_ns": 1787931324360622817
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-01.parquet",
+      "bytes": 3252913,
+      "mtime_ns": 1787931326599683771
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-02.parquet",
+      "bytes": 2913530,
+      "mtime_ns": 1787931329991776118
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-03.parquet",
+      "bytes": 3271912,
+      "mtime_ns": 1787931338281001805
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-04.parquet",
+      "bytes": 3029956,
+      "mtime_ns": 1787931339974047903
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-05.parquet",
+      "bytes": 3200179,
+      "mtime_ns": 1787931342788124529
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-06.parquet",
+      "bytes": 3070844,
+      "mtime_ns": 1787931345254191681
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-07.parquet",
+      "bytes": 3391904,
+      "mtime_ns": 1787931354595446068
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-08.parquet",
+      "bytes": 3416179,
+      "mtime_ns": 1787931355160461456
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-09.parquet",
+      "bytes": 3196436,
+      "mtime_ns": 1787931357919536600
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-10.parquet",
+      "bytes": 3369884,
+      "mtime_ns": 1787931359842588976
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-11.parquet",
+      "bytes": 3298106,
+      "mtime_ns": 1787931370997892830
+    },
+    {
+      "relative_path": "2025/ETHUSDT-1m-2025-12.parquet",
+      "bytes": 3249230,
+      "mtime_ns": 1787931370288873516
+    },
+    {
+      "relative_path": "2026/ETHUSDT-1m-2026-01.parquet",
+      "bytes": 3303352,
+      "mtime_ns": 1787931373761968126
+    },
+    {
+      "relative_path": "2026/ETHUSDT-1m-2026-02.parquet",
+      "bytes": 2957906,
+      "mtime_ns": 1787931376669047321
+    },
+    {
+      "relative_path": "2026/ETHUSDT-1m-2026-03.parquet",
+      "bytes": 3198608,
+      "mtime_ns": 1787931385066276096
+    },
+    {
+      "relative_path": "2026/ETHUSDT-1m-2026-04.parquet",
+      "bytes": 3039314,
+      "mtime_ns": 1787931386703320699
+    },
+    {
+      "relative_path": "2026/ETHUSDT-1m-2026-05.parquet",
+      "bytes": 3137324,
+      "mtime_ns": 1787931389805405220
+    },
+    {
+      "relative_path": "2026/ETHUSDT-1m-2026-06.parquet",
+      "bytes": 3064271,
+      "mtime_ns": 1787931391490451134
+    },
+    {
+      "relative_path": "2026/ETHUSDT-1m-2026-07.parquet",
+      "bytes": 3072563,
+      "mtime_ns": 1787931400847706115
+    }
+  ]
+}

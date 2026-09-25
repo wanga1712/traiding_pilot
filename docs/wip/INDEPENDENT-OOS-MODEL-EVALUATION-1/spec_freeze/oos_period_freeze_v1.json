@@ -1,0 +1,48 @@
+{
+  "artifact": "oos_period_freeze_v1",
+  "frozen_before_model_scoring": true,
+  "selection_used_price_or_return_payload": false,
+  "development_authority_end": "2023-06-20T06:08:00Z",
+  "canonical_decision_timeframe": "15m",
+  "oos_start": "2023-06-20T06:14:59.999999Z",
+  "oos_start_rule": "first canonical 15m DECISION_AT strictly after development authority end",
+  "oos_end": "2026-07-31T23:59:59.999999Z",
+  "oos_end_rule": "last complete canonical 15m DECISION_AT supported by the final frozen source partition footer",
+  "expected_complete_15m_slots": 109224,
+  "source_host": "s7",
+  "source_path": "/srv/traiding_pilot/market/binance/spot/ETHUSDT/1m",
+  "source_partition_inventory": "source_partition_inventory_v1.json",
+  "source_partition_manifest_sha256": "e025d34e282b56d8defc4febcbb23cf66c93ad2515c756e93e29fc68b6a07d19",
+  "source_partition_count": 46,
+  "last_partition": {
+    "relative_path": "2026/ETHUSDT-1m-2026-07.parquet",
+    "bytes": 3072563,
+    "rows_from_parquet_footer": 44640,
+    "row_groups": 1,
+    "open_time_min_from_footer": "2026-07-01T00:00:00Z",
+    "open_time_max_from_footer": "2026-07-31T23:59:00Z",
+    "close_time_min_from_footer": "2026-07-01T00:00:59.999999Z",
+    "close_time_max_from_footer": "2026-07-31T23:59:59.999999Z"
+  },
+  "temporal_blocks": [
+    {
+      "block": "OOS_BLOCK_1",
+      "start": "2023-06-20T06:14:59.999999Z",
+      "end": "2024-07-03T11:59:59.999999Z",
+      "expected_slots": 36408
+    },
+    {
+      "block": "OOS_BLOCK_2",
+      "start": "2024-07-03T12:14:59.999999Z",
+      "end": "2025-07-17T17:59:59.999999Z",
+      "expected_slots": 36408
+    },
+    {
+      "block": "OOS_BLOCK_3",
+      "start": "2025-07-17T18:14:59.999999Z",
+      "end": "2026-07-31T23:59:59.999999Z",
+      "expected_slots": 36408
+    }
+  ],
+  "boundaries_may_change_after_scoring": false
+}

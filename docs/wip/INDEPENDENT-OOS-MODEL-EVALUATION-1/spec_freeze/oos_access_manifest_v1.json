@@ -1,0 +1,10 @@
+{
+  "artifact": "oos_access_manifest_v1",
+  "OOS_OPENED": "NO",
+  "OOS_EVALUATION_RUN_COUNT": 0,
+  "OOS_EXAM_COMPROMISED": "NO",
+  "MODEL_RETRAIN_COUNT": 0,
+  "CALIBRATOR_USED": "NO",
+  "PNL_TESTED": "NO",
+  "EXECUTION_TESTED": "NO"
+}

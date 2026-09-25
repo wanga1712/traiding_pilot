@@ -1,0 +1,92 @@
+{
+  "artifact": "independent_oos_evaluation_spec_v1",
+  "wip": "INDEPENDENT-OOS-MODEL-EVALUATION-1",
+  "mode": "ONE-SHOT-FROZEN-PROBABILITY-OOS-1",
+  "frozen_before_oos_payload_read": true,
+  "parent_model_authority": "860c4683bd93593e204656a903c29776b0e75225",
+  "parent_dataset_authority": "201efd1e1b98056d526baced8042a51887c0218e",
+  "feature_set": "FS_FULL",
+  "feature_set_hash": "87229d0281281de555a38255989eef40deaf0915cdd2c385592d360253fea64b",
+  "target_spec_hash": "c9880376ee6d268933f6c655f428732dfb836e4ff2eba2ab4499fd269c4c752e",
+  "probability_variant": "RAW",
+  "horizons_minutes": [30, 60],
+  "models": {
+    "30": {
+      "family": "CATBOOST",
+      "feature_set": "FS_FULL",
+      "sha256": "79db5021d666a5dd9b79da34c85293809837f924c4b571585778163821025959"
+    },
+    "60": {
+      "family": "CATBOOST",
+      "feature_set": "FS_FULL",
+      "sha256": "2cba813ddf434047a4b5d5a0517fc95873bc0223145d73961093263bfb84e5e2"
+    }
+  },
+  "feature_counts": {
+    "dense": 15,
+    "atomic": 284,
+    "composite": 5478,
+    "total": 5777
+  },
+  "target_semantics": {
+    "window_start": "future canonical 1m close_time > DECISION_AT",
+    "window_end": "future canonical 1m close_time <= DECISION_AT+horizon",
+    "complete_consecutive_path_required": true,
+    "gap_policy": "censor",
+    "right_boundary_policy": "censor",
+    "positive_label": "FWD_RETURN > 0",
+    "negative_label": "FWD_RETURN < 0",
+    "zero_return_policy": "exclude"
+  },
+  "development_priors": {
+    "30": {
+      "positive_count": 72427,
+      "negative_count": 70987,
+      "probability": 0.5050204303624471
+    },
+    "60": {
+      "positive_count": 72462,
+      "negative_count": 70980,
+      "probability": 0.5051658510059815
+    }
+  },
+  "primary_metrics": [
+    "LOG_LOSS",
+    "BRIER_SCORE",
+    "DELTA_LOGLOSS_VS_DEV_PRIOR",
+    "DELTA_BRIER_VS_DEV_PRIOR"
+  ],
+  "secondary_metrics": [
+    "ROC_AUC",
+    "BALANCED_ACCURACY_AT_0_5",
+    "ECE_10_BIN",
+    "OOS_POSITIVE_RATE",
+    "MEAN_PREDICTED_PROBABILITY",
+    "STD_PREDICTED_PROBABILITY",
+    "CONSTANT_0_5_LOGLOSS",
+    "CONSTANT_0_5_BRIER"
+  ],
+  "temporal_blocks": {
+    "count": 3,
+    "rule": "three consecutive equal-duration blocks over the frozen canonical 15m decision grid"
+  },
+  "bootstrap": {
+    "block_length_calendar_days": 7,
+    "repetitions": 2000,
+    "random_seed": 20260925,
+    "confidence_interval": 0.95,
+    "method": "sample non-overlapping seven-calendar-day UTC blocks with replacement, concatenate and truncate to the original valid-row count"
+  },
+  "classification": {
+    "OOS_SUPPORTED": "full-period logloss delta < 0 and Brier delta < 0 and logloss delta < 0 in at least two of three frozen blocks",
+    "OOS_WEAK": "both full-period deltas < 0 but block stability condition fails",
+    "OOS_NOT_SUPPORTED": "full-period logloss delta >= 0 or Brier delta >= 0"
+  },
+  "model_retrain_count": 0,
+  "calibrator_used": "NO",
+  "oos_feature_research_performed": "NO",
+  "oos_hyperparameter_tuning_count": 0,
+  "oos_model_selection_count": 0,
+  "pnl_tested": "NO",
+  "execution_tested": "NO"
+}
