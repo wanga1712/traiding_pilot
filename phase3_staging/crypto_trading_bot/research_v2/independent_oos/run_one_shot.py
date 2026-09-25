@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import glob
 import hashlib
 import json
+import multiprocessing as mp
 import os
 import resource
 import time
@@ -52,6 +54,14 @@ DENSE_COLUMNS = [
     "range_pct", "close_position", "volume_log1p", "mean_high_low_range_14",
     "volume_mean_32", "volume_std_32", "volume_z_32",
 ]
+
+_WORKER_BARS_BY_TF: dict[str, list] = {}
+_WORKER_SCAN_START = ""
+_WORKER_SCAN_END = ""
+_WORKER_START_NS = 0
+_WORKER_END_NS = 0
+_WORKER_SAMPLE_CACHE: dict[tuple, Any] = {}
+_WORKER_THRESHOLD_CACHE: dict[tuple, Any] = {}
 
 
 def sha256(path: Path) -> str:
@@ -149,28 +159,33 @@ def _stream_maps() -> tuple[dict[str, str], dict[str, dict]]:
     return paths, metas
 
 
+def _atomic_worker(cfg: dict) -> tuple[str, np.ndarray, np.ndarray]:
+    signals = generate_signals_for_row(
+        _WORKER_BARS_BY_TF[cfg["decision_tf"]], cfg,
+        scan_start_iso=_WORKER_SCAN_START, scan_end_iso=_WORKER_SCAN_END,
+        sample_cache=_WORKER_SAMPLE_CACHE, inverse_threshold_cache=_WORKER_THRESHOLD_CACHE,
+    )
+    new_ns = np.asarray([int(parse_ts(x["available_at"]).timestamp() * 1e9) for x in signals], dtype=np.int64)
+    new_price = np.asarray([float(x.get("signal_price") or 0.0) for x in signals], dtype=np.float64)
+    keep = (new_ns >= _WORKER_START_NS) & (new_ns < _WORKER_END_NS)
+    return cfg["candidate_id"], new_ns[keep], new_price[keep]
+
+
 def _combine_atomic_streams(
     required_configs: list[dict], bars_by_tf: dict[str, list], start: datetime, end_exclusive: datetime
 ) -> dict[str, dict[str, np.ndarray]]:
+    global _WORKER_BARS_BY_TF, _WORKER_SCAN_START, _WORKER_SCAN_END
+    global _WORKER_START_NS, _WORKER_END_NS
     frozen_paths, _ = _stream_maps()
-    sample_cache: dict[tuple, Any] = {}
-    threshold_cache: dict[tuple, Any] = {}
     start_ns = int(start.timestamp() * 1e9)
     end_ns = int(end_exclusive.timestamp() * 1e9)
     out: dict[str, dict[str, np.ndarray]] = {}
     runtime = OUT / "atomic_oos_streams_v1"
     runtime.mkdir(parents=True, exist_ok=True)
-    for number, cfg in enumerate(required_configs, 1):
+    pending: list[dict] = []
+
+    def commit(cfg: dict, new_ns: np.ndarray, new_price: np.ndarray) -> None:
         cid = cfg["candidate_id"]
-        signals = generate_signals_for_row(
-            bars_by_tf[cfg["decision_tf"]], cfg,
-            scan_start_iso=start.isoformat(), scan_end_iso=end_exclusive.isoformat(),
-            sample_cache=sample_cache, inverse_threshold_cache=threshold_cache,
-        )
-        new_ns = np.asarray([int(parse_ts(x["available_at"]).timestamp() * 1e9) for x in signals], dtype=np.int64)
-        new_price = np.asarray([float(x.get("signal_price") or 0.0) for x in signals], dtype=np.float64)
-        keep = (new_ns >= start_ns) & (new_ns < end_ns)
-        new_ns, new_price = new_ns[keep], new_price[keep]
         frozen = np.load(frozen_paths[cid])
         dev_ns = np.asarray(frozen["available_at_ns"], dtype=np.int64)
         dev_price = np.asarray(frozen["signal_price"], dtype=np.float64)
@@ -184,8 +199,35 @@ def _combine_atomic_streams(
         out[cid] = {"available_at_ns": both_ns, "signal_price": both_price, "oos_ns": new_ns}
         key = hashlib.sha256(cid.encode()).hexdigest()[:20]
         np.savez_compressed(runtime / f"{key}.npz", available_at_ns=new_ns, signal_price=new_price)
-        if number % 25 == 0:
-            print(f"atomic replay {number}/{len(required_configs)}", flush=True)
+
+    for cfg in required_configs:
+        key = hashlib.sha256(cfg["candidate_id"].encode()).hexdigest()[:20]
+        checkpoint = runtime / f"{key}.npz"
+        if checkpoint.exists():
+            saved = np.load(checkpoint)
+            commit(cfg, np.asarray(saved["available_at_ns"], dtype=np.int64), np.asarray(saved["signal_price"], dtype=np.float64))
+        else:
+            pending.append(cfg)
+    completed = len(required_configs) - len(pending)
+    print(f"atomic replay resume {completed}/{len(required_configs)}", flush=True)
+    if pending:
+        _WORKER_BARS_BY_TF = bars_by_tf
+        _WORKER_SCAN_START = start.isoformat()
+        _WORKER_SCAN_END = end_exclusive.isoformat()
+        _WORKER_START_NS = start_ns
+        _WORKER_END_NS = end_ns
+        workers = max(1, int(os.environ.get("OOS_ATOMIC_WORKERS", "4")))
+        with concurrent.futures.ProcessPoolExecutor(max_workers=workers, mp_context=mp.get_context("fork")) as pool:
+            futures = {pool.submit(_atomic_worker, cfg): cfg for cfg in pending}
+            for future in concurrent.futures.as_completed(futures):
+                cfg = futures[future]
+                cid, new_ns, new_price = future.result()
+                if cid != cfg["candidate_id"]:
+                    raise RuntimeError("atomic worker candidate mismatch")
+                commit(cfg, new_ns, new_price)
+                completed += 1
+                if completed % 10 == 0 or completed == len(required_configs):
+                    print(f"atomic replay {completed}/{len(required_configs)}", flush=True)
     return out
 
 

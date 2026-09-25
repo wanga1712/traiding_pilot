@@ -16,5 +16,15 @@
   "methodology_changed": "NO",
   "repair": "read trade_count from the already frozen canonical 15m resampled parquet while preserving all frozen dense formulas",
   "resume_policy": "same logical run; resume is permitted only while no prediction or metric artifact exists",
+  "resource_resume": {
+    "user_authorized": true,
+    "completed_atomic_checkpoints_reused": 170,
+    "atomic_workers": 4,
+    "memory_high": "10G",
+    "memory_max": "12G",
+    "gpu_used": "NO",
+    "gpu_reason": "frozen indicator/event replay is CPU work; model inference is not the runtime bottleneck",
+    "methodology_changed": "NO"
+  },
   "oos_exam_compromised": "NO"
 }
