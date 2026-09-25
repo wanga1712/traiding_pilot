@@ -1,0 +1,25 @@
+{
+  "calibration_improved_all_evaluable_folds": false,
+  "calibrators": {
+    "30": {
+      "bytes": 1069,
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-MODEL-BAKEOFF-1/final_development_calibrators/platt_30m.joblib",
+      "reloadable": true,
+      "sha256": "fa1d3f5296f6daa8c91f319456db0e24233d64217b402613da33d0c00c91ca90",
+      "training_oof_rows": 107758
+    },
+    "60": {
+      "bytes": 1069,
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-MODEL-BAKEOFF-1/final_development_calibrators/platt_60m.joblib",
+      "reloadable": true,
+      "sha256": "d27cfe77c0ea13d81bcf0abb649506a6c926d9fbfbde4c95ce4393b903e882ac",
+      "training_oof_rows": 107764
+    }
+  },
+  "chronological_protocol": "WFV_2 uses WFV_1 OOF; WFV_3 uses WFV_1+WFV_2 OOF",
+  "final_calibrator_training": "all DEVELOPMENT OOF predictions; frozen only for later independent OOS",
+  "method": "Platt sigmoid on logit(raw_probability)",
+  "oos_probability_variant": "RAW",
+  "oos_touched": "NO",
+  "status": "PASS"
+}

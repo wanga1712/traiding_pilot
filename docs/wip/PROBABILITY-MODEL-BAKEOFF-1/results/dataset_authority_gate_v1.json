@@ -1,0 +1,43 @@
+{
+  "committed_evidence": "/var/tmp/probability_model_bakeoff_expected_dataset_manifest.json",
+  "files": {
+    "model_training_feature_registry_v2.json": {
+      "actual": "75153ef9360cd69c5e95af67bbead0babfe60f0063edc462f3cb86af5f1e4f84",
+      "expected": "75153ef9360cd69c5e95af67bbead0babfe60f0063edc462f3cb86af5f1e4f84",
+      "match": true
+    },
+    "model_training_target_registry_v2.json": {
+      "actual": "3c057df2ec38edbd43fd7189b81029562340309c9e66c1872b21eba4b40d68d5",
+      "expected": "3c057df2ec38edbd43fd7189b81029562340309c9e66c1872b21eba4b40d68d5",
+      "match": true
+    },
+    "training_atomic_feature_matrix_v2.npz": {
+      "actual": "105c4424049f255b015633c50992fc33201ac823c7cf17a9630d449d5a8eddfe",
+      "expected": "105c4424049f255b015633c50992fc33201ac823c7cf17a9630d449d5a8eddfe",
+      "match": true
+    },
+    "training_composite_feature_matrix_v2.npz": {
+      "actual": "4f4edd1096253e139ac87f6e284d68304c58441a8a17f497ba72ee61dfa61bbe",
+      "expected": "4f4edd1096253e139ac87f6e284d68304c58441a8a17f497ba72ee61dfa61bbe",
+      "match": true
+    },
+    "training_features_dense_v2.parquet": {
+      "actual": "d94691750a700968008f782fcb2968481a477cafdfe28311f7cf084831c87e76",
+      "expected": "d94691750a700968008f782fcb2968481a477cafdfe28311f7cf084831c87e76",
+      "match": true
+    },
+    "training_row_index_v2.parquet": {
+      "actual": "0f812057fa06a174a5818d4ab85325d9883b73bf291abd0fa38ebb308d0fe809",
+      "expected": "0f812057fa06a174a5818d4ab85325d9883b73bf291abd0fa38ebb308d0fe809",
+      "match": true
+    },
+    "training_targets_v2.parquet": {
+      "actual": "023bc11037b7022aca2bb0b1b4e062a5a773033dfc7b61d03f6a6f7da9e4fb12",
+      "expected": "023bc11037b7022aca2bb0b1b4e062a5a773033dfc7b61d03f6a6f7da9e4fb12",
+      "match": true
+    }
+  },
+  "oos_touched": "NO",
+  "parent_dataset_commit": "201efd1e1b98056d526baced8042a51887c0218e",
+  "status": "PASS"
+}

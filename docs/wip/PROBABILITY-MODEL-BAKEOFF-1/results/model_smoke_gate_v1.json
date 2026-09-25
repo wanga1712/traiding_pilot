@@ -1,0 +1,17 @@
+{
+  "families": [
+    "PRIOR_BASELINE",
+    "LOGISTIC_L2",
+    "LIGHTGBM",
+    "CATBOOST"
+  ],
+  "feature_sets": [
+    "FS_DENSE",
+    "FS_FULL"
+  ],
+  "horizon_minutes": 240,
+  "oos_touched": "NO",
+  "serialization_reload_parity": "PASS",
+  "status": "PASS",
+  "wfv": "WFV_1"
+}

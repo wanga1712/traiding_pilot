@@ -1,0 +1,19 @@
+{
+  "calibration_status": "PASS",
+  "completed_model_fold_runs": 252,
+  "development_model_metrics_independent_oos": "NO",
+  "development_reuse_bias": "YES",
+  "expected_model_fold_runs": 252,
+  "final_models_reloadable": true,
+  "oos_opened": "NO",
+  "pnl_tested": "NO",
+  "selected_horizons_minutes": [
+    30,
+    60
+  ],
+  "selected_probability_variant_for_oos": "RAW",
+  "support_counts": {
+    "NOT_SUPPORTED": 74,
+    "SUPPORTED": 10
+  }
+}

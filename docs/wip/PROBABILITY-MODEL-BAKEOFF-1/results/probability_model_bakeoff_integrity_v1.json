@@ -1,0 +1,11 @@
+{
+  "all_expected_candidates_accounted_for": true,
+  "chronological_cross_calibration": "PASS",
+  "completion_gate": "PASS",
+  "dataset_authority_gate": "PASS",
+  "final_model_lineage_complete": true,
+  "model_sample_reproducible": "PASS",
+  "oos_access_count": 0,
+  "preprocessing_future_row_leakage_count": 0,
+  "selected_candidates_frozen_and_reloadable": true
+}

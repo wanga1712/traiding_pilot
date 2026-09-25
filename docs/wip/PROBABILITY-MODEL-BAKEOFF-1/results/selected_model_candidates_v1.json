@@ -1,0 +1,33 @@
+{
+  "120": {
+    "selected": false
+  },
+  "1440": {
+    "selected": false
+  },
+  "240": {
+    "selected": false
+  },
+  "30": {
+    "family": "CATBOOST",
+    "feature_set": "FS_FULL",
+    "selected": true,
+    "support_class": "SUPPORTED",
+    "weighted_brier": 0.24860238469708326,
+    "weighted_log_loss": 0.6903473859918876
+  },
+  "480": {
+    "selected": false
+  },
+  "60": {
+    "family": "CATBOOST",
+    "feature_set": "FS_FULL",
+    "selected": true,
+    "support_class": "SUPPORTED",
+    "weighted_brier": 0.24925885503319256,
+    "weighted_log_loss": 0.6916673728284536
+  },
+  "720": {
+    "selected": false
+  }
+}
