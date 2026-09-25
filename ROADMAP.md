@@ -16,7 +16,7 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | Field | Value |
 |---|---|
 | **WIP** | `PROBABILITY-MODEL-BAKEOFF-1` |
-| **STATUS** | ACTIVE |
+| **STATUS** | REVIEW |
 | **PHASE** | 10 — DEVELOPMENT walk-forward probability-model bakeoff |
 | **Note** | Train fixed Logistic L2, LightGBM, and CatBoost candidates on frozen DEVELOPMENT V2 only. DEVELOPMENT reuse bias is explicit; OOS and PnL remain locked. |
 
@@ -24,7 +24,7 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
 **Current:**  
-`PROBABILITY-MODEL-BAKEOFF-1` (ACTIVE)
+`PROBABILITY-MODEL-BAKEOFF-1` (REVIEW) — 252/252 DEVELOPMENT model-fold runs complete. CatBoost/FS_FULL selected for 30m and 60m only; OOS and PnL remain locked. Result evidence commit `860c4683bd93593e204656a903c29776b0e75225`.
 
 **Previous CLOSED:**  
 `PROBABILITY-MODEL-TRAINING-DATASET-1` — accepted dataset authority `201efd1e1b98056d526baced8042a51887c0218e`; 143779 causal DEVELOPMENT rows; OOS locked.
