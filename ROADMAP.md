@@ -16,15 +16,15 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | Field | Value |
 |---|---|
 | **WIP** | `INDEPENDENT-OOS-MODEL-EVALUATION-1` |
-| **STATUS** | ACTIVE |
+| **STATUS** | REVIEW |
 | **PHASE** | 11 — One-shot frozen probability-model OOS exam |
-| **Note** | Score only the frozen 30m and 60m CatBoost/FS_FULL RAW candidates on one fixed independent OOS period. No retraining, calibration, selection, execution, or PnL. |
+| **Note** | One-shot frozen OOS exam complete: 30m and 60m are both `OOS_SUPPORTED`; small probability-metric improvements were stable across all three frozen blocks. Awaiting review. No retraining, calibration, execution, or PnL. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
 **Current:**  
-`INDEPENDENT-OOS-MODEL-EVALUATION-1` (ACTIVE) — one-shot independent exam of the frozen 30m and 60m CatBoost/FS_FULL RAW candidates. OOS boundaries and methodology must be frozen before payload access. Execution and PnL remain locked.
+`INDEPENDENT-OOS-MODEL-EVALUATION-1` (REVIEW) — one-shot independent exam completed successfully. Both frozen CatBoost/FS_FULL RAW horizons are `OOS_SUPPORTED`; all integrity gates pass. Execution and PnL remain locked.
 
 **Previous CLOSED:**
 `PROBABILITY-MODEL-BAKEOFF-1` — accepted model authority `860c4683bd93593e204656a903c29776b0e75225`; CatBoost/FS_FULL RAW selected for 30m and 60m only; all other horizons rejected; no OOS or PnL used.

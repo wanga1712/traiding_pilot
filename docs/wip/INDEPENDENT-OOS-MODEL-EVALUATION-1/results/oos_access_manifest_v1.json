@@ -1,0 +1,18 @@
+{
+  "artifact": "oos_access_manifest_v1",
+  "OOS_OPENED": "YES",
+  "OOS_EVALUATION_RUN_COUNT": 1,
+  "OOS_EXAM_COMPROMISED": "NO",
+  "MODEL_RETRAIN_COUNT": 0,
+  "CALIBRATOR_USED": "NO",
+  "PNL_TESTED": "NO",
+  "EXECUTION_TESTED": "NO",
+  "first_payload_read_at": "2026-09-25T09:38:43.338995+00:00",
+  "runner_sha256": "74131a1f952a00e15c3429532eebc664a47b842d3379aee31dd9c674e2f14a59",
+  "PRE_METRICS_RESUME_COUNT": 3,
+  "METRICS_OBSERVED_BEFORE_RESUME": "NO",
+  "METHODOLOGY_CHANGED": "NO",
+  "PREPROCESSING_ADAPTER_FIX": "preserve frozen trade_count from canonical resampled parquet",
+  "previous_runner_sha256": "74131a1f952a00e15c3429532eebc664a47b842d3379aee31dd9c674e2f14a59",
+  "resumed_at": "2026-09-25T10:46:04.217137+00:00"
+}

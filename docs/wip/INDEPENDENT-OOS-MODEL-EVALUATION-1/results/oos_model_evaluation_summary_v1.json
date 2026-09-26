@@ -1,0 +1,86 @@
+{
+  "WIP": "INDEPENDENT-OOS-MODEL-EVALUATION-1",
+  "MODE": "ONE-SHOT-FROZEN-PROBABILITY-OOS-1",
+  "status": "REVIEW",
+  "OOS_START": "2023-06-20T06:14:59.999999Z",
+  "OOS_END": "2026-07-31T23:59:59.999999Z",
+  "OOS_OPENED": "YES",
+  "OOS_EVALUATION_RUN_COUNT": 1,
+  "OOS_ROWS": 109224,
+  "horizons": {
+    "30": {
+      "rows": 109105,
+      "logloss": 0.6907674622609836,
+      "prior_logloss": 0.69304932829993,
+      "delta_logloss": -0.002281866038946423,
+      "brier": 0.24881096117748788,
+      "prior_brier": 0.24995107509072398,
+      "delta_brier": -0.001140113913236096,
+      "roc_auc": 0.5397677179102229,
+      "balanced_accuracy_at_0_5": 0.5297284352490068,
+      "ece_10_bin": 0.005334974923627755,
+      "positive_rate": 0.5073827963887998,
+      "mean_predicted_probability": 0.5025211449152434,
+      "std_predicted_probability": 0.034105778219428305,
+      "constant_0_5_logloss": 0.6931471805599454,
+      "constant_0_5_brier": 0.25,
+      "oos_class": "OOS_SUPPORTED",
+      "carry_forward": "YES",
+      "block_logloss_deltas": [
+        -0.003281692814972592,
+        -0.0017833538887465084,
+        -0.0017808539286396918
+      ],
+      "bootstrap": {
+        "block_length_calendar_days": 7,
+        "repetitions": 2000,
+        "random_seed": 20260925,
+        "delta_logloss_ci_low": -0.002661519636385573,
+        "delta_logloss_ci_high": -0.001898299808234799,
+        "delta_brier_ci_low": -0.0013286156832627398,
+        "delta_brier_ci_high": -0.000949957661325749
+      }
+    },
+    "60": {
+      "rows": 109158,
+      "logloss": 0.6917403281439922,
+      "prior_logloss": 0.6930171190379839,
+      "delta_logloss": -0.001276790893991686,
+      "brier": 0.24929661071399528,
+      "prior_brier": 0.24993497107818188,
+      "delta_brier": -0.000638360364186602,
+      "roc_auc": 0.5313961125685673,
+      "balanced_accuracy_at_0_5": 0.5239864319365005,
+      "ece_10_bin": 0.008258482941072781,
+      "positive_rate": 0.5088770406200187,
+      "mean_predicted_probability": 0.5007719795623945,
+      "std_predicted_probability": 0.029231140986379966,
+      "constant_0_5_logloss": 0.6931471805599453,
+      "constant_0_5_brier": 0.25,
+      "oos_class": "OOS_SUPPORTED",
+      "carry_forward": "YES",
+      "block_logloss_deltas": [
+        -0.002390354716635401,
+        -0.000738348715993542,
+        -0.0007018538672913799
+      ],
+      "bootstrap": {
+        "block_length_calendar_days": 7,
+        "repetitions": 2000,
+        "random_seed": 20260925,
+        "delta_logloss_ci_low": -0.0016705639113974435,
+        "delta_logloss_ci_high": -0.0008666905937083614,
+        "delta_brier_ci_low": -0.0008339343641505965,
+        "delta_brier_ci_high": -0.0004333359682513313
+      }
+    }
+  },
+  "MODEL_RETRAIN_COUNT": 0,
+  "CALIBRATOR_USED": "NO",
+  "PNL_TESTED": "NO",
+  "EXECUTION_TESTED": "NO",
+  "OOS_EXAM_COMPROMISED": "NO",
+  "runner_sha256": "74131a1f952a00e15c3429532eebc664a47b842d3379aee31dd9c674e2f14a59",
+  "wall_seconds": 5239.902990102768,
+  "peak_rss_gb": 1.9580574035644531
+}

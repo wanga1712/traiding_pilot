@@ -1,0 +1,90 @@
+{
+  "MODEL_HASH_GATE": "PASS",
+  "MODEL_30M_HASH_GATE": "PASS",
+  "MODEL_60M_HASH_GATE": "PASS",
+  "OOS_DENSE_FEATURE_COUNT": 15,
+  "OOS_ATOMIC_FEATURE_COUNT": 284,
+  "OOS_COMPOSITE_FEATURE_COUNT": 5478,
+  "OOS_FEATURE_COUNT_TOTAL": 5777,
+  "FEATURE_SCHEMA_MATCH": "PASS",
+  "FEATURE_ORDER_MATCH": "PASS",
+  "FEATURE_SET_HASH_MATCH": "PASS",
+  "FEATURE_AVAILABLE_AFTER_DECISION_COUNT": 0,
+  "TARGET_FEATURE_LEAKAGE_COUNT": 0,
+  "OOS_FEATURE_RESEARCH_PERFORMED": "NO",
+  "MODEL_RETRAIN_COUNT": 0,
+  "CALIBRATOR_USED": "NO",
+  "OOS_BOUNDARIES_CHANGED_AFTER_SCORING": "NO",
+  "OOS_MODEL_SELECTION_COUNT": 0,
+  "OOS_HYPERPARAMETER_TUNING_COUNT": 0,
+  "OOS_PROBABILITY_VARIANT": "RAW",
+  "OOS_EXAM_COMPROMISED": "NO",
+  "target_counts": {
+    "complete": 218442,
+    "censored_gap": 0,
+    "censored_boundary": 6
+  },
+  "files": {
+    "oos_atomic_feature_matrix_v1.npz": {
+      "bytes": 1058126,
+      "sha256": "1e31dde58f2f54f5e16251aeafa8e7e5c6d9e4ac873384b8939f0e5a332c8aaf"
+    },
+    "oos_predictions_v1.parquet": {
+      "bytes": 3763199,
+      "sha256": "e9dd9dca6c9c9ed712477fff06bbeeaf565c97a05b71fd8437cb271dec696a4b"
+    },
+    "oos_feature_integrity_v1.json": {
+      "bytes": 331,
+      "sha256": "7e6ab960b46082fb35d4662d3c1da85979dce96c18113b2c6819f94d2bca62be"
+    },
+    "oos_row_index_v1.parquet": {
+      "bytes": 2467339,
+      "sha256": "c66141359396fe391ee0c503663ccabb3a913fd8318b0384fa2c4e1b7f692fc2"
+    },
+    "pre_metrics_resume_incident_v1.json": {
+      "bytes": 1200,
+      "sha256": "9179a8bf13f90f94d9f186be34f33091ecbcafa988fbb36d15e1406167ed0a8e"
+    },
+    "oos_metrics_v1.csv": {
+      "bytes": 800,
+      "sha256": "a04f74c256fe671204a433e2fee081550d0759c07839d2cda442272c90c84287"
+    },
+    "oos_temporal_blocks_v1.csv": {
+      "bytes": 1954,
+      "sha256": "3650b3add91fa53732afe1fedb4a91d540ac6ecdf249cef469a25e424636d477"
+    },
+    "independent_oos_evaluation_spec_v1.json": {
+      "bytes": 3074,
+      "sha256": "8cf122b655fb1c79ea92ff786f34d6a1a7166814f19a2fbb0d6d8944c2ead0f9"
+    },
+    "oos_targets_v1.parquet": {
+      "bytes": 2889543,
+      "sha256": "4ff1a172f79fb5535881309b123199c51029a230029c9ece77cb6c03f1a50b57"
+    },
+    "oos_bootstrap_v1.csv": {
+      "bytes": 368,
+      "sha256": "904420c22c55c0325ac45b734f65d8720f7d7a593b0c462ba32291eeb9f1777e"
+    },
+    "oos_composite_feature_matrix_v1.npz": {
+      "bytes": 13110130,
+      "sha256": "8a61e5957e96406bae5e1f420d44de2f43664a3a80f96093a7d82d36afc253b6"
+    },
+    "source_partition_inventory_v1.json": {
+      "bytes": 6872,
+      "sha256": "92695989331535ed558caa2e16cee3f875399cc36f8abe38e3bb15934c7dbd59"
+    },
+    "oos_features_dense_v1.parquet": {
+      "bytes": 13914765,
+      "sha256": "9c89581279162f6065e0126664eb6372bb64d87959322e6e12ecf5d9eba19a9b"
+    },
+    "oos_period_freeze_v1.json": {
+      "bytes": 1843,
+      "sha256": "f719fefb1c1eb551ed3ef428ed3f64239a9fd4dfa71d3cc93617c1c168c9484a"
+    },
+    "oos_access_manifest_v1.json": {
+      "bytes": 734,
+      "sha256": "6d9d65f751fffa8234bf29d93cba81ac4b1f9b983590ff55ca056998cf621e31"
+    }
+  },
+  "status": "PASS"
+}
