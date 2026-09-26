@@ -20,6 +20,7 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | **PHASE** | Development OOF probability-to-trading-policy research |
 | **MODEL AUTHORITY** | `860c4683bd93593e204656a903c29776b0e75225` |
 | **PARENT RESULT** | `90570dbfe41abcdbbf0a2b6beafdc738148b6176` |
+| **RESULT COMMIT** | `e6d3d093214074d255c6625d116b7825dbf5d855` |
 | **Note** | `NO_VALIDATED_POLICY`: 100/1728 discovery candidates eligible; 20 retained; 0/20 validation candidates eligible. Confirmation untouched. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
@@ -1075,6 +1076,8 @@ OLD_OOS_LOCK=`2023-06-20T06:14:59.999999Z through 2026-07-31T23:59:59.999999Z; n
 ARTIFACTS=`/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/`
 
 RESULT_SUMMARY=`NO_VALIDATED_POLICY; discovery eligible 100/1728; retained 20; validation eligible 0/20; no selected policy; confirmation untouched and run count 0`
+
+GIT_COMMIT=`e6d3d093214074d255c6625d116b7825dbf5d855`
 
 NEXT_WIP=`FUTURES-PREDICTIVE-FEATURE-MODEL-V2-1 proposed; do not start automatically`
 
