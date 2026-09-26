@@ -1022,6 +1022,17 @@ PENDING
 
 STATUS=PLANNED (paused — do not run until feature bank reviewed)
 
+ACCOUNT_RUIN_RULE:
+
+- `STARTING_EQUITY_USDT=100`
+- External recapitalization is forbidden.
+- When `EQUITY_USDT <= 0`, set `ACCOUNT_RUINED=YES`, record
+  `RUIN_TIMESTAMP` and `RUIN_TRADE_ID`, and set
+  `STOP_OPENING_NEW_POSITIONS=YES`.
+- No additional virtual capital may be deposited after ruin.
+- Required report fields: `MIN_EQUITY_USDT`, `ACCOUNT_RUINED`,
+  `RUIN_TIMESTAMP`, and `TRADES_BEFORE_RUIN`.
+
 ### WIP=TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1
 
 STATUS=PLANNED
