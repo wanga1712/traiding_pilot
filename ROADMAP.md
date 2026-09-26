@@ -16,16 +16,16 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | Field | Value |
 |---|---|
 | **WIP** | `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` |
-| **STATUS** | ACTIVE |
+| **STATUS** | REVIEW |
 | **PHASE** | 11 — Frozen probability-to-PnL execution simulation |
 | **PARENT RESULT** | `5e498326d0f0ca747e042f29e4bf681cb7efb8e6` |
-| **Note** | Evaluate the frozen 30m and 60m OOS predictions as two separate 1x strategies under the predeclared Q10/Q90 policy and provisional fixed costs. No model, feature, threshold, holding-period, or position-rule changes. |
+| **Note** | Full frozen simulation complete. Both strategies are `EXECUTION_WEAK`: gross return is positive, but the 13 bps provisional cost model reduces both 100 USDT accounts to effectively zero. Awaiting review. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
 **Current:**  
-`PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` (ACTIVE) — the first PnL WIP. It evaluates the two frozen OOS probability streams separately using DEVELOPMENT-only Q10/Q90 thresholds, one position at a time, 1x leverage, fixed holding periods, and the frozen provisional cost model.
+`PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` (REVIEW) — full frozen simulation complete. Both 30m and 60m are `EXECUTION_WEAK`: gross returns are positive, but costs consume the edge and all three frozen blocks are net negative. No formal `equity <= 0` ruin occurred, although both accounts are effectively depleted.
 
 **Previous CLOSED:**
 `INDEPENDENT-OOS-MODEL-EVALUATION-1` — accepted result authority `5e498326d0f0ca747e042f29e4bf681cb7efb8e6`; 30m and 60m both `OOS_SUPPORTED`; integrity PASS; no retraining or OOS tuning.
@@ -1023,7 +1023,7 @@ PENDING
 
 ### WIP=PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
 
-STATUS=ACTIVE
+STATUS=REVIEW
 
 MODE=`FROZEN-PROBABILITY-TO-PNL-1`
 
@@ -1032,6 +1032,8 @@ PARENT_OOS_RESULT_COMMIT=`5e498326d0f0ca747e042f29e4bf681cb7efb8e6`
 POLICY=`30m/60m separate; DEVELOPMENT OOF Q10/Q90; one position; 1x; 100% current equity; fixed 30m/60m hold`
 
 COSTS=`TAKER_FEE_PER_SIDE=0.00055; SLIPPAGE_PER_SIDE=0.00010; primary round trip=13 bps; exact historical funding excluded`
+
+RESULT_SUMMARY=`30m gross +124.3455%, net -99.9999993%, ending 0.0000007048 USDT; 60m gross +21.0514%, net -99.9999518%, ending 0.0000481767 USDT; both EXECUTION_WEAK`
 
 ACCOUNT_RUIN_RULE:
 
@@ -1521,7 +1523,7 @@ none (end of planned chain)
 | OSCILLATOR-PREDICTOR-REFERENCE-1 | CLOSED | 8a |
 | OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1 | CLOSED | 8a |
 | MULTITF-INDICATOR-PARAMETER-SEARCH-1 | ACTIVE | 8a |
-| PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | ACTIVE | 8b |
+| PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | REVIEW | 8b |
 | TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1 | PLANNED | 8b |
 | TRADING-POLICY-MODEL-BAKEOFF-1 | PLANNED | 8b |
 | QWEN-HISTORICAL-TRADING-PILOT-1 | PLANNED | 8b |

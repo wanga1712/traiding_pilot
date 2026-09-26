@@ -1,0 +1,14 @@
+{
+  "artifact": "execution_postrun_audit_v1",
+  "audited_horizons_minutes": [30, 60],
+  "ENTRY_AFTER_DECISION": "PASS",
+  "FIXED_HOLD": "PASS",
+  "RECONCILIATION": "PASS",
+  "EQUITY_CHAIN": "PASS",
+  "THRESHOLD_DIRECTION": "PASS",
+  "NO_OVERLAP": "PASS",
+  "NO_FORMAL_RUIN": "PASS",
+  "runner_sha256": "939796ffae7bcc3c6d22e5accb78f44eb89ca02b746d23f1d29c807632f57ef0",
+  "evaluation_sha256": "d6901d13ebf17a2d4ea51a728c3912c270ed516e1824bc883c61fb0d4be655cf",
+  "status": "PASS"
+}

@@ -1,0 +1,75 @@
+{
+  "artifact": "execution_manifest_v1",
+  "files": {
+    "execution_trades_30m_v1.parquet": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_trades_30m_v1.parquet",
+      "bytes": 2846385,
+      "sha256": "43018eb3d8e3dfe738cf5c8612f1ba7d09c794283e0d2c7706b332bffde1d0cd",
+      "rows": 15051
+    },
+    "execution_equity_30m_v1.parquet": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_equity_30m_v1.parquet",
+      "bytes": 380483,
+      "sha256": "d252c96ad945167a818c8db95823f4afb651456447772255c3725a2e99f66f9b",
+      "rows": 15052
+    },
+    "execution_trades_60m_v1.parquet": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_trades_60m_v1.parquet",
+      "bytes": 2163011,
+      "sha256": "b9459fe21a892e63445ef27de006ce400b9d259ec095d63e358a7d7e34e810b9",
+      "rows": 11328
+    },
+    "execution_equity_60m_v1.parquet": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_equity_60m_v1.parquet",
+      "bytes": 288325,
+      "sha256": "16729acab602b1c718c1836b5e943331e6ee614c9c9db1d8897d46b3ac51d1e7",
+      "rows": 11329
+    },
+    "execution_policy_freeze_v1.json": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_policy_freeze_v1.json",
+      "bytes": 1698,
+      "sha256": "32a2d017b50bbcfd4e71feda0d97a09998555de89cd60af9cadb9a38b33a738f"
+    },
+    "execution_cost_spec_v1.json": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_cost_spec_v1.json",
+      "bytes": 719,
+      "sha256": "07a3819068081494287f957fa102a1568c25ab09d4e3bfdf1720b37958fee197"
+    },
+    "execution_summary_v1.json": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_summary_v1.json",
+      "bytes": 4008,
+      "sha256": "6cc4279f1d181693db946b295466f438f2f8f35e2e7c694bcab89c60a2737915"
+    },
+    "execution_metrics_v1.csv": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_metrics_v1.csv",
+      "bytes": 1822,
+      "sha256": "86f3482039700aaf689a73401edc573f43f599341907ee2e5e6ff3ea42da06ed"
+    },
+    "execution_oos_blocks_v1.csv": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_oos_blocks_v1.csv",
+      "bytes": 959,
+      "sha256": "4ccdb77acdbe18babd45bfec66a7ccedc74c7c07fe0e7880df0caad3b15a2fba"
+    },
+    "execution_yearly_results_v1.csv": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_yearly_results_v1.csv",
+      "bytes": 1154,
+      "sha256": "e2504c56a555cd9f22a8129ed989727671ea6145b4f9088891919eb0a4880e2a"
+    },
+    "execution_monthly_results_v1.csv": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_monthly_results_v1.csv",
+      "bytes": 9793,
+      "sha256": "65a4ba5c9b487b595b65db384acd91d7ed94c42d3c0bc144b0b8533bbd36bb19"
+    },
+    "execution_cost_sensitivity_v1.csv": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_cost_sensitivity_v1.csv",
+      "bytes": 552,
+      "sha256": "a7f2f82c9c96e7805c6e4431f605dbfff55141266e5498e9a4b04d63177bbef3"
+    },
+    "execution_integrity_v1.json": {
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1/execution_integrity_v1.json",
+      "bytes": 555,
+      "sha256": "84f23b9dc1b336d0a00b971c17515b2509ad6d817a96f3f94f05b72a00f00ff7"
+    }
+  },
+  "status": "PASS"
+}

@@ -21,7 +21,7 @@ simulation, or PnL. The OOS exam is not compromised. Full runtime artifacts
 remain on S13; small and medium evidence is committed with the WIP report.
 
 Both horizons proceed separately to
-`PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`, which is ACTIVE. Entry thresholds
+`PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`, which is in REVIEW. Entry thresholds
 are frozen from DEVELOPMENT OOF probability distributions at Q10/Q90. The
 simulator uses one position at a time, 1x leverage, 100% of current equity,
 fixed 30m/60m holding periods, 0.00055 taker fee per side, and 0.00010
@@ -29,3 +29,12 @@ slippage per side. Starting equity is 100 USDT with no recapitalization; an
 equity value at or below zero permanently stops new entries. OOS predictions,
 models, features, thresholds, costs, holding periods, and position rules are
 immutable in this WIP.
+
+The full frozen simulation classified both horizons `EXECUTION_WEAK`. Before
+costs, 30m returned +124.3455% and 60m returned +21.0514%. Under the primary
+13 bps provisional round-trip cost assumption, net returns were approximately
+-100% for both horizons, and every frozen chronological block was net
+negative. The formal `equity <= 0` ruin condition was not reached, but ending
+equity was only 0.0000007048 USDT for 30m and 0.0000481767 USDT for 60m.
+There was no recapitalization, retraining, threshold optimization, leverage
+search, or alteration of the frozen OOS predictions. No next WIP is active.
