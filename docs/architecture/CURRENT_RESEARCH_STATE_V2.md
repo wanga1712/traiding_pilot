@@ -41,10 +41,18 @@ search, or alteration of the frozen OOS predictions. The correct conclusion is
 `MODEL_EDGE_EXISTS=YES` and `CURRENT_EXECUTION_POLICY_NOT_SUPPORTED`: Q10/Q90
 entries with fixed 30m/60m holds are not tradable at 13 bps.
 
-`PROBABILITY-TRADING-POLICY-RESEARCH-1` is now ACTIVE. It uses only frozen
+`PROBABILITY-TRADING-POLICY-RESEARCH-1` is now in REVIEW. It used only frozen
 DEVELOPMENT OOF predictions from the 30m and 60m CatBoost/FS_FULL RAW models.
 The exact 1728-candidate search space, stage rules, costs, and execution rules
 were frozen before results. The previously examined 2023-2026 OOS is locked:
 policy search, validation, result reading, and reexecution counts must remain
 zero. Earliest, middle, and latest OOF evaluation folds are discovery,
 validation, and one-shot confirmation respectively.
+
+The result is `NO_VALIDATED_POLICY`. Of 1728 frozen discovery candidates, 100
+met every discovery gate and the ranking retained 20. None of the 20 met the
+validation gates at 13 bps. The strongest validation result still lost
+7.0611% net, had -11.7031 bps arithmetic net expectancy, profit factor 0.6449,
+and break-even friction only 0.9930 bps. No policy was selected; confirmation
+was untouched and its run count remains zero. The proposed next WIP is
+`FUTURES-PREDICTIVE-FEATURE-MODEL-V2-1`, but it has not been started.

@@ -1,0 +1,26 @@
+{
+  "0.95": {
+    "long_threshold_30m": 0.5681992913054527,
+    "short_threshold_30m": 0.43767764482548027,
+    "long_threshold_60m": 0.5672191852966265,
+    "short_threshold_60m": 0.43529630573485195
+  },
+  "0.975": {
+    "long_threshold_30m": 0.5835716747704918,
+    "short_threshold_30m": 0.4176893067308678,
+    "long_threshold_60m": 0.580916141313738,
+    "short_threshold_60m": 0.41865460487501005
+  },
+  "0.99": {
+    "long_threshold_30m": 0.6062425086740073,
+    "short_threshold_30m": 0.3852707545549319,
+    "long_threshold_60m": 0.5996586167339736,
+    "short_threshold_60m": 0.3973472146603156
+  },
+  "0.995": {
+    "long_threshold_30m": 0.6241963168627145,
+    "short_threshold_30m": 0.3622190764260388,
+    "long_threshold_60m": 0.6180911040012805,
+    "short_threshold_60m": 0.38135664741953357
+  }
+}

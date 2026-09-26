@@ -1,0 +1,76 @@
+{
+  "artifact": "policy_manifest_v1",
+  "status": "PASS",
+  "policy_research_result": "NO_VALIDATED_POLICY",
+  "files": {
+    "policy_research_spec_v1.json": {
+      "status": "PRESENT",
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/policy_research_spec_v1.json",
+      "bytes": 3920,
+      "sha256": "4fdcd61c424f6ede48c59e87b94cd6372b9d5f060d24d3ba9af8d9c0a1f75e85"
+    },
+    "policy_search_space_v1.json": {
+      "status": "PRESENT",
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/policy_search_space_v1.json",
+      "bytes": 1560,
+      "sha256": "593fd5370b813df90e72fb523170bfece90c835426eaf3b15aca982d010fa2df"
+    },
+    "policy_oof_split_manifest_v1.json": {
+      "status": "PRESENT",
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/policy_oof_split_manifest_v1.json",
+      "bytes": 1506,
+      "sha256": "e1c5ee0f089a2515b3e9ea351a88a0cd21acb4101949d84eac8eb851c01987c7"
+    },
+    "policy_discovery_results_v1.parquet": {
+      "status": "PRESENT",
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/policy_discovery_results_v1.parquet",
+      "bytes": 129881,
+      "sha256": "e222b10e60d25d358cb156e25b601ca5dc079d466ed88c02c49adb74aff3babe",
+      "rows": 1728
+    },
+    "policy_discovery_top20_v1.csv": {
+      "status": "PRESENT",
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/policy_discovery_top20_v1.csv",
+      "bytes": 8003,
+      "sha256": "c8337cffefabaff565781c7cb81d81447412564d536a94defe4a6b201807bbe7",
+      "rows": 20
+    },
+    "policy_validation_results_v1.csv": {
+      "status": "PRESENT",
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/policy_validation_results_v1.csv",
+      "bytes": 7738,
+      "sha256": "46fb8d2b1fe4de76ed616af8f33652950fb0e8de7883be52bf2b4799831a4020",
+      "rows": 20
+    },
+    "policy_candidate_freeze_v1.json": {
+      "status": "ABSENT_BY_PROTOCOL_NO_VALIDATION_SURVIVOR"
+    },
+    "policy_confirmation_trades_v1.parquet": {
+      "status": "ABSENT_BY_PROTOCOL_NO_VALIDATION_SURVIVOR"
+    },
+    "policy_confirmation_equity_v1.parquet": {
+      "status": "ABSENT_BY_PROTOCOL_NO_VALIDATION_SURVIVOR"
+    },
+    "policy_confirmation_metrics_v1.json": {
+      "status": "ABSENT_BY_PROTOCOL_NO_VALIDATION_SURVIVOR"
+    },
+    "policy_confirmation_blocks_v1.csv": {
+      "status": "ABSENT_BY_PROTOCOL_NO_VALIDATION_SURVIVOR"
+    },
+    "policy_cost_sensitivity_v1.csv": {
+      "status": "ABSENT_BY_PROTOCOL_NO_VALIDATION_SURVIVOR"
+    },
+    "policy_integrity_v1.json": {
+      "status": "PRESENT",
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/policy_integrity_v1.json",
+      "bytes": 654,
+      "sha256": "42de619f30bac399b811d9d4881b15176424fb96038b8d1656ed6851e5abdcff"
+    },
+    "policy_summary_v1.json": {
+      "status": "PRESENT",
+      "path": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/policy_summary_v1.json",
+      "bytes": 3508,
+      "sha256": "74d8b8f5244e9c5e2ff04d62652852aae317e0efe21e15723946741b4fc94bd3"
+    }
+  }
+}

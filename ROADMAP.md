@@ -16,17 +16,17 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | Field | Value |
 |---|---|
 | **WIP** | `PROBABILITY-TRADING-POLICY-RESEARCH-1` |
-| **STATUS** | ACTIVE |
+| **STATUS** | REVIEW |
 | **PHASE** | Development OOF probability-to-trading-policy research |
 | **MODEL AUTHORITY** | `860c4683bd93593e204656a903c29776b0e75225` |
 | **PARENT RESULT** | `90570dbfe41abcdbbf0a2b6beafdc738148b6176` |
-| **Note** | Frozen 30m/60m CatBoost FS_FULL RAW models; exact 1728-candidate low-turnover policy grid; DEVELOPMENT OOF only; old OOS locked. |
+| **Note** | `NO_VALIDATED_POLICY`: 100/1728 discovery candidates eligible; 20 retained; 0/20 validation candidates eligible. Confirmation untouched. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
 **Current:**  
-`PROBABILITY-TRADING-POLICY-RESEARCH-1` (ACTIVE) — search for a causal low-turnover policy using only the three frozen DEVELOPMENT OOF folds. The old 2023-2026 OOS is burned and cannot be read, rerun, or used for selection.
+`PROBABILITY-TRADING-POLICY-RESEARCH-1` (REVIEW) — `NO_VALIDATED_POLICY`. Discovery produced 100 eligible candidates and retained 20; none survived validation. No policy was selected and confirmation remained untouched.
 
 **Previous CLOSED_NEGATIVE:**
 `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` — model edge exists, but Q10/Q90 entries with fixed 30m/60m holds are not tradable at 13 bps. This rejects the tested execution policy, not the frozen probability models.
@@ -1058,7 +1058,7 @@ ACCOUNT_RUIN_RULE:
 
 ### WIP=PROBABILITY-TRADING-POLICY-RESEARCH-1
 
-STATUS=ACTIVE
+STATUS=REVIEW
 
 MODE=`DEVELOPMENT-OOF-LOW-TURNOVER-POLICY-1`
 
@@ -1074,9 +1074,9 @@ OLD_OOS_LOCK=`2023-06-20T06:14:59.999999Z through 2026-07-31T23:59:59.999999Z; n
 
 ARTIFACTS=`/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/`
 
-RESULT_SUMMARY=`PENDING`
+RESULT_SUMMARY=`NO_VALIDATED_POLICY; discovery eligible 100/1728; retained 20; validation eligible 0/20; no selected policy; confirmation untouched and run count 0`
 
-NEXT_WIP=`PENDING REVIEW; do not start automatically`
+NEXT_WIP=`FUTURES-PREDICTIVE-FEATURE-MODEL-V2-1 proposed; do not start automatically`
 
 ### WIP=TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1
 
@@ -1556,7 +1556,7 @@ none (end of planned chain)
 | OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1 | CLOSED | 8a |
 | MULTITF-INDICATOR-PARAMETER-SEARCH-1 | ACTIVE | 8a |
 | PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | CLOSED_NEGATIVE | 8b |
-| PROBABILITY-TRADING-POLICY-RESEARCH-1 | ACTIVE | 8b |
+| PROBABILITY-TRADING-POLICY-RESEARCH-1 | REVIEW | 8b |
 | TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1 | PLANNED | 8b |
 | TRADING-POLICY-MODEL-BAKEOFF-1 | PLANNED | 8b |
 | QWEN-HISTORICAL-TRADING-PILOT-1 | PLANNED | 8b |

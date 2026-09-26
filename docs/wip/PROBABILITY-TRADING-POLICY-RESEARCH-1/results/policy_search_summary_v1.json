@@ -1,0 +1,11 @@
+{
+  "discovery_candidates": 1728,
+  "discovery_eligible": 100,
+  "discovery_retained": 20,
+  "validation_evaluated": 20,
+  "validation_eligible": 0,
+  "selected_policy_exists": "NO",
+  "policy_research_result": "NO_VALIDATED_POLICY",
+  "confirmation_touched": "NO",
+  "confirmation_run_count": 0
+}

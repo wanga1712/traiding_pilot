@@ -1,6 +1,6 @@
 # PROBABILITY-TRADING-POLICY-RESEARCH-1
 
-Status: **ACTIVE**
+Status: **REVIEW**
 
 Mode: `DEVELOPMENT-OOF-LOW-TURNOVER-POLICY-1`
 
@@ -70,4 +70,47 @@ metrics must be committed before the one permitted confirmation run.
 Runtime artifact root:
 `/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/`.
 
-Result: **PENDING**.
+## Result
+
+`POLICY_RESEARCH_RESULT=NO_VALIDATED_POLICY`.
+
+All 1728 frozen candidates ran on `POLICY_DISCOVERY`. One hundred met every
+discovery gate and the predeclared ranking retained exactly 20. None of those
+20 met the unchanged validation gates. The protocol therefore stopped before
+policy selection: no candidate freeze was created and `POLICY_CONFIRMATION`
+was never read or scored.
+
+The leading discovery candidate, `POLICY-1634`, used `BOTH_AGREE`, Q0.995,
+one-decision persistence, a 240-minute cooldown, `NEUTRAL_CROSS`, a 15-minute
+minimum hold and a 120-minute cap. It made 94 discovery trades, returned
++24.9114% net at 13 bps, had 24.0680 bps arithmetic net expectancy, profit
+factor 2.4677, maximum drawdown 3.8784%, and break-even friction 36.6949 bps.
+
+That discovery result did not generalize. The best ranked validation result,
+`POLICY-1649`, made 61 trades and had only +0.6075% gross return. At 13 bps it
+returned -7.0611%, with -11.7031 bps arithmetic net expectancy, profit factor
+0.6449, maximum drawdown 9.9189%, and break-even friction 0.9930 bps. It failed
+the net return, expectancy, profit factor, and break-even-cost gates.
+
+## Integrity and artifacts
+
+- Model retrains, model parameter changes, and feature research: `0`.
+- Old-OOS policy search, validation, and reexecution: `0`.
+- Confirmation run count: `0`; confirmation touched: `NO`.
+- Execution future leakage, overlapping positions, averaging, external
+  recapitalization, and invalid gap fills: `0`.
+- The DEVELOPMENT execution-price file contains 1618630 rows from
+  `2020-05-21T01:45:00Z` through `2023-06-20T06:08:00Z`, SHA256
+  `220f4b37a13be31b2c1c7def4a47c1c03086db391f6e8a0a9f5c2afb0d169530`,
+  and zero old-OOS rows.
+- Six synthetic execution tests pass locally and on S13.
+
+Small and medium evidence is committed in `results/`. Runtime authority remains
+under `/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/`.
+Confirmation and candidate-freeze artifacts are absent by protocol because
+validation had zero survivors.
+
+Proposed next WIP: `FUTURES-PREDICTIVE-FEATURE-MODEL-V2-1`. It has not been
+started.
+
+Result commit: `PENDING`.
