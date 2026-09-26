@@ -15,18 +15,21 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | 11 — Frozen probability-to-PnL execution simulation |
-| **PARENT RESULT** | `5e498326d0f0ca747e042f29e4bf681cb7efb8e6` |
-| **RESULT COMMIT** | `5079c3df5d5d7f629a3249e0f0617163ae5733ac` |
-| **Note** | Full frozen simulation complete. Both strategies are `EXECUTION_WEAK`: gross return is positive, but the 13 bps provisional cost model reduces both 100 USDT accounts to effectively zero. Awaiting review. |
+| **WIP** | `PROBABILITY-TRADING-POLICY-RESEARCH-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | Development OOF probability-to-trading-policy research |
+| **MODEL AUTHORITY** | `860c4683bd93593e204656a903c29776b0e75225` |
+| **PARENT RESULT** | `90570dbfe41abcdbbf0a2b6beafdc738148b6176` |
+| **Note** | Frozen 30m/60m CatBoost FS_FULL RAW models; exact 1728-candidate low-turnover policy grid; DEVELOPMENT OOF only; old OOS locked. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
 **Current:**  
-`PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` (REVIEW) — full frozen simulation complete. Both 30m and 60m are `EXECUTION_WEAK`: gross returns are positive, but costs consume the edge and all three frozen blocks are net negative. No formal `equity <= 0` ruin occurred, although both accounts are effectively depleted.
+`PROBABILITY-TRADING-POLICY-RESEARCH-1` (ACTIVE) — search for a causal low-turnover policy using only the three frozen DEVELOPMENT OOF folds. The old 2023-2026 OOS is burned and cannot be read, rerun, or used for selection.
+
+**Previous CLOSED_NEGATIVE:**
+`PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` — model edge exists, but Q10/Q90 entries with fixed 30m/60m holds are not tradable at 13 bps. This rejects the tested execution policy, not the frozen probability models.
 
 **Previous CLOSED:**
 `INDEPENDENT-OOS-MODEL-EVALUATION-1` — accepted result authority `5e498326d0f0ca747e042f29e4bf681cb7efb8e6`; 30m and 60m both `OOS_SUPPORTED`; integrity PASS; no retraining or OOS tuning.
@@ -1024,7 +1027,7 @@ PENDING
 
 ### WIP=PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
 
-STATUS=REVIEW
+STATUS=CLOSED_NEGATIVE
 
 MODE=`FROZEN-PROBABILITY-TO-PNL-1`
 
@@ -1035,6 +1038,10 @@ POLICY=`30m/60m separate; DEVELOPMENT OOF Q10/Q90; one position; 1x; 100% curren
 COSTS=`TAKER_FEE_PER_SIDE=0.00055; SLIPPAGE_PER_SIDE=0.00010; primary round trip=13 bps; exact historical funding excluded`
 
 RESULT_SUMMARY=`30m gross +124.3455%, net -99.9999993%, ending 0.0000007048 USDT; 60m gross +21.0514%, net -99.9999518%, ending 0.0000481767 USDT; both EXECUTION_WEAK`
+
+FINAL_INTERPRETATION=`MODEL_EDGE_EXISTS=YES; CURRENT_EXECUTION_POLICY_NOT_SUPPORTED; POLICY_TRADABLE_AT_13BPS=NO; turnover and realized per-trade edge are far too small relative to 13 bps friction`
+
+FINAL_AUTHORITY=`90570dbfe41abcdbbf0a2b6beafdc738148b6176`
 
 GIT_COMMIT=`5079c3df5d5d7f629a3249e0f0617163ae5733ac`
 
@@ -1048,6 +1055,28 @@ ACCOUNT_RUIN_RULE:
 - No additional virtual capital may be deposited after ruin.
 - Required report fields: `MIN_EQUITY_USDT`, `ACCOUNT_RUINED`,
   `RUIN_TIMESTAMP`, and `TRADES_BEFORE_RUIN`.
+
+### WIP=PROBABILITY-TRADING-POLICY-RESEARCH-1
+
+STATUS=ACTIVE
+
+MODE=`DEVELOPMENT-OOF-LOW-TURNOVER-POLICY-1`
+
+PHASE=`Development OOF probability-to-trading-policy research`
+
+MODEL_AUTHORITY=`860c4683bd93593e204656a903c29776b0e75225`
+
+INPUTS=`30m and 60m CatBoost / FS_FULL / RAW frozen DEVELOPMENT OOF predictions only`
+
+SEARCH_SPACE=`1728 frozen candidates: entry source × confidence quantile × persistence × cooldown × dynamic exit × min hold × max hold`
+
+OLD_OOS_LOCK=`2023-06-20T06:14:59.999999Z through 2026-07-31T23:59:59.999999Z; no policy search, validation, comparison, or reexecution`
+
+ARTIFACTS=`/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-TRADING-POLICY-RESEARCH-1/`
+
+RESULT_SUMMARY=`PENDING`
+
+NEXT_WIP=`PENDING REVIEW; do not start automatically`
 
 ### WIP=TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1
 
@@ -1526,7 +1555,8 @@ none (end of planned chain)
 | OSCILLATOR-PREDICTOR-REFERENCE-1 | CLOSED | 8a |
 | OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1 | CLOSED | 8a |
 | MULTITF-INDICATOR-PARAMETER-SEARCH-1 | ACTIVE | 8a |
-| PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | REVIEW | 8b |
+| PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | CLOSED_NEGATIVE | 8b |
+| PROBABILITY-TRADING-POLICY-RESEARCH-1 | ACTIVE | 8b |
 | TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1 | PLANNED | 8b |
 | TRADING-POLICY-MODEL-BAKEOFF-1 | PLANNED | 8b |
 | QWEN-HISTORICAL-TRADING-PILOT-1 | PLANNED | 8b |

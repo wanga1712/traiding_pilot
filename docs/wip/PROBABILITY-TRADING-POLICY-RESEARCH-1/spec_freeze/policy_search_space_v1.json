@@ -1,0 +1,37 @@
+{
+  "version": "policy_search_space_v1",
+  "entry_source": ["30M_ONLY", "60M_ONLY", "BOTH_AGREE"],
+  "confidence_quantile": [0.95, 0.975, 0.99, 0.995],
+  "entry_persistence_decisions": [1, 2],
+  "cooldown_minutes": [0, 60, 240],
+  "exit_family": ["NEUTRAL_CROSS", "REVERSE_THRESHOLD", "CONFIDENCE_LOSS"],
+  "minimum_hold_minutes": [15, 30],
+  "maximum_hold_minutes": [60, 120, 240, 480],
+  "candidate_count": 1728,
+  "threshold_derivation": {
+    "data": "POLICY_DISCOVERY_ONLY",
+    "method": "linear empirical quantile",
+    "long": "probability >= upper quantile",
+    "short": "probability <= lower quantile",
+    "both_agree": "separate frozen 30m and 60m thresholds; same direction required"
+  },
+  "persistence_2": "condition holds at two consecutive canonical 15m decision points in the same direction",
+  "cooldown_starts": "position exit",
+  "exit_rules": {
+    "NEUTRAL_CROSS": {
+      "single_long": "corresponding probability <= 0.50",
+      "single_short": "corresponding probability >= 0.50",
+      "both_long": "p30 <= 0.50 OR p60 <= 0.50",
+      "both_short": "p30 >= 0.50 OR p60 >= 0.50"
+    },
+    "REVERSE_THRESHOLD": {
+      "single": "corresponding opposite entry threshold reached",
+      "both": "both models satisfy the opposite-direction thresholds"
+    },
+    "CONFIDENCE_LOSS": {
+      "single": "original entry condition no longer true",
+      "both": "same-direction agreement at the original entry thresholds is lost"
+    }
+  },
+  "not_in_search": ["stop_loss", "take_profit_grid", "trailing_stop_grid", "leverage", "funding"]
+}

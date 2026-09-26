@@ -1,0 +1,85 @@
+{
+  "wip": "PROBABILITY-TRADING-POLICY-RESEARCH-1",
+  "mode": "DEVELOPMENT-OOF-LOW-TURNOVER-POLICY-1",
+  "status": "ACTIVE",
+  "model_authority": "860c4683bd93593e204656a903c29776b0e75225",
+  "models": [
+    {"horizon": "30m", "algorithm": "CatBoost", "feature_set": "FS_FULL", "probability": "RAW"},
+    {"horizon": "60m", "algorithm": "CatBoost", "feature_set": "FS_FULL", "probability": "RAW"}
+  ],
+  "model_retraining_allowed": false,
+  "calibration_allowed": false,
+  "feature_changes_allowed": false,
+  "old_oos": {
+    "start": "2023-06-20T06:14:59.999999Z",
+    "end": "2026-07-31T23:59:59.999999Z",
+    "policy_search_allowed": false,
+    "policy_validation_allowed": false,
+    "reexecution_allowed": false
+  },
+  "development_price_end_inclusive": "2023-06-20T06:08:00Z",
+  "execution": {
+    "signal_time": "DECISION_AT",
+    "entry_fill": "first canonical 1m OPEN strictly after DECISION_AT",
+    "dynamic_exit_fill": "first canonical 1m OPEN strictly after exit decision",
+    "safety_cap_fill": "first canonical 1m OPEN at or after entry time plus MAX_HOLD_MINUTES",
+    "unavailable_required_bar": "SKIP_INVALID",
+    "bridge_market_data_gap": false,
+    "long_entry_multiplier": 1.0001,
+    "short_entry_multiplier": 0.9999,
+    "long_exit_multiplier": 0.9999,
+    "short_exit_multiplier": 1.0001
+  },
+  "costs": {
+    "taker_fee_per_side": 0.00055,
+    "slippage_per_side": 0.00010,
+    "primary_round_trip_cost_bps": 13,
+    "exact_historical_funding_included": false
+  },
+  "account": {
+    "starting_equity_usdt": 100,
+    "leverage": 1,
+    "position_notional": "100% current equity",
+    "maximum_open_positions": 1,
+    "external_recapitalization": "FORBIDDEN",
+    "ruin_condition": "EQUITY_USDT<=0",
+    "averaging": false,
+    "pyramiding": false,
+    "grid": false,
+    "martingale": false
+  },
+  "discovery": {
+    "run_candidates": 1728,
+    "eligibility": {"trade_count_min": 50, "gross_return_percent_gt": 0, "net_return_percent_gt": 0, "arithmetic_net_expectancy_bps_per_trade_gt": 0, "profit_factor_gt": 1.0, "break_even_round_trip_cost_bps_gte": 15, "account_ruined": false},
+    "retain": 20,
+    "ranking": ["arithmetic_net_expectancy_bps_per_trade DESC", "profit_factor DESC", "max_drawdown_percent ASC", "trade_count DESC"]
+  },
+  "validation": {
+    "input": "TOP_20_DISCOVERY_ONLY",
+    "eligibility": {"trade_count_min": 30, "gross_return_percent_gt": 0, "net_return_percent_gt": 0, "arithmetic_net_expectancy_bps_per_trade_gt": 0, "profit_factor_gt": 1.0, "break_even_round_trip_cost_bps_gte": 13, "account_ruined": false},
+    "ranking": ["arithmetic_net_expectancy_bps_per_trade DESC", "profit_factor DESC", "max_drawdown_percent ASC", "trade_count DESC"],
+    "zero_survivors": "NO_VALIDATED_POLICY_AND_DO_NOT_READ_CONFIRMATION"
+  },
+  "confirmation": {
+    "requires_policy_freeze_commit": true,
+    "maximum_run_count": 1,
+    "blocks": "three equal-duration chronological blocks frozen before scoring",
+    "cost_sensitivity_bps": [0, 5, 10, 13, 20, 30],
+    "supported_requires": {"trade_count_min": 30, "gross_return_percent_gt": 0, "net_return_percent_gt": 0, "net_expectancy_bps_per_trade_gt": 0, "profit_factor_gt": 1.0, "break_even_cost_bps_gte": 13, "positive_net_blocks_min": 2, "account_ruined": false},
+    "classification": {"all_supported_conditions": "POLICY_DEV_SUPPORTED", "gross_positive_but_condition_failed": "POLICY_DEV_WEAK", "gross_nonpositive": "POLICY_DEV_NOT_SUPPORTED"}
+  },
+  "integrity_counters": {
+    "model_retrain_count": 0,
+    "model_parameter_change_count": 0,
+    "feature_research_count": 0,
+    "old_oos_policy_search_count": 0,
+    "old_oos_policy_validation_count": 0,
+    "old_oos_reexecution_count": 0,
+    "oos_threshold_optimization_count": 0,
+    "execution_future_leakage_count": 0,
+    "overlapping_position_count": 0,
+    "averaging_count": 0,
+    "external_recapitalization_count": 0,
+    "invalid_gap_fill_count": 0
+  }
+}

@@ -1,6 +1,6 @@
 # PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
 
-Status: **REVIEW**
+Status: **CLOSED_NEGATIVE**
 
 Mode: `FROZEN-PROBABILITY-TO-PNL-1`
 
@@ -12,16 +12,21 @@ Implementation commit: `36ed546f970675f3dad66507a7bfe97591465dc2`
 
 Result commit: `5079c3df5d5d7f629a3249e0f0617163ae5733ac`
 
+Final authority: `90570dbfe41abcdbbf0a2b6beafdc738148b6176`
+
 ## Result
 
-Both frozen probability streams have positive gross returns before costs, but
+`MODEL_EDGE_EXISTS=YES`. Both frozen probability streams have positive gross returns before costs, but
 neither survives the frozen provisional 13 bps round-trip friction. The 30m
 strategy compounds 100 USDT to 224.35 USDT at zero cost and to approximately
 0.00000070 USDT under the primary cost model. The 60m strategy compounds to
 121.05 USDT at zero cost and to approximately 0.00004818 USDT after primary
 costs. Both therefore classify `EXECUTION_WEAK`: the gross signal is positive,
 but execution costs consume it and every frozen OOS block has negative net
-return.
+return. Therefore `POLICY_TRADABLE_AT_13BPS=NO` and
+`CURRENT_EXECUTION_POLICY_NOT_SUPPORTED`. This result does not mean that the
+frozen model has no edge; it rejects only Q10/Q90 entries with fixed 30m/60m
+holding periods under the stated execution costs.
 
 | Metric | 30m | 60m |
 |---|---:|---:|
@@ -111,4 +116,5 @@ trade and equity tables remain on S13 under:
 | `execution_trades_60m_v1.parquet` | 11328 | 2163011 | `b9459fe21a892e63445ef27de006ce400b9d259ec095d63e358a7d7e34e810b9` |
 | `execution_equity_60m_v1.parquet` | 11329 | 288325 | `16729acab602b1c718c1836b5e943331e6ee614c9c9db1d8897d46b3ac51d1e7` |
 
-This WIP is ready for review. No next WIP has been started.
+This WIP is accepted as `CLOSED_NEGATIVE`. The result and final authorities
+above preserve the negative policy result.

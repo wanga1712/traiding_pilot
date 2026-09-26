@@ -1,0 +1,22 @@
+{
+  "version": "policy_oof_split_manifest_v1",
+  "oof_artifact": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-MODEL-BAKEOFF-1/walkforward_predictions_v1.parquet",
+  "oof_sha256": "dc3c90f88513a5023299ae6b19d9b8cef102c65d0cfcc402a153cf44f698b862",
+  "oof_artifact_rows": 9782279,
+  "selected_models": ["30m/CatBoost/FS_FULL/RAW", "60m/CatBoost/FS_FULL/RAW"],
+  "alignment": "inner join of valid selected-model OOF rows by row_id and decision_at within each original fold",
+  "aligned_rows": 107647,
+  "splits": [
+    {"stage": "POLICY_DISCOVERY", "original_fold": "WFV_1", "start": "2020-05-21T01:44:59.999999Z", "end": "2021-05-31T02:59:59.999999Z", "rows": 35772},
+    {"stage": "POLICY_VALIDATION", "original_fold": "WFV_2", "start": "2021-05-31T03:14:59.999999Z", "end": "2022-06-10T04:29:59.999999Z", "rows": 35949},
+    {"stage": "POLICY_CONFIRMATION", "original_fold": "WFV_3", "start": "2022-06-10T04:44:59.999999Z", "end": "2023-06-20T04:59:59.999999Z", "rows": 35926}
+  ],
+  "confirmation_blocks": [
+    {"block": 1, "start": "2022-06-10T04:44:59.999999Z", "end_exclusive": "2022-10-13T04:49:59.999999Z"},
+    {"block": 2, "start": "2022-10-13T04:49:59.999999Z", "end_exclusive": "2023-02-15T04:54:59.999999Z"},
+    {"block": 3, "start": "2023-02-15T04:54:59.999999Z", "end_inclusive": "2023-06-20T04:59:59.999999Z"}
+  ],
+  "old_oos_start": "2023-06-20T06:14:59.999999Z",
+  "old_oos_end": "2026-07-31T23:59:59.999999Z",
+  "development_price_end_inclusive": "2023-06-20T06:08:00Z"
+}

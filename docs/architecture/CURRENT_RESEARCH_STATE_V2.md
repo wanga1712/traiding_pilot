@@ -20,8 +20,8 @@ There was no retraining, calibration, model selection, OOS tuning, execution
 simulation, or PnL. The OOS exam is not compromised. Full runtime artifacts
 remain on S13; small and medium evidence is committed with the WIP report.
 
-Both horizons proceed separately to
-`PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`, which is in REVIEW. Entry thresholds
+Both horizons proceeded separately to
+`PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`, which is `CLOSED_NEGATIVE`. Entry thresholds
 are frozen from DEVELOPMENT OOF probability distributions at Q10/Q90. The
 simulator uses one position at a time, 1x leverage, 100% of current equity,
 fixed 30m/60m holding periods, 0.00055 taker fee per side, and 0.00010
@@ -37,4 +37,14 @@ costs, 30m returned +124.3455% and 60m returned +21.0514%. Under the primary
 negative. The formal `equity <= 0` ruin condition was not reached, but ending
 equity was only 0.0000007048 USDT for 30m and 0.0000481767 USDT for 60m.
 There was no recapitalization, retraining, threshold optimization, leverage
-search, or alteration of the frozen OOS predictions. No next WIP is active.
+search, or alteration of the frozen OOS predictions. The correct conclusion is
+`MODEL_EDGE_EXISTS=YES` and `CURRENT_EXECUTION_POLICY_NOT_SUPPORTED`: Q10/Q90
+entries with fixed 30m/60m holds are not tradable at 13 bps.
+
+`PROBABILITY-TRADING-POLICY-RESEARCH-1` is now ACTIVE. It uses only frozen
+DEVELOPMENT OOF predictions from the 30m and 60m CatBoost/FS_FULL RAW models.
+The exact 1728-candidate search space, stage rules, costs, and execution rules
+were frozen before results. The previously examined 2023-2026 OOS is locked:
+policy search, validation, result reading, and reexecution counts must remain
+zero. Earliest, middle, and latest OOF evaluation folds are discovery,
+validation, and one-shot confirmation respectively.
