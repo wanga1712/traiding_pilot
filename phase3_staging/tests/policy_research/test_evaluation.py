@@ -62,6 +62,14 @@ class PolicyEvaluationTests(unittest.TestCase):
         self.assertFalse(should_exit(1, 0.1, 0.9, c))
         self.assertTrue(should_exit(1, 0.1, 0.1, c))
 
+    def test_missing_bar_is_skipped_and_never_gap_filled(self):
+        decisions, opens = data([0.9, 0.4, 0.4])
+        opens = opens.drop(pd.Timestamp("2024-01-01T00:15:00Z"))
+        result = simulate_policy(decisions, opens, candidate(), fee_per_side=0, slippage_per_side=0)
+        self.assertEqual(result.metrics["missing_required_bar_count"], 1)
+        self.assertEqual(result.metrics["invalid_gap_fill_count"], 0)
+        self.assertEqual(result.metrics["trade_count"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

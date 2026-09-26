@@ -107,7 +107,7 @@ def simulate_policy(
     cooldown_until: pd.Timestamp | None = None
     prior_signal = 0
     streak = 0
-    invalid_gap_count = 0
+    missing_required_bar_count = 0
     incomplete_open_position_count = 0
     exposure_minutes = 0.0
     rows: list[dict[str, Any]] = []
@@ -118,10 +118,10 @@ def simulate_policy(
         return value if value > ts else value + pd.Timedelta(minutes=1)
 
     def close(exit_time: pd.Timestamp, exit_reason: str) -> bool:
-        nonlocal equity, min_equity, peak, max_dd, position, cooldown_until, invalid_gap_count, exposure_minutes
+        nonlocal equity, min_equity, peak, max_dd, position, cooldown_until, missing_required_bar_count, exposure_minutes
         assert position is not None
         if exit_time not in price.index:
-            invalid_gap_count += 1
+            missing_required_bar_count += 1
             return False
         direction = int(position["direction"])
         raw_exit = float(price.loc[exit_time])
@@ -189,7 +189,7 @@ def simulate_policy(
         if cooldown_until is not None and entry_time < cooldown_until:
             continue
         if entry_time not in price.index:
-            invalid_gap_count += 1
+            missing_required_bar_count += 1
             continue
         raw_entry = float(price.loc[entry_time])
         entry_fill = raw_entry * (1.0 + signal * slippage_per_side)
@@ -234,7 +234,8 @@ def simulate_policy(
         "break_even_round_trip_cost_bps": break_even_cost_bps(raw),
         "ending_equity": equity, "minimum_equity_usdt": min_equity,
         "account_ruined": "YES" if equity <= 0 else "NO",
-        "invalid_gap_fill_count": invalid_gap_count,
+        "missing_required_bar_count": missing_required_bar_count,
+        "invalid_gap_fill_count": 0,
         "incomplete_open_position_count": incomplete_open_position_count,
         "overlapping_position_count": 0, "averaging_count": 0,
     }
