@@ -18,6 +18,7 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | **WIP** | `INDEPENDENT-OOS-MODEL-EVALUATION-1` |
 | **STATUS** | REVIEW |
 | **PHASE** | 11 — One-shot frozen probability-model OOS exam |
+| **RESULT COMMIT** | `5e498326d0f0ca747e042f29e4bf681cb7efb8e6` |
 | **Note** | One-shot frozen OOS exam complete: 30m and 60m are both `OOS_SUPPORTED`; small probability-metric improvements were stable across all three frozen blocks. Awaiting review. No retraining, calibration, execution, or PnL. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
