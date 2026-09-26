@@ -1,0 +1,19 @@
+{
+  "artifact": "execution_cost_spec_v1",
+  "created_before_oos_pnl": true,
+  "cost_model": "PROVISIONAL_FIXED_COST_ASSUMPTION",
+  "starting_equity_usdt": 100.0,
+  "leverage": 1.0,
+  "position_notional_fraction_of_current_equity": 1.0,
+  "taker_fee_per_side": 0.00055,
+  "base_slippage_per_side": 0.0001,
+  "primary_round_trip_cost_bps": 13.0,
+  "exact_historical_funding_included": false,
+  "funding_stress_per_crossing": 0.0001,
+  "funding_stress_timestamp_hours_utc": [0, 8, 16],
+  "funding_stress_is_diagnostic_only": true,
+  "cost_sensitivity_round_trip_bps": [0, 5, 10, 13, 20],
+  "external_recapitalization": "FORBIDDEN",
+  "ruin_condition": "EQUITY_USDT <= 0",
+  "stop_opening_new_positions_after_ruin": true
+}

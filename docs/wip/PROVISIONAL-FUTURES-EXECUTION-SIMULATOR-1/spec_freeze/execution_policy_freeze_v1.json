@@ -1,0 +1,38 @@
+{
+  "artifact": "execution_policy_freeze_v1",
+  "wip": "PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1",
+  "mode": "FROZEN-PROBABILITY-TO-PNL-1",
+  "created_before_oos_pnl": true,
+  "parent_oos_result_commit": "5e498326d0f0ca747e042f29e4bf681cb7efb8e6",
+  "parent_model_authority": "860c4683bd93593e204656a903c29776b0e75225",
+  "oos_prediction_sha256": "e9dd9dca6c9c9ed712477fff06bbeeaf565c97a05b71fd8437cb271dec696a4b",
+  "development_oof_source": "/var/tmp/traiding_pilot_ui_workspace/artifacts/PROBABILITY-MODEL-BAKEOFF-1/walkforward_predictions_v1.parquet",
+  "development_oof_source_sha256": "dc3c90f88513a5023299ae6b19d9b8cef102c65d0cfcc402a153cf44f698b862",
+  "threshold_method": "FIXED_10_90_PERCENTILE",
+  "quantile_interpolation": "linear",
+  "strategies": {
+    "30": {
+      "strategy_id": "STRATEGY_30M_RAW_Q10Q90",
+      "development_oof_rows": 107758,
+      "short_threshold": 0.4650778653995327,
+      "long_threshold": 0.55051926907757,
+      "holding_minutes": 30
+    },
+    "60": {
+      "strategy_id": "STRATEGY_60M_RAW_Q10Q90",
+      "development_oof_rows": 107764,
+      "short_threshold": 0.4696675122191984,
+      "long_threshold": 0.5445806653710086,
+      "holding_minutes": 60
+    }
+  },
+  "signal_rule": "LONG if p_up >= long_threshold; SHORT if p_up <= short_threshold; otherwise WAIT",
+  "entry_rule": "first canonical 1m OPEN strictly after DECISION_AT",
+  "exit_rule": "canonical 1m OPEN exactly holding_minutes after entry",
+  "missing_entry_or_exit_rule": "exclude trade with explicit reason",
+  "maximum_open_positions_per_strategy": 1,
+  "averaging": false,
+  "pyramiding": false,
+  "thresholds_from_development_only": true,
+  "oos_threshold_optimization_count": 0
+}

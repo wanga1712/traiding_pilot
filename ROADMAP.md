@@ -15,17 +15,20 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `INDEPENDENT-OOS-MODEL-EVALUATION-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | 11 — One-shot frozen probability-model OOS exam |
-| **RESULT COMMIT** | `5e498326d0f0ca747e042f29e4bf681cb7efb8e6` |
-| **Note** | One-shot frozen OOS exam complete: 30m and 60m are both `OOS_SUPPORTED`; small probability-metric improvements were stable across all three frozen blocks. Awaiting review. No retraining, calibration, execution, or PnL. |
+| **WIP** | `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | 11 — Frozen probability-to-PnL execution simulation |
+| **PARENT RESULT** | `5e498326d0f0ca747e042f29e4bf681cb7efb8e6` |
+| **Note** | Evaluate the frozen 30m and 60m OOS predictions as two separate 1x strategies under the predeclared Q10/Q90 policy and provisional fixed costs. No model, feature, threshold, holding-period, or position-rule changes. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
 **Current:**  
-`INDEPENDENT-OOS-MODEL-EVALUATION-1` (REVIEW) — one-shot independent exam completed successfully. Both frozen CatBoost/FS_FULL RAW horizons are `OOS_SUPPORTED`; all integrity gates pass. Execution and PnL remain locked.
+`PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1` (ACTIVE) — the first PnL WIP. It evaluates the two frozen OOS probability streams separately using DEVELOPMENT-only Q10/Q90 thresholds, one position at a time, 1x leverage, fixed holding periods, and the frozen provisional cost model.
+
+**Previous CLOSED:**
+`INDEPENDENT-OOS-MODEL-EVALUATION-1` — accepted result authority `5e498326d0f0ca747e042f29e4bf681cb7efb8e6`; 30m and 60m both `OOS_SUPPORTED`; integrity PASS; no retraining or OOS tuning.
 
 **Previous CLOSED:**
 `PROBABILITY-MODEL-BAKEOFF-1` — accepted model authority `860c4683bd93593e204656a903c29776b0e75225`; CatBoost/FS_FULL RAW selected for 30m and 60m only; all other horizons rejected; no OOS or PnL used.
@@ -1020,7 +1023,15 @@ PENDING
 
 ### WIP=PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
 
-STATUS=PLANNED (paused — do not run until feature bank reviewed)
+STATUS=ACTIVE
+
+MODE=`FROZEN-PROBABILITY-TO-PNL-1`
+
+PARENT_OOS_RESULT_COMMIT=`5e498326d0f0ca747e042f29e4bf681cb7efb8e6`
+
+POLICY=`30m/60m separate; DEVELOPMENT OOF Q10/Q90; one position; 1x; 100% current equity; fixed 30m/60m hold`
+
+COSTS=`TAKER_FEE_PER_SIDE=0.00055; SLIPPAGE_PER_SIDE=0.00010; primary round trip=13 bps; exact historical funding excluded`
 
 ACCOUNT_RUIN_RULE:
 
@@ -1510,7 +1521,7 @@ none (end of planned chain)
 | OSCILLATOR-PREDICTOR-REFERENCE-1 | CLOSED | 8a |
 | OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1 | CLOSED | 8a |
 | MULTITF-INDICATOR-PARAMETER-SEARCH-1 | ACTIVE | 8a |
-| PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | PLANNED (paused) | 8b |
+| PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | ACTIVE | 8b |
 | TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1 | PLANNED | 8b |
 | TRADING-POLICY-MODEL-BAKEOFF-1 | PLANNED | 8b |
 | QWEN-HISTORICAL-TRADING-PILOT-1 | PLANNED | 8b |
