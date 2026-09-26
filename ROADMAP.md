@@ -19,6 +19,7 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | **STATUS** | REVIEW |
 | **PHASE** | 11 — Frozen probability-to-PnL execution simulation |
 | **PARENT RESULT** | `5e498326d0f0ca747e042f29e4bf681cb7efb8e6` |
+| **RESULT COMMIT** | `5079c3df5d5d7f629a3249e0f0617163ae5733ac` |
 | **Note** | Full frozen simulation complete. Both strategies are `EXECUTION_WEAK`: gross return is positive, but the 13 bps provisional cost model reduces both 100 USDT accounts to effectively zero. Awaiting review. |
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
@@ -1034,6 +1035,8 @@ POLICY=`30m/60m separate; DEVELOPMENT OOF Q10/Q90; one position; 1x; 100% curren
 COSTS=`TAKER_FEE_PER_SIDE=0.00055; SLIPPAGE_PER_SIDE=0.00010; primary round trip=13 bps; exact historical funding excluded`
 
 RESULT_SUMMARY=`30m gross +124.3455%, net -99.9999993%, ending 0.0000007048 USDT; 60m gross +21.0514%, net -99.9999518%, ending 0.0000481767 USDT; both EXECUTION_WEAK`
+
+GIT_COMMIT=`5079c3df5d5d7f629a3249e0f0617163ae5733ac`
 
 ACCOUNT_RUIN_RULE:
 
