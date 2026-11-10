@@ -116,7 +116,7 @@ artifact was modified.
 | Costs/PnL/risk | Fees and slippage accounting is implemented and tested. Historical funding is deliberately absent from primary PnL. No liquidation/leverage/risk engine is part of this implementation; those remain planned roadmap work. |
 | API/secrets | No tracked `.env`, key, PEM, DB, or literal credential was found, but `.gitignore` does not protect the untracked local credential/runtime files. Legacy deploy scripts pin the obsolete 10.8.x host, disable host checking, and omit process timeouts. |
 | GUI/lifecycle | The current UI entry point imports five absent modules, cannot be reproduced from a clean checkout, and is launched by `pkill`/`nohup` rather than a supervised service. |
-| Tests | 43 test-related Python files and 252 test functions are present, but clean collection is invalidated by missing imports. No tests cover the packaging, cache, OOS-overlap, or deployment failures below. |
+| Tests | 43 test-related Python files and 252 test functions are present, but none were executed. Clean collection is invalidated by missing imports. This audit cannot confirm system health or that the inventoried tests pass. |
 
 ## Defect register
 
@@ -388,7 +388,8 @@ artifact was modified.
 ## Tests
 
 Static inventory only; no tests were run because the user did not request test
-execution and the repository has no dependency manifest.
+execution and the repository has no dependency manifest. Test discovery is not
+test execution and is not evidence that the system works.
 
 - Test-related Python files: 43 (including package/config files)
 - Test functions: 252
@@ -411,7 +412,9 @@ execution and the repository has no dependency manifest.
 
 - This report
 - Root control/plan: `WIP.md`
-- Local Git branches and commits listed above; no remote upload
+- Local Git branches and commits listed above; audit commit
+  `c21e0569e3474efb598bb58a4c181b34676e93e0` was later pushed to
+  `origin/main`
 
 ## Browser/runtime evidence
 
@@ -419,7 +422,7 @@ Not applicable; no deploy, restart, UI launch, or runtime mutation is allowed.
 
 ## Git commit
 
-GIT_COMMIT=faacaf08b3eda971d972f4e4fb4c6fedecbf969d (audit base); audit-doc commit recorded on the local branch
+GIT_COMMIT=c21e0569e3474efb598bb58a4c181b34676e93e0
 
 ## RETURN
 
@@ -427,10 +430,10 @@ GIT_COMMIT=faacaf08b3eda971d972f4e4fb4c6fedecbf969d (audit base); audit-doc comm
 WIP=TRADING-PILOT-BASELINE-AND-AUDIT-1
 STATUS=REVIEW
 LOCAL_BRANCH=audit/trading-pilot-baseline-20261110
-LOCAL_HEAD=changes-committed-after-audit
-ORIGIN_MAIN_HEAD=faacaf08b3eda971d972f4e4fb4c6fedecbf969d
+LOCAL_HEAD=c21e0569e3474efb598bb58a4c181b34676e93e0
+ORIGIN_MAIN_HEAD=c21e0569e3474efb598bb58a4c181b34676e93e0
 BASELINE_COMMIT=5e05b7c79165981b5fd8b30a0e1f0eca133c3bae
-AHEAD=audit-doc-commits
+AHEAD=0
 BEHIND=0
 FILES_CHANGED=WIP.md,docs/wip/TRADING-PILOT-BASELINE-AND-AUDIT-1.md,ROADMAP.md
 CONFIRMED_DEFECTS=11
@@ -440,14 +443,17 @@ ALREADY_FIXED=1
 LEGACY=3
 TESTS_RUN=none
 TESTS_FAILED=0
+TEST_CONFIRMATION=NOT_PERFORMED
+AUDIT_CONCLUSION=DIAGNOSTIC_ONLY_ACCEPTABLE_NOT_SYSTEM_HEALTH
 UNVERIFIED=S7 PostgreSQL,runtime S13,S13/S7 live connectivity,actual resampling implementation,blocked OOS data
 NEXT_WIP_PROPOSAL=TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1
 ```
 
 ## Decision
 
-Audit complete; awaiting user review. No functional repair is authorized by
-this WIP.
+Audit complete as diagnostic work; awaiting user review. This report does not
+certify system health because no tests were executed. No functional repair is
+authorized by this WIP, and the next WIP must not start automatically.
 
 ## Roadmap update
 

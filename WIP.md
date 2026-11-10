@@ -85,6 +85,8 @@ Detailed evidence and the defect register live in
   formula was confirmed, but stale-cache and post-gap signal defects remain.
 - The research policy and provisional execution results are already documented
   in their existing WIPs and were not rerun or altered.
+- This audit is completed diagnostic work, not confirmation that the system is
+  healthy or that its 252 inventoried test functions pass. No tests were run.
 
 ## RETURN
 
@@ -92,10 +94,10 @@ Detailed evidence and the defect register live in
 WIP=TRADING-PILOT-BASELINE-AND-AUDIT-1
 STATUS=REVIEW
 LOCAL_BRANCH=audit/trading-pilot-baseline-20261110
-LOCAL_HEAD=changes-committed-after-audit
-ORIGIN_MAIN_HEAD=faacaf08b3eda971d972f4e4fb4c6fedecbf969d
+LOCAL_HEAD=c21e0569e3474efb598bb58a4c181b34676e93e0
+ORIGIN_MAIN_HEAD=c21e0569e3474efb598bb58a4c181b34676e93e0
 BASELINE_COMMIT=5e05b7c79165981b5fd8b30a0e1f0eca133c3bae
-AHEAD=audit-doc-commits
+AHEAD=0
 BEHIND=0
 FILES_CHANGED=WIP.md,docs/wip/TRADING-PILOT-BASELINE-AND-AUDIT-1.md,ROADMAP.md
 CONFIRMED_DEFECTS=11
@@ -105,6 +107,8 @@ ALREADY_FIXED=1
 LEGACY=3
 TESTS_RUN=none
 TESTS_FAILED=0
+TEST_CONFIRMATION=NOT_PERFORMED
+AUDIT_CONCLUSION=DIAGNOSTIC_ONLY_ACCEPTABLE_NOT_SYSTEM_HEALTH
 UNVERIFIED=S7 PostgreSQL,runtime S13,S13/S7 live connectivity,actual resampling implementation,blocked OOS data
 NEXT_WIP_PROPOSAL=TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1
 ```

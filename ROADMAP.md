@@ -35,7 +35,7 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | **MODE** | SAFE / READ-FIRST / NO DEPLOY |
 | **BASELINE** | `5e05b7c79165981b5fd8b30a0e1f0eca133c3bae` on `baseline/trading-pilot-pre-main-20261110` |
 | **AUDIT BASE** | `faacaf08b3eda971d972f4e4fb4c6fedecbf969d` (`origin/main`) |
-| **RESULT** | 11 confirmed defects: 1 CRITICAL, 7 HIGH, 3 MEDIUM; no functional repair performed |
+| **RESULT** | 11 confirmed defects: 1 CRITICAL, 7 HIGH, 3 MEDIUM; 252 tests inventoried, none run; diagnostic only, not system-health confirmation |
 | **REPORT** | [`docs/wip/TRADING-PILOT-BASELINE-AND-AUDIT-1.md`](docs/wip/TRADING-PILOT-BASELINE-AND-AUDIT-1.md) |
 | **NEXT WIP** | `TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1` proposed only; do not auto-start |
 
