@@ -4,6 +4,8 @@ This directory contains the compact evidence needed to review
 `TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1`. Full runtime parquet data,
 equity tables, and all portfolio journals remain on S13.
 
+Evidence commit: `4b15f3d7cb678a5d349d744584cd80c47b4a2c21`.
+
 ## Primary evidence
 
 | File | Purpose |
