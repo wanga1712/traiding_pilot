@@ -1,6 +1,7 @@
 """Hard OOS lock — fail closed; never load partition OOS."""
 from __future__ import annotations
 
+from datetime import timezone
 from typing import Any, Iterable
 
 import pandas as pd
@@ -40,20 +41,24 @@ def assert_events_exclude_oos(events: pd.DataFrame, *, context: str = "") -> Non
 
 def assert_no_oos_bounds(start: Any, end: Any, *, context: str = "") -> None:
     """Reject explicit OOS calendar window requests."""
-    from crypto_trading_bot.research_v2.reversal_signal_study.config import PARTITION_BOUNDS
     from crypto_trading_bot.research_v2.indicator_engine.bars import parse_ts
+    from crypto_trading_bot.research_v2.reversal_signal_study.config import PARTITION_BOUNDS
 
     oos_start, oos_end = PARTITION_BOUNDS["OOS"]
-    try:
-        s = parse_ts(start) if not hasattr(start, "timestamp") else start
-        e = parse_ts(end) if not hasattr(end, "timestamp") else end
-    except Exception:  # noqa: BLE001
-        return
-    # Any requested window that starts at/after OOS start is refused.
+    s = parse_ts(start)
+    e = parse_ts(end)
+    if s.tzinfo is None:
+        s = s.replace(tzinfo=timezone.utc)
+    if e.tzinfo is None:
+        e = e.replace(tzinfo=timezone.utc)
+    if e <= s:
+        raise ValueError("window end must be after window start")
+    # Any window starting in or after OOS is refused, including fully later data.
     if s >= oos_start:
         assert_oos_locked(context=context or f"window_start={s.isoformat()} overlaps OOS")
-    if e > oos_end and s >= oos_start:
-        assert_oos_locked(context=context or "window fully inside/after OOS")
+    # A window that begins before OOS is also refused when it intersects it.
+    if s < oos_end and e > oos_start:
+        assert_oos_locked(context=context or "window overlaps OOS")
 
 
 def guard_partition_iterable(partitions: Iterable[str] | None, *, context: str = "") -> tuple[str, ...]:

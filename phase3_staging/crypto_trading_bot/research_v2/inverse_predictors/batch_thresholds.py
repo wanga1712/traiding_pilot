@@ -7,6 +7,7 @@ from typing import Any
 import numpy as np
 
 from crypto_trading_bot.research_v2.indicator_engine.bars import bars_to_arrays
+from crypto_trading_bot.research_v2.indicator_engine.cache import fingerprint_bars
 from crypto_trading_bot.research_v2.indicator_engine.macd import compute_macd_series
 from crypto_trading_bot.research_v2.indicator_engine.math_core import ema
 from crypto_trading_bot.research_v2.indicator_engine.segments import segment_starts_array
@@ -59,9 +60,7 @@ def _cache_key(bars: list[dict[str, Any]], *, parameter_set_id: str, source_time
     return (
         source_timeframe,
         parameter_set_id,
-        len(bars),
-        str(bars[0]["close_time"]),
-        str(bars[-1]["close_time"]),
+        fingerprint_bars(bars),
     )
 
 
@@ -120,9 +119,7 @@ def _macd_precompute_key(
         fast,
         slow,
         signal,
-        len(bars),
-        str(bars[0]["close_time"]),
-        str(bars[-1]["close_time"]),
+        fingerprint_bars(bars),
     )
 
 

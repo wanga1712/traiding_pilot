@@ -1,114 +1,123 @@
-# WIP — TRADING-PILOT-BASELINE-AND-AUDIT-1
+# WIP — TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1
 
 STATUS=REVIEW
 STARTED_AT=2026-11-10
-MODE=SAFE / READ-FIRST / NO DEPLOY
+MODE=SAFE / LOCAL-FIRST / NO DEPLOY / NO RESEARCH RERUN
 REPOSITORY=wanga1712/traiding_pilot
 TARGET_BRANCH=main
 
 ## Goal
 
-Reconcile the local repository with GitHub, preserve the pre-existing local
-worktree in a separate baseline branch, and audit the implementation actually
-committed on `origin/main`.
+Restore the implementation that current `main` cannot import, protect secrets,
+and repair the confirmed data-integrity defects from
+`TRADING-PILOT-BASELINE-AND-AUDIT-1` before any research result is reconsidered.
 
-The prior audit used stale `master`. No prior finding is accepted until it is
-rechecked against `faacaf08b3eda971d972f4e4fb4c6fedecbf969d` or a later
-explicitly recorded `origin/main`.
+## Accepted parent
 
-## Baseline facts
+- Parent WIP: `TRADING-PILOT-BASELINE-AND-AUDIT-1`
+- Parent status: ACCEPTED / CLOSED
+- Audited commit: `c21e0569e3474efb598bb58a4c181b34676e93e0`
+- Accepted diagnostics: 11 confirmed defects
+- Limit: audit-only; no tests were executed and system health was not confirmed
 
-- Pre-audit local branch: `master`
-- Pre-audit local HEAD: `4b82803cc4be233c6c9b831c7e8937fc2b507e71`
-- Fetched `origin/main`: `faacaf08b3eda971d972f4e4fb4c6fedecbf969d`
-- Control SHA verified: YES
-- Local `master` versus `origin/main`: AHEAD=6, BEHIND=98
-- Baseline branch: `baseline/trading-pilot-pre-main-20261110`
-- Baseline commit: `5e05b7c79165981b5fd8b30a0e1f0eca133c3bae`
-- Audit branch: `audit/trading-pilot-baseline-20261110`
-- Audit base: `origin/main` at `faacaf08b3eda971d972f4e4fb4c6fedecbf969d`
+## Scope
 
-The baseline commit contains 110 source/documentation/test files. It excludes
-the 84.5 MB training Parquet, 25 training checkpoints totaling 221.9 MB,
-logs, databases, `.env`, keys, and virtual environments. Secret screening
-found only three documented placeholders and no literal credential.
-Nothing was pushed.
+### Stage 1 — restoration and protection
 
-## Execution plan
+- Restore the 22 missing project files from S13 read-only runtime source after
+  hash and compatibility review.
+- Add a reproducible dependency manifest.
+- Add a clean-import smoke test.
+- Restore ignore rules for secrets, keys, logs, databases, data, checkpoints,
+  build outputs, IDE state, and virtual environments.
 
-- [x] Verify repository and remote.
-- [x] Read existing WIP controls before work.
-- [x] Record status, branches, remotes, HEAD, and recent history.
-- [x] Fetch `origin --prune` without merge, pull, or reset.
-- [x] Compare local `master` with `origin/main`.
-- [x] Create and secret-screen a separate baseline branch/commit.
-- [x] Create a clean audit branch directly from `origin/main`.
-- [x] Read current `AGENTS.md`, `ROADMAP.md`, and V2 architecture documents.
-- [x] Audit OHLCV collection, sources, timeframes, completeness, and UTC handling.
-- [x] Audit PostgreSQL schema, transactions, connections, and duplicate writes.
-- [x] Audit indicators, DMA, causality, and look-ahead exposure.
-- [x] Audit strategy construction, signals, and research/execution boundaries.
-- [x] Audit backtesting, fees, funding, slippage, PnL, and risk management.
-- [x] Audit API configuration, exceptions, timeouts, and secret handling.
-- [x] Audit background processes, GUI, and resource lifecycle.
-- [x] Inventory automatic tests and identify coverage gaps without a broad test run.
-- [x] Reconcile findings with existing WIPs and `research_v2`.
-- [x] Classify findings and produce prioritized regression-test requirements.
-- [x] Write RETURN, update the canonical WIP report, and set STATUS=REVIEW.
+### Stage 2 — correctness guards
+
+- Fix the OOS interval-overlap guard.
+- Replace partial in-memory cache fingerprints with full-content fingerprints.
+- Make OHLCV cache writes atomic and bounded.
+- Correct DMA and Stochastic state behavior across candle gaps.
+- Add focused regression tests.
+
+### Stage 3 — verification
+
+- Run targeted unit and integration tests.
+- Run local import checks from the project package root.
+- Do not run model training, OOS/confirmation access, research pipelines,
+  deployments, service restarts, database migrations, or live trading.
 
 ## Constraints
 
-- No changes to trading algorithms, model parameters, or frozen research.
-- No opening blocked OOS or confirmation datasets.
-- No real trading.
-- No changes to S7 data or S13 runtime data.
-- No migrations, deploy, or restart.
-- No automatic start of the next WIP.
-- No changes to existing WIP statuses without acceptance.
+- Do not modify CatBoost models, model parameters, predictions, frozen research
+  evidence, or historical research result artifacts.
+- Do not open blocked OOS or confirmation datasets.
+- Do not modify S7 data or S13 runtime data.
+- S13 may be read only to restore missing source files and verify hashes.
+- Do not deploy or restart any service.
+- Do not automatically start another WIP after this one.
+- Do not overwrite prior research outputs.
+
+## Acceptance criteria
+
+- All six previously missing import targets resolve from a clean checkout.
+- Dependency installation is described by versioned project requirements.
+- Secret/runtime paths are ignored and cannot be staged by a broad `git add`.
+- OOS overlap, cache invalidation, atomic cache recovery, and post-gap signal
+  tests pass.
+- Existing frozen artifacts and model files remain byte-for-byte unchanged.
+- No research rerun, deploy, S7/S13 mutation, or live trade occurs.
 
 ## Evidence
 
-Detailed evidence and the defect register live in
-`docs/wip/TRADING-PILOT-BASELINE-AND-AUDIT-1.md`.
+Audit inputs:
+`docs/wip/TRADING-PILOT-BASELINE-AND-AUDIT-1.md`
 
-## Audit result
+Restoration source:
+`sergey@s13:/var/tmp/traiding_pilot_ui_workspace/phase3_staging/`
 
-- 11 confirmed defects: 1 CRITICAL, 7 HIGH, 3 MEDIUM.
-- The same root cause produces six missing internal import targets:
-  `resampling`, `annotations`, `visualization.chart_engine`,
-  `visualization.dinapoli_live`, `visualization.zigzag_live`, and
-  `zigzag.classic`.
-- No literal secret was found in tracked source; host-key verification is
-  nevertheless disabled in legacy deployment scripts.
-- The current indicator calculations keep `available_at` at the source-bar
-  close and preserve display displacement separately. No direct future-value
-  formula was confirmed, but stale-cache and post-gap signal defects remain.
-- The research policy and provisional execution results are already documented
-  in their existing WIPs and were not rerun or altered.
-- This audit is completed diagnostic work, not confirmation that the system is
-  healthy or that its 252 inventoried test functions pass. No tests were run.
+Implementation evidence and RETURN will be recorded in
+`docs/wip/TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1.md`.
+
+## Verification summary
+
+- Restored 22 source/schema files from S13 read-only source with hash checks.
+- Import smoke: PASS for 10 data/UI/wave consumers.
+- Focused integrity, OOS, indicator-engine, and trading-run tests: 61 passed.
+- Non-research test groups: 186 passed.
+- Composite-signal suite: 49 passed.
+- Indicator parameter-search suite: 34 passed, 10 failed.
+- Total: 269 passed, 10 failed.
+
+The 10 failures are confined to existing frozen registry/spec and routing
+comparisons in `indicator_parameter_search`. They are not repaired here because
+doing so requires research-artifact reconciliation outside this WIP.
+
+GitHub repository default branch was changed from `master` to `main`.
+
+No model, frozen result, S7 dataset, or S13 runtime data was changed. No
+research pipeline, OOS/confirmation run, deploy, restart, or migration ran.
 
 ## RETURN
 
 ```text
-WIP=TRADING-PILOT-BASELINE-AND-AUDIT-1
+WIP=TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1
 STATUS=REVIEW
-LOCAL_BRANCH=audit/trading-pilot-baseline-20261110
-LOCAL_HEAD=c21e0569e3474efb598bb58a4c181b34676e93e0
-ORIGIN_MAIN_HEAD=c21e0569e3474efb598bb58a4c181b34676e93e0
-BASELINE_COMMIT=5e05b7c79165981b5fd8b30a0e1f0eca133c3bae
-AHEAD=0
-BEHIND=0
-FILES_CHANGED=WIP.md,docs/wip/TRADING-PILOT-BASELINE-AND-AUDIT-1.md,ROADMAP.md
-CONFIRMED_DEFECTS=11
-CRITICAL=1
-HIGH=7
-ALREADY_FIXED=1
-LEGACY=3
-TESTS_RUN=none
-TESTS_FAILED=0
-TEST_CONFIRMATION=NOT_PERFORMED
-AUDIT_CONCLUSION=DIAGNOSTIC_ONLY_ACCEPTABLE_NOT_SYSTEM_HEALTH
-UNVERIFIED=S7 PostgreSQL,runtime S13,S13/S7 live connectivity,actual resampling implementation,blocked OOS data
-NEXT_WIP_PROPOSAL=TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1
+LOCAL_BRANCH=wip/trading-pilot-import-data-integrity-repair-1
+LOCAL_HEAD=
+BASE_MAIN=b83393dace03943da0527c2c732ecc3d9cb31c53
+PARENT_CLOSED=TRADING-PILOT-BASELINE-AND-AUDIT-1
+RESTORED_MODULES=PASS_22_FILES
+SECRETS_PROTECTED=PASS_TESTS
+OOS_GUARD=PASS_TESTS
+CACHE_INVALIDATION=PASS_TESTS
+GAP_HANDLING=PASS_TESTS
+DEFAULT_BRANCH=main
+TESTS_RUN=279
+TESTS_PASSED=269
+TESTS_FAILED=10
+KNOWN_FAILURES=indicator_parameter_search_frozen_registry_spec_and_routing_mismatch
+RESEARCH_RERUN=none
+DEPLOY=none
+S7_S13_MUTATION=none
+NEXT_WIP=none
 ```

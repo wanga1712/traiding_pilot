@@ -1,9 +1,9 @@
 # WIP=TRADING-PILOT-BASELINE-AND-AUDIT-1
 
-STATUS=REVIEW
+STATUS=CLOSED
 
 STARTED_AT=2026-11-10
-CLOSED_AT=
+CLOSED_AT=2026-11-10
 
 ## Goal
 
@@ -428,7 +428,7 @@ GIT_COMMIT=c21e0569e3474efb598bb58a4c181b34676e93e0
 
 ```text
 WIP=TRADING-PILOT-BASELINE-AND-AUDIT-1
-STATUS=REVIEW
+STATUS=CLOSED
 LOCAL_BRANCH=audit/trading-pilot-baseline-20261110
 LOCAL_HEAD=c21e0569e3474efb598bb58a4c181b34676e93e0
 ORIGIN_MAIN_HEAD=c21e0569e3474efb598bb58a4c181b34676e93e0
@@ -451,12 +451,12 @@ NEXT_WIP_PROPOSAL=TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1
 
 ## Decision
 
-Audit complete as diagnostic work; awaiting user review. This report does not
-certify system health because no tests were executed. No functional repair is
-authorized by this WIP, and the next WIP must not start automatically.
+Accepted by the user as completed diagnostic work. This report does not certify
+system health because no tests were executed. Functional repairs belong to
+`TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1`.
 
 ## Roadmap update
 
 ROADMAP_STATUS_UPDATED=YES
 
-NEXT_WIP=TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1 (proposal only; do not start automatically)
+NEXT_WIP=TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1

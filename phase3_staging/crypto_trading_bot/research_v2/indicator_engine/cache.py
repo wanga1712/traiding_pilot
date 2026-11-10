@@ -1,6 +1,8 @@
 """Cache for batch indicator series (research performance)."""
 from __future__ import annotations
 
+import hashlib
+import json
 from typing import Any, Hashable
 
 from .types import IndicatorResult
@@ -43,6 +45,17 @@ class SeriesCache:
 def fingerprint_bars(bars: list[dict[str, Any]]) -> str:
     if not bars:
         return "empty"
-    first = bars[0].get("open_time")
-    last = bars[-1].get("close_time")
-    return f"{len(bars)}|{first}|{last}|{bars[0].get('close')}|{bars[-1].get('close')}"
+    digest = hashlib.sha256()
+    for bar in bars:
+        payload = (
+            bar.get("open_time"),
+            bar.get("close_time"),
+            bar.get("open"),
+            bar.get("high"),
+            bar.get("low"),
+            bar.get("close"),
+            bar.get("volume", 0.0),
+        )
+        digest.update(json.dumps(payload, separators=(",", ":"), default=str).encode("utf-8"))
+        digest.update(b"\n")
+    return digest.hexdigest()

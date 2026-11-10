@@ -10,7 +10,8 @@ from typing import Any
 def fsync_path(path: Path) -> None:
     """Fsync an existing file."""
     path = Path(path)
-    fd = os.open(str(path), os.O_RDONLY)
+    flags = os.O_RDWR if os.name == "nt" else os.O_RDONLY
+    fd = os.open(str(path), flags)
     try:
         os.fsync(fd)
     finally:

@@ -16,11 +16,10 @@ from crypto_trading_bot.research_v2.oscillator_predictor.inverse import price_fo
 from crypto_trading_bot.research_v2.oscillator_predictor.peaks import confirmed_extrema_at
 from crypto_trading_bot.research_v2.oscillator_predictor.run_validate import (
     run_batch_streaming_parity,
-    run_future_leakage_test,
     run_future_mutation_test,
-    run_gap_independence_tests,
     run_numeric_reference_tests,
-    run_peak_confirmation_test,
+    run_peak_and_leakage,
+    run_post_gap_independence,
 )
 from crypto_trading_bot.research_v2.oscillator_predictor.streaming import StreamingOscillatorPredictor
 from crypto_trading_bot.research_v2.indicator_engine.bars import bars_to_arrays
@@ -54,18 +53,18 @@ def test_dno_inverse_roundtrip() -> None:
 
 
 def test_peak_confirmation() -> None:
-    assert run_peak_confirmation_test()["PEAK_CONFIRMATION_CAUSALITY"] == "PASS"
+    assert run_peak_and_leakage()["PEAK_CONFIRMATION_CAUSALITY"] == "PASS"
 
 
 def test_anti_leakage() -> None:
-    assert run_future_leakage_test()["FUTURE_PEAK_LEAKAGE_TEST"] == "PASS"
+    assert run_peak_and_leakage()["FUTURE_PEAK_LEAKAGE_TEST"] == "PASS"
     assert run_future_mutation_test()["PREDICTOR_FUTURE_MUTATION_TEST"] == "PASS"
 
 
 def test_gap_independence() -> None:
-    r = run_gap_independence_tests()
-    assert r["DNO_POST_GAP_INDEPENDENCE"] == "PASS"
+    r = run_post_gap_independence()
     assert r["PREDICTOR_POST_GAP_INDEPENDENCE"] == "PASS"
+    assert r["CURRENT_SEGMENT_EXTREMA_ONLY"] is True
 
 
 def test_batch_streaming_parity() -> None:

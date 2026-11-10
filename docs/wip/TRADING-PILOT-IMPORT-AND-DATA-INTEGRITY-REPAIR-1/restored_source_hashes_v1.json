@@ -1,0 +1,30 @@
+{
+  "source_host": "s13",
+  "source_path": "/var/tmp/traiding_pilot_ui_workspace/phase3_staging/crypto_trading_bot/research_v2",
+  "source_access": "READ_ONLY",
+  "restored_file_count": 22,
+  "workspace_sha256": {
+    "annotations/__init__.py": "e8c38a63bb38a75d2690e2d5185ae3cfd38a7308a04edce6f2c546df832d3770",
+    "annotations/evaluation.py": "d389344e23a25560014a490b0bd650499d8164d9de509a2c0f9931be58dc1629",
+    "annotations/persistence.py": "b50edd650f453ab54bb14a42d6387e6c4abfaeec728cf67c2b96462ca4741b87",
+    "annotations/schema.sql": "fd207a0e2229dcae9c99993b215a4cae347103c3b9fa13b4288bf7d995c9a90f",
+    "dinapoli/__init__.py": "139f7c8ef2e32ca9bb99cc9fb6b524528fabc3fe77f50a142d411d750334327d",
+    "dinapoli/multitf_sweep.py": "e0448a51dbf60d2967bd6ecb786936ba7fce58174a78228706433740629c593e",
+    "dinapoli/normalize_retest.py": "0211a40288302c777fe30db7ccab18f4b102289fb9bc0fcd83f54cb9d9cf13a2",
+    "dinapoli/run.py": "41c0879133eb8c8bbb549d7535f0a1be4a739434a350fe57e51b85e995e2f4ab",
+    "dinapoli/run_multitf.py": "1ba94c6d2f9f0fe1b1bcb75907799f867f95c2782497ebda3c97bb009b83738a",
+    "dinapoli/run_normalize_retest.py": "3ea56ad493158f8429942eb118b3c9d5cf3d50a6cf579d2f43944d1385c27685",
+    "dinapoli/validate_4h.py": "d216979bf97221ce6e4992b915a4febf80a7cc249258a05117934509a26eb31e",
+    "resampling/__init__.py": "1d8dc7f209d192243862ae8e72b33e9c33259558926ca212cc997a9478b6f4e1",
+    "resampling/resampler.py": "df014a359d794df00572bbc5819f027b62ad20e3c245748caa5f506b587efe05",
+    "visualization/chart_engine.py": "e0d4f3eb239c652361392379b59941ab3d704e0de7186f171a331bf50d450cf3",
+    "visualization/dinapoli_live.py": "1894e9a2e79cb3b9d712e44bae7d08c21ff303d256d185897e31340ec94d34c3",
+    "visualization/zigzag_live.py": "094a51cc1f9f13cde6aa4246089b70dce6c2a0d51984e44ef16186835dbfe368",
+    "zigzag/__init__.py": "56cef26a976abb610b2c028eacbb602e416309b3ba963d961bfb51dce92bc4f6",
+    "zigzag/classic.py": "363484f95c9bfd11f7267f66bcb884eaafb1747fafbc871a94abb20e1a838c41",
+    "zigzag/match.py": "4caabb8b7feff107e8a50dd3f5b02ea2f1090178d8b090fb0fa1055464fba67a",
+    "zigzag/overlay.py": "07f067b9e69e01ef3563e77bbc157f14fedcbe225d5daa8ac3c503b5dc8c21d1",
+    "zigzag/run.py": "f2c1393bcc1ee0a744068229e704d0bd559c2cf4825b3d8d97bd03f11ba2da27",
+    "zigzag/search.py": "844d5bbbfa3ef4babf660538319c89a5be5aac18a3aafcc1a9642e6672af5473"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "base_main": "b83393dace03943da0527c2c732ecc3d9cb31c53",
+  "status": "REVIEW",
+  "import_smoke": {
+    "passed": 10,
+    "failed": 0
+  },
+  "tests": {
+    "focused_integrity_set": {
+      "passed": 61,
+      "failed": 0
+    },
+    "non_research_groups": {
+      "passed": 186,
+      "failed": 0
+    },
+    "composite_signal_search": {
+      "passed": 49,
+      "failed": 0
+    },
+    "indicator_parameter_search": {
+      "passed": 34,
+      "failed": 10
+    },
+    "total_run": 279,
+    "total_passed": 269,
+    "total_failed": 10
+  },
+  "known_failure_scope": "frozen registry/spec hash and route reconciliation in tests/indicator_parameter_search",
+  "default_branch": "main",
+  "research_rerun": "NO",
+  "oos_confirmation_access": "NO",
+  "model_training": "NO",
+  "s7_mutation": "NO",
+  "s13_runtime_mutation": "NO",
+  "deploy": "NO",
+  "restart": "NO",
+  "migration": "NO",
+  "live_trading": "NO"
+}

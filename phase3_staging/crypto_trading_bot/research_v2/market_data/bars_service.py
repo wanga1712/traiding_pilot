@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import json
+import os
+import shutil
 import subprocess
+import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -110,7 +113,15 @@ class TimeframeBarService:
         cache_path = self._cache_path(timeframe)
         existing: pa.Table | None = None
         if cache_path.exists():
-            existing = pq.read_table(cache_path)
+            try:
+                existing = pq.read_table(cache_path)
+            except Exception:
+                cache_path.unlink(missing_ok=True)
+                existing = None
+            if existing is not None and existing.num_rows == 0:
+                cache_path.unlink(missing_ok=True)
+                existing = None
+        if existing is not None:
             cache_start = existing["open_time_utc"][0].as_py()
             cache_end = existing["open_time_utc"][-1].as_py()
             if cache_start <= start_at and cache_end >= end_at - timedelta(minutes=TIMEFRAMES[timeframe]):
@@ -162,7 +173,7 @@ class TimeframeBarService:
             )
         else:
             merged = fresh.sort_by("open_time_utc")
-        pq.write_table(merged, cache_path, compression="zstd")
+        _atomic_write_parquet(merged, cache_path)
 
     def _load_one_minute_range(self, start_at: datetime, end_at: datetime) -> pa.Table:
         tables: list[pa.Table] = []
@@ -197,16 +208,45 @@ class TimeframeBarService:
         filename = f"{self.symbol}-1m-{year:04d}-{month:02d}.parquet"
         local_path = self.cache_root / "1m" / filename
         if local_path.exists():
-            return local_path
+            try:
+                pq.read_table(local_path)
+                return local_path
+            except Exception:
+                local_path.unlink(missing_ok=True)
         remote = self.canonical_root / str(year) / filename
+        temporary = local_path.with_name(f".{local_path.name}.{uuid.uuid4().hex}.tmp")
         if self.ssh_host:
             local_path.parent.mkdir(parents=True, exist_ok=True)
-            command = ["scp", "-i", str(self.ssh_key), f"{self.ssh_host}:{remote}", str(local_path)]
-            subprocess.run(command, check=True, capture_output=True)
+            command = [
+                "scp",
+                "-i",
+                str(self.ssh_key),
+                "-o",
+                "BatchMode=yes",
+                "-o",
+                "ConnectTimeout=15",
+                f"{self.ssh_host}:{remote}",
+                str(temporary),
+            ]
+            try:
+                subprocess.run(command, check=True, capture_output=True, timeout=300)
+            except Exception:
+                temporary.unlink(missing_ok=True)
+                raise
         elif remote.exists():
-            local_path.write_bytes(remote.read_bytes())
+            try:
+                shutil.copyfile(remote, temporary)
+            except Exception:
+                temporary.unlink(missing_ok=True)
+                raise
         else:
             return local_path.parent / filename
+        try:
+            pq.read_table(temporary)
+            os.replace(temporary, local_path)
+        except Exception:
+            temporary.unlink(missing_ok=True)
+            raise
         return local_path
 
     def _cache_path(self, timeframe: str) -> Path:
@@ -248,6 +288,17 @@ def _serialize_row(row: dict) -> dict:
         "trade_count": int(row["trade_count"]),
         "complete": bool(row.get("complete", True)),
     }
+
+
+def _atomic_write_parquet(table: pa.Table, path: Path) -> None:
+    temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        pq.write_table(table, temporary, compression="zstd")
+        pq.read_table(temporary)
+        os.replace(temporary, path)
+    except Exception:
+        temporary.unlink(missing_ok=True)
+        raise
 
 
 def _visible_bar_count(candles: list[dict], visible_start: str | None, visible_end: str | None) -> int:

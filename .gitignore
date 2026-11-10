@@ -1,4 +1,49 @@
 
+# Python bytecode
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+.venv_*/
+env/
+
+# IDE and agent state
+.idea/
+.cursor/
+.vscode/
+
+# Secrets and credentials
+.env
+*.env
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Runtime data and logs
+data/
+logs/
+app.log
+*.log
+*.sqlite
+*.sqlite3
+*.db
+*.parquet
+*.pt
+*.pth
+
+# Local restoration and build output
+.repair_stage_*/
+.pytest_tmp*/
+build/
+dist/
+*.egg-info/
+node_modules/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
 

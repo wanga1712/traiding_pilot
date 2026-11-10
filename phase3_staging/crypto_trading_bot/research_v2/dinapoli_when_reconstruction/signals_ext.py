@@ -52,6 +52,8 @@ def dma_signals(bars, *, candidate_id, period, display_shift, decision_tf, scan_
         src, src_prev = _src(i, shift), _src(i - 1, shift)
         if src < 0 or src_prev < 0:
             continue
+        if arrays.gap_flags[src] or arrays.gap_flags[src_prev]:
+            continue
         if not samples[src].valid or not samples[src_prev].valid:
             continue
         dma, dma_prev = samples[src].values.get("dma"), samples[src_prev].values.get("dma")
@@ -119,6 +121,10 @@ def stoch_obos_signals(
             continue
         src, src_prev = _src(i, shift), _src(i - 1, shift)
         if src < 0 or src_prev < 0:
+            continue
+        if arrays.gap_flags[src] or arrays.gap_flags[src_prev]:
+            was_os = False
+            was_ob = False
             continue
         if not samples[src].valid or not samples[src_prev].valid:
             continue
@@ -191,6 +197,8 @@ def macd_signals(bars, *, candidate_id, fast, slow, signal, display_shift, decis
             continue
         src, src_prev = _src(i, shift), _src(i - 1, shift)
         if src < 0 or src_prev < 0:
+            continue
+        if arrays.gap_flags[src] or arrays.gap_flags[src_prev]:
             continue
         if not samples[src].valid or not samples[src_prev].valid:
             continue

@@ -57,8 +57,9 @@ def compute_dma_series(
 
         dma_v = float(ma[i])
         price = float(arrays.close[i])
-        prev_price = float(arrays.close[i - 1]) if i > 0 else None
-        prev_dma = float(ma[i - 1]) if i > 0 and not np.isnan(ma[i - 1]) else None
+        prev_contiguous = i >= period and contiguous_ok(arrays.gap_flags, i - period, i - 1)
+        prev_price = float(arrays.close[i - 1]) if prev_contiguous else None
+        prev_dma = float(ma[i - 1]) if prev_contiguous and not np.isnan(ma[i - 1]) else None
 
         price_above = price > dma_v
         price_below = price < dma_v
@@ -85,7 +86,7 @@ def compute_dma_series(
                     "PRICE_BELOW_DMA": price_below,
                     "PRICE_CROSS_UP_DMA": cross_up,
                     "PRICE_CROSS_DOWN_DMA": cross_down,
-                    "DMA_SLOPE": slope_last(ma, i),
+                    "DMA_SLOPE": slope_last(ma, i) if prev_dma is not None else None,
                     "DISTANCE_PRICE_DMA_ABS": dist_abs,
                     "DISTANCE_PRICE_DMA_PCT": dist_pct,
                     "DISTANCE_PRICE_DMA_ATR": dist_atr,
