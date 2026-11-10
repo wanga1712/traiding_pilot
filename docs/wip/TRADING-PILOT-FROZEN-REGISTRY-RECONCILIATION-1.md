@@ -1,9 +1,9 @@
 # WIP=TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1
 
-STATUS=REVIEW
+STATUS=CLOSED
 
 STARTED_AT=2026-11-10
-CLOSED_AT=
+CLOSED_AT=2026-11-10
 
 ## Goal
 
@@ -150,7 +150,7 @@ GIT_COMMIT=ee4c5dabe51e0fe6b3558d0c484c10ff30fa4b75
 
 ```text
 WIP=TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1
-STATUS=REVIEW
+STATUS=CLOSED
 LOCAL_BRANCH=diagnostic/trading-pilot-frozen-registry-reconciliation-1
 LOCAL_HEAD=ee4c5dabe51e0fe6b3558d0c484c10ff30fa4b75
 BASE_MAIN=1bfdb9708df635e83971f1e9a6e9545b543f8d77
@@ -170,8 +170,9 @@ NEXT_WIP_PROPOSAL=TRADING-PILOT-FROZEN-REGISTRY-TEST-ALIGNMENT-1
 
 ## Decision
 
-Diagnosis complete; awaiting user review. No artifact or routing repair was
-performed.
+Diagnostic accepted by the user. The V2 test contract was aligned without
+changing frozen artifacts. Full `indicator_parameter_search` suite: 44 passed.
+No frozen artifact or routing repair was performed.
 
 ## Roadmap update
 

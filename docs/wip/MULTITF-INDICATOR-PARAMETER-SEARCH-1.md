@@ -1,6 +1,6 @@
 # WIP=MULTITF-INDICATOR-PARAMETER-SEARCH-1
 
-STATUS=ACTIVE
+STATUS=CLOSED
 
 ## Purpose
 
@@ -46,3 +46,15 @@ Required freeze commits:
 ## Next WIP (not activated)
 
 `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` = PLANNED
+
+## Closure evidence
+
+- `artifacts/MULTITF-INDICATOR-PARAMETER-SEARCH-1/wip_closure_v1.json`
+- `validation_independent_review_v1.json`: `VALIDATION_EXECUTION_STATUS=ACCEPTED`
+- closure commit: `f232422`
+- final active registry authority: `SEARCH_SPEC_V2`
+- v1 status: `SUPERSEDED_INVALID_EXECUTION_SPEC`
+- OOS opened: `NO`
+- PnL tested: `NO`
+
+GIT_COMMIT=f232422

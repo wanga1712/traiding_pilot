@@ -1,77 +1,94 @@
-# WIP — TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1
+# WIP — TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1
 
-STATUS=REVIEW
+STATUS=ACTIVE
 STARTED_AT=2026-11-10
-MODE=DIAGNOSTIC / READ-ONLY / NO RESEARCH / NO DEPLOY
-REPOSITORY=wanga1712/traiding_pilot
-TARGET_BRANCH=main
+MODE=BUILD + RUN / HISTORICAL SIMULATION ONLY
+INITIAL_CAPITAL=100 USDT
+ASSET=ETHUSDT
+LEVERAGE=10X_ISOLATED
+HEDGE_MODE=ENABLED_IN_SIMULATOR
+LIVE_TRADING=DISABLED
 
-## Goal
+## Authorization
 
-Determine why 10 `indicator_parameter_search` tests disagree with the frozen
-registry/spec artifacts and candidate routing code, without changing those
-artifacts or running research.
+- `USER_APPROVAL=YES`
+- `DATE=2026-11-10`
+- `SCOPE=BUILD_AND_RUN_HISTORICAL_SIMULATION`
+- S13 execution and modification authorized.
+- S7 remains read-only and out of scope.
+- Existing OOS/confirmation, CatBoost models, and frozen research artifacts
+  remain immutable.
 
-## Parent
+## Governance prerequisites
 
-- Parent WIP: `TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1`
-- Parent status: ACCEPTED / CLOSED
-- Parent implementation commit: `a24442fe1c6b6658545fb763d31ad9e4f9f8a544`
-- Base main: `1bfdb9708df635e83971f1e9a6e9545b543f8d77`
+- `MULTITF-INDICATOR-PARAMETER-SEARCH-1`: CLOSED based on
+  `wip_closure_v1.json`, accepted independent review, and commit `f232422`.
+- `TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1`: CLOSED after V2 test-contract
+  alignment; full suite `44 passed`.
+- Frozen V2 registry matches current code with 0 mismatches.
 
-## Scope
+## Work plan
 
-- Reproduce the 10 known failures.
-- Separate file-encoding/line-ending hash mismatches from semantic registry and
-  routing mismatches.
-- Compare the frozen CSV/JSON schema and route fields with the code that reads
-  them.
-- Identify the authoritative version and propose a minimal repair path.
-- Do not modify frozen artifacts or production routing in this WIP.
+- [ ] Commit governance/test-contract correction.
+- [ ] Implement simulator package and risk engine.
+- [ ] Add synthetic unit/integration tests.
+- [ ] Run local test suite.
+- [ ] Deploy code and dependencies to an isolated S13 workspace.
+- [ ] Run data preflight for spot, futures mark, funding, fees, maintenance
+  margin, and gaps.
+- [ ] Execute RUN 1 discovery if preflight passes.
+- [ ] Freeze configurations and SHA256.
+- [ ] Execute RUN 2 validation without retuning.
+- [ ] Produce equity curves, event journals, liquidation/cost reports, and
+  controls.
+- [ ] Set STATUS=REVIEW and stop.
 
-## Constraints
+## Mandatory data gate
 
-- No market research.
-- No OOS or confirmation access.
-- No CatBoost or other model training.
-- No model, prediction, or frozen-result changes.
-- No S7/S13 access or mutation.
-- No deployment, service restart, or migration.
-- No candidate search, backtest, or research pipeline execution.
-- No automatic start of a later implementation WIP.
+RUN 1 requires:
 
-## Acceptance criteria
+- ETHUSDT price history covering both approved chronological years.
+- Futures mark/contract price history or documented exchange-rule approximation.
+- Historical funding.
+- Fee and slippage inputs.
+- Maintenance-margin tier inputs sufficient for 10x isolated liquidation.
+- Gap coverage.
 
-- All 10 failures are classified as encoding-only or semantic.
-- Each semantic mismatch cites the frozen field and routing expectation.
-- The authoritative artifact version is identified.
-- A minimal, reviewable reconciliation plan is documented.
-- No research artifact or runtime host is changed.
+If any mandatory input is unavailable, RUN 1 stops with an explicit blocker.
 
-- Reproduced: 10/10 failures.
-- Encoding-only: 2.
-- Semantic/test-expectation drift: 8.
-- Frozen V2 is authoritative.
-- Existing V2 data matches current code without registry mismatches.
+## Safety
+
+- No live orders, API keys, withdrawals, deploy of services, or trading.
+- Do not modify S7.
+- Do not open old OOS/confirmation.
+- Do not modify CatBoost or frozen result artifacts.
+- Do not tune on RUN 2.
+- Keep all runtime outputs under an isolated S13 experiment directory.
 
 ## RETURN
 
 ```text
-WIP=TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1
-STATUS=REVIEW
-LOCAL_BRANCH=diagnostic/trading-pilot-frozen-registry-reconciliation-1
-LOCAL_HEAD=ee4c5dabe51e0fe6b3558d0c484c10ff30fa4b75
-BASE_MAIN=1bfdb9708df635e83971f1e9a6e9545b543f8d77
-PARENT_CLOSED=TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1
-TESTS_REPRODUCED=10
-ENCODING_ONLY=2
-SEMANTIC_MISMATCH=8
-AUTHORITY=FROZEN_SEARCH_SPEC_V2
-RUNTIME_REGISTRY_MISMATCH=0
-ROUTING_UNRESOLVED=0
-ARTIFACT_CHANGES=none
-RESEARCH_RERUN=none
-S7_S13_ACCESS=none
-DEPLOY=none
-NEXT_WIP_PROPOSAL=TRADING-PILOT-FROZEN-REGISTRY-TEST-ALIGNMENT-1
+WIP=TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1
+STATUS=IN_PROGRESS
+LOCAL_BRANCH=wip/trading-pilot-capital-growth-experiment-1
+LOCAL_HEAD=
+BASE_MAIN=b3567bd4c952d65e55b05c909a6e0c11ac31fbce
+INITIAL_CAPITAL=100
+LEVERAGE=10
+HEDGE_MODE=ENABLED_IN_SIMULATOR
+RUN1=pending
+RUN2=pending
+CONFIG_SHA=
+PRIMARY_PNL=
+HEDGE_PNL=
+AVERAGING_EFFECT=
+LIQUIDATIONS_PREVENTED=
+LIQUIDATIONS_OCCURRED=
+FINAL_EQUITY=
+MAX_DRAWDOWN=
+BEATS_UNHEDGED_CONTROL=
+BEATS_BUY_AND_HOLD=
+OOS_OPENED=NO
+LIVE_TRADING=NO
+NEXT_WIP=none
 ```

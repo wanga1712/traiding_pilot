@@ -61,7 +61,7 @@ recorded as TPA-010 for user decision rather than changed in this audit.
 | Field | Value |
 |---|---|
 | **WIP** | `TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1` |
-| **STATUS** | REVIEW |
+| **STATUS** | CLOSED |
 | **MODE** | DIAGNOSTIC / READ-ONLY / NO RESEARCH / NO DEPLOY |
 | **BASE MAIN** | `1bfdb9708df635e83971f1e9a6e9545b543f8d77` |
 | **REPORT** | [`docs/wip/TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1.md`](docs/wip/TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1.md) |
@@ -80,17 +80,17 @@ recorded as TPA-010 for user decision rather than changed in this audit.
 | **ACTIVATION GATE** | Explicit user activation after prerequisite WIP review |
 | **FLOW** | News/sentiment dataset approval → separate Crash Risk Predictor V1 training WIP |
 
-## Proposed historical simulation WIP (not active)
+## Current historical simulation WIP
 
 | Field | Value |
 |---|---|
 | **WIP** | `TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1` |
-| **STATUS** | PLANNED |
-| **REGISTRATION** | PROPOSED |
+| **STATUS** | ACTIVE |
+| **REGISTRATION** | AUTHORIZED |
 | **MODE** | BUILD + RUN / HISTORICAL SIMULATION ONLY |
 | **CAPITAL MODEL** | 100 USDT; 10x isolated; hedge mode |
 | **REPORT** | [`docs/wip/TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1.md`](docs/wip/TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1.md) |
-| **ACTIVATION GATE** | Explicit user activation under the one-active-primary-WIP rule |
+| **ACTIVATION GATE** | PASS — user approved 2026-11-10 |
 | **LIVE TRADING** | DISABLED |
 
 **Current:**  
@@ -1074,7 +1074,7 @@ NEXT_WIP:
 
 ### WIP=MULTITF-INDICATOR-PARAMETER-SEARCH-1
 
-STATUS=ACTIVE
+STATUS=CLOSED
 
 PHASE=8a — Multi-TF indicator parameter search
 
@@ -1088,10 +1088,10 @@ ARTIFACTS:
 `artifacts/MULTITF-INDICATOR-PARAMETER-SEARCH-1/`
 
 GIT_COMMIT:  
-PENDING
+f232422
 
 RESULT_SUMMARY:  
-PENDING
+Accepted validation closure. Active authority is SEARCH_SPEC_V2. Discovery FDR was invalid and not used for selection; redundancy was diagnostic only. Validation accepted; OOS opened NO; PnL tested NO. Evidence: `wip_closure_v1.json` and `validation_independent_review_v1.json`.
 
 ### WIP=PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1
 
@@ -1613,9 +1613,9 @@ none (end of planned chain)
 | PROJECT-RESEARCH-ROADMAP-AND-WIP-GOVERNANCE-1 | CLOSED | Governance |
 | TRADING-PILOT-BASELINE-AND-AUDIT-1 | CLOSED | Operational audit |
 | TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1 | CLOSED | Operational repair |
-| TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1 | REVIEW | Frozen-registry diagnostic |
+| TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1 | CLOSED | Frozen-registry diagnostic |
 | MARKET-SENTIMENT-AND-NEWS-DATASET-1 | PLANNED | Research data |
-| TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1 | PLANNED | Historical simulation |
+| TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1 | ACTIVE | Historical simulation |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
@@ -1629,7 +1629,7 @@ none (end of planned chain)
 | MULTITF-DISPLACED-INDICATOR-AND-GEOMETRY-BANK-1 | CLOSED | 8a |
 | OSCILLATOR-PREDICTOR-REFERENCE-1 | CLOSED | 8a |
 | OSCILLATOR-PREDICTOR-HISTORICAL-EVENT-STUDY-1 | CLOSED | 8a |
-| MULTITF-INDICATOR-PARAMETER-SEARCH-1 | ACTIVE | 8a |
+| MULTITF-INDICATOR-PARAMETER-SEARCH-1 | CLOSED | 8a |
 | PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1 | CLOSED_NEGATIVE | 8b |
 | PROBABILITY-TRADING-POLICY-RESEARCH-1 | REVIEW | 8b |
 | TRADING-AGENT-FOUNDATION-AND-RESOURCE-ISOLATION-1 | PLANNED | 8b |

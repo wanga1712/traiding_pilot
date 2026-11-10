@@ -27,7 +27,9 @@ from crypto_trading_bot.research_v2.indicator_parameter_search.signals_bank impo
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-FROZEN_CSV = REPO_ROOT / "artifacts" / "MULTITF-INDICATOR-PARAMETER-SEARCH-1" / "candidate_registry_snapshot_v1.csv"
+ARTIFACT_ROOT = REPO_ROOT / "artifacts" / "MULTITF-INDICATOR-PARAMETER-SEARCH-1"
+FROZEN_CSV_V1 = ARTIFACT_ROOT / "candidate_registry_snapshot_v1.csv"
+FROZEN_CSV = ARTIFACT_ROOT / "candidate_registry_snapshot_v2.csv"
 
 
 @pytest.fixture(scope="module")
@@ -36,12 +38,17 @@ def frozen_registry() -> list[dict]:
 
 
 @pytest.fixture(scope="module")
+def frozen_registry_v1() -> list[dict]:
+    return load_frozen_registry(FROZEN_CSV_V1)
+
+
+@pytest.fixture(scope="module")
 def built_registry() -> list[dict]:
     return build_candidate_registry()
 
 
-def test_frozen_registry_deserialization(frozen_registry):
-    stats = registry_deserialization_stats(frozen_registry)
+def test_frozen_registry_deserialization(frozen_registry_v1):
+    stats = registry_deserialization_stats(frozen_registry_v1)
     assert stats["FROZEN_REGISTRY_ROW_COUNT"] == 3220
     assert stats["FROZEN_REGISTRY_PARAMETERS_DICT_COUNT"] == 3220
     assert stats["FROZEN_REGISTRY_PARAMETERS_STRING_COUNT"] == 0
@@ -58,7 +65,7 @@ def test_production_loader_uses_frozen_csv(monkeypatch, frozen_registry):
         FROZEN_CSV.parent,
     )
     prod = _load_frozen_registry()
-    assert len(prod) == 3220
+    assert len(prod) == 3200
     assert all(isinstance(r["parameters"], dict) for r in prod)
     mismatch_count, _ = compare_registry_semantics(prod, frozen_registry)
     assert mismatch_count == 0
@@ -70,13 +77,15 @@ def test_inverse_predictor_rows(frozen_registry):
     for row in inv:
         params = row_parameters(row)
         assert isinstance(params, dict)
-        assert params.get("inverse_route")
-        assert resolve_candidate_route(row) == "INVERSE"
+        expected_route = params.get("inverse_parameter_set_id")
+        assert expected_route
+        assert resolve_candidate_route(row) == expected_route
 
 
 def test_dno_quantile_control_route(frozen_registry):
     rows = [r for r in frozen_registry if r["parameter_set_id"] == "CAUSAL_DNO_QUANTILE_80_20_CONTROL_V1"]
     assert rows
+    assert all(r["family"] == "DNO_QUANTILE" for r in rows)
     assert all(is_quantile_control_row(r) for r in rows)
     assert all(resolve_candidate_route(r) == "DNO_QUANTILE_CONTROL" for r in rows)
 
@@ -84,15 +93,17 @@ def test_dno_quantile_control_route(frozen_registry):
 def test_dno_period_7_reference_semantics(frozen_registry):
     row = next(r for r in frozen_registry if r["parameter_set_id"] == "DNO_PERIOD_7_REFERENCE" and r["decision_tf"] == "1H")
     params = row_parameters(row)
-    assert params == {"period": 7, "family": "DNO_ONLY"}
-    assert resolve_candidate_route(row) == "PREDICTOR"
+    assert row["family"] == "PURE_DNO"
+    assert params["period"] == 7
+    assert row["event_primitive"] in ("DNO_ZERO_CROSS_UP", "DNO_ZERO_CROSS_DOWN")
+    assert resolve_candidate_route(row) == "PURE_DNO"
 
 
 def test_candidate_routing_preflight_all_rows(frozen_registry):
     from crypto_trading_bot.research_v2.indicator_parameter_search.candidate_routing import representative_bars_by_tf
 
     report = run_candidate_routing_preflight(frozen_registry, bars_by_tf=representative_bars_by_tf())
-    assert report["CANDIDATE_ROUTING_PREFLIGHT_TOTAL"] == 3220
+    assert report["CANDIDATE_ROUTING_PREFLIGHT_TOTAL"] == 3200
     assert report["CANDIDATE_ROUTING_PREFLIGHT_EXCEPTION_COUNT"] == 0
     assert report["CANDIDATE_ROUTING_PREFLIGHT_UNRESOLVED_COUNT"] == 0
 

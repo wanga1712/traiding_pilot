@@ -1,10 +1,10 @@
 # WIP=TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1
 
-STATUS=PLANNED
-REGISTRATION=PROPOSED
-ACTIVATED=NO
+STATUS=ACTIVE
+REGISTRATION=AUTHORIZED
+ACTIVATED=YES
 
-STARTED_AT=
+STARTED_AT=2026-11-10
 CLOSED_AT=
 MODE=BUILD + RUN / HISTORICAL SIMULATION ONLY
 INITIAL_CAPITAL=100 USDT
@@ -21,6 +21,15 @@ position to offset adverse movement.
 
 The primary position may be LONG or SHORT. The hedge is always opposite and is
 a temporary risk-reduction position, not an automatic symmetric copy.
+
+## Authorization
+
+- `USER_APPROVAL=YES`
+- `DATE=2026-11-10`
+- `SCOPE=BUILD_AND_RUN_HISTORICAL_SIMULATION`
+- `LIVE_TRADING=NO`
+- S13 execution and modification authorized by the user.
+- S7 remains read-only and out of scope.
 
 ## Capital structures
 
@@ -200,7 +209,7 @@ NEXT_WIP=none
 
 ## Decision
 
-Proposed only. Not activated.
+Activated for historical simulator build and RUN 1 → freeze → RUN 2.
 
 ## Roadmap update
 

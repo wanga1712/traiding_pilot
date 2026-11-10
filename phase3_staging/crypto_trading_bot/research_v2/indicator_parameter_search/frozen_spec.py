@@ -17,6 +17,8 @@ REGISTRY_V1_REL = "artifacts/MULTITF-INDICATOR-PARAMETER-SEARCH-1/candidate_regi
 SEARCH_SPEC_V2_FREEZE_COMMIT = "eb561bc1298bd2b0ec5e21cc4ac6c690ec148bad"
 EXPECTED_SEARCH_SPEC_V2_SHA256 = "08ea6ee5d857317594691fa668ec8f41f4e32fd2f5df61defc0d3dbc7b601fac"
 EXPECTED_CANDIDATE_REGISTRY_V2_SHA256 = "3940fe68ab87d54bf171ee119d40f4b2d23a81f0adcfb403bb361a5ffb620d15"
+EXPECTED_SEARCH_SPEC_V2_GIT_BLOB_SHA256 = "981fda57ffeaa6d0f92dcd839a81b3de9ecf98089045e55223372b2f278aaa48"
+EXPECTED_CANDIDATE_REGISTRY_V2_GIT_BLOB_SHA256 = "13e54358d22283f361141cc658103b34bf3ff4f232cea7315ba962b9f70c49a1"
 
 SEARCH_SPEC_V2_REL = "artifacts/MULTITF-INDICATOR-PARAMETER-SEARCH-1/search_spec_v2.json"
 REGISTRY_V2_REL = "artifacts/MULTITF-INDICATOR-PARAMETER-SEARCH-1/candidate_registry_snapshot_v2.csv"
@@ -30,7 +32,8 @@ REGISTRY_REL = REGISTRY_V1_REL
 
 
 def _sha256_bytes(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
+    canonical = data.replace(b"\r\n", b"\n")
+    return hashlib.sha256(canonical).hexdigest()
 
 
 def _sha256_file(path: Path) -> str:
@@ -106,8 +109,8 @@ def verify_frozen_v2_artifacts(artifact_root: Path) -> dict[str, str]:
     import crypto_trading_bot.research_v2.indicator_parameter_search.frozen_spec as mod
 
     freeze_commit = mod.SEARCH_SPEC_V2_FREEZE_COMMIT
-    expected_spec = mod.EXPECTED_SEARCH_SPEC_V2_SHA256
-    expected_registry = mod.EXPECTED_CANDIDATE_REGISTRY_V2_SHA256
+    expected_spec = mod.EXPECTED_SEARCH_SPEC_V2_GIT_BLOB_SHA256
+    expected_registry = mod.EXPECTED_CANDIDATE_REGISTRY_V2_GIT_BLOB_SHA256
     return _verify_pair(
         artifact_root,
         spec_name="search_spec_v2.json",
