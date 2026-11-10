@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from .accounting import FuturesAccount, Position, SpotAccount
@@ -38,6 +39,10 @@ def _max_drawdown(values: list[float]) -> float:
 
 def _equity(futures: FuturesAccount, spot: SpotAccount, mark: float) -> float:
     return float(spot.equity(mark) + futures.equity(mark))
+
+
+def _affordable_margin(free_collateral: float, leverage: float, fee_rate: float) -> float:
+    return max(0.0, float(free_collateral)) / ((1.0 + float(leverage) * float(fee_rate)) * (1.0 + 1e-12))
 
 
 def simulate_portfolio(
@@ -90,6 +95,13 @@ def simulate_portfolio(
         if pd.notna(rate)
     }
     decision_by_index = dict(decisions)
+    daily_close = (
+        frame.set_index("open_time")["close"]
+        .astype(float)
+        .resample("1D")
+        .last()
+        .dropna()
+    )
 
     if config.spot_mode == "HOLD":
         spot.buy_to_target(
@@ -104,6 +116,49 @@ def simulate_portfolio(
 
     def role_position(role: str) -> Position | None:
         return futures.primary if role == "PRIMARY" else futures.hedge
+
+    def recovery_estimate(time: pd.Timestamp, direction: int) -> dict[str, Any]:
+        history = daily_close[daily_close.index < time].tail(366)
+        if len(history) < 40:
+            return {
+                "recovery_p50_hours": None,
+                "recovery_p90_hours": None,
+                "recovery_unresolved_rate": None,
+                "recovery_sample_count": 0,
+            }
+        if direction > 0:
+            reference = history.rolling(30, min_periods=10).max().shift(1)
+            excursion = 1.0 - history / reference
+            current_reference = float(history.tail(30).max())
+            current_excursion = max(0.0, 1.0 - float(history.iloc[-1]) / current_reference)
+            adverse = excursion >= max(0.05, current_excursion)
+            recovered = history >= reference
+        else:
+            reference = history.rolling(30, min_periods=10).min().shift(1)
+            excursion = history / reference - 1.0
+            current_reference = float(history.tail(30).min())
+            current_excursion = max(0.0, float(history.iloc[-1]) / current_reference - 1.0)
+            adverse = excursion >= max(0.05, current_excursion)
+            recovered = history <= reference
+        starts = np.flatnonzero(adverse.fillna(False).to_numpy())
+        durations: list[float] = []
+        unresolved = 0
+        for start in starts:
+            found = None
+            for index in range(start + 1, len(history)):
+                if bool(recovered.iloc[index]):
+                    found = index
+                    break
+            if found is None:
+                unresolved += 1
+            else:
+                durations.append((found - start) * 24.0)
+        return {
+            "recovery_p50_hours": float(np.percentile(durations, 50)) if durations else None,
+            "recovery_p90_hours": float(np.percentile(durations, 90)) if durations else None,
+            "recovery_unresolved_rate": unresolved / len(starts) if len(starts) else 0.0,
+            "recovery_sample_count": len(starts),
+        }
 
     def close_role(time: pd.Timestamp, role: str, price: float, reason: str) -> bool:
         nonlocal state
@@ -175,6 +230,13 @@ def simulate_portfolio(
     def open_primary(time: pd.Timestamp, price: float, direction: int) -> None:
         nonlocal state, thesis_direction, primary_opened_at, hedge_cycles, hedge_close_streak, next_average_level, cycle_number
         desired = futures_budget * exec_cfg.primary_budget_fraction
+        entry_report_risk = replace(
+            config.risk,
+            max_loss_fraction_total_equity=(
+                config.risk.max_loss_fraction_total_equity
+                * strategy.primary_risk_headroom_fraction
+            ),
+        )
         margin, report = maximum_margin_for_limit(
             futures,
             spot,
@@ -182,9 +244,12 @@ def simulate_portfolio(
             side=direction,
             desired_margin=desired,
             execution=exec_cfg,
-            risk=config.risk,
+            risk=entry_report_risk,
         )
-        margin = min(margin, futures.free_collateral)
+        margin = min(
+            margin,
+            _affordable_margin(futures.free_collateral, exec_cfg.leverage, exec_cfg.taker_fee_per_side),
+        )
         if margin <= 1e-6:
             emit(time, "PRIMARY_SKIPPED", reason="RISK_LIMIT", risk=report)
             return
@@ -198,6 +263,7 @@ def simulate_portfolio(
             fee_rate=exec_cfg.taker_fee_per_side,
             leverage=exec_cfg.leverage,
         )
+        position.metadata.update(recovery_estimate(time, direction))
         cycle_number += 1
         thesis_direction = direction
         primary_opened_at = time
@@ -226,13 +292,24 @@ def simulate_portfolio(
             else signal["close"] - futures.primary.average_entry
         )
         atr = signal.get("atr") or 0.0
-        if atr <= 0 or adverse < strategy.hedge_atr_mult * atr or signal["direction"] != side:
+        fast = signal.get("fast")
+        contra_confirmed = (
+            fast is not None
+            and (
+                (futures.primary.side > 0 and signal["close"] < fast)
+                or (futures.primary.side < 0 and signal["close"] > fast)
+            )
+        )
+        if atr <= 0 or adverse < strategy.hedge_atr_mult * atr or not contra_confirmed:
             return
         primary_notional = futures.primary.notional(price)
         reserve_cap = futures_budget * exec_cfg.hedge_budget_fraction
         for fraction in strategy.hedge_fractions:
             desired = min(reserve_cap, primary_notional * fraction / exec_cfg.leverage)
-            desired = min(desired, futures.free_collateral)
+            desired = min(
+                desired,
+                _affordable_margin(futures.free_collateral, exec_cfg.leverage, exec_cfg.taker_fee_per_side),
+            )
             margin, report = maximum_margin_for_limit(
                 futures,
                 spot,
@@ -273,7 +350,25 @@ def simulate_portfolio(
         nonlocal state, next_average_level
         if futures.primary is None or not config.averaging_enabled:
             return
-        if next_average_level >= len(strategy.averaging_atr_levels) or signal["direction"] != futures.primary.side:
+        fast = signal.get("fast")
+        slow = signal.get("slow")
+        thesis_intact = (
+            fast is not None
+            and slow is not None
+            and (
+                (
+                    futures.primary.side > 0
+                    and fast > slow
+                    and signal["close"] > slow
+                )
+                or (
+                    futures.primary.side < 0
+                    and fast < slow
+                    and signal["close"] < slow
+                )
+            )
+        )
+        if next_average_level >= len(strategy.averaging_atr_levels) or not thesis_intact:
             return
         atr = signal.get("atr") or 0.0
         if atr <= 0:
@@ -287,7 +382,10 @@ def simulate_portfolio(
         if adverse < level * atr:
             return
         desired = futures_budget * exec_cfg.averaging_budget_fractions[next_average_level]
-        desired = min(desired, futures.free_collateral)
+        desired = min(
+            desired,
+            _affordable_margin(futures.free_collateral, exec_cfg.leverage, exec_cfg.taker_fee_per_side),
+        )
         margin, report = maximum_margin_for_limit(
             futures,
             spot,
@@ -352,10 +450,14 @@ def simulate_portfolio(
                 else:
                     hedge_close_streak = 0
             held_hours = (time - primary_opened_at).total_seconds() / 3600.0 if primary_opened_at else 0.0
-            if signal["direction"] == -futures.primary.side and held_hours >= strategy.min_hold_hours:
+            open_hedge(time, price, signal)
+            if (
+                futures.hedge is None
+                and signal["direction"] == -futures.primary.side
+                and held_hours >= strategy.min_hold_hours
+            ):
                 finish_cycle(time, price, reason="TREND_REVERSAL")
-            else:
-                open_hedge(time, price, signal)
+            elif futures.primary is not None:
                 average_primary(time, price, signal)
 
         if signal is not None and futures.primary is None and futures.free_collateral > 0 and signal["direction"] != 0:
@@ -484,6 +586,29 @@ def simulate_portfolio(
         trades_frame["holding_hours"] = (exit_ - entry).dt.total_seconds() / 3600.0
         metrics["mean_holding_hours"] = float(trades_frame["holding_hours"].mean())
         metrics["max_holding_hours"] = float(trades_frame["holding_hours"].max())
+        recovery_primary = trades_frame[
+            (trades_frame["role"] == "PRIMARY")
+            & trades_frame["recovery_p50_hours"].notna()
+            & trades_frame["holding_hours"].notna()
+        ]
+        if not recovery_primary.empty:
+            errors = (
+                recovery_primary["holding_hours"] - recovery_primary["recovery_p50_hours"]
+            ).abs()
+            metrics["recovery_p50_mae_hours"] = float(errors.mean())
+            metrics["recovery_p50_accuracy_within_50pct"] = float(
+                (
+                    errors
+                    <= recovery_primary["recovery_p50_hours"].abs() * 0.5
+                ).mean()
+            )
+            metrics["recovery_unresolved_rate_mean"] = float(
+                recovery_primary["recovery_unresolved_rate"].mean()
+            )
+        else:
+            metrics["recovery_p50_mae_hours"] = None
+            metrics["recovery_p50_accuracy_within_50pct"] = None
+            metrics["recovery_unresolved_rate_mean"] = None
     return SimulationResult(
         portfolio=config.name,
         trades=trades_frame,

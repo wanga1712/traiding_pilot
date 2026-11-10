@@ -1,7 +1,8 @@
 # WIP — TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1
 
-STATUS=ACTIVE
+STATUS=REVIEW
 STARTED_AT=2026-11-10
+REVIEWED_AT=2026-11-10
 MODE=BUILD + RUN / HISTORICAL SIMULATION ONLY
 INITIAL_CAPITAL=100 USDT
 ASSET=ETHUSDT
@@ -9,85 +10,102 @@ LEVERAGE=10X_ISOLATED
 HEDGE_MODE=ENABLED_IN_SIMULATOR
 LIVE_TRADING=DISABLED
 
-## Authorization
+## Outcome
 
-- `USER_APPROVAL=YES`
-- `DATE=2026-11-10`
-- `SCOPE=BUILD_AND_RUN_HISTORICAL_SIMULATION`
-- S13 execution and modification authorized.
-- S7 remains read-only and out of scope.
-- Existing OOS/confirmation, CatBoost models, and frozen research artifacts
-  remain immutable.
+The historical experiment completed with a reproducible PASS data gate and
+hash-frozen RUN 1 configuration.
 
-## Governance prerequisites
+- RUN 1: 2020-01-01 through 2021-01-01 UTC.
+- RUN 2: 2021-01-01 through 2022-01-01 UTC, without retuning.
+- Dynamic hedging beat the matching unhedged control in `0/8` comparisons.
+- Hedged portfolios had 65 liquidation events; unhedged controls had 49.
+- The best result in both runs was `A_HOLD_UNHEDGED_AVG`.
+- Best final equity: 269.84 USDT in RUN 1 and 206.28 USDT in RUN 2.
+- Buy & Hold equivalents: 570.78 USDT in RUN 1 and 498.80 USDT in RUN 2.
+- `BEATS_BUY_AND_HOLD=NO`; no portfolio reached 500, 1,000, or 10,000 USDT.
 
-- `MULTITF-INDICATOR-PARAMETER-SEARCH-1`: CLOSED based on
-  `wip_closure_v1.json`, accepted independent review, and commit `f232422`.
-- `TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1`: CLOSED after V2 test-contract
-  alignment; full suite `44 passed`.
-- Frozen V2 registry matches current code with 0 mismatches.
+The conclusion is limited to this fixed baseline strategy and execution model.
+It does not prove that every possible hedge design cannot work.
 
-## Work plan
+## Completed work
 
-- [ ] Commit governance/test-contract correction.
-- [ ] Implement simulator package and risk engine.
-- [ ] Add synthetic unit/integration tests.
-- [ ] Run local test suite.
-- [ ] Deploy code and dependencies to an isolated S13 workspace.
-- [ ] Run data preflight for spot, futures mark, funding, fees, maintenance
-  margin, and gaps.
-- [ ] Execute RUN 1 discovery if preflight passes.
-- [ ] Freeze configurations and SHA256.
-- [ ] Execute RUN 2 validation without retuning.
-- [ ] Produce equity curves, event journals, liquidation/cost reports, and
-  controls.
-- [ ] Set STATUS=REVIEW and stop.
+- [x] Closed the stale governance blocker with documented authority.
+- [x] Implemented the two-position hedge/averaging simulator and risk engine.
+- [x] Added synthetic coverage for entry, hedge, averaging, liquidation, and
+  accounting paths.
+- [x] Passed the capital-growth suite locally and on S13: 11 tests each.
+- [x] Passed the governance prerequisite suite: 44 tests.
+- [x] Passed the S13 spot/futures/mark/funding data preflight.
+- [x] Executed RUN 1 and froze the configuration SHA256.
+- [x] Executed RUN 2 without changing the frozen configuration.
+- [x] Verified all 1,583 S13 artifacts against the inventory manifest.
+- [x] Published compact evidence and charts with the WIP report.
+- [x] Set `STATUS=REVIEW`; no next WIP was started.
 
-## Mandatory data gate
+## Data and integrity
 
-RUN 1 requires:
+| Field | Value |
+|---|---:|
+| Spot coverage | 99.7866% |
+| Futures coverage | 100% |
+| Mark-price coverage | 99.9950% |
+| Funding rows | 2,193 / 2,193 |
+| Duplicate rows | 0 |
+| Artifact count | 1,583 |
+| Manifest verification | PASS |
 
-- ETHUSDT price history covering both approved chronological years.
-- Futures mark/contract price history or documented exchange-rule approximation.
-- Historical funding.
-- Fee and slippage inputs.
-- Maintenance-margin tier inputs sufficient for 10x isolated liquidation.
-- Gap coverage.
+The full runtime artifact tree remains at:
 
-If any mandatory input is unavailable, RUN 1 stops with an explicit blocker.
+```text
+S13:/var/tmp/traiding_pilot_ui_workspace/capital_growth_experiment_v1/
+```
 
 ## Safety
 
-- No live orders, API keys, withdrawals, deploy of services, or trading.
-- Do not modify S7.
-- Do not open old OOS/confirmation.
-- Do not modify CatBoost or frozen result artifacts.
-- Do not tune on RUN 2.
-- Keep all runtime outputs under an isolated S13 experiment directory.
+- No live orders, withdrawals, deployment, or service restart.
+- S7 was not changed.
+- S13 mutation was limited to the isolated experiment workspace.
+- OOS/confirmation remained closed.
+- No CatBoost retraining or frozen-research modification.
+- No tuning was performed after RUN 2 was observed.
+
+## Artifacts
+
+- WIP report:
+  `docs/wip/TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1.md`
+- Summary and evidence:
+  `docs/wip/TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1/results/`
+- Local report suite: 11 PASS.
+- S13 report suite: 11 PASS.
 
 ## RETURN
 
 ```text
 WIP=TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1
-STATUS=IN_PROGRESS
+STATUS=REVIEW
 LOCAL_BRANCH=wip/trading-pilot-capital-growth-experiment-1
-LOCAL_HEAD=
-BASE_MAIN=b3567bd4c952d65e55b05c909a6e0c11ac31fbce
+BASE_MAIN=48d7b2abdfe4ea4a1a3b301be149a0993ee5a6fb
+SIMULATOR_BASELINE=6fe32abbf2ef53eb3914f99ef403850a3ba220e0
 INITIAL_CAPITAL=100
 LEVERAGE=10
 HEDGE_MODE=ENABLED_IN_SIMULATOR
-RUN1=pending
-RUN2=pending
-CONFIG_SHA=
-PRIMARY_PNL=
-HEDGE_PNL=
-AVERAGING_EFFECT=
-LIQUIDATIONS_PREVENTED=
-LIQUIDATIONS_OCCURRED=
-FINAL_EQUITY=
-MAX_DRAWDOWN=
-BEATS_UNHEDGED_CONTROL=
-BEATS_BUY_AND_HOLD=
+RUN1=2020-01-01..2021-01-01
+RUN2=2021-01-01..2022-01-01
+CONFIG_SHA=c7f44d8a022ceb6e882240c5c753dff60c9f0f91fdf5087c554a981db37bff57
+PRIMARY_PNL=A_HOLD_HEDGED_AVG_RUN1=-5.44;RUN2=-39.76
+HEDGE_PNL=A_HOLD_HEDGED_AVG_RUN1=-1.78;RUN2=-0.02
+AVERAGING_EFFECT=RUN1=-1.03/-4.28/-0.12/-3.30;RUN2=0/0/0/0
+LIQUIDATIONS_PREVENTED=-16
+LIQUIDATIONS_OCCURRED=65_HEDGED/49_UNHEDGED
+FINAL_EQUITY_RANGE=103.17..269.84
+MAX_DRAWDOWN=40.57_WORST
+BEATS_UNHEDGED_CONTROL=NO_0_OF_8
+BEATS_BUY_AND_HOLD=NO
+TESTS_RUN=LOCAL_11_PASS;S13_11_PASS;GOVERNANCE_PREREQ_44_PASS
+TESTS_FAILED=0
+ARTIFACT_MANIFEST=PASS_1583_FILES
+S7_CHANGED=NO
+FROZEN_RESEARCH_CHANGED=NO
 OOS_OPENED=NO
 LIVE_TRADING=NO
 NEXT_WIP=none

@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import hashlib
 import json
+import multiprocessing as mp
+import os
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -13,6 +16,11 @@ from .config import RUN1_END, RUN1_START, RUN2_END, RUN2_START, portfolio_matrix
 from .data import prepare_dataset
 from .simulator import SimulationResult, simulate_portfolio
 from .strategy import build_decision_frame, execution_events
+
+
+_WORK_FRAME: pd.DataFrame | None = None
+_WORK_FUNDING: pd.DataFrame | None = None
+_WORK_EVENTS: list[tuple[int, dict]] | None = None
 
 
 def sha256_file(path: Path) -> str:
@@ -67,13 +75,21 @@ def _run_stage(
     funding: pd.DataFrame,
     stage_root: Path,
 ) -> list[SimulationResult]:
+    global _WORK_FRAME, _WORK_FUNDING, _WORK_EVENTS
     decisions = build_decision_frame(frame)
     events = execution_events(decisions, frame["open_time"])
+    configs = portfolio_matrix()
+    workers = min(6, max(1, (os.cpu_count() or 1) - 1))
+    _WORK_FRAME, _WORK_FUNDING, _WORK_EVENTS = frame, funding, events
+    with concurrent.futures.ProcessPoolExecutor(
+        max_workers=workers,
+        mp_context=mp.get_context("fork"),
+    ) as pool:
+        stage_results = list(pool.map(_run_config_worker, configs))
     results: list[SimulationResult] = []
     metrics = []
-    for config in portfolio_matrix():
-        result = simulate_portfolio(frame, funding, events, config)
-        result_dir = stage_root / config.name
+    for result in stage_results:
+        result_dir = stage_root / result.portfolio
         result_dir.mkdir(parents=True, exist_ok=True)
         result.trades.to_csv(result_dir / "trades.csv", index=False)
         result.events.to_csv(result_dir / "events.csv", index=False)
@@ -82,8 +98,58 @@ def _run_stage(
         results.append(result)
         metrics.append(result.metrics)
     pd.DataFrame(metrics).to_csv(stage_root / "portfolio_metrics.csv", index=False)
+    _write_journals(results, stage_root)
     _plot_equity(results, stage_root / "equity_curves.png")
     return results
+
+
+def _run_config_worker(config) -> SimulationResult:
+    assert _WORK_FRAME is not None and _WORK_FUNDING is not None and _WORK_EVENTS is not None
+    return simulate_portfolio(_WORK_FRAME, _WORK_FUNDING, _WORK_EVENTS, config)
+
+
+def _write_journals(results: list[SimulationResult], stage_root: Path) -> None:
+    trade_frames = []
+    event_frames = []
+    for result in results:
+        if not result.trades.empty:
+            trades = result.trades.copy()
+            trades.insert(0, "portfolio", result.portfolio)
+            trade_frames.append(trades)
+        if not result.events.empty:
+            events = result.events.copy()
+            events.insert(0, "portfolio", result.portfolio)
+            event_frames.append(events)
+        _plot_role_pnl(result, stage_root / result.portfolio / "primary_hedge_pnl.png")
+    if trade_frames:
+        pd.concat(trade_frames, ignore_index=True, sort=False).to_csv(stage_root / "all_trades.csv", index=False)
+    if event_frames:
+        pd.concat(event_frames, ignore_index=True, sort=False).to_csv(stage_root / "all_events.csv", index=False)
+
+
+def _plot_role_pnl(result: SimulationResult, path: Path) -> None:
+    if result.trades.empty:
+        return
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    plt.figure(figsize=(10, 4))
+    for role, color in (("PRIMARY", "#42a5f5"), ("HEDGE", "#ef5350")):
+        frame = result.trades[result.trades["role"] == role].copy()
+        if frame.empty:
+            continue
+        frame["exit_time"] = pd.to_datetime(frame["exit_time"], utc=True)
+        frame = frame.sort_values("exit_time")
+        frame["cumulative_net_pnl"] = frame["net_pnl"].cumsum()
+        plt.step(frame["exit_time"], frame["cumulative_net_pnl"], where="post", label=role, color=color)
+    plt.axhline(0.0, color="grey", linewidth=1)
+    plt.ylabel("Cumulative net PnL, USDT")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(path, dpi=150)
+    plt.close()
 
 
 def _plot_equity(results: list[SimulationResult], path: Path) -> None:
@@ -128,6 +194,23 @@ def _comparison(results: list[SimulationResult]) -> dict[str, Any]:
     return comparisons
 
 
+def _write_artifact_manifest(root: Path) -> dict[str, Any]:
+    manifest_path = root / "artifact_manifest_v1.json"
+    files = {}
+    for path in sorted(root.rglob("*")):
+        if not path.is_file() or path == manifest_path:
+            continue
+        if "INVALIDATED_" in path.as_posix():
+            continue
+        files[str(path.relative_to(root))] = {
+            "bytes": path.stat().st_size,
+            "sha256": sha256_file(path),
+        }
+    manifest = {"version": "CAPITAL_GROWTH_ARTIFACT_MANIFEST_V1", "files": files, "file_count": len(files)}
+    write_json(manifest_path, manifest)
+    return manifest
+
+
 def run_experiment(
     *,
     data_root: Path,
@@ -168,6 +251,25 @@ def run_experiment(
         "run2": _comparison(run2_results),
     }
     write_json(data_root / "control_comparisons_v1.json", comparisons)
+    all_results = {"RUN1": run1_results, "RUN2": run2_results}
+    hedged_wins = sum(
+        int(row.get("beats_unhedged", False))
+        for stage in comparisons.values()
+        for row in stage.values()
+    )
+    liquidations_prevented = sum(
+        int(row.get("liquidations_prevented", 0))
+        for stage in comparisons.values()
+        for row in stage.values()
+    )
+    best = {}
+    for stage_name, stage_results in all_results.items():
+        winner = max(stage_results, key=lambda result: result.metrics["final_equity"])
+        best[stage_name] = {
+            "portfolio": winner.portfolio,
+            "final_equity": winner.metrics["final_equity"],
+            "buy_hold_equivalent": 100.0 * (1.0 + winner.metrics["buy_hold_return"]),
+        }
     summary = {
         "WIP": "TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1",
         "status": "REVIEW",
@@ -183,11 +285,21 @@ def run_experiment(
             "portfolios": {r.portfolio: r.metrics for r in run2_results},
         },
         "comparisons": comparisons,
+        "decision": {
+            "HEDGED_BEATS_UNHEDGED_COUNT": hedged_wins,
+            "HEDGED_COMPARISON_COUNT": sum(len(stage) for stage in comparisons.values()),
+            "NET_LIQUIDATIONS_PREVENTED": liquidations_prevented,
+            "BEST_BY_RUN": best,
+            "BEATS_BUY_AND_HOLD": all(
+                row["final_equity"] > row["buy_hold_equivalent"] for row in best.values()
+            ),
+        },
         "data_preflight": preflight,
         "OOS_OPENED": "NO",
         "LIVE_TRADING": "NO",
     }
     write_json(data_root / "summary_v1.json", summary)
+    _write_artifact_manifest(data_root)
     return summary
 
 

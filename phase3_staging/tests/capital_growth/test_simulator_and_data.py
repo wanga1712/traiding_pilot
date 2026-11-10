@@ -93,6 +93,67 @@ def test_predeclared_portfolio_matrix_has_twelve_runnable_configs() -> None:
     assert all(value > 0 for value in finals)
 
 
+def test_aggressive_synthetic_rule_opens_and_closes_hedge() -> None:
+    frame = _market_frame(1800)
+    funding = pd.DataFrame(
+        {
+            "funding_time": pd.date_range("2020-01-01", periods=220, freq="8h", tz="UTC"),
+            "funding_rate": 0.0,
+        }
+    )
+    config = PortfolioConfig(
+        name="HEDGE_TRIGGER_TEST",
+        spot_fraction=0.0,
+        spot_mode="SWING",
+        hedge_enabled=True,
+        averaging_enabled=False,
+        strategy=StrategyConfig(
+            min_hold_hours=10000,
+            hedge_atr_mult=0.01,
+            averaging_atr_levels=(100.0,),
+        ),
+        rebalance_after_cycle=False,
+    )
+    decisions = build_decision_frame(frame)
+    events = execution_events(decisions, frame["open_time"])
+    result = simulate_portfolio(frame, funding, events, config)
+    assert (result.events["event"] == "HEDGE_OPENED").any()
+    assert result.metrics["hedge_trade_count"] >= 1
+
+
+def test_aggressive_synthetic_rule_performs_averaging() -> None:
+    frame = _market_frame(1200)
+    pulls = (frame["open_time"] >= pd.Timestamp("2020-01-10T00:00:00Z")) & (
+        frame["open_time"] < pd.Timestamp("2020-01-11T00:00:00Z")
+    )
+    for col in ("open", "high", "low", "close", "futures_open", "futures_high", "futures_low", "futures_close", "mark_open", "mark_high", "mark_low", "mark_close"):
+        frame.loc[pulls, col] = frame.loc[pulls, col] - 8.0
+    funding = pd.DataFrame(
+        {
+            "funding_time": pd.date_range("2020-01-01", periods=150, freq="8h", tz="UTC"),
+            "funding_rate": 0.0,
+        }
+    )
+    config = PortfolioConfig(
+        name="AVERAGE_TRIGGER_TEST",
+        spot_fraction=0.0,
+        spot_mode="SWING",
+        hedge_enabled=False,
+        averaging_enabled=True,
+        strategy=StrategyConfig(
+            min_hold_hours=10000,
+            hedge_atr_mult=100.0,
+            averaging_atr_levels=(0.01, 0.02),
+        ),
+        rebalance_after_cycle=False,
+    )
+    decisions = build_decision_frame(frame)
+    events = execution_events(decisions, frame["open_time"])
+    result = simulate_portfolio(frame, funding, events, config)
+    assert (result.events["event"] == "PRIMARY_AVERAGED").any()
+    assert result.metrics["averaging_count"] >= 1
+
+
 def test_data_preflight_blocks_missing_funding() -> None:
     start = datetime(2020, 1, 1, tzinfo=timezone.utc)
     end = datetime(2020, 1, 2, tzinfo=timezone.utc)

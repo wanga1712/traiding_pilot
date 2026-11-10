@@ -42,7 +42,7 @@ def build_decision_frame(
     long_ok = (grouped["close"] > grouped["fast"]) & (grouped["fast"] > grouped["slow"])
     short_ok = (grouped["close"] < grouped["fast"]) & (grouped["fast"] < grouped["slow"])
     grouped["direction"] = np.select([long_ok, short_ok], [1, -1], default=0).astype(int)
-    grouped["decision_at"] = grouped.index + grouped.index.freq
+    grouped["decision_at"] = grouped.index + pd.Timedelta(rule)
     return grouped.reset_index().rename(columns={"index": "bar_open"})
 
 

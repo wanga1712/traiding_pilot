@@ -1,0 +1,70 @@
+{
+  "run1": {
+    "A_HOLD_HEDGED_AVG": {
+      "beats_unhedged": false,
+      "unhedged_final_equity": 269.83646171326575,
+      "liquidations_prevented": 1,
+      "hedged_return_percent": 133.18223226663358,
+      "unhedged_return_percent": 169.83646171326575,
+      "averaging_effect_usdt": -1.0271500112588114
+    },
+    "A_SWING_HEDGED_AVG": {
+      "beats_unhedged": false,
+      "unhedged_final_equity": 173.57401329312893,
+      "liquidations_prevented": -3,
+      "hedged_return_percent": 51.74696167957098,
+      "unhedged_return_percent": 73.57401329312894,
+      "averaging_effect_usdt": -4.276947002234692
+    },
+    "B_HOLD_HEDGED_AVG": {
+      "beats_unhedged": false,
+      "unhedged_final_equity": 157.92083002857748,
+      "liquidations_prevented": -3,
+      "hedged_return_percent": 5.103472159111888,
+      "unhedged_return_percent": 57.920830028577484,
+      "averaging_effect_usdt": -0.11635669831001394
+    },
+    "B_SWING_HEDGED_AVG": {
+      "beats_unhedged": false,
+      "unhedged_final_equity": 142.68744798714607,
+      "liquidations_prevented": -4,
+      "hedged_return_percent": 23.262060140713793,
+      "unhedged_return_percent": 42.68744798714608,
+      "averaging_effect_usdt": -3.301676685166427
+    }
+  },
+  "run2": {
+    "A_HOLD_HEDGED_AVG": {
+      "beats_unhedged": false,
+      "unhedged_final_equity": 206.28024614797533,
+      "liquidations_prevented": 0,
+      "hedged_return_percent": 106.21686193796371,
+      "unhedged_return_percent": 106.28024614797536,
+      "averaging_effect_usdt": 0.0
+    },
+    "A_SWING_HEDGED_AVG": {
+      "beats_unhedged": false,
+      "unhedged_final_equity": 125.57452263830334,
+      "liquidations_prevented": -2,
+      "hedged_return_percent": 13.15885068996112,
+      "unhedged_return_percent": 25.574522638303332,
+      "averaging_effect_usdt": 0.0
+    },
+    "B_HOLD_HEDGED_AVG": {
+      "beats_unhedged": false,
+      "unhedged_final_equity": 144.37386338204186,
+      "liquidations_prevented": -3,
+      "hedged_return_percent": 4.884465755418033,
+      "unhedged_return_percent": 44.373863382041854,
+      "averaging_effect_usdt": 0.0
+    },
+    "B_SWING_HEDGED_AVG": {
+      "beats_unhedged": false,
+      "unhedged_final_equity": 114.57513834777112,
+      "liquidations_prevented": -2,
+      "hedged_return_percent": 3.1734139830472685,
+      "unhedged_return_percent": 14.57513834777111,
+      "averaging_effect_usdt": 0.0
+    }
+  }
+}

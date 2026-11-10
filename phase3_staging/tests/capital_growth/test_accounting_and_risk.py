@@ -118,3 +118,19 @@ def test_liquidation_prices_are_inside_ten_x_band() -> None:
         leverage=10.0,
     )
     assert 89.0 < position.liquidation_price(0.004, 0.0005) < 91.0
+
+
+def test_position_never_spends_entry_fee_buffer() -> None:
+    futures = FuturesAccount(free_collateral=10.0)
+    maximum = 10.0 / ((1.0 + 10.0 * 0.0005) * (1.0 + 1e-12))
+    futures.open_position(
+        "PRIMARY",
+        side=1,
+        time=pd.Timestamp("2024-01-01T00:00:00Z"),
+        price=100.0,
+        margin=maximum,
+        slippage=0.0,
+        fee_rate=0.0005,
+        leverage=10.0,
+    )
+    assert futures.free_collateral >= 0

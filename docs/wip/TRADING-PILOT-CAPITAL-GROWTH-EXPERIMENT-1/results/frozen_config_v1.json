@@ -1,0 +1,702 @@
+{
+  "version": "CAPITAL_GROWTH_EXPERIMENT_CONFIG_V1",
+  "run1": {
+    "start": "2020-01-01T00:00:00+00:00",
+    "end": "2021-01-01T00:00:00+00:00"
+  },
+  "run2": {
+    "start": "2021-01-01T00:00:00+00:00",
+    "end": "2022-01-01T00:00:00+00:00"
+  },
+  "portfolios": [
+    {
+      "name": "A_HOLD_HEDGED_AVG",
+      "spot_fraction": 0.6,
+      "spot_mode": "HOLD",
+      "hedge_enabled": true,
+      "averaging_enabled": true,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    },
+    {
+      "name": "A_HOLD_HEDGED_NOAVG",
+      "spot_fraction": 0.6,
+      "spot_mode": "HOLD",
+      "hedge_enabled": true,
+      "averaging_enabled": false,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    },
+    {
+      "name": "A_HOLD_UNHEDGED_AVG",
+      "spot_fraction": 0.6,
+      "spot_mode": "HOLD",
+      "hedge_enabled": false,
+      "averaging_enabled": true,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    },
+    {
+      "name": "A_SWING_HEDGED_AVG",
+      "spot_fraction": 0.6,
+      "spot_mode": "SWING",
+      "hedge_enabled": true,
+      "averaging_enabled": true,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    },
+    {
+      "name": "A_SWING_HEDGED_NOAVG",
+      "spot_fraction": 0.6,
+      "spot_mode": "SWING",
+      "hedge_enabled": true,
+      "averaging_enabled": false,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    },
+    {
+      "name": "A_SWING_UNHEDGED_AVG",
+      "spot_fraction": 0.6,
+      "spot_mode": "SWING",
+      "hedge_enabled": false,
+      "averaging_enabled": true,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    },
+    {
+      "name": "B_HOLD_HEDGED_AVG",
+      "spot_fraction": 0.4,
+      "spot_mode": "HOLD",
+      "hedge_enabled": true,
+      "averaging_enabled": true,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    },
+    {
+      "name": "B_HOLD_HEDGED_NOAVG",
+      "spot_fraction": 0.4,
+      "spot_mode": "HOLD",
+      "hedge_enabled": true,
+      "averaging_enabled": false,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    },
+    {
+      "name": "B_HOLD_UNHEDGED_AVG",
+      "spot_fraction": 0.4,
+      "spot_mode": "HOLD",
+      "hedge_enabled": false,
+      "averaging_enabled": true,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    },
+    {
+      "name": "B_SWING_HEDGED_AVG",
+      "spot_fraction": 0.4,
+      "spot_mode": "SWING",
+      "hedge_enabled": true,
+      "averaging_enabled": true,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    },
+    {
+      "name": "B_SWING_HEDGED_NOAVG",
+      "spot_fraction": 0.4,
+      "spot_mode": "SWING",
+      "hedge_enabled": true,
+      "averaging_enabled": false,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    },
+    {
+      "name": "B_SWING_UNHEDGED_AVG",
+      "spot_fraction": 0.4,
+      "spot_mode": "SWING",
+      "hedge_enabled": false,
+      "averaging_enabled": true,
+      "initial_capital": 100.0,
+      "strategy": {
+        "fast_period": 20,
+        "slow_period": 50,
+        "atr_period": 14,
+        "hedge_atr_mult": 2.0,
+        "hedge_close_confirmations": 1,
+        "averaging_atr_levels": [
+          2.0,
+          4.0
+        ],
+        "min_hold_hours": 72,
+        "max_hedge_cycles": 2,
+        "hedge_fractions": [
+          1.0,
+          0.75,
+          0.5,
+          0.25
+        ],
+        "primary_risk_headroom_fraction": 0.4
+      },
+      "execution": {
+        "leverage": 10.0,
+        "taker_fee_per_side": 0.0005,
+        "slippage_per_side": 0.0002,
+        "maintenance_margin_rate": 0.004,
+        "liquidation_fee_rate": 0.0005,
+        "primary_budget_fraction": 0.4,
+        "hedge_budget_fraction": 0.2,
+        "averaging_budget_fractions": [
+          0.2,
+          0.2
+        ]
+      },
+      "risk": {
+        "scenario_moves": [
+          -0.15,
+          -0.1,
+          -0.08,
+          -0.05,
+          -0.03,
+          0.03,
+          0.05,
+          0.08,
+          0.1,
+          0.15
+        ],
+        "max_loss_fraction_total_equity": 0.05
+      },
+      "rebalance_after_cycle": true
+    }
+  ],
+  "strategy_rule": "LONG when close>SMA20>SMA50; SHORT when close<SMA20<SMA50",
+  "hedge_rule": "opposite confirmed trend after adverse excursion >= 2 ATR; size by risk",
+  "averaging_rule": "at 2 and 4 ATR adverse while thesis trend persists; max twice",
+  "exit_rule": "opposite trend after minimum 72h or end of run",
+  "data_policy": "Binance public spot/futures/mark/funding data only; no OOS"
+}

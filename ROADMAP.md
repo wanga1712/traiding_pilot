@@ -85,13 +85,14 @@ recorded as TPA-010 for user decision rather than changed in this audit.
 | Field | Value |
 |---|---|
 | **WIP** | `TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1` |
-| **STATUS** | ACTIVE |
+| **STATUS** | REVIEW |
 | **REGISTRATION** | AUTHORIZED |
 | **MODE** | BUILD + RUN / HISTORICAL SIMULATION ONLY |
 | **CAPITAL MODEL** | 100 USDT; 10x isolated; hedge mode |
 | **REPORT** | [`docs/wip/TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1.md`](docs/wip/TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1.md) |
 | **ACTIVATION GATE** | PASS — user approved 2026-11-10 |
 | **LIVE TRADING** | DISABLED |
+| **RESULT** | Hedged did not beat unhedged (`0/8`); Buy & Hold won |
 
 **Current:**  
 `PROBABILITY-TRADING-POLICY-RESEARCH-1` (REVIEW) — `NO_VALIDATED_POLICY`. Discovery produced 100 eligible candidates and retained 20; none survived validation. No policy was selected and confirmation remained untouched.
@@ -1615,7 +1616,7 @@ none (end of planned chain)
 | TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1 | CLOSED | Operational repair |
 | TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1 | CLOSED | Frozen-registry diagnostic |
 | MARKET-SENTIMENT-AND-NEWS-DATASET-1 | PLANNED | Research data |
-| TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1 | ACTIVE | Historical simulation |
+| TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1 | REVIEW | Historical simulation |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |

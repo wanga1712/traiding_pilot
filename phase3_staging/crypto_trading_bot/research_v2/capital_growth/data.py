@@ -3,8 +3,6 @@ from __future__ import annotations
 import json
 import os
 import time
-import urllib.parse
-import urllib.request
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -12,10 +10,13 @@ from typing import Any
 
 import pandas as pd
 import pyarrow.parquet as pq
+import requests
 
 
 BINANCE_FAPI = "https://fapi.binance.com"
 SIX_HOURS_MS = 8 * 60 * 60 * 1000
+_SESSION = requests.Session()
+_SESSION.headers.update({"User-Agent": "TradingPilotCapitalGrowth/1.0"})
 
 
 def _utc_ms(value: datetime) -> int:
@@ -37,45 +38,20 @@ def _atomic_parquet(frame: pd.DataFrame, path: Path) -> None:
 
 
 def _get_json(path: str, params: dict[str, Any], *, timeout: int = 30) -> Any:
-    query = urllib.parse.urlencode(params)
-    request = urllib.request.Request(
-        f"{BINANCE_FAPI}{path}?{query}",
-        headers={"User-Agent": "TradingPilotCapitalGrowth/1.0"},
-    )
-    with urllib.request.urlopen(request, timeout=timeout) as response:
-        return json.loads(response.read().decode("utf-8"))
+    last_error: Exception | None = None
+    for attempt in range(5):
+        try:
+            response = _SESSION.get(f"{BINANCE_FAPI}{path}", params=params, timeout=timeout)
+            response.raise_for_status()
+            return response.json()
+        except Exception as exc:  # noqa: BLE001
+            last_error = exc
+            time.sleep(min(30.0, 2.0 ** attempt))
+    assert last_error is not None
+    raise last_error
 
 
-def download_klines(
-    *,
-    endpoint: str,
-    start: datetime,
-    end: datetime,
-    path: Path,
-    interval: str = "1m",
-) -> pd.DataFrame:
-    cursor = _utc_ms(start)
-    end_ms = _utc_ms(end)
-    rows: list[list[Any]] = []
-    while cursor < end_ms:
-        payload = _get_json(
-            endpoint,
-            {
-                "symbol": "ETHUSDT",
-                "interval": interval,
-                "startTime": cursor,
-                "endTime": end_ms - 1,
-                "limit": 1500,
-            },
-        )
-        if not payload:
-            break
-        rows.extend(payload)
-        next_cursor = int(payload[-1][0]) + 60_000
-        if next_cursor <= cursor:
-            raise RuntimeError(f"non-advancing kline cursor: {cursor}")
-        cursor = next_cursor
-        time.sleep(0.12)
+def _kline_frame(rows: list[list[Any]]) -> pd.DataFrame:
     frame = pd.DataFrame(
         rows,
         columns=[
@@ -93,14 +69,61 @@ def download_klines(
             "ignore",
         ],
     )
-    if frame.empty:
-        raise RuntimeError(f"no kline data returned for {endpoint}")
     frame["open_time"] = pd.to_datetime(frame["open_time"], unit="ms", utc=True)
     frame["close_time"] = pd.to_datetime(frame["close_time"], unit="ms", utc=True)
     for col in ("open", "high", "low", "close", "volume", "quote_volume"):
         frame[col] = pd.to_numeric(frame[col], errors="coerce")
-    frame = frame.drop(columns=["ignore"]).sort_values("open_time").drop_duplicates("open_time")
+    return frame.drop(columns=["ignore"]).sort_values("open_time").drop_duplicates("open_time")
+
+
+def _load_parts(directory: Path) -> pd.DataFrame:
+    files = sorted(directory.glob("*.parquet")) if directory.is_dir() else []
+    if not files:
+        return pd.DataFrame()
+    return pd.concat([pd.read_parquet(path) for path in files], ignore_index=True)
+
+
+def download_klines(
+    *,
+    endpoint: str,
+    start: datetime,
+    end: datetime,
+    path: Path,
+    interval: str = "1m",
+) -> pd.DataFrame:
+    cursor = _utc_ms(start)
+    end_ms = _utc_ms(end)
+    parts_dir = path.with_name(path.stem + "_parts")
+    parts_dir.mkdir(parents=True, exist_ok=True)
+    existing = _load_parts(parts_dir)
+    if not existing.empty:
+        cursor = max(cursor, int(pd.Timestamp(existing["open_time"].max()).timestamp() * 1000) + 60_000)
+    while cursor < end_ms:
+        payload = _get_json(
+            endpoint,
+            {
+                "symbol": "ETHUSDT",
+                "interval": interval,
+                "startTime": cursor,
+                "endTime": end_ms - 1,
+                "limit": 1500,
+            },
+        )
+        if not payload:
+            break
+        page = _kline_frame(payload)
+        if not page.empty:
+            _atomic_parquet(page, parts_dir / f"part-{int(page.iloc[0]['open_time'].timestamp() * 1000)}.parquet")
+        next_cursor = int(payload[-1][0]) + 60_000
+        if next_cursor <= cursor:
+            raise RuntimeError(f"non-advancing kline cursor: {cursor}")
+        cursor = next_cursor
+        time.sleep(0.08)
+    frame = _load_parts(parts_dir)
+    if frame.empty:
+        raise RuntimeError(f"no kline data returned for {endpoint}")
     frame = frame[(frame["open_time"] >= pd.Timestamp(start)) & (frame["open_time"] < pd.Timestamp(end))]
+    frame = frame.sort_values("open_time").drop_duplicates("open_time").reset_index(drop=True)
     _atomic_parquet(frame, path)
     return frame
 
@@ -108,7 +131,11 @@ def download_klines(
 def download_funding(start: datetime, end: datetime, path: Path) -> pd.DataFrame:
     cursor = _utc_ms(start)
     end_ms = _utc_ms(end)
-    rows: list[dict[str, Any]] = []
+    parts_dir = path.with_name(path.stem + "_parts")
+    parts_dir.mkdir(parents=True, exist_ok=True)
+    existing = _load_parts(parts_dir)
+    if not existing.empty:
+        cursor = max(cursor, int(pd.Timestamp(existing["funding_time"].max()).timestamp() * 1000) + 1)
     while cursor < end_ms:
         payload = _get_json(
             "/fapi/v1/fundingRate",
@@ -121,19 +148,22 @@ def download_funding(start: datetime, end: datetime, path: Path) -> pd.DataFrame
         )
         if not payload:
             break
-        rows.extend(payload)
+        page = pd.DataFrame(payload)
+        page["funding_time"] = pd.to_datetime(page["fundingTime"], unit="ms", utc=True)
+        page["funding_rate"] = pd.to_numeric(page["fundingRate"], errors="coerce")
+        page["mark_price"] = pd.to_numeric(page["markPrice"], errors="coerce")
+        page = page[["funding_time", "funding_rate", "mark_price", "rateType"]]
+        if not page.empty:
+            _atomic_parquet(page, parts_dir / f"part-{int(page.iloc[0]['funding_time'].timestamp() * 1000)}.parquet")
         next_cursor = int(payload[-1]["fundingTime"]) + 1
         if next_cursor <= cursor:
             raise RuntimeError(f"non-advancing funding cursor: {cursor}")
         cursor = next_cursor
-        time.sleep(0.12)
-    frame = pd.DataFrame(rows)
+        time.sleep(0.08)
+    frame = _load_parts(parts_dir)
     if frame.empty:
         raise RuntimeError("no funding data returned")
-    frame["funding_time"] = pd.to_datetime(frame["fundingTime"], unit="ms", utc=True)
-    frame["funding_rate"] = pd.to_numeric(frame["fundingRate"], errors="coerce")
-    frame["mark_price"] = pd.to_numeric(frame["markPrice"], errors="coerce")
-    frame = frame[["funding_time", "funding_rate", "mark_price", "rateType"]].sort_values("funding_time")
+    frame = frame.sort_values("funding_time")
     frame = frame.drop_duplicates("funding_time")
     frame = frame[(frame["funding_time"] >= pd.Timestamp(start)) & (frame["funding_time"] <= pd.Timestamp(end))]
     _atomic_parquet(frame, path)
@@ -174,14 +204,21 @@ def prepare_dataset(
     combined_path = data_root / "ETHUSDT_1m_combined.parquet"
 
     spot = load_spot_from_cache(spot_cache_root, start, end)
-    if download:
-        futures = download_klines(endpoint="/fapi/v1/klines", start=start, end=end, path=futures_path)
-        mark = download_klines(endpoint="/fapi/v1/markPriceKlines", start=start, end=end, path=mark_path)
-        funding = download_funding(start, end, funding_path)
-    else:
-        futures = pd.read_parquet(futures_path)
-        mark = pd.read_parquet(mark_path)
-        funding = pd.read_parquet(funding_path)
+    futures = (
+        download_klines(endpoint="/fapi/v1/klines", start=start, end=end, path=futures_path)
+        if not futures_path.exists() and download
+        else pd.read_parquet(futures_path)
+    )
+    mark = (
+        download_klines(endpoint="/fapi/v1/markPriceKlines", start=start, end=end, path=mark_path)
+        if not mark_path.exists() and download
+        else pd.read_parquet(mark_path)
+    )
+    funding = (
+        download_funding(start, end, funding_path)
+        if not funding_path.exists() and download
+        else pd.read_parquet(funding_path)
+    )
 
     futures = futures[["open_time", "open", "high", "low", "close"]].rename(
         columns={c: f"futures_{c}" for c in ("open", "high", "low", "close")}

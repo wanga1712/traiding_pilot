@@ -21,6 +21,7 @@ class StrategyConfig:
     min_hold_hours: int = 72
     max_hedge_cycles: int = 2
     hedge_fractions: tuple[float, ...] = (1.0, 0.75, 0.5, 0.25)
+    primary_risk_headroom_fraction: float = 0.40
 
 
 @dataclass(frozen=True)

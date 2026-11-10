@@ -229,6 +229,16 @@ class FuturesAccount:
         else:
             self.realized_hedge += net
             self.hedge = None
+        recovery = {
+            key: position.metadata.get(key)
+            for key in (
+                "recovery_p50_hours",
+                "recovery_p90_hours",
+                "recovery_unresolved_rate",
+                "recovery_sample_count",
+            )
+            if key in position.metadata
+        }
         return {
             "role": role,
             "side": "LONG" if position.side > 0 else "SHORT",
@@ -245,6 +255,7 @@ class FuturesAccount:
             "funding_cost": position.funding_costs,
             "reason": reason,
             "additions": position.additions,
+            **recovery,
         }
 
     def liquidate(
