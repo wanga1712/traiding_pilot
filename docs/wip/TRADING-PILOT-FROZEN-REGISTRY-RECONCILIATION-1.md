@@ -144,7 +144,7 @@ No registry, spec, model, or research-result artifact was modified.
 
 ## Git commit
 
-GIT_COMMIT=pending
+GIT_COMMIT=ee4c5dabe51e0fe6b3558d0c484c10ff30fa4b75
 
 ## RETURN
 
@@ -152,7 +152,7 @@ GIT_COMMIT=pending
 WIP=TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1
 STATUS=REVIEW
 LOCAL_BRANCH=diagnostic/trading-pilot-frozen-registry-reconciliation-1
-LOCAL_HEAD=
+LOCAL_HEAD=ee4c5dabe51e0fe6b3558d0c484c10ff30fa4b75
 BASE_MAIN=1bfdb9708df635e83971f1e9a6e9545b543f8d77
 PARENT_CLOSED=TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1
 TESTS_REPRODUCED=10

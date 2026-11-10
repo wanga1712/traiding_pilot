@@ -1,5 +1,6 @@
 {
   "base_main": "1bfdb9708df635e83971f1e9a6e9545b543f8d77",
+  "diagnostic_commit": "ee4c5dabe51e0fe6b3558d0c484c10ff30fa4b75",
   "tests_reproduced": 10,
   "failure_classes": {
     "encoding_only": 2,
