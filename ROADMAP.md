@@ -26,6 +26,23 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
 
+## Current operational audit (non-research, does not replace the primary WIP)
+
+| Field | Value |
+|---|---|
+| **WIP** | `TRADING-PILOT-BASELINE-AND-AUDIT-1` |
+| **STATUS** | REVIEW |
+| **MODE** | SAFE / READ-FIRST / NO DEPLOY |
+| **BASELINE** | `5e05b7c79165981b5fd8b30a0e1f0eca133c3bae` on `baseline/trading-pilot-pre-main-20261110` |
+| **AUDIT BASE** | `faacaf08b3eda971d972f4e4fb4c6fedecbf969d` (`origin/main`) |
+| **RESULT** | 11 confirmed defects: 1 CRITICAL, 7 HIGH, 3 MEDIUM; no functional repair performed |
+| **REPORT** | [`docs/wip/TRADING-PILOT-BASELINE-AND-AUDIT-1.md`](docs/wip/TRADING-PILOT-BASELINE-AND-AUDIT-1.md) |
+| **NEXT WIP** | `TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1` proposed only; do not auto-start |
+
+This operational audit does not change the research WIP statuses below. The
+existing `MULTITF-INDICATOR-PARAMETER-SEARCH-1` ACTIVE/index inconsistency is
+recorded as TPA-010 for user decision rather than changed in this audit.
+
 **Current:**  
 `PROBABILITY-TRADING-POLICY-RESEARCH-1` (REVIEW) — `NO_VALIDATED_POLICY`. Discovery produced 100 eligible candidates and retained 20; none survived validation. No policy was selected and confirmation remained untouched.
 
@@ -1544,6 +1561,7 @@ none (end of planned chain)
 | DINAPOLI-COP-OP-XOP-4H-VALIDATION-1 | CLOSED | Historical |
 | DINAPOLI-COP-OP-XOP-MULTITIMEFRAME-SWEEP-1 | CLOSED_NEGATIVE | Historical |
 | PROJECT-RESEARCH-ROADMAP-AND-WIP-GOVERNANCE-1 | CLOSED | Governance |
+| TRADING-PILOT-BASELINE-AND-AUDIT-1 | REVIEW | Operational audit |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
