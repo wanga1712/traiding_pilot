@@ -68,6 +68,18 @@ recorded as TPA-010 for user decision rather than changed in this audit.
 | **SCOPE** | Separate encoding-only from semantic frozen registry/routing mismatches |
 | **RESULT** | 10 reproduced; 2 encoding-only, 8 V1/old-route expectation drift; frozen V2 matches built registry with 0 mismatches |
 
+## Proposed research data WIP (not active)
+
+| Field | Value |
+|---|---|
+| **WIP** | `MARKET-SENTIMENT-AND-NEWS-DATASET-1` |
+| **STATUS** | PLANNED |
+| **REGISTRATION** | PROPOSED |
+| **MODE** | RESEARCH / DATA-ONLY / NO RETRAIN / OOS LOCKED |
+| **REPORT** | [`docs/wip/MARKET-SENTIMENT-AND-NEWS-DATASET-1.md`](docs/wip/MARKET-SENTIMENT-AND-NEWS-DATASET-1.md) |
+| **ACTIVATION GATE** | Explicit user activation after prerequisite WIP review |
+| **FLOW** | News/sentiment dataset approval → separate Crash Risk Predictor V1 training WIP |
+
 **Current:**  
 `PROBABILITY-TRADING-POLICY-RESEARCH-1` (REVIEW) — `NO_VALIDATED_POLICY`. Discovery produced 100 eligible candidates and retained 20; none survived validation. No policy was selected and confirmation remained untouched.
 
@@ -1589,6 +1601,7 @@ none (end of planned chain)
 | TRADING-PILOT-BASELINE-AND-AUDIT-1 | CLOSED | Operational audit |
 | TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1 | CLOSED | Operational repair |
 | TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1 | REVIEW | Frozen-registry diagnostic |
+| MARKET-SENTIMENT-AND-NEWS-DATASET-1 | PLANNED | Research data |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
