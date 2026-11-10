@@ -1,0 +1,81 @@
+{
+  "base_main": "1bfdb9708df635e83971f1e9a6e9545b543f8d77",
+  "tests_reproduced": 10,
+  "failure_classes": {
+    "encoding_only": 2,
+    "test_expectation_drift": 8
+  },
+  "authority": {
+    "active": "MULTITF_INDICATOR_PARAMETER_SEARCH_V2",
+    "v1_status": "SUPERSEDED_INVALID_EXECUTION_SPEC",
+    "production_loader": "candidate_registry_snapshot_v2.csv"
+  },
+  "v1": {
+    "rows": 3220,
+    "columns": 14,
+    "execution_route_column": false,
+    "family_counts": {
+      "DMA": 1680,
+      "STOCHASTIC": 340,
+      "MACD": 520,
+      "OSC_PREDICTOR": 480,
+      "DNO_PREDICTOR": 80,
+      "INVERSE_PREDICTOR": 120
+    },
+    "unresolved_route_count": 200,
+    "built_registry_mismatch_count": 6420
+  },
+  "v2": {
+    "rows": 3200,
+    "columns": 15,
+    "execution_route_column": true,
+    "family_counts": {
+      "DMA": 1680,
+      "STOCHASTIC": 340,
+      "MACD": 520,
+      "PURE_DNO": 20,
+      "DNO_QUANTILE": 40,
+      "OSC_PREDICTOR": 480,
+      "INVERSE_PREDICTOR": 120
+    },
+    "unresolved_route_count": 0,
+    "built_registry_mismatch_count": 0,
+    "routing_preflight_exception_count": 0,
+    "mandatory_reference_routes": {
+      "total": 460,
+      "executable": 460,
+      "failed": 0
+    },
+    "inverse_batch_reference_parity": "PASS",
+    "inverse_batch_signal_parity": "PASS",
+    "inverse_batch_gap_parity": "PASS",
+    "dno_quantile_control_route": "PASS",
+    "silent_dead_route_count": 0
+  },
+  "hash_evidence": {
+    "v1_spec": {
+      "working_sha256": "8878954b7b9c6fc8f4f0f940cbca93c34e14656329920fe65214ff81da368c6a",
+      "git_blob_sha256": "a50e6357b1b64c502ada9a76af23a636e3df7c16746054ff5ca77a6718420c3b",
+      "equal_after_crlf_to_lf_normalization": true
+    },
+    "v1_registry": {
+      "working_sha256": "aaed46310b1d8fb9d247fbc26853c6065945c5bddde43b271f8a1145677b1def",
+      "git_blob_sha256": "93a89cb4dfd50d3dc85d615c7678431ffaf980e32b0f6ef77057c6f80fbfa159",
+      "equal_after_crlf_to_lf_normalization": true
+    },
+    "v2_spec": {
+      "working_sha256": "08ea6ee5d857317594691fa668ec8f41f4e32fd2f5df61defc0d3dbc7b601fac",
+      "git_blob_sha256": "981fda57ffeaa6d0f92dcd839a81b3de9ecf98089045e55223372b2f278aaa48",
+      "equal_after_crlf_to_lf_normalization": true
+    },
+    "v2_registry": {
+      "working_sha256": "3940fe68ab87d54bf171ee119d40f4b2d23a81f0adcfb403bb361a5ffb620d15",
+      "git_blob_sha256": "13e54358d22283f361141cc658103b34bf3ff4f232cea7315ba962b9f70c49a1",
+      "equal_after_crlf_to_lf_normalization": true
+    }
+  },
+  "artifact_changes": "NONE",
+  "research_rerun": "NONE",
+  "s7_s13_access": "NONE",
+  "deploy": "NONE"
+}

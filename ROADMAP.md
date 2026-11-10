@@ -48,13 +48,25 @@ recorded as TPA-010 for user decision rather than changed in this audit.
 | Field | Value |
 |---|---|
 | **WIP** | `TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1` |
-| **STATUS** | REVIEW |
+| **STATUS** | CLOSED |
 | **MODE** | SAFE / LOCAL-FIRST / NO DEPLOY / NO RESEARCH RERUN |
 | **BASE MAIN** | `b83393dace03943da0527c2c732ecc3d9cb31c53` |
 | **IMPLEMENTATION COMMIT** | `a24442fe1c6b6658545fb763d31ad9e4f9f8a544` |
 | **SCOPE** | Restore imports, dependencies, secret protection, OOS guard, cache integrity, and gap regressions |
 | **REPORT** | [`docs/wip/TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1.md`](docs/wip/TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1.md) |
-| **RESULT** | 22 files restored; focused/non-research/composite tests PASS; 269 passed, 10 pre-existing research-artifact tests failed; no research rerun |
+| **RESULT** | ACCEPTED; 22 files restored; focused/non-research/composite tests PASS; 10 research-artifact failures carried to diagnostic reconciliation |
+
+## Current frozen-registry diagnostic WIP (non-research)
+
+| Field | Value |
+|---|---|
+| **WIP** | `TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1` |
+| **STATUS** | REVIEW |
+| **MODE** | DIAGNOSTIC / READ-ONLY / NO RESEARCH / NO DEPLOY |
+| **BASE MAIN** | `1bfdb9708df635e83971f1e9a6e9545b543f8d77` |
+| **REPORT** | [`docs/wip/TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1.md`](docs/wip/TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1.md) |
+| **SCOPE** | Separate encoding-only from semantic frozen registry/routing mismatches |
+| **RESULT** | 10 reproduced; 2 encoding-only, 8 V1/old-route expectation drift; frozen V2 matches built registry with 0 mismatches |
 
 **Current:**  
 `PROBABILITY-TRADING-POLICY-RESEARCH-1` (REVIEW) — `NO_VALIDATED_POLICY`. Discovery produced 100 eligible candidates and retained 20; none survived validation. No policy was selected and confirmation remained untouched.
@@ -1575,7 +1587,8 @@ none (end of planned chain)
 | DINAPOLI-COP-OP-XOP-MULTITIMEFRAME-SWEEP-1 | CLOSED_NEGATIVE | Historical |
 | PROJECT-RESEARCH-ROADMAP-AND-WIP-GOVERNANCE-1 | CLOSED | Governance |
 | TRADING-PILOT-BASELINE-AND-AUDIT-1 | CLOSED | Operational audit |
-| TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1 | REVIEW | Operational repair |
+| TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1 | CLOSED | Operational repair |
+| TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1 | REVIEW | Frozen-registry diagnostic |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
