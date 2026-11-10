@@ -147,7 +147,7 @@ GitHub default branch was changed from `master` to `main` and the local
 
 ## Git commit
 
-GIT_COMMIT=local repair commit recorded after final review
+GIT_COMMIT=a24442fe1c6b6658545fb763d31ad9e4f9f8a544
 
 ## RETURN
 
@@ -155,7 +155,7 @@ GIT_COMMIT=local repair commit recorded after final review
 WIP=TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1
 STATUS=REVIEW
 LOCAL_BRANCH=wip/trading-pilot-import-data-integrity-repair-1
-LOCAL_HEAD=
+LOCAL_HEAD=a24442fe1c6b6658545fb763d31ad9e4f9f8a544
 BASE_MAIN=b83393dace03943da0527c2c732ecc3d9cb31c53
 PARENT_CLOSED=TRADING-PILOT-BASELINE-AND-AUDIT-1
 RESTORED_MODULES=PASS_22_FILES
@@ -168,6 +168,7 @@ TESTS_RUN=279
 TESTS_PASSED=269
 TESTS_FAILED=10
 KNOWN_FAILURES=indicator_parameter_search_frozen_registry_spec_and_routing_mismatch
+IMPLEMENTATION_COMMIT=a24442fe1c6b6658545fb763d31ad9e4f9f8a544
 RESEARCH_RERUN=none
 DEPLOY=none
 S7_S13_MUTATION=none

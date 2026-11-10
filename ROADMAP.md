@@ -51,6 +51,7 @@ recorded as TPA-010 for user decision rather than changed in this audit.
 | **STATUS** | REVIEW |
 | **MODE** | SAFE / LOCAL-FIRST / NO DEPLOY / NO RESEARCH RERUN |
 | **BASE MAIN** | `b83393dace03943da0527c2c732ecc3d9cb31c53` |
+| **IMPLEMENTATION COMMIT** | `a24442fe1c6b6658545fb763d31ad9e4f9f8a544` |
 | **SCOPE** | Restore imports, dependencies, secret protection, OOS guard, cache integrity, and gap regressions |
 | **REPORT** | [`docs/wip/TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1.md`](docs/wip/TRADING-PILOT-IMPORT-AND-DATA-INTEGRITY-REPAIR-1.md) |
 | **RESULT** | 22 files restored; focused/non-research/composite tests PASS; 269 passed, 10 pre-existing research-artifact tests failed; no research rerun |
