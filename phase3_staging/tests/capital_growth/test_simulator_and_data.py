@@ -5,7 +5,12 @@ from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
 
-from crypto_trading_bot.research_v2.capital_growth.config import PortfolioConfig, StrategyConfig, portfolio_matrix
+from crypto_trading_bot.research_v2.capital_growth.config import (
+    PortfolioConfig,
+    RiskConfig,
+    StrategyConfig,
+    portfolio_matrix,
+)
 from crypto_trading_bot.research_v2.capital_growth.data import data_preflight
 from crypto_trading_bot.research_v2.capital_growth.simulator import simulate_portfolio
 from crypto_trading_bot.research_v2.capital_growth.strategy import build_decision_frame, execution_events
@@ -94,10 +99,26 @@ def test_predeclared_portfolio_matrix_has_twelve_runnable_configs() -> None:
 
 
 def test_aggressive_synthetic_rule_opens_and_closes_hedge() -> None:
-    frame = _market_frame(1800)
+    frame = _market_frame(6)
+    prices = [100.0, 100.0, 99.0, 99.0, 99.0, 99.0]
+    for column in (
+        "open",
+        "high",
+        "low",
+        "close",
+        "futures_open",
+        "futures_high",
+        "futures_low",
+        "futures_close",
+        "mark_open",
+        "mark_high",
+        "mark_low",
+        "mark_close",
+    ):
+        frame[column] = prices
     funding = pd.DataFrame(
         {
-            "funding_time": pd.date_range("2020-01-01", periods=220, freq="8h", tz="UTC"),
+            "funding_time": pd.date_range("2020-01-01", periods=1, freq="8h", tz="UTC"),
             "funding_rate": 0.0,
         }
     )
@@ -112,12 +133,50 @@ def test_aggressive_synthetic_rule_opens_and_closes_hedge() -> None:
             hedge_atr_mult=0.01,
             averaging_atr_levels=(100.0,),
         ),
+        risk=RiskConfig(max_loss_fraction_total_equity=1.0),
         rebalance_after_cycle=False,
     )
-    decisions = build_decision_frame(frame)
-    events = execution_events(decisions, frame["open_time"])
+    events = [
+        (
+            0,
+            {
+                "decision_at": frame.loc[0, "open_time"],
+                "direction": 1,
+                "atr": 1.0,
+                "fast": 100.0,
+                "slow": 99.0,
+                "close": 100.0,
+                "volume": 100_000.0,
+            },
+        ),
+        (
+            1,
+            {
+                "decision_at": frame.loc[1, "open_time"],
+                "direction": -1,
+                "atr": 1.0,
+                "fast": 100.0,
+                "slow": 100.0,
+                "close": 99.0,
+                "volume": 100_000.0,
+            },
+        ),
+        (
+            2,
+            {
+                "decision_at": frame.loc[2, "open_time"],
+                "direction": 1,
+                "atr": 1.0,
+                "fast": 99.0,
+                "slow": 99.0,
+                "close": 99.0,
+                "volume": 100_000.0,
+            },
+        ),
+    ]
     result = simulate_portfolio(frame, funding, events, config)
     assert (result.events["event"] == "HEDGE_OPENED").any()
+    assert (result.events["event"] == "HEDGE_CLOSED").any()
     assert result.metrics["hedge_trade_count"] >= 1
 
 

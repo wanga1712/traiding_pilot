@@ -67,6 +67,7 @@ def execution_events(
                     "fast": float(row.fast) if np.isfinite(row.fast) else None,
                     "slow": float(row.slow) if np.isfinite(row.slow) else None,
                     "close": float(row.close),
+                    "volume": float(row.volume) if np.isfinite(row.volume) else 0.0,
                 },
             )
         )

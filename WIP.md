@@ -1,7 +1,7 @@
 # WIP - TRADING-PILOT-GPU-AI-TRADING-POLICY-1
 
 STATUS=ACTIVE
-PHASE=GATE_1_SIMULATOR_REPAIR
+PHASE=GATE_2_DATASET
 STARTED_AT=2026-11-11
 MODE=REPAIR -> DATASET -> GPU TRAINING -> BACKTEST
 MODEL=NEW_TRAIN_FROM_SCRATCH
@@ -23,9 +23,9 @@ LIVE_TRADING=DISABLED
 
 ## Current phase
 
-GATE 0 passed: CatBoost 1.2.10 trained a real model with `task_type="GPU"` on
-the S13 GTX 1660 SUPER. Peak observed VRAM was 5,473 MiB, and the saved smoke
-model reloaded successfully. GATE 1 now repairs and validates the simulator.
+GATE 0 and GATE 1 passed. CatBoost trained on CUDA and the repaired simulator
+passed 19 deterministic tests locally and on S13. GATE 2 now builds the causal
+DEVELOPMENT dataset.
 
 ## Immutable negative baseline
 
@@ -48,7 +48,7 @@ negative result must not be overwritten or presented as the new AI strategy.
 ```text
 WIP=TRADING-PILOT-GPU-AI-TRADING-POLICY-1
 STATUS=ACTIVE
-PHASE=GATE_1_SIMULATOR_REPAIR
+PHASE=GATE_2_DATASET
 LOCAL_BRANCH=wip/trading-pilot-gpu-ai-trading-policy-1
 BASE_MAIN=e044daaa470dabfbb6102232e2cb5a8866d90039
 INITIAL_CAPITAL=100
@@ -58,7 +58,7 @@ GPU_NAME=NVIDIA_GTX_1660_SUPER
 CUDA_AVAILABLE=YES_DRIVER_13.2
 GPU_TRAINING_CONFIRMED=YES_CATBOOST_1.2.10
 GPU_VRAM_USED=MAX_5473_MIB
-SIMULATOR_ACCOUNTING=pending
+SIMULATOR_ACCOUNTING=PASS
 DATASET_ROWS=pending
 ENTRY_MODEL_TRAINED=pending
 MANAGEMENT_MODEL_TRAINED=pending

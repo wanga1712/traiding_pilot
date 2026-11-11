@@ -27,9 +27,16 @@ class Position:
         return self.quantity * abs(float(mark))
 
     def liquidation_price(self, maintenance_rate: float, fee_buffer: float) -> float:
+        if self.quantity <= 0:
+            raise ValueError("liquidation price requires positive quantity")
+        risk_rate = float(maintenance_rate) + float(fee_buffer)
         if self.side > 0:
-            return self.average_entry * (1.0 - 1.0 / self.metadata["leverage"] + maintenance_rate + fee_buffer)
-        return self.average_entry * (1.0 + 1.0 / self.metadata["leverage"] - maintenance_rate - fee_buffer)
+            numerator = self.average_entry * self.quantity - self.margin
+            return max(0.0, numerator / (self.quantity * (1.0 + risk_rate)))
+        denominator = self.quantity * (1.0 - risk_rate)
+        if denominator <= 0:
+            return float("inf")
+        return (self.average_entry * self.quantity + self.margin) / denominator
 
     def add(
         self,
@@ -138,11 +145,20 @@ class FuturesAccount:
         slippage: float,
         fee_rate: float,
         leverage: float,
+        max_notional: float | None = None,
+        min_notional: float = 0.0,
     ) -> Position:
         if margin <= 0 or margin > self.free_collateral + 1e-12:
             raise ValueError("insufficient free collateral")
         fill = float(price) * (1.0 + side * slippage)
-        notional = float(margin) * float(leverage)
+        requested_margin = float(margin)
+        requested_notional = requested_margin * float(leverage)
+        notional = requested_notional
+        if max_notional is not None:
+            notional = min(notional, max(0.0, float(max_notional)))
+        if notional < float(min_notional) - 1e-12:
+            raise ValueError("order notional below minimum")
+        margin = notional / float(leverage)
         quantity = notional / fill
         fee = notional * fee_rate
         if fee > self.free_collateral - margin + 1e-12:
@@ -158,7 +174,13 @@ class FuturesAccount:
             margin=float(margin),
             average_entry=fill,
             entry_fees=fee,
-            metadata={"leverage": float(leverage)},
+            metadata={
+                "leverage": float(leverage),
+                "requested_margin": requested_margin,
+                "requested_notional": requested_notional,
+                "filled_notional": notional,
+                "unfilled_notional": max(0.0, requested_notional - notional),
+            },
         )
         if role == "PRIMARY":
             self.primary = position
@@ -177,19 +199,37 @@ class FuturesAccount:
         slippage: float,
         fee_rate: float,
         leverage: float,
+        max_notional: float | None = None,
+        min_notional: float = 0.0,
     ) -> None:
         if self.primary is None:
             raise ValueError("no primary position")
         if margin <= 0 or margin > self.free_collateral + 1e-12:
             raise ValueError("insufficient free collateral for averaging")
         fill = float(price) * (1.0 + self.primary.side * slippage)
-        notional = float(margin) * float(leverage)
+        requested_margin = float(margin)
+        requested_notional = requested_margin * float(leverage)
+        notional = requested_notional
+        if max_notional is not None:
+            notional = min(notional, max(0.0, float(max_notional)))
+        if notional < float(min_notional) - 1e-12:
+            raise ValueError("averaging order notional below minimum")
+        margin = notional / float(leverage)
         quantity = notional / fill
         fee = notional * fee_rate
         self.free_collateral -= margin + fee
         self.slippage_costs += notional * slippage
         self.entry_fees += fee
         self.primary.add(quantity=quantity, price=fill, margin=margin, fee=fee, time=time)
+        self.primary.metadata.setdefault("children", []).append(
+            {
+                "time": pd.Timestamp(time).isoformat(),
+                "requested_margin": requested_margin,
+                "requested_notional": requested_notional,
+                "filled_notional": notional,
+                "unfilled_notional": max(0.0, requested_notional - notional),
+            }
+        )
 
     def apply_funding(self, mark: float, rate: float) -> float:
         total_cost = 0.0
@@ -219,7 +259,9 @@ class FuturesAccount:
         fill = float(price) * (1.0 - position.side * slippage)
         gross = position.side * position.quantity * (fill - position.average_entry)
         exit_fee = position.quantity * fill * fee_rate
-        self.free_collateral += position.margin + gross - exit_fee
+        released = max(0.0, position.margin + gross - exit_fee)
+        deficit = max(0.0, -(position.margin + gross - exit_fee))
+        self.free_collateral += released
         self.slippage_costs += position.quantity * float(price) * slippage
         self.exit_fees += exit_fee
         net = gross - position.entry_fees - position.funding_costs - exit_fee
@@ -255,6 +297,7 @@ class FuturesAccount:
             "funding_cost": position.funding_costs,
             "reason": reason,
             "additions": position.additions,
+            "isolated_deficit": deficit,
             **recovery,
         }
 
@@ -280,6 +323,16 @@ class FuturesAccount:
         else:
             self.realized_hedge += net
             self.hedge = None
+        recovery = {
+            key: position.metadata.get(key)
+            for key in (
+                "recovery_p50_hours",
+                "recovery_p90_hours",
+                "recovery_unresolved_rate",
+                "recovery_sample_count",
+            )
+            if key in position.metadata
+        }
         return {
             "role": role,
             "side": "LONG" if position.side > 0 else "SHORT",
@@ -296,4 +349,66 @@ class FuturesAccount:
             "funding_cost": position.funding_costs,
             "reason": "LIQUIDATED",
             "additions": position.additions,
+            "isolated_deficit": max(
+                0.0,
+                -(position.margin + gross - liquidation_fee),
+            ),
+            **recovery,
         }
+
+
+@dataclass(frozen=True)
+class TransferRecord:
+    time: str
+    direction: str
+    amount: float
+    purpose: str
+
+
+@dataclass
+class TransferLedger:
+    records: list[TransferRecord] = field(default_factory=list)
+    spot_to_futures: float = 0.0
+    futures_to_spot: float = 0.0
+
+    def transfer_spot_to_futures(
+        self,
+        spot: SpotAccount,
+        futures: FuturesAccount,
+        *,
+        time: pd.Timestamp,
+        amount: float,
+        purpose: str,
+    ) -> float:
+        value = min(max(0.0, float(amount)), max(0.0, spot.cash))
+        if value <= 0:
+            return 0.0
+        spot.cash -= value
+        futures.free_collateral += value
+        self.spot_to_futures += value
+        self.records.append(
+            TransferRecord(pd.Timestamp(time).isoformat(), "SPOT_TO_FUTURES", value, purpose)
+        )
+        return value
+
+    def transfer_futures_to_spot(
+        self,
+        spot: SpotAccount,
+        futures: FuturesAccount,
+        *,
+        time: pd.Timestamp,
+        amount: float,
+        purpose: str,
+    ) -> float:
+        if futures.primary is not None or futures.hedge is not None:
+            raise ValueError("cannot transfer margin while futures positions are open")
+        value = min(max(0.0, float(amount)), max(0.0, futures.free_collateral))
+        if value <= 0:
+            return 0.0
+        futures.free_collateral -= value
+        spot.cash += value
+        self.futures_to_spot += value
+        self.records.append(
+            TransferRecord(pd.Timestamp(time).isoformat(), "FUTURES_TO_SPOT", value, purpose)
+        )
+        return value

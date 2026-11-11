@@ -1,7 +1,7 @@
 # WIP=TRADING-PILOT-GPU-AI-TRADING-POLICY-1
 
 STATUS=ACTIVE
-PHASE=GATE_1_SIMULATOR_REPAIR
+PHASE=GATE_2_DATASET
 STARTED_AT=2026-11-11
 MODE=REPAIR -> DATASET -> GPU TRAINING -> BACKTEST
 MODEL=NEW_TRAIN_FROM_SCRATCH
@@ -83,6 +83,17 @@ a trading model.
 - Prevent hedge-profit double counting and synthetic capital creation.
 - Pass independent deterministic scenario tests before training the policy.
 
+#### GATE 1 result: PASS
+
+The repaired simulator passed 19 deterministic tests locally and on an isolated
+S13 copy. Evidence is committed under `gate1/`.
+
+Validated paths include explicit Spot/Futures transfer records, isolated
+PRIMARY/HEDGE accounting, Spot-aware portfolio stress, a continuously enforced
+5% futures-thesis loss limit, margin-based liquidation prices, mark high/low
+liquidation, funding/costs, partial fills, min/max order size, and
+reinvestment without synthetic capital.
+
 ### GATE 2 - Dataset
 
 - Build a new versioned DEVELOPMENT-only dataset with `available_at`.
@@ -159,7 +170,7 @@ GPU_NAME=NVIDIA_GTX_1660_SUPER
 CUDA_AVAILABLE=YES_DRIVER_13.2
 GPU_TRAINING_CONFIRMED=YES_CATBOOST_1.2.10
 GPU_VRAM_USED=MAX_5473_MIB
-SIMULATOR_ACCOUNTING=
+SIMULATOR_ACCOUNTING=PASS
 DATASET_ROWS=
 FEATURE_COUNT=
 INDICATOR_FAMILIES_USED=

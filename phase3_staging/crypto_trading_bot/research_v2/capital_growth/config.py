@@ -34,6 +34,9 @@ class ExecutionConfig:
     primary_budget_fraction: float = 0.40
     hedge_budget_fraction: float = 0.20
     averaging_budget_fractions: tuple[float, float] = (0.20, 0.20)
+    min_order_notional: float = 5.0
+    max_order_notional: float = 1_000.0
+    max_bar_participation_rate: float = 0.001
 
 
 @dataclass(frozen=True)
