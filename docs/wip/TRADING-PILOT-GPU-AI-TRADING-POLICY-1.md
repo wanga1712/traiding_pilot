@@ -1,7 +1,7 @@
 # WIP=TRADING-PILOT-GPU-AI-TRADING-POLICY-1
 
-STATUS=ACTIVE
-PHASE=GATE_2_DATASET
+STATUS=REVIEW
+PHASE=REVIEW
 STARTED_AT=2026-11-11
 MODE=REPAIR -> DATASET -> GPU TRAINING -> BACKTEST
 MODEL=NEW_TRAIN_FROM_SCRATCH
@@ -138,6 +138,68 @@ reinvestment without synthetic capital.
 - Do not represent re-use of 2020-2021 as independent OOS.
 - Return `VALIDATION_BLOCKED` if no sufficient allowed period exists.
 
+## Final results
+
+### GATE 2 - PASS
+
+- `GPU_AI_POLICY_DATASET_V1`: 17,514 causal 1H decisions.
+- 453 dense, 284 atomic, and 5,478 composite features; 6,215 total.
+- 48,240 complete target windows across 24h, 72h, and 168h.
+- 4,038 target windows censored by source gaps and 264 at the data boundary.
+- Chronological TRAIN: 4,356 rows; SELECTION: 4,411; LOCKED 2021: 8,747.
+- 8,411 train/selection rows pass the 168h purge and 24h embargo gate.
+- Target reference parity: PASS.
+- Feature values are never zero-filled; unavailable values remain missing.
+
+The execution source ends at `2022-01-01` exclusive. A 2022 RUN 2 would require
+a separately authorized futures/mark/funding ingestion path, so the available
+chronological validation is 2021. This is DEVELOPMENT reuse, not independent
+OOS.
+
+### GATE 3 - PASS with negative predictive evidence
+
+- ENTRY direction model: GPU, selection accuracy 49.91%, logloss 0.92180.
+- ENTRY risk model: GPU, 24h excursion MAE 0.02369.
+- POSITION_MANAGEMENT model: GPU, selection accuracy 45.89%, logloss 1.10440.
+- Peak observed VRAM: 5,473 MiB across the GPU jobs.
+- All three models save and reload reproducibly.
+- The management training labels contain five observed classes; no selected
+  `CLOSE_HEDGE` training example exists, so that class probability is
+  unsupported by data.
+
+High-confidence entry predictions do not improve accuracy. The new models do
+not establish a predictive edge.
+
+### GATE 4/5 - frozen policy and historical comparison
+
+Representative 60/40, spot HOLD results:
+
+| Strategy | RUN 1 2020 | RUN 2 2021 |
+|---|---:|---:|
+| BUY_HOLD | 381.86 | 339.31 |
+| SMA_BASELINE | 342.35 | 299.81 |
+| INDICATORS_ONLY | 342.31 | 299.75 |
+| AI_NO_HEDGE | 342.30 | 299.81 |
+| AI_HEDGE | 342.36 | 299.81 |
+| AI_HEDGE_AVG | 342.35 | 299.81 |
+
+- AI added value versus indicators-only is mixed and at most +0.47 USDT.
+- Hedge added value is at most +0.05 USDT in RUN 1 and zero in RUN 2.
+- Averaging is negative to negligible.
+- All AI variants lose to Buy & Hold.
+- AI SWING variants are materially worse, ending RUN 2 between 40.48 and
+  60.46 USDT for the tested allocations.
+- Best AI drawdown is 38.06% in RUN 1 and 60.06% in RUN 2.
+- Best AI representative records one liquidation in each run.
+
+Policy SHA256:
+`d296c8107bef0c68fe06b92532026e485b08b194e10ec89a5f3e1b6ab179434c`.
+
+Evidence is committed under `gate2/`, `gate3/`, and `gate4/`; full datasets,
+all policy variants, and runtime tables remain on S13.
+`runtime_manifest_v1.json` inventories 679 final runtime files totaling
+92,056,733 bytes.
+
 ## Comparisons
 
 All new variants use identical data, execution, and cost assumptions:
@@ -165,34 +227,34 @@ Both 60/40 and 40/60 capital allocations are required.
 ```text
 WIP=TRADING-PILOT-GPU-AI-TRADING-POLICY-1
 STATUS=REVIEW
-GPU_NAME=
 GPU_NAME=NVIDIA_GTX_1660_SUPER
 CUDA_AVAILABLE=YES_DRIVER_13.2
 GPU_TRAINING_CONFIRMED=YES_CATBOOST_1.2.10
 GPU_VRAM_USED=MAX_5473_MIB
 SIMULATOR_ACCOUNTING=PASS
-DATASET_ROWS=
-FEATURE_COUNT=
-INDICATOR_FAMILIES_USED=
-ENTRY_MODEL_TRAINED=
-MANAGEMENT_MODEL_TRAINED=
-MODEL_SHA256=
-RUN1=
-RUN2=
-POLICY_SHA256=
-BUY_HOLD_FINAL_EQUITY=
-SMA_FINAL_EQUITY=
-INDICATORS_FINAL_EQUITY=
-AI_NO_HEDGE_FINAL_EQUITY=
-AI_HEDGE_FINAL_EQUITY=
-AI_HEDGE_AVG_FINAL_EQUITY=
-AI_ADDED_VALUE=
-HEDGE_ADDED_VALUE=
-AVERAGING_ADDED_VALUE=
-MAX_DRAWDOWN=
-LIQUIDATIONS=
-TRAINING_GPU_LOG=
-ARTIFACTS=
+DATASET_ROWS=17514
+FEATURE_COUNT=6215_TOTAL;ENTRY_SELECTED_200;MANAGEMENT_SELECTED_201
+INDICATOR_FAMILIES_USED=DMA;MACD;STOCHASTIC;RSI;ADX;ATR;BOLLINGER;REALIZED_VOL;DNO;OSC_PREDICTOR;INVERSE;COMPOSITE;ZIGZAG_CONFIRMED;MULTI_TF;VOLUME_STRUCTURE;PORTFOLIO_STATE
+ENTRY_MODEL_TRAINED=YES
+MANAGEMENT_MODEL_TRAINED=YES
+RISK_MODEL_TRAINED=YES
+MODEL_SHA256=ENTRY=df5c3eaefaab1dbdf47441e765886e882e24f2373af6dae2df86977e7b49bc86;RISK=ab2955f0efd89565d3833402cdb8425c877c8ed4bac9d34246819cbb405fd45d;MANAGEMENT=3da5206e4099ae0edec19c0485731c33dc0af20bf1848820e714bce62f9fada0
+RUN1=2020-01-01..2021-01-01
+RUN2=2021-01-01..2022-01-01_DEVELOPMENT_ONLY_NOT_OOS
+POLICY_SHA256=d296c8107bef0c68fe06b92532026e485b08b194e10ec89a5f3e1b6ab179434c
+BUY_HOLD_FINAL_EQUITY=RUN1_381.86;RUN2_339.31
+SMA_FINAL_EQUITY=RUN1_342.35;RUN2_299.81
+INDICATORS_FINAL_EQUITY=RUN1_342.31;RUN2_299.75
+AI_NO_HEDGE_FINAL_EQUITY=RUN1_342.30;RUN2_299.81
+AI_HEDGE_FINAL_EQUITY=RUN1_342.36;RUN2_299.81
+AI_HEDGE_AVG_FINAL_EQUITY=RUN1_342.35;RUN2_299.81
+AI_ADDED_VALUE=MIXED_-0.005_TO_+0.466_RUN1;+0.068_TO_+0.125_RUN2_HOLD
+HEDGE_ADDED_VALUE=MAX_+0.055_RUN1;0_RUN2
+AVERAGING_ADDED_VALUE=MIXED_-54.50_TO_+0.023_RUN1;0_RUN2
+MAX_DRAWDOWN=BEST_AI_RUN1_38.06%;BEST_AI_RUN2_60.06%
+LIQUIDATIONS=BEST_AI_REPRESENTATIVE_1_PER_RUN
+TRAINING_GPU_LOG=docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1/gate3/gate3_training.log
+ARTIFACTS=docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1/gate2;gate3;gate4;runtime_manifest_v1.json;S13:/var/tmp/traiding_pilot_ui_workspace/gpu_ai_trading_policy_v1/
 OOS_OPENED=NO
 LIVE_TRADING=NO
 NEXT_WIP=none

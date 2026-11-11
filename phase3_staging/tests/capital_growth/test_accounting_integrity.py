@@ -175,6 +175,35 @@ def test_partial_fill_respects_notional_cap_and_minimum() -> None:
         )
 
 
+def test_partial_reduce_keeps_remaining_position_and_realizes_once() -> None:
+    futures = FuturesAccount(free_collateral=100.0)
+    futures.open_position(
+        "PRIMARY",
+        side=1,
+        time=pd.Timestamp("2024-01-01", tz="UTC"),
+        price=100.0,
+        margin=10.0,
+        slippage=0.0,
+        fee_rate=0.0,
+        leverage=10.0,
+    )
+    trade = futures.reduce_position(
+        "PRIMARY",
+        time=pd.Timestamp("2024-01-01T01:00:00Z"),
+        price=105.0,
+        fraction=0.5,
+        slippage=0.0,
+        fee_rate=0.0,
+        reason="TEST_REDUCE",
+    )
+    assert trade["quantity"] == pytest.approx(0.5)
+    assert trade["net_pnl"] == pytest.approx(2.5)
+    assert futures.primary is not None
+    assert futures.primary.quantity == pytest.approx(0.5)
+    assert futures.realized_primary == pytest.approx(2.5)
+    assert futures.equity(105.0) == pytest.approx(105.0)
+
+
 def test_risk_report_includes_spot_but_limits_only_the_trading_thesis() -> None:
     spot = SpotAccount(cash=0.0, eth=1.0)
     futures = FuturesAccount(free_collateral=100.0)

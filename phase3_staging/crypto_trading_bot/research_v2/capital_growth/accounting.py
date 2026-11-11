@@ -356,6 +356,72 @@ class FuturesAccount:
             **recovery,
         }
 
+    def reduce_position(
+        self,
+        role: str,
+        *,
+        time: pd.Timestamp,
+        price: float,
+        fraction: float,
+        slippage: float,
+        fee_rate: float,
+        reason: str,
+    ) -> dict:
+        position = self.primary if role == "PRIMARY" else self.hedge
+        if position is None:
+            raise ValueError(f"no {role} position")
+        fraction = min(1.0, max(0.0, float(fraction)))
+        if fraction <= 0:
+            raise ValueError("reduce fraction must be positive")
+        if fraction >= 0.999999:
+            return self.close_position(
+                role,
+                time=time,
+                price=price,
+                slippage=slippage,
+                fee_rate=fee_rate,
+                reason=reason,
+            )
+        quantity = position.quantity * fraction
+        margin = position.margin * fraction
+        entry_fee = position.entry_fees * fraction
+        funding = position.funding_costs * fraction
+        fill = float(price) * (1.0 - position.side * slippage)
+        gross = position.side * quantity * (fill - position.average_entry)
+        exit_fee = quantity * fill * fee_rate
+        released = max(0.0, margin + gross - exit_fee)
+        deficit = max(0.0, -(margin + gross - exit_fee))
+        self.free_collateral += released
+        self.exit_fees += exit_fee
+        self.slippage_costs += quantity * float(price) * slippage
+        net = gross - entry_fee - funding - exit_fee
+        position.quantity -= quantity
+        position.margin -= margin
+        position.entry_fees -= entry_fee
+        position.funding_costs -= funding
+        if role == "PRIMARY":
+            self.realized_primary += net
+        else:
+            self.realized_hedge += net
+        return {
+            "role": role,
+            "side": "LONG" if position.side > 0 else "SHORT",
+            "entry_time": position.entry_time.isoformat(),
+            "exit_time": pd.Timestamp(time).isoformat(),
+            "average_entry": position.average_entry,
+            "exit_fill": fill,
+            "quantity": quantity,
+            "margin": margin,
+            "gross_pnl": gross,
+            "net_pnl": net,
+            "entry_fees": entry_fee,
+            "exit_fee": exit_fee,
+            "funding_cost": funding,
+            "reason": reason,
+            "additions": position.additions,
+            "isolated_deficit": deficit,
+        }
+
 
 @dataclass(frozen=True)
 class TransferRecord:

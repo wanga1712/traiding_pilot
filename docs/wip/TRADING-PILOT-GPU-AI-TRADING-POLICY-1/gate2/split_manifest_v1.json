@@ -1,0 +1,25 @@
+{
+  "train_start": "2020-01-01 00:00:00+00:00",
+  "train_end_exclusive": "2020-07-01 00:00:00+00:00",
+  "selection_start": "2020-07-01 00:00:00+00:00",
+  "selection_end_exclusive": "2021-01-01 00:00:00+00:00",
+  "run1": [
+    "2020-01-01 00:00:00+00:00",
+    "2021-01-01 00:00:00+00:00"
+  ],
+  "run2": [
+    "2021-01-01 00:00:00+00:00",
+    "2022-01-01 00:00:00+00:00"
+  ],
+  "purge_hours": 168,
+  "embargo_hours": 24,
+  "counts": {
+    "LOCKED": 8747,
+    "SELECTION": 4411,
+    "TRAIN": 4356
+  },
+  "training_allowed_rows": 8411,
+  "label_complete_rows": 8435,
+  "development_only": true,
+  "independent_oos": "NO"
+}

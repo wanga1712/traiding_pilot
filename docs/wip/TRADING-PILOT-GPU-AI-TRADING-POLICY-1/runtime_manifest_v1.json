@@ -1,0 +1,2723 @@
+{
+  "version": "GPU_AI_POLICY_RUNTIME_MANIFEST_V1",
+  "files": {
+    "gate0/catboost_gpu_smoke.cbm": {
+      "bytes": 141728,
+      "sha256": "032d8b8c93288242a782544ca70fee43d2dea22b0c017add8b9495afa508e824"
+    },
+    "gate0/gate0_evidence.json": {
+      "bytes": 1834,
+      "sha256": "2b13d6a2eedb45a09ef212e9e8dca8ccd4559c0dbe06dc2390a46e63b4570525"
+    },
+    "gate0/training_gpu.log": {
+      "bytes": 2457,
+      "sha256": "383e4c252932566e8fa393a8858912ebe2b789391d4fff7853275e435c11d937"
+    },
+    "gate1/gate1_code_sha256.txt": {
+      "bytes": 1435,
+      "sha256": "dffed58e802b9627cd2785e673dd88855f0e06d9f4a52470c34be3ec2695b594"
+    },
+    "gate1/gate1_runtime_versions.json": {
+      "bytes": 197,
+      "sha256": "28faa7fdfcea2def12480e341e7d180f83521fd973023ed199be0713a6981533"
+    },
+    "gate1/gate1_tests_s13.log": {
+      "bytes": 99,
+      "sha256": "f4cf822bb1097034e8851f5db048c12fcb20dbd3ce426be35ad05f5ea41ff196"
+    },
+    "gate1/gate1_tests_s13.log\r": {
+      "bytes": 99,
+      "sha256": "46da7b7b40fa9cd9287018b4ac2ef99aa78d40dbf88606e688bb46486d3a8932"
+    },
+    "gate1/phase3_staging/.pytest_cache/.gitignore": {
+      "bytes": 37,
+      "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd"
+    },
+    "gate1/phase3_staging/.pytest_cache/CACHEDIR.TAG": {
+      "bytes": 191,
+      "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4"
+    },
+    "gate1/phase3_staging/.pytest_cache/README.md": {
+      "bytes": 302,
+      "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad"
+    },
+    "gate1/phase3_staging/.pytest_cache/v/cache/nodeids": {
+      "bytes": 2044,
+      "sha256": "f508f462840acbcc676fd662c27f20fdc65e87be1159f0c58fa586793057702a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/annotations/__init__.py": {
+      "bytes": 169,
+      "sha256": "e8c38a63bb38a75d2690e2d5185ae3cfd38a7308a04edce6f2c546df832d3770"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/annotations/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 365,
+      "sha256": "5be13ccda9e51592336dee78d3a180aeec744e506ac854bd542235149baa87df"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/annotations/__pycache__/evaluation.cpython-312.pyc": {
+      "bytes": 2914,
+      "sha256": "1baa5c5c6e29a6c928ac30ac5fffa1f95a3a4a9fb2d3b8fcc69957eca555a2f2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/annotations/__pycache__/persistence.cpython-312.pyc": {
+      "bytes": 4100,
+      "sha256": "33210ae3971369f9e92012e5f605de0c4f3b565eeff3ebd47c32fecb4be37a67"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/annotations/evaluation.py": {
+      "bytes": 1550,
+      "sha256": "d389344e23a25560014a490b0bd650499d8164d9de509a2c0f9931be58dc1629"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/annotations/persistence.py": {
+      "bytes": 2702,
+      "sha256": "b50edd650f453ab54bb14a42d6387e6c4abfaeec728cf67c2b96462ca4741b87"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/annotations/schema.sql": {
+      "bytes": 971,
+      "sha256": "fd207a0e2229dcae9c99993b215a4cae347103c3b9fa13b4288bf7d995c9a90f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/__init__.py": {
+      "bytes": 379,
+      "sha256": "476da486337a8e8d016dec466f61dc409f35bf580e14e144418e06a3d8349d03"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 594,
+      "sha256": "6027fd0683d0b50cc3c87b6cbdd0436b4fc4b901836b5467aaa105e83d248988"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/__pycache__/accounting.cpython-312.pyc": {
+      "bytes": 21519,
+      "sha256": "9c312ad55e96c88a9a019a1e6b48ffbb33e9a49b41316cc5fae92e122258665b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/__pycache__/config.cpython-312.pyc": {
+      "bytes": 4278,
+      "sha256": "b13b4a934ba3bc395b2e50a9d1d65c874113c4166ca98511fc269c2289b993d8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/__pycache__/data.cpython-312.pyc": {
+      "bytes": 17840,
+      "sha256": "8660b4ae5222523b51ca1bcb17cfd2af3e5a83dd32d791e5f55594f1d6091b8f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/__pycache__/risk.cpython-312.pyc": {
+      "bytes": 6608,
+      "sha256": "6e04faad6ce5fa130f5670d7302a6c7ae8bb23af61894244bf2a0aa6dd3607d4"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/__pycache__/simulator.cpython-312.pyc": {
+      "bytes": 34501,
+      "sha256": "ebfdf5bd6c7cf93f26e33dec91c97670fc13e616b3cfcad35328a42d494f5dc9"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/__pycache__/strategy.cpython-312.pyc": {
+      "bytes": 4524,
+      "sha256": "a972d0ba6b0595d40cf5a382ae77eee3a454e8271682b25a8c727c285ae4360d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/accounting.py": {
+      "bytes": 14578,
+      "sha256": "5d6ecdb541dcd8c49c992ea8f157b450ee2033eaec15214d3bb3b27b5060ed27"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/config.py": {
+      "bytes": 2818,
+      "sha256": "238b80741e74b07b845b1c120e57bbaed11a6455c491b2bd7af55a1dbba77b50"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/data.py": {
+      "bytes": 12322,
+      "sha256": "d5801c413c5d5995fafa09e57cac9397d0ce48cd3149cd40a487452c9e0c5347"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/risk.py": {
+      "bytes": 5945,
+      "sha256": "04fbe378a631dfa11fe7764545278a5dde11e6c09dedbfc86b6afdfdeed65716"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/run_experiment.py": {
+      "bytes": 12579,
+      "sha256": "390812969891639cc71d6c96c54e6674351b921a4cce9b16fb59cda3dbaa2ea7"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/simulator.py": {
+      "bytes": 32833,
+      "sha256": "2af549cad254bccb39db8de804a0528ad54c5673f63e574149c12ed04f76d2cb"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/capital_growth/strategy.py": {
+      "bytes": 2659,
+      "sha256": "d4b764ef6c02a3e3d0f5438c51aa0bf57556391b141ea064e7d79111e6eac82e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__init__.py": {
+      "bytes": 187,
+      "sha256": "37e5c6cad575f99a301305b1f907b671f87d17afb796aca3014becb5e6ed0c82"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 422,
+      "sha256": "4f973334d348732d597bd477c13247cf80855598a547008e475dd9126a9b2558"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/atomic_replay.cpython-312.pyc": {
+      "bytes": 29697,
+      "sha256": "1c5647622b77673e88c71e57aa665fc50a7955b040363db96299b4738d4999be"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/boot_authority.cpython-312.pyc": {
+      "bytes": 6584,
+      "sha256": "0076b8bf5ec8213982b87a9d97644e773e7c00e3715cf3b22c60a86419b0db7e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/bounded_compose.cpython-312.pyc": {
+      "bytes": 36334,
+      "sha256": "b8d13ea7e54beefa54473d7c929eab2d4236d599d7538713462bd8d6b1cf8331"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/classify.cpython-312.pyc": {
+      "bytes": 4230,
+      "sha256": "3d62b2ba50224075382d7e05483215adc86595f3a85f78537705893364f4ad14"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/compose.cpython-312.pyc": {
+      "bytes": 17499,
+      "sha256": "eca0e4ad36ffae700c460df6ba7d00d766c24b40de7f0902b1286a623c7748bd"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/composite_stream_hash.cpython-312.pyc": {
+      "bytes": 3646,
+      "sha256": "7a0ff0abf237ee29efbbf949d111ecab0dbe5f64d48fd25b3287fcbb23013b2d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/config.cpython-312.pyc": {
+      "bytes": 4861,
+      "sha256": "888527505825e4caee656f24674f844a9276a583d1c08ad166276634438f49f9"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/context_state.cpython-312.pyc": {
+      "bytes": 14652,
+      "sha256": "4bc50d36c6dcb594f70ceb9feec3110954ce0fb65f6cfcc470ca1c3195c134e2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/durable_io.cpython-312.pyc": {
+      "bytes": 3569,
+      "sha256": "5454eb95798d5f8803ddc7d124235cdf163f7113a351cfa41b56a23e8ac65c15"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/enumeration_authority.cpython-312.pyc": {
+      "bytes": 5088,
+      "sha256": "315b85a08c8acaaf5b8973acce17a6e2d868daf3e7caacaf93ad17aab62a4c36"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/evaluate_window.cpython-312.pyc": {
+      "bytes": 6971,
+      "sha256": "a78063c6274cb9785b7307e50e042c8da151c6c3948669df4e14ffd5e2738be4"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/finalize.cpython-312.pyc": {
+      "bytes": 50983,
+      "sha256": "f78ffb5efbc06d6bb52d6fd4f75577e1dec31cf39b850bdf389bdfbc74451821"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/memory_guard.cpython-312.pyc": {
+      "bytes": 5016,
+      "sha256": "098b87a80755428409dee334efc0050a85dbfca98df74ba98b57df4d8515ebd9"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/oos_guard.cpython-312.pyc": {
+      "bytes": 4060,
+      "sha256": "d4a3ac2d33485d51a696bf66f6df7d7953687ea287ebd5f0a008a1785b2747f8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/result_parts.cpython-312.pyc": {
+      "bytes": 5667,
+      "sha256": "2490a48e0adfd65224e6216bd9e08accf56b239fa8229ad8165d29f5f60b5d05"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/stream_store.cpython-312.pyc": {
+      "bytes": 17543,
+      "sha256": "0c69205515808b937421f413bbf03b314eb5a15ea7dc03a2232f5bb8905894db"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/__pycache__/survivor_store.cpython-312.pyc": {
+      "bytes": 14496,
+      "sha256": "4efc51984365a25ee3fde177584bdcf8cf364d10c4f5fea5070ea924434fade2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/atomic_replay.py": {
+      "bytes": 26352,
+      "sha256": "68b8754ccacc44ee35287e0e4d891288b88c000bf8bf7cf32e7e8ef4b97b7cc8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/boot_authority.py": {
+      "bytes": 5539,
+      "sha256": "4b26e18d36c54202dbc1774de3e130f59ac981399e5815cf410c6cc9079446b1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/bounded_compose.py": {
+      "bytes": 36411,
+      "sha256": "85c5746e5510fbb9799b21fc81929ab43b9ead7d654210bf48ef43c5fead03e6"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/classify.py": {
+      "bytes": 4050,
+      "sha256": "8e8ac3bc8d364ca990d012386b5051f2ca85948f0ba38228c9aac8e97bd0cd8d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/compose.py": {
+      "bytes": 22131,
+      "sha256": "d0d27fe52e637e1bca3d75c152ccdb8a28ef2a594e9e16b5607ba4f50771e4be"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/composite_stream_hash.py": {
+      "bytes": 1977,
+      "sha256": "3f42f705f4cebb39ced0b2dd5a96df5426d8bdc1eefbd74b3e948f68297a900b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/config.py": {
+      "bytes": 4266,
+      "sha256": "adff43af7ce0c375247ce32774b903ede275daceacbf750938500db19c5ea3c2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/context_state.py": {
+      "bytes": 10510,
+      "sha256": "dd750b18621e389c78b692546a7fd20586e228fe3b85cf092d424a341b711c97"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/durable_io.py": {
+      "bytes": 1667,
+      "sha256": "855089dccc9269d2c9adbb43c094253979f7080ed92eca5bdcb80a0a3f617e88"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/enumeration_authority.py": {
+      "bytes": 3549,
+      "sha256": "f1fbc0e6c8ba3afc691527e6e9fb0c1bc4b06c7ef7526f146c6d6864a7c8cc3f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/evaluate_window.py": {
+      "bytes": 6084,
+      "sha256": "dcb02b4fcb5e06b102a220a789646cf4c9f510944e100bb2a7d92897b13c3aee"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/finalize.py": {
+      "bytes": 39899,
+      "sha256": "7524697bafc6d128e80dc848ca25189bbae40f54a3aa55aac3a10919183eaca4"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/memory_guard.py": {
+      "bytes": 2952,
+      "sha256": "959a5f66c2525dde040cee39d87964db1c60e12f01949d4f8f875545b84fa660"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/oos_guard.py": {
+      "bytes": 2669,
+      "sha256": "9aa1a97f8cb3265753e02ab9866d51e8a8e6cbaddd4d6b6658723afbfd356ec3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/parity_runner.py": {
+      "bytes": 13702,
+      "sha256": "4665688ebfaf9ee958660ffb7ae2b1fc7af30c34ce0adb0fd2f2080885ca7910"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/result_parts.py": {
+      "bytes": 3427,
+      "sha256": "0d94b3948ef925c247ddc2da10082ea9b7d746cb703a659154fb66715fd03c68"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/run_search.py": {
+      "bytes": 28900,
+      "sha256": "29f0ff2c36606bef5a111d1f09b95cf1f688eb44fbd5aadcd2fa1397b98888af"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/smoke_selection.py": {
+      "bytes": 6657,
+      "sha256": "58e80d440c0cbb40b6b6138f6548e4469316b96082287cb46c784800cf2e0a7f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/stream_store.py": {
+      "bytes": 11660,
+      "sha256": "2a588625e7074ab84c164686fb1fd82126944a85256277cdb1f68fe21d1dd66b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/composite_signal_search/survivor_store.py": {
+      "bytes": 10384,
+      "sha256": "dbdbd4e0379a465486958b014d2b207ebf2c0c3a917f3177a325067c200c8ca8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli/__init__.py": {
+      "bytes": 342,
+      "sha256": "139f7c8ef2e32ca9bb99cc9fb6b524528fabc3fe77f50a142d411d750334327d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 537,
+      "sha256": "125bddf596ab654591859805b298a4a3cdf409232f35461ca9ad15d19057dbdf"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli/__pycache__/multitf_sweep.cpython-312.pyc": {
+      "bytes": 44170,
+      "sha256": "65c3368fedb32ff2fadf69e05926b3f6f279dd9b8f4ca7225d1d9a6cf35f62a7"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli/__pycache__/normalize_retest.cpython-312.pyc": {
+      "bytes": 46656,
+      "sha256": "208f19dddf4ad9d09de77e2361e92b29d801fa0cf3d0172c836181bf22a8d5a7"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli/__pycache__/validate_4h.cpython-312.pyc": {
+      "bytes": 32109,
+      "sha256": "36060307b88dd98c495e002b0720c3dee79ff2887812092a8bc79b0502161402"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli/multitf_sweep.py": {
+      "bytes": 30022,
+      "sha256": "e0448a51dbf60d2967bd6ecb786936ba7fce58174a78228706433740629c593e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli/normalize_retest.py": {
+      "bytes": 38296,
+      "sha256": "0211a40288302c777fe30db7ccab18f4b102289fb9bc0fcd83f54cb9d9cf13a2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli/run.py": {
+      "bytes": 2646,
+      "sha256": "41c0879133eb8c8bbb549d7535f0a1be4a739434a350fe57e51b85e995e2f4ab"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli/run_multitf.py": {
+      "bytes": 3408,
+      "sha256": "1ba94c6d2f9f0fe1b1bcb75907799f867f95c2782497ebda3c97bb009b83738a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli/run_normalize_retest.py": {
+      "bytes": 4548,
+      "sha256": "3ea56ad493158f8429942eb118b3c9d5cf3d50a6cf579d2f43944d1385c27685"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli/validate_4h.py": {
+      "bytes": 22610,
+      "sha256": "d216979bf97221ce6e4992b915a4febf80a7cc249258a05117934509a26eb31e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli_when_reconstruction/__init__.py": {
+      "bytes": 142,
+      "sha256": "30425cb0c0a0fffcd4cf3d8d0b71ade8b4b0873c20bfcf644e71f4775c3c4be5"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli_when_reconstruction/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 387,
+      "sha256": "3b319df250a5a0bce079069a6688b9708d07d368d2162fd841a523b030d990e4"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli_when_reconstruction/__pycache__/signals_ext.cpython-312.pyc": {
+      "bytes": 8961,
+      "sha256": "ccf0abb864e0c3963ff86b33f08e011216c8467900955396da7fe3782160407f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli_when_reconstruction/__pycache__/version.cpython-312.pyc": {
+      "bytes": 352,
+      "sha256": "ed4b4c66ec2a702ac1198b54035cd06984e032fd59b8f5281e20a779653c379e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli_when_reconstruction/config.py": {
+      "bytes": 2425,
+      "sha256": "c6a89fb45935838a8549e3ed8e169d56a2429644dfd95f4a39cf556997d0ad27"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli_when_reconstruction/confluence.py": {
+      "bytes": 5407,
+      "sha256": "7b5829265e29a453093c04de230e93d595947963c2a520cffa6fabf67301055a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli_when_reconstruction/context_gates.py": {
+      "bytes": 4420,
+      "sha256": "e35e7ffc4d7e590897e5fbfbec364053a0bf470113a11baf125a376dd14bbddd"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli_when_reconstruction/geometry_stages.py": {
+      "bytes": 4749,
+      "sha256": "662f6cbe52b41ed63bb7b40e2484d003f86108706d36efb7adf127e59aa6b595"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli_when_reconstruction/run_study.py": {
+      "bytes": 38189,
+      "sha256": "dd906c636d567a19e4175fabed8819a6efc374bead048a3aea28cee537aedc1d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli_when_reconstruction/signals_ext.py": {
+      "bytes": 8763,
+      "sha256": "d9cbf43595c82fad739731d8f8833b88ef2a9c3c63db0ee8ac5cbaf063a68a4b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/dinapoli_when_reconstruction/version.py": {
+      "bytes": 124,
+      "sha256": "c42868ba785df9894060bdea9157c402e54049c4c33a764f4dcb530ce2662f2d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/independent_oos/__init__.py": {
+      "bytes": 71,
+      "sha256": "7445d07537fb2f08e0e1d3111baa3f609f2724977c2ae454b484a1b81f21c2c3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/independent_oos/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 283,
+      "sha256": "6adae71674bc45914d86ab73d92834e31579eebe33153543b3f68658e18357ed"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/independent_oos/__pycache__/evaluation.cpython-312.pyc": {
+      "bytes": 9740,
+      "sha256": "6a70a97d8385ec9937de19aa566a284b6e74f30ba3421506e2ee9119c0e576f7"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/independent_oos/evaluation.py": {
+      "bytes": 5249,
+      "sha256": "171d98e62bbe63979fececa0d87cd35e444fe906775deb68d8b1faa72649ed8c"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/independent_oos/run_one_shot.py": {
+      "bytes": 25156,
+      "sha256": "4bc4f1baddda9eef509461bf66efe11a33d65a1c321497f36d06683964e3e0b3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/README.md": {
+      "bytes": 1637,
+      "sha256": "30accf64aec874b5dd127e80383665612af93a0062183d18799471590cae0874"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__init__.py": {
+      "bytes": 553,
+      "sha256": "e49d0eef99d3305e7fe85d2a1c930537da7c9b31f589b5bb293c497a760f3960"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 684,
+      "sha256": "f2c8770b0e42bd3c8d786a9042b061f0a4a9ddbb22a28b0a8bac5562c84bfce3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/adx.cpython-312.pyc": {
+      "bytes": 4914,
+      "sha256": "0bd6ed8b24b56cc33f51577a7b4143346fce68275ba7a13fcc724dd57cb0a9d1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/bars.cpython-312.pyc": {
+      "bytes": 5030,
+      "sha256": "647c76a2a31487d66acfa9ba4d04e6f36968289cdf733c1ffe7ba4c8acd4fc5f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/cache.cpython-312.pyc": {
+      "bytes": 2957,
+      "sha256": "f2817067698d5e47f55501d199213d476ba4677cc078928e2ac116fa6f2c89d8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/candle.cpython-312.pyc": {
+      "bytes": 3626,
+      "sha256": "ab3a3a0f99222d0f806be774c4f3aeccaa14bbd4d11e74cdc6e2c1e755d656e9"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/dinapoli_macd.cpython-312.pyc": {
+      "bytes": 5148,
+      "sha256": "1ac7e5ff626313e07723a850c7686c61d56d71cc8ac0b94810f49bfff4e876fd"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/dinapoli_stochastic.cpython-312.pyc": {
+      "bytes": 8215,
+      "sha256": "939393ea47aa3b7ca52e1fa9e30dbe8be0ed0df149ffd4bf41bd81e9ee500cd8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/dma.cpython-312.pyc": {
+      "bytes": 3914,
+      "sha256": "1a2402e531aa164274748cf52296725eefbb5dfd13a2bb16b8f186b3c65be825"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/engine.cpython-312.pyc": {
+      "bytes": 7790,
+      "sha256": "4f61fa103d13029637212e96ff7fd75cf9468a9f27bbd1f4fab243448a09533d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/macd.cpython-312.pyc": {
+      "bytes": 5036,
+      "sha256": "a904c5ee87bf47598ccb44edcc7b70e5d2c34631324cb6bdae863a5077166e75"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/math_core.cpython-312.pyc": {
+      "bytes": 7464,
+      "sha256": "6ba602f6c88bdd70c1d6f87670029f4acc1cdc5784dd30189707f41d50056a45"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/momentum.cpython-312.pyc": {
+      "bytes": 9286,
+      "sha256": "477b1b8fd18122eda407741698cea67d0206788544aeb3522b8f77c7ddf5fec1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/registry.cpython-312.pyc": {
+      "bytes": 4429,
+      "sha256": "106b7369d297b000bb4191a3560210f5999ec51716b87848176929f099090a23"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/rsi.cpython-312.pyc": {
+      "bytes": 4268,
+      "sha256": "791e6f3955f301fa45f4eef51cab61fc703e65e154d8632af76072c485323dea"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/segments.cpython-312.pyc": {
+      "bytes": 2951,
+      "sha256": "413a84533c9b18b5808c57702cf38a683ae72d82103d2913a11b5189f504a032"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/stochastic.cpython-312.pyc": {
+      "bytes": 4463,
+      "sha256": "08746b98ee3041842b94dd8510d1dceea39e5e5f812b973d3a39c7f74c80fe2a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/trend.cpython-312.pyc": {
+      "bytes": 4686,
+      "sha256": "efa269245cced8909d365d7810319e2ac0e57c1e63b80ea8d69921bd613fc10e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/types.cpython-312.pyc": {
+      "bytes": 2306,
+      "sha256": "68ad7ff3d4eacb93d2aa6aeb0f8f3f4500d06d724df7abbcfe5e87ae84cc9ff3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/version.cpython-312.pyc": {
+      "bytes": 261,
+      "sha256": "3ed045ddb14848feef4a5bcbcd64cadd26d187945fddf5aaf92cc6c6b01abcd0"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/volatility.cpython-312.pyc": {
+      "bytes": 6309,
+      "sha256": "5dfb7a137a0479559a6b41238f1727059cf758c576d0ac345e2b984dd4d76abb"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/__pycache__/volume.cpython-312.pyc": {
+      "bytes": 3520,
+      "sha256": "aa5ec217e23b12259161d78e230da756cff885298e756b06adc9ede41e422a5d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/adx.py": {
+      "bytes": 3721,
+      "sha256": "e104011be5c2fabf5788c76f63c405428a56d0a389241045dd4f22fd8236204c"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/bars.py": {
+      "bytes": 3304,
+      "sha256": "0053614d8d1a5c01b64140424ec303fd282161be79353c808e3b759b0c39f601"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/cache.py": {
+      "bytes": 1651,
+      "sha256": "25a896610a6e5930cb8b47ddb4c63b5f961684a63854a9c0a59562bee578431a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/candle.py": {
+      "bytes": 2973,
+      "sha256": "0b234c0bf281f13db7c72a1a1a401495e6f5f2a968ad83dce54a89cfa5f27fc8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/dinapoli_macd.py": {
+      "bytes": 3951,
+      "sha256": "dbd6c7380c16393953220c050117ac6992c270cfd591e9286602f1bd7bdd81b6"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/dinapoli_stochastic.py": {
+      "bytes": 6351,
+      "sha256": "e5c33bafa0893b9ed7391aa8437f56131bc47bf91bd6872698eed544f6024798"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/dma.py": {
+      "bytes": 3972,
+      "sha256": "e1ab852f3a81d3cac8c8b287376f5a9d3682a1b191d57387e6b9cdb3836951f1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/engine.py": {
+      "bytes": 7006,
+      "sha256": "4ffab2515e7005479f3c895aa22e932d9d51245bc8da200ecd03e62ccbad854e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/macd.py": {
+      "bytes": 4143,
+      "sha256": "5f865d7a367d1095c61bc332bc52b80920461c1fa42d9fc9fbe486ff6827fd1c"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/math_core.py": {
+      "bytes": 4375,
+      "sha256": "5da4d03d5360a5698e827baa944abe2f4cd23c56e73150be12aa8af8e17b1fdd"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/momentum.py": {
+      "bytes": 7087,
+      "sha256": "93fcb3e044588aa758f3d67c974241f2f94ef69935d8d7f95e66097336e24b8a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/registry.py": {
+      "bytes": 6774,
+      "sha256": "a526bb23f337ba30535c7666b03abfc65440ccb85133bd882ab8b72b78faa975"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/rsi.py": {
+      "bytes": 3451,
+      "sha256": "f6e13f1b3c7d8a76c73ca6999d4a4eeba2d28d86b0c94f75b0c23253fd6134e2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/run_validate.py": {
+      "bytes": 6570,
+      "sha256": "8e75ef8cbd563b66d8061450f7a865300d296dd562c57eca4f1f5a8725bdf869"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/segments.py": {
+      "bytes": 1929,
+      "sha256": "f760fb17cf16983e9212ea47dd95c3e17b8d10c78612c97c54eb0c6107896924"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/stochastic.py": {
+      "bytes": 3729,
+      "sha256": "bcbe3a9ac01e15d5294d7156738b024571d9d3b3b070d40f7ae2a31b22f9cce7"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/tests/__init__.py": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/tests/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 214,
+      "sha256": "85246d7703f7ccea9bbe57abe4854209bdbfbb9307f1c0c298c1814e16133233"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/tests/__pycache__/fixtures.cpython-312.pyc": {
+      "bytes": 2642,
+      "sha256": "aa4d1f00bf5dc0b22a13f3db66456218c04e2c8ad8a06a30cd02bed50a578d8d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/tests/__pycache__/test_dma.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 14625,
+      "sha256": "4ccb59101c9e8570b5ecdf2c440c40595ff0670dbaf57cf0b82bc9244f0f5b2b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/tests/__pycache__/test_mtf_warmup_gaps.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 11630,
+      "sha256": "fb98fcc817a5022cd981e712b78a03e4773592ea4c26d959891415fec49e43c7"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/tests/__pycache__/test_reference_and_leakage.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 20105,
+      "sha256": "5dbf59535587fd69a61ba896751395943e1def6e92057b96113ba33efafa5667"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/tests/fixtures.py": {
+      "bytes": 1869,
+      "sha256": "68347da078192cb3cc8a1929d5193bcca9d270fabac211658306e885e09e9ed0"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/tests/test_dma.py": {
+      "bytes": 2560,
+      "sha256": "583025348b1521a715a14a31702b01932984216d13ce65d88a0c2007b999c6b0"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/tests/test_mtf_warmup_gaps.py": {
+      "bytes": 3190,
+      "sha256": "1c5d772454d08196558ddcaee62951481d51b26c5f7ca70b8ac5680e19c9e7ae"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/tests/test_reference_and_leakage.py": {
+      "bytes": 4943,
+      "sha256": "22174d34b35afa2512588f567b36b2ffaad023642000828753504ac5a01bdadb"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/trend.py": {
+      "bytes": 3360,
+      "sha256": "d126aa1d60bc83e5e691272c0501115b63d4bb67efe2fcc09986a1cada10a4ad"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/types.py": {
+      "bytes": 1699,
+      "sha256": "035382e41537ef2fbb44c145a935e24065f92f5dd00b70228875ac437448a346"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/version.py": {
+      "bytes": 50,
+      "sha256": "73e55d1e9f49eec04c066633668df0d733f67e44d382363d51995bd7963458ef"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/volatility.py": {
+      "bytes": 5159,
+      "sha256": "e61f371de6e97bcb888ade3299f09900e481411788c25858cb7fa5767d581c46"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_engine/volume.py": {
+      "bytes": 3250,
+      "sha256": "53ee566a253b05aaab28e2ba6d596411feebeb52088a4e002b80ccfcda314479"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__init__.py": {
+      "bytes": 86,
+      "sha256": "2b9a469a1742215ee2751161746faf48fd6f77b0992d22715909a2b9747e2351"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 314,
+      "sha256": "40dcd46c5ba3d762a28143f041dd22cfeffea3f9df783e7476791f80b7f0154a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/anti_leakage.cpython-312.pyc": {
+      "bytes": 1813,
+      "sha256": "c91776d53b921a5c82c174fad60bd3f827f8d45250901d7027d38d3369f9e2a0"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/candidate_registry.cpython-312.pyc": {
+      "bytes": 19265,
+      "sha256": "6a7e7f9bdd7cb3f5a934d1c38985d52fae8bbf7703a7870bbec2db7dea167561"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/candidate_routing.cpython-312.pyc": {
+      "bytes": 28099,
+      "sha256": "a1be7e8c8aa4ca61e741ea52abd14dd7b9458069a518bf2d900e4c0573e3a71f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/config.cpython-312.pyc": {
+      "bytes": 3898,
+      "sha256": "defdaaf17bcab2ca930287cc1e2d0d7c20a2baf91b7c6f65d9b95c1dc139efc4"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/data_isolation.cpython-312.pyc": {
+      "bytes": 5918,
+      "sha256": "afdcf660e18710c19525d99d0e1c96fe44fcacea027c015eacb237fcef6163a5"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/evaluation.cpython-312.pyc": {
+      "bytes": 12425,
+      "sha256": "6bd493128be7a58b07fd56262351b60eeed994ee71f29d46202b8aca42f2244e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/frozen_spec.cpython-312.pyc": {
+      "bytes": 5740,
+      "sha256": "a648dc3bcd99fb2dd53b912c5d4031c90b7788686b8e4c97103580a52072b7e2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/run_search.cpython-312.pyc": {
+      "bytes": 37809,
+      "sha256": "23f13f8f4096aca51009c242cfb720389e708223eea514fb1331fcb61c7b8d54"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/search_spec.cpython-312.pyc": {
+      "bytes": 12454,
+      "sha256": "496b1e4a02405862a756f6575e3dfe5b09a4015f71b36f9a616548285bca46cf"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/signals_bank.cpython-312.pyc": {
+      "bytes": 25647,
+      "sha256": "e10e1c9a9a6533c532699cafd7ad06a5382185c0c03b6d935e70fa0f337b6d63"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/validation_authority.cpython-312.pyc": {
+      "bytes": 8721,
+      "sha256": "f05ad4e89255ebf9e7b5b614ee8fe1e03c6967c6062295de6cd91068bee381e3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/__pycache__/version.cpython-312.pyc": {
+      "bytes": 716,
+      "sha256": "1e260241b37a390a738894adbfa3635783da2b8f0355c2faf26bf942af48c2b8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/anti_leakage.py": {
+      "bytes": 1479,
+      "sha256": "938fde8efecfec39f3632ad671323d6445816689ff4ce707f914c826319250b6"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/candidate_registry.py": {
+      "bytes": 19839,
+      "sha256": "2e8e4c1ddbeef748126b5f3f7db7c0646786c0d1fa2e44f9beb4d9b27d611aa5"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/candidate_routing.py": {
+      "bytes": 28127,
+      "sha256": "5f5ee4c9238f84d6b999efff897f89edfd00dd50565da9367956233c86dc3eeb"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/config.py": {
+      "bytes": 3067,
+      "sha256": "2e682eaec8e9e862c59fed3bdb490fb2229eee217cbef6ea05b10f7b5d10bb9f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/data_isolation.py": {
+      "bytes": 3778,
+      "sha256": "5a797c49ea5d20618cdc4fe9e1390b79cb8471c0885085b343019a9f33673d98"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/evaluation.py": {
+      "bytes": 9648,
+      "sha256": "79c1314593fefc435f59f59b3d37d88ff3beafbbb65cb24e1b87b60d1543d3c6"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/frozen_spec.py": {
+      "bytes": 5344,
+      "sha256": "90787dd13944f48aa1c729e2c6290ad7c32910995f0c68836127b5c40e1480a9"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/run_search.py": {
+      "bytes": 34540,
+      "sha256": "c6271c118f3a1d89c6ac449cf52352cbd081a4567a508c8f18f93df416db5ca7"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/search_spec.py": {
+      "bytes": 10515,
+      "sha256": "fe30bad7eda8c81679ea6159efc265fd9741a592f862c40abe94734c136c038e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/signals_bank.py": {
+      "bytes": 25038,
+      "sha256": "dbbaafdf24c11ccd7da357efac891d63273a4e15470802c435a935bde8836e2d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/validation_authority.py": {
+      "bytes": 7483,
+      "sha256": "cc6501ae5d84907bac07ea5e01374f5099dbd10eaf8a908ce3e80c2c60177615"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/indicator_parameter_search/version.py": {
+      "bytes": 444,
+      "sha256": "c9c5a179ed0545aa4ee12b6f1727d1fc8253a45df5d502d81ce820d29f09e8d4"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__init__.py": {
+      "bytes": 453,
+      "sha256": "498f4d16bdd31ff207b24f86e002f62143edae21d41f2fa17f3941ce259c707b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 618,
+      "sha256": "2d7738bfd08999bc153ed82915a9307d47b9a8a595a14329179803cefeb290ef"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/batch_thresholds.cpython-312.pyc": {
+      "bytes": 13956,
+      "sha256": "a18e6ac8bdf225499eb628f0ef40a61687dcb8d09f33ead8f93194bb50ab3a79"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/dma_solver.cpython-312.pyc": {
+      "bytes": 3037,
+      "sha256": "429b7bfa0f3f3440305ec60a25b3c13a5a41113ff8a08a6d8b6075ab10eee48d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/dno_solver.cpython-312.pyc": {
+      "bytes": 3249,
+      "sha256": "9072e46b74d8fa75258503be8b3987b8c5511d018b8c3987e07d45dd91ed1d62"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/engine.cpython-312.pyc": {
+      "bytes": 5358,
+      "sha256": "e8c979b0003d6d2dfcf025292d0bf705090792ed4bf2e9fb89123ac093167fef"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/ma_osc_solver.cpython-312.pyc": {
+      "bytes": 8623,
+      "sha256": "5035cfd9cd141ce7dc35804e9e338a78284fa65df41e472f76ecc65133f9e9cc"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/macd_solver.cpython-312.pyc": {
+      "bytes": 4015,
+      "sha256": "059bbcfeca712f8a359222647b0d5c2fb50c20b465b407bfaf06b13bf1e311f6"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/registry.cpython-312.pyc": {
+      "bytes": 4950,
+      "sha256": "c8acfb7b73920857405c3eee62df4784ba3408e38a79ed07df4acd0b0365ec7c"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/replay.cpython-312.pyc": {
+      "bytes": 6838,
+      "sha256": "5a66fecc27e0df108fad9924450ee79b0760c4dd7dcc88e1f3be08ac5daf5a72"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/result_utils.cpython-312.pyc": {
+      "bytes": 2217,
+      "sha256": "bf14af4d7e9a7f65479971ad91b84f4da5b6d0c0767e52e21232b3778a15ea8f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/rsi_solver.cpython-312.pyc": {
+      "bytes": 3443,
+      "sha256": "46b8fed7c16795b418e17ea529aec7d2862601c12dc0c2c4ce6680548b3dc8b5"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/state.cpython-312.pyc": {
+      "bytes": 4911,
+      "sha256": "81fd95e6450d176e44215c8ec4aa4ee6569aaf4a57b14e96bdbda34550df45ab"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/stoch_solver.cpython-312.pyc": {
+      "bytes": 4492,
+      "sha256": "c32c2e9ed87324fd6010a497dd4a61c2b3f6b5c7206592374e247fac95660820"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/streaming.cpython-312.pyc": {
+      "bytes": 1266,
+      "sha256": "ea4b9a0a2553df0b688fc57b51db33675e62b912a28d7ac50545fae232484179"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/types.cpython-312.pyc": {
+      "bytes": 1672,
+      "sha256": "0dd73b9d28b438cb1392c71c66401ffd7af55291ef3a1d049cea268463937ade"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/__pycache__/version.cpython-312.pyc": {
+      "bytes": 947,
+      "sha256": "89fd5da19cb57c935b02d6c90dafdc30be537f6d6066cf3c0a4590a2b7d419b1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/batch_thresholds.py": {
+      "bytes": 11929,
+      "sha256": "a81fe024754d9cf1a90d86b5a19136a8136a050d907ab1ebb8e21143dd40b794"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/dma_solver.py": {
+      "bytes": 3294,
+      "sha256": "c73d22072ee91cdba36a0b7c213cacc596316dbfd8733302406e0b3e7fc88109"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/dno_solver.py": {
+      "bytes": 2887,
+      "sha256": "fa0a82a34d74785d94d0b13f5a21043336f563312f69a65d5bfd7630b355110c"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/docs_inverse_predictor_engine_v1.md": {
+      "bytes": 1365,
+      "sha256": "27d7ac14eef2493ba5bc46a2e1fd479aebaade8aaceced5f25a581c725db8923"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/engine.py": {
+      "bytes": 5910,
+      "sha256": "185fac7feef420aea12a8a55edad67a364fe0d7aa2a6f937efe6ac386d04f648"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/ma_osc_solver.py": {
+      "bytes": 9519,
+      "sha256": "c7d60e1a839dba5777287fc6fed3f09f500430c078a22b515063d04bdd08d6cd"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/macd_solver.py": {
+      "bytes": 4107,
+      "sha256": "02b2a804757b555e974a5e07b9e0462c57c043ca1b92f41605022b36a56123e8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/registry.py": {
+      "bytes": 9601,
+      "sha256": "de24560c253f9c0b9dc8fb677ef7dc9f05efaa8ea6291ef0fafde3fe5121cd6b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/replay.py": {
+      "bytes": 5289,
+      "sha256": "d12d20370f0cb75e9bed41236231febaff89ab284a94ffaf96e557023d57867e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/result_utils.py": {
+      "bytes": 2025,
+      "sha256": "7f22be4dfbf7191c81630a97a46738d821c482df1fa302abce802014694da083"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/rsi_solver.py": {
+      "bytes": 3635,
+      "sha256": "a9de2c8f5d4b7df38729abdddd97fd8d64744f29e891e9606774f968dd0460a0"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/run_validate.py": {
+      "bytes": 6297,
+      "sha256": "e8b980e0d460bcb40fa09ca573b0971c043aa949a75571f1d45ce1361c52defc"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/state.py": {
+      "bytes": 3187,
+      "sha256": "28bc4972d168886e4dc5eae56746248fe85613d5e2b8a7dfa1a8e9b9034a6a2f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/stoch_solver.py": {
+      "bytes": 6271,
+      "sha256": "7350b0aa4c92de7954ced7eb8e10121d7f5069115d53db4cdf256944da903038"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/streaming.py": {
+      "bytes": 925,
+      "sha256": "73b7c6fed6855b941a08299c0a537e3a95d40f524c11cd811aff0c7d47104fa3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/tests/__init__.py": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/tests/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 216,
+      "sha256": "18f41bd2f6ca2c172283ec25079f86eb4425689dc5779569a09aeeda786e5437"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/tests/__pycache__/test_inverse_predictors.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 25462,
+      "sha256": "6aff076a2ab5075996a454cabcb074d636a02b658c4d64a3c161b22a67676223"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/tests/test_inverse_predictors.py": {
+      "bytes": 6821,
+      "sha256": "7eac945c0b898fee337b1633ebf6c741587a4eca12a6ef17fe58ef706c13a00a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/types.py": {
+      "bytes": 993,
+      "sha256": "24f2d4e6b4a920cd8cc78e7c7ca7a34f20333638280a622764972c523422a3c5"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/inverse_predictors/version.py": {
+      "bytes": 974,
+      "sha256": "76df272fd36f282f9a676f80d6b01f9c59bf4369b80f877e69418ca7ab50b386"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/market_data/__init__.py": {
+      "bytes": 585,
+      "sha256": "b3b1dbaaf932186a64e96225807cf8effb22d17283cdfe6d15becbfd9b8f362c"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/market_data/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 641,
+      "sha256": "77920820e0f58bef1d426d1e934a8c8fe744fb53ea8e9b9f4aa85226135735d1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/market_data/__pycache__/bars_service.cpython-312.pyc": {
+      "bytes": 18026,
+      "sha256": "c6fa8663cb809a5222a291a74addf2bc0c926c6351b126ae6341babe753e8283"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/market_data/__pycache__/research_access.cpython-312.pyc": {
+      "bytes": 7994,
+      "sha256": "b1e167f4c60c1e07edf22a63884af0b3953f585518e7164fe49cc2d9827d9280"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/market_data/bars_service.py": {
+      "bytes": 13403,
+      "sha256": "ef4138652a3f7c04c61534df6798ee3444bca65ff02d8f71f1c98d26238d4093"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/market_data/research_access.py": {
+      "bytes": 6570,
+      "sha256": "55f713f3f38011ba0631daccd965120c5146a082a7191b933369903dab8fbc83"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_bakeoff/__init__.py": {
+      "bytes": 53,
+      "sha256": "2037e38639e67794f10a815cca81191496e0c4a560520484b15e547d442bc99d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_bakeoff/finalize_bakeoff.py": {
+      "bytes": 8842,
+      "sha256": "8b5478f7eb41cbd9a1cee3403facbb7b11757489442728a9f36cca3856df49c0"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_bakeoff/run_bakeoff.py": {
+      "bytes": 14705,
+      "sha256": "82c0479c047cac2f36c1f3dec0d627e2d3cee5b4c6eea3c1356ee37850709778"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_training_dataset/__init__.py": {
+      "bytes": 43,
+      "sha256": "48d90209eb99f43c29d08e8e5d717ffb0befb358c12b05da406ed8b0f4a9db2e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_training_dataset/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 264,
+      "sha256": "32e0163978cd208f3c6b12dbb44188960ca8320616cf59d4bf9ab1fdddc4e0ea"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_training_dataset/__pycache__/integrity.cpython-312.pyc": {
+      "bytes": 1611,
+      "sha256": "425c327de824a1d5395337fdb6e8f12123e16d88a6681a3228c2175b2665172b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_training_dataset/__pycache__/target_engine.cpython-312.pyc": {
+      "bytes": 11412,
+      "sha256": "96b68f87a84d972392b0e1963122f596d4bd74f0b5d160433c545bf36c2d3e43"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_training_dataset/__pycache__/test_integrity.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 11894,
+      "sha256": "87fce0bee6e71d2cac01ec0745c91f1a8cd8fb703187e8de62f3879e0f978baf"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_training_dataset/build_dataset.py": {
+      "bytes": 8791,
+      "sha256": "9c6870aa6b2f590e626a7687d18feaf942447c04be0abbf11a68162ba9678883"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_training_dataset/build_v2.py": {
+      "bytes": 18668,
+      "sha256": "1019f24d1731b006e29f78ee13e1663d38ff4401890a1f6e086936de4ded518c"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_training_dataset/finalize_evidence.py": {
+      "bytes": 4940,
+      "sha256": "3bb8a2d52a96ee791e46aedc46b6173dd4bc9f5ecf3a0bf86c8184b6da3a8eb8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_training_dataset/integrity.py": {
+      "bytes": 739,
+      "sha256": "43c869fd3c61fe872b86e4853959dcff1373587098fafb5aff420a8dadd5798f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_training_dataset/target_engine.py": {
+      "bytes": 4979,
+      "sha256": "1fcab7841782f7094bd6eb0bde2740b4a415d38b042bc1bd5c5ed933975d8608"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/model_training_dataset/test_integrity.py": {
+      "bytes": 3990,
+      "sha256": "2fc9d52414ad9f906e0a9edba191ab98b3f423b5fdec510444efa9e03f6f2cc9"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__init__.py": {
+      "bytes": 428,
+      "sha256": "ecb1b0d9fa516f7fb646e6c08e58f2e104008969eb1e38f39404702918d88c26"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 581,
+      "sha256": "1be46b33dc6279f509159eccac48151e3703da455d5a7a1977f7f78287f54f44"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/aligned_features.cpython-312.pyc": {
+      "bytes": 3068,
+      "sha256": "b927e31c743a9c173df9516a60685e8136a46eeb812f71a4d0b24fc189d5072a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/displacement.cpython-312.pyc": {
+      "bytes": 3494,
+      "sha256": "6138e12c09a65fdf935e9e97f5c2fdc1553502e0c2f05d5690b564026c4e0cf4"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/geometry.cpython-312.pyc": {
+      "bytes": 5034,
+      "sha256": "90980441ec599e5d357eebadf3b87055194eb753754e1364e204863eb20570c8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/geometry_stage.cpython-312.pyc": {
+      "bytes": 833,
+      "sha256": "39a113643f363185ce36449ad05c8332dd306ae111fc530d6750399316da4983"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/ma_features.cpython-312.pyc": {
+      "bytes": 8120,
+      "sha256": "8147aee7d77d52ab116835c0b3458abc70e025e4e1e3fecf34e23990940eb3ab"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/macd_features.cpython-312.pyc": {
+      "bytes": 10481,
+      "sha256": "0f859fb97ae29c470aa8bdcfc98de31a79086e7842bad271bc7fade829ae8ab1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/pivots.cpython-312.pyc": {
+      "bytes": 3716,
+      "sha256": "04163ec4eb3ffa5ad79759fdd84a89417c1170cbb5c19c51074c4e9f3ac90281"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/registries.cpython-312.pyc": {
+      "bytes": 12489,
+      "sha256": "4e10cebb64d45fc023a340b71c76ad8fa4596d3b6275c2fda46e10c1af84a7ed"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/snapshot.cpython-312.pyc": {
+      "bytes": 12326,
+      "sha256": "cd75ef4c920e846de29f42622b0f215fc76610486b983964e222bfc15b5e2136"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/stoch_features.cpython-312.pyc": {
+      "bytes": 10655,
+      "sha256": "638c087263c5bef2d3daad898a2baa8cc4a2e345c9627bff1cced71312ba4f34"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/streaming.cpython-312.pyc": {
+      "bytes": 2459,
+      "sha256": "4695743e67d6abf7394a1b1b52a9de86b1847e83f3d3198492940e6426a2b6ec"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/version.cpython-312.pyc": {
+      "bytes": 341,
+      "sha256": "726cf6d335e918785e38eea1d15c131d36a689bbdfd410e3afa2b58416562c28"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/__pycache__/warmup.cpython-312.pyc": {
+      "bytes": 4593,
+      "sha256": "e67dc3e396e423acf966e1b51facc40ca96f89ad4f25a539bd4ea478b4c47109"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/aligned_features.py": {
+      "bytes": 2377,
+      "sha256": "167c4961b3ea9a21915b038346d9cdfaa6545fdf2e3d3ec2f2ff6db7c79e1630"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/displacement.py": {
+      "bytes": 3000,
+      "sha256": "e3382bae1507d035817fdda21351933944d81383afcb0fe365f2b1356da6298d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/full_history_gap_audit.py": {
+      "bytes": 19209,
+      "sha256": "89df5f1b3b63bd94578382149c4901625e056d2c7102fb8806c2de5a899bd754"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/gap_audit.py": {
+      "bytes": 5497,
+      "sha256": "5ca239753e689b85def9cb33dc5926790313642151b8a8fa79415121320eadd0"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/geometry.py": {
+      "bytes": 3528,
+      "sha256": "cdfb7a7ff4a4fe056d773c63131e2d790b32579e6b2b191c8da1489e1b5d7698"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/geometry_stage.py": {
+      "bytes": 527,
+      "sha256": "6d00ec78e37fe15ee44f31ea3ab1eb2ede25922daab6b9f2187be0bb32c52186"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/ma_features.py": {
+      "bytes": 7861,
+      "sha256": "2922b3c107627a0cc118394f5eb2eb240f8983f4fb29309abf8abf49c6dcdead"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/macd_features.py": {
+      "bytes": 10093,
+      "sha256": "302cf5f1e4d8c4c6f355be5c81cb120fc1f6b159dbcd1a1130a68547b5e43c84"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/pivots.py": {
+      "bytes": 2612,
+      "sha256": "433e723dab386d8390db1ba25f69f7427eb2b3b75d3c3ecc6ffb71efe37ad11a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/registries.py": {
+      "bytes": 16152,
+      "sha256": "0d5355a49a3d06ae10ed3bfff9176238033fd6f32508a9ad3027910ddeba6bea"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/run_validate.py": {
+      "bytes": 13606,
+      "sha256": "44a0ab7019dfe9eca8677ea15b89c154cb4add1d425b8f9682da99f1267da526"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/search_space.py": {
+      "bytes": 2258,
+      "sha256": "6be7191fd8da948b9a534290354eb190cc6df4a080735c639fea29623a4a503b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/snapshot.py": {
+      "bytes": 11179,
+      "sha256": "aeb7dad90ab5fa18c3b8381fb2f5ac54a1789d3fb938b84199dd334fdca0f87a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/stoch_features.py": {
+      "bytes": 10947,
+      "sha256": "ae0ca0165c5d18e4583098e436ead5506f78716b272adf636df21f1cd6870f9b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/streaming.py": {
+      "bytes": 1362,
+      "sha256": "f25c7f86491e2f2d41630404de0f4ee940dcf1f5b506bf44b521ab29b1319218"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/version.py": {
+      "bytes": 120,
+      "sha256": "423e540814dd8b606ae561c50bcdc8d27ecc89765dd3c85d78c1d43532569b55"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/multitf_feature_bank/warmup.py": {
+      "bytes": 4168,
+      "sha256": "d56cc05028bf9daaf97976e87d15abaca6bae95d8a2d9662ff19922a77a40385"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__init__.py": {
+      "bytes": 627,
+      "sha256": "640d6f4e2713bf9c6403093c42d90aabbefa61a5a43aa4258dccc76cb7c06665"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 726,
+      "sha256": "59dd226eae58aa6d25c9830fee5d1bb418a7a23b40a4114dc22914c364fa4dfc"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__pycache__/config.cpython-312.pyc": {
+      "bytes": 962,
+      "sha256": "35f4828c9c424378cc5ea33e05ba6de6f05e0b579677144cefa87f5c3146afea"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__pycache__/dno.cpython-312.pyc": {
+      "bytes": 5998,
+      "sha256": "b7c93f65a847f7b019d2df26247b8fce9a484ef91e01a3b3ac06274a96e0eb86"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__pycache__/dynamic_predictor.cpython-312.pyc": {
+      "bytes": 2617,
+      "sha256": "1aaf69dd9b0a07a914de2e81d77f86e711ecbfc7957185ed6b3989f46806eb7e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__pycache__/inverse.cpython-312.pyc": {
+      "bytes": 3091,
+      "sha256": "712e96a9c9f105b25ab2ddfe32cc8647346ebd595ec39a2e3f78408df8d51f62"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__pycache__/peaks.cpython-312.pyc": {
+      "bytes": 3154,
+      "sha256": "a696b6cac7a35c0f4ff011de67486edaa3a49525e05f3c7d5970d4580f0f934d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__pycache__/registry.cpython-312.pyc": {
+      "bytes": 2161,
+      "sha256": "ed12f9bdd5581d70d9986749cf2e91815aec3d5e5a92234739fedf1eea231ae2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__pycache__/run_validate.cpython-312.pyc": {
+      "bytes": 45477,
+      "sha256": "d076389cc6e6abd664d55c93826cf45ab035c7b4aa7e3aee9cc09e890642932e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__pycache__/series_engine.cpython-312.pyc": {
+      "bytes": 14282,
+      "sha256": "8a1dac12f4c8a8cdbfabbb13aa94f3722dd786a04a4d6a213568bce3ad5e179a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__pycache__/streaming.cpython-312.pyc": {
+      "bytes": 8442,
+      "sha256": "145708be7c0b786f4555f4356d628c50f85b0bbaa97698c25066c70ede9b4e8d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/__pycache__/version.cpython-312.pyc": {
+      "bytes": 334,
+      "sha256": "49e15aad92c37ea836e96699790fa76757e7d95c01cce52f211fddd974475e81"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/config.py": {
+      "bytes": 402,
+      "sha256": "5007b1047822deab3b99ea27a8226354819656ef00bd6dc4838e1d5e7ebe2d83"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/dno.py": {
+      "bytes": 4654,
+      "sha256": "71cc65f325bd06d673c21d2dc4e0a49f560dd5f92994d278a65dbb3e64596a2e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/dynamic_predictor.py": {
+      "bytes": 2036,
+      "sha256": "120a84366ec29141be23041d191898352f648d29c8de3523e8acdf4bc96b52a5"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/inverse.py": {
+      "bytes": 2445,
+      "sha256": "d5cd064cbf403162819c9178c9de9df1e397746be113357276154cc70912cd5b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/peaks.py": {
+      "bytes": 2298,
+      "sha256": "22d653dd209aa911d65b672947c86ee110c1c66544e216d7a88437dc66c4bbc6"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/registry.py": {
+      "bytes": 2716,
+      "sha256": "bb58f58e7b0330db0964b1e736a183b604176ed112567285301ecbe15af92752"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/run_validate.py": {
+      "bytes": 34699,
+      "sha256": "97b5deba559ff3f3f17d556e3c20a508cc5d9113c63c3bdc1c35c8ebd5737260"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/series_engine.py": {
+      "bytes": 11971,
+      "sha256": "561ff1dc2beb17e8f875254840214945fda55935efcadc70d5e705d24e915f6e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/streaming.py": {
+      "bytes": 5349,
+      "sha256": "96c4b19a77d81a2309af44291ba7558007946cfa14e61dc919e07ffba2ca8f7f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/version.py": {
+      "bytes": 113,
+      "sha256": "80c3d700d01a0cc090598ddd1484e6a1b53fa11cd20bf1df0ae87725a1e38c08"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor/visual_audit.py": {
+      "bytes": 7329,
+      "sha256": "311985419f10fc062d6d9611dda4c60b82cc799e1b73ab29d3482afcb013c1b8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/__init__.py": {
+      "bytes": 76,
+      "sha256": "e7b2b4e608f016a43159e57a98c3d43da00034eb7aec6ac913df91cd693191d5"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 307,
+      "sha256": "e8145856e275a5ec34d25f47e6f030004a2a117b39bdc714e413d0224e22d954"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/__pycache__/anti_leakage_v2.cpython-312.pyc": {
+      "bytes": 4696,
+      "sha256": "c75f89a4c56636a1ad61b54cec4104bac40e6f1b7fd6db8bd267227e3af8a5c1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/__pycache__/bar_loader.cpython-312.pyc": {
+      "bytes": 4362,
+      "sha256": "4bac75f360347f33a69d4de41fa06de2c65e4b8757215f55ae1df050f8dc7950"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/__pycache__/config.cpython-312.pyc": {
+      "bytes": 2540,
+      "sha256": "2f9858ad19295aa319406fff66b92a8796c067eb7cb2adb29290a063fd51edaf"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/__pycache__/final_integrity_v1.cpython-312.pyc": {
+      "bytes": 24066,
+      "sha256": "76e5584cc512efb72b0ef629866ba64c952848b3e8b95678a7a7417575f6e813"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/__pycache__/methodology_v2.cpython-312.pyc": {
+      "bytes": 30244,
+      "sha256": "b00b42a94c3b536b742d32fa52525fc91a950b6575c08d8636fa679ca055b787"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/__pycache__/run_final_integrity.cpython-312.pyc": {
+      "bytes": 30871,
+      "sha256": "3e946695013339e1cdfb61caee52a65c0cae2fb38a19078134e5d2030a2427ba"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/__pycache__/stats.cpython-312.pyc": {
+      "bytes": 3888,
+      "sha256": "e9ddfaa425234dfcd7c9538e788dcc405ff66e3bcf749cbfd0b92897fddec589"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/__pycache__/study_engine.cpython-312.pyc": {
+      "bytes": 24114,
+      "sha256": "b4bc9afab7b975ac1a997282be5b1e4d5c921bacaf4c02dde0dfa18b8804b103"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/__pycache__/version.cpython-312.pyc": {
+      "bytes": 517,
+      "sha256": "0aaae70c6210ce712061db626117f37eb1ad235ea884220a47c06ad71177c2b5"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/anti_leakage.py": {
+      "bytes": 2703,
+      "sha256": "12558ce0a44833375b4f4750c24209e0c9ad3ebd44c3381c23f4822b3987a972"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/anti_leakage_v2.py": {
+      "bytes": 3082,
+      "sha256": "bd9e157dc54012a4ff8a5667d42afec75dab2e04426278c523e88377d2713ee6"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/bar_loader.py": {
+      "bytes": 3160,
+      "sha256": "41f3f98fa0d6b6a7736b921f15440f2716e63b486ffc4aae0e78e4d2cb164d10"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/config.py": {
+      "bytes": 1742,
+      "sha256": "2efe8323f4bae92bef784345db210fd8b0c500be4d6d80675335a9fba370df54"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/final_integrity_v1.py": {
+      "bytes": 19772,
+      "sha256": "5779b817044e560a4b00f5cb9ecf3a0ca83a2b580b72de9141518471ac057af4"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/methodology_v2.py": {
+      "bytes": 28546,
+      "sha256": "0123e85bc53cdde945c6d28eb73bc1ea16e24f786b811037635aab60295dee4f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/run_final_integrity.py": {
+      "bytes": 26623,
+      "sha256": "b458a5ba91967492750718abe903f4a5d96c0dab171c7e04b9f1be44ebabaa8b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/run_methodology_fix.py": {
+      "bytes": 28062,
+      "sha256": "8736cc7f3e9da5eb398a0ad269eab2de2a3de0d1f4ad21e38b754274f180e6c0"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/run_preflight.py": {
+      "bytes": 467,
+      "sha256": "d73b9581894696d150934df7ff195e1c4703a1cfadd65f6ee677c36cf6cf6e8e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/run_study.py": {
+      "bytes": 18322,
+      "sha256": "68ecce6f42f0d280fcef427787dda1eb620c175ef7acf39d2a5051864199baca"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/s13_canonical_preflight.py": {
+      "bytes": 14851,
+      "sha256": "01465d5bc7e2c7e16ad3a390847d5b9c1533f7ed5178c66ebb0139e656f382f5"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/stats.py": {
+      "bytes": 2375,
+      "sha256": "8ffb730abf7898f119b48f8990f7e7cf2b7be6f9eb99bfb25f96a029297c02c1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/study_engine.py": {
+      "bytes": 20248,
+      "sha256": "3ccd03dd10d918d5c075418e0e76847f2b734bc6ef31117282595804cffc1de6"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/oscillator_predictor_event_study/version.py": {
+      "bytes": 270,
+      "sha256": "21fe5c79745609e9014b4e41d1d15610f5380fd81024186c5ac8466afcbc6350"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/policy_research/__init__.py": {
+      "bytes": 60,
+      "sha256": "e374af881697301802864a32e35f219654abffb447376a24e5498de8d5edc9a6"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/policy_research/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 274,
+      "sha256": "1b613aecde9668c71064432c16bc2af3331be800690b541a75b52e494d5ace71"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/policy_research/__pycache__/evaluation.cpython-312.pyc": {
+      "bytes": 14057,
+      "sha256": "ebcdd71881838e31cbfa4ddafbd4487549d726a43d717c6826daba1b0a26599f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/policy_research/evaluation.py": {
+      "bytes": 11585,
+      "sha256": "649f9720ff0eeaf6d97fede855fff28380908ef8f3c16e07d1418cb344e814e2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/policy_research/run_policy_research.py": {
+      "bytes": 12790,
+      "sha256": "88030f4e772e45c2865788998cf921b6bb3a663b557d243de32bf607420f01dd"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/__init__.py": {
+      "bytes": 376,
+      "sha256": "2c90514d99f859d480aebeaece4d58511a2dd7bdeb4e3ebd29b8d75a24490215"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 547,
+      "sha256": "8082dd745cae1c26b27fcb88918d79ebbdaec7f6b00a26d465ecba534746f782"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/__pycache__/cluster.cpython-312.pyc": {
+      "bytes": 4675,
+      "sha256": "b5faa33ce33a05bad2d345e27bd3a867e7fd31b7eabf9a3e74311a0cd61eccbf"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/__pycache__/collect.cpython-312.pyc": {
+      "bytes": 6577,
+      "sha256": "5b43b5efbb11fd00d4a97f2b558672b8bc7ca3005accf307e10208a394d8defa"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/__pycache__/engine.cpython-312.pyc": {
+      "bytes": 7059,
+      "sha256": "8c3bb160aff70e0c537693a08b4cf4fc67f97ae46ca49caec4230594f47ac713"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/__pycache__/features.cpython-312.pyc": {
+      "bytes": 19549,
+      "sha256": "3f6b6572ce4bad08fc7d066266dcdb1c92a465ba7e0b6e3dba166c1f817ce42d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/__pycache__/registry.cpython-312.pyc": {
+      "bytes": 3508,
+      "sha256": "f8a420270dd72363810a7098c35e668df971466bcfcaf478b7df3e864c3928f1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/__pycache__/types.cpython-312.pyc": {
+      "bytes": 2331,
+      "sha256": "1b3031813a888c5ec1d0bfe40604d8e71aee7b415667f5f1e1091bb6f73a6d0b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/__pycache__/version.cpython-312.pyc": {
+      "bytes": 1171,
+      "sha256": "a795e925d7d0596293a86362cfe7b27281f1c942340d9f896abb3b5054623c49"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/cluster.py": {
+      "bytes": 2362,
+      "sha256": "60550e8bdb77ecff5f25fa7547c7fa9ca1c994109e50bed558110d5a55160e9c"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/collect.py": {
+      "bytes": 5415,
+      "sha256": "88601836059256c757777a8794bd382f309c937e6987bed98882c1a931b62815"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/docs_predictor_confluence_engine_v1.md": {
+      "bytes": 1079,
+      "sha256": "263ba06fac5ef90b3da427755531d0c63667d435ed1fe50ca99e9f4db4a3acfb"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/engine.py": {
+      "bytes": 6913,
+      "sha256": "4e779e6a037e3f3520c587001ff22af4999ee0d002ef5dd879c0e3904733d94d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/features.py": {
+      "bytes": 15984,
+      "sha256": "0c273f78e7c4e034f4b8d531b1f15257e9f8c64e1cee8c63ba58f7e1cb9167e4"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/registry.py": {
+      "bytes": 4028,
+      "sha256": "d32e6e6ef06ee538bf68e33c919d2f8b804cc7914b03be5b484e42338fe614af"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/run_validate.py": {
+      "bytes": 8777,
+      "sha256": "68d4176dd827918bc562c87206793d92662ecb3efd81d1211d3db24b560de1da"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/tests/__init__.py": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/tests/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 218,
+      "sha256": "cb2c47df25414a3c7285611b0e9d2e86c817de4ab03fcc783e75e8b31955aac8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/tests/__pycache__/test_confluence.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 18163,
+      "sha256": "666a2d6adac05653359a5216a4487345f722dbe23fafe89121753d3696a34d09"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/tests/test_confluence.py": {
+      "bytes": 5418,
+      "sha256": "27136b4335b53c87640fe025499e4e427d53c29ab38a520972c9240af382829b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/types.py": {
+      "bytes": 1313,
+      "sha256": "19d60dfc0df7eb26fe05a146b52c4cd378e81eebd790f184c82d4d7ea457730a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/predictor_confluence/version.py": {
+      "bytes": 1297,
+      "sha256": "8d199b3b507cb87ccea64d31623543d931b5984413e74afd087fa63d64c4a330"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/provisional_execution/__init__.py": {
+      "bytes": 54,
+      "sha256": "b6046cd1c4da7d2a8425a49e3c234fe6e3273d63d831dfe409412841c6c24ef7"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/provisional_execution/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 274,
+      "sha256": "9f8cfedcb5c7f8a1d5851ec5a9845ea420d8c0cee36881662470ac85158f0614"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/provisional_execution/__pycache__/evaluation.cpython-312.pyc": {
+      "bytes": 18213,
+      "sha256": "8366fb71d2d1f550b1f7d34be31eb2df0ce8bb1d4795136613e0e928957e63e2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/provisional_execution/evaluation.py": {
+      "bytes": 13903,
+      "sha256": "d8241d2e9bce8bdd1032872cd0bc780ae323121fb3cfaebabaf5c92a8400ec6a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/provisional_execution/run_simulator.py": {
+      "bytes": 9755,
+      "sha256": "3d8bac863fc865e3c463912c44fa62c4f2507c9fb144ec669b3bb4a626cd9624"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/resampling/__init__.py": {
+      "bytes": 165,
+      "sha256": "1d8dc7f209d192243862ae8e72b33e9c33259558926ca212cc997a9478b6f4e1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/resampling/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 349,
+      "sha256": "87a6aa3779a382ac2f57a83d34c8de890be28d0102f1f6977b5dcd6e457e9ace"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/resampling/__pycache__/resampler.cpython-312.pyc": {
+      "bytes": 5087,
+      "sha256": "46312880a74fe30236a4c74c0f1c31e3d07e6f7e41656841d4c1e69b7de4b177"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/resampling/resampler.py": {
+      "bytes": 2931,
+      "sha256": "df014a359d794df00572bbc5819f027b62ad20e3c245748caa5f506b587efe05"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/__init__.py": {
+      "bytes": 337,
+      "sha256": "96245af46392afab5b2687dfcaa1ce18e04b9366bf3a0054c04ef5101d97ef82"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 545,
+      "sha256": "40d726b4213cd8a0fbafdf2a09e014453f05043dbac5a860f4a0bbdf9b9a4f80"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/__pycache__/anti_leakage.cpython-312.pyc": {
+      "bytes": 4422,
+      "sha256": "0b31213fbdf2367e5f424e8ff7b4a27a8304ee7f5f8d9a4b8a0885a6c2f448a0"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/__pycache__/build_dataset.cpython-312.pyc": {
+      "bytes": 36447,
+      "sha256": "ef6d43c7180de1bef913b752e9eda529d7f2500b13520c0a44ac08dadce93ce6"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/__pycache__/config.cpython-312.pyc": {
+      "bytes": 981,
+      "sha256": "94966afdc3d1362d82771152d8246b5a420abbb39dc67bc24b8190c637bf1878"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/__pycache__/schema.cpython-312.pyc": {
+      "bytes": 4262,
+      "sha256": "21d6875617908f5164fbc4b3afb87d3e4a02cb214084440076725c1bf31132ea"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/__pycache__/test_anti_leakage.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 7997,
+      "sha256": "952404db4eb329f0fbbe18a90a71344cae5b433e7393a0fc913cf25fa6b16cdb"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/anti_leakage.py": {
+      "bytes": 3336,
+      "sha256": "4136ad1608ad9c0381a5761a0e5ac49ff725a1db1eff508804ace6943274c593"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/anti_leakage_contract.md": {
+      "bytes": 2048,
+      "sha256": "60ec12de3e7b8e7a2a8a1424e066dfaec34694ed83e58e92293153e699e3022f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/build_dataset.py": {
+      "bytes": 28098,
+      "sha256": "622f875620901108acfca9b90950b4b6c8e697c854004f9c1c1e6a6e3de62ad1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/config.py": {
+      "bytes": 1103,
+      "sha256": "6626d25a51886b7b859e723ecb3bc55a0342c396dd687cb85f8567c7d982f661"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/feature_contract.py": {
+      "bytes": 1207,
+      "sha256": "2b9ea581bce306f5e3c4f2ad5905044b9304a442316097ee01259a8a65aeb203"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/run_build.py": {
+      "bytes": 2437,
+      "sha256": "e1eb8be2ffd275457181ee172ffb373222bb4756e56414b23bca13317f3ffef0"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/schema.py": {
+      "bytes": 5025,
+      "sha256": "1617b696e2a9f15cd1f8922f829ed7e3967f4859c0e219b9893af95dd3f6ec10"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_events/test_anti_leakage.py": {
+      "bytes": 2857,
+      "sha256": "852a833811e4713d26c3b26a2e67214a3797fbff2ed8d32f67980dcde3fba000"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/__init__.py": {
+      "bytes": 153,
+      "sha256": "fe3b51430195ad01a5f7ab3dda474f1e15935475aee7e9f5e3f9489ab7663aff"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 396,
+      "sha256": "73e10ce794ea96453c0571e43c90f84e24a1cc8c386cf7579ef53eb7d5c039ae"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/__pycache__/bar_io.cpython-312.pyc": {
+      "bytes": 4126,
+      "sha256": "910f22e3e79f8bfe7958e750ff672f613c9a64db86d4463775f6eb2d85616ec0"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/__pycache__/config.cpython-312.pyc": {
+      "bytes": 1909,
+      "sha256": "2f3e1443319d50e6ed6050b53d27f92888099c56d0571ca235b0bf00d73732e9"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/__pycache__/match.cpython-312.pyc": {
+      "bytes": 12534,
+      "sha256": "ac0b358417290d8c8c958395d17ae79c6e2ce7e4208cf6ef46f60e29fe0abbd3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/__pycache__/metrics.cpython-312.pyc": {
+      "bytes": 11150,
+      "sha256": "f6637e8abf5d6a9142cc765919011620c61f351aab4bf2aad3ae14b4480d9485"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/__pycache__/signals.cpython-312.pyc": {
+      "bytes": 12211,
+      "sha256": "7c3df466a499181788f040140b877a6316b39a2792827a72b15ed4eea1a70011"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/__pycache__/version.cpython-312.pyc": {
+      "bytes": 404,
+      "sha256": "e408073f7ce0006796e45b9236411aedbcaf22e09e5b4c1451b33be6c5acb9db"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/bar_io.py": {
+      "bytes": 2746,
+      "sha256": "8727ad25028e5f3791d0cb580c652a88d80d7592e04e8e5f3bdffd3b4759e6d2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/candidates.py": {
+      "bytes": 8648,
+      "sha256": "81b673a66e13d299e50b5322b193e83f4b6482806ebb78e2164d38a0063e7d9c"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/config.py": {
+      "bytes": 1896,
+      "sha256": "cb99f582763c32503e4179783121f575075071ecec4bbe4ae7ac33d35b23a337"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/context_study.py": {
+      "bytes": 14813,
+      "sha256": "706d3c299b8da527fdbeadfe8febb6ec6a4821dacc6af11c5e644443f4ce89ed"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/match.py": {
+      "bytes": 9061,
+      "sha256": "0615d6d475990acdd5ec5f01449efd6a825b26c72d40b20da65229855ec087eb"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/metrics.py": {
+      "bytes": 8962,
+      "sha256": "904653edd1cb1a5b7a02e7d6a63cd0f6e452c5f7d67ca7930ba11c3919510973"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/run_study.py": {
+      "bytes": 29640,
+      "sha256": "f73bf51a77a70fdfebc5618a3b8796bcf4106e3a96bd8cb17e70f6a8fa85bef3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/signals.py": {
+      "bytes": 10759,
+      "sha256": "e594c4a9f8650c84f8d5820b090c7cd7148c075decf12b2cb0ef09017fc53551"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/reversal_signal_study/version.py": {
+      "bytes": 172,
+      "sha256": "24cf5a14ef03eb6d7e659dbe98bcd731d16fe39444120e1e106756956c879d8b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/__init__.py": {
+      "bytes": 286,
+      "sha256": "4804e2864d0af84eb880829915dea5ed12bf1fcfc4bae602dbaf254d9e7fe550"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 450,
+      "sha256": "b021647a658cb55a447c9fbc3413fb5250de8b600067d2d53745ce19fca1a41f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/__pycache__/api.cpython-312.pyc": {
+      "bytes": 4818,
+      "sha256": "92d3cb0f5026c37b5ccf16cfa70fb2113c918f99170f06daf203c1541c4c0f87"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/__pycache__/fixtures.cpython-312.pyc": {
+      "bytes": 6641,
+      "sha256": "a33dad2e57faabbfc8a129cfb098baf58f86720d5c67802c2c5815ed7d188465"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/__pycache__/null_semantics.cpython-312.pyc": {
+      "bytes": 2419,
+      "sha256": "2027f8254d4b91ceaa48208cb7bcb9a74364082ea205ca247f8f95358ebba03d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/__pycache__/reconciliation.cpython-312.pyc": {
+      "bytes": 3073,
+      "sha256": "d260fdabd778c23a3a2f88ca22a6898943dd798285c5f11533ed3ef139aeee7e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/__pycache__/repository.cpython-312.pyc": {
+      "bytes": 6753,
+      "sha256": "41f89121ff2dc8c95313dfd8b4cefcaf285055da3da7dc6e2abe9e3c5e945aca"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/__pycache__/schema.cpython-312.pyc": {
+      "bytes": 3542,
+      "sha256": "3311b5b7acffffe8edbbcb29b1d2b4862824dbbcf151cf9770a6f24a3fd589c2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/__pycache__/version.cpython-312.pyc": {
+      "bytes": 268,
+      "sha256": "a067e4316c1fe9f8392f661063b917c3c1a2b8958fff8e395761de2185555b1e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/api.py": {
+      "bytes": 3023,
+      "sha256": "55e3d32296388c60656bf553489dbb9ea4c1aa92f91a3c22a578890fea2c94d3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/fixtures.py": {
+      "bytes": 8120,
+      "sha256": "401415560517db9337d75b1cc63e97a3e974e3572d5689e62f58b3668e0e1c2b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/null_semantics.py": {
+      "bytes": 1485,
+      "sha256": "6231539ff5ee9e94fdb699fa04b3e0f563c57a18f08b4396a645836353ff4fec"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/reconciliation.py": {
+      "bytes": 2199,
+      "sha256": "281c2411a19af510d4e332412dacf314582f7ac7a075072864fdf74a0695ca8f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/repository.py": {
+      "bytes": 4627,
+      "sha256": "31eb17b9b8d95c90fb3cb25fef34e34b13311ae1450de1f6128a8abc66be8d09"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/schema.py": {
+      "bytes": 2698,
+      "sha256": "839e6622ab358eed3c44e4641c9785385ef4f670bbe35d52db36b05a6de2c02a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/trading_runs/version.py": {
+      "bytes": 61,
+      "sha256": "ebf587e409ab5ed971cf01bf3310460a7ca05d9e7819a1c604dd0cfa00e84d03"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/visualization/__pycache__/chart_engine.cpython-312.pyc": {
+      "bytes": 32392,
+      "sha256": "1af8582373a12403fb357cd2c53f7befcfcc1d4ef35354e96a76f479d3702e2c"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/visualization/__pycache__/dinapoli_live.cpython-312.pyc": {
+      "bytes": 5897,
+      "sha256": "9c2ef01a1e036fa28bd25627e62fad88092954d935b45c8b7502ef70bcde8d13"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/visualization/__pycache__/expert_app.cpython-312.pyc": {
+      "bytes": 43112,
+      "sha256": "0536a5c1fe6d334fad6718c9df37335d6ac0bc9863190f5c606ae47c82b3cb0d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/visualization/__pycache__/trading_run_panel.cpython-312.pyc": {
+      "bytes": 24956,
+      "sha256": "03270438ecc1043835530c2f91e2c8bd886743894778cdaf59a64dfde449e8f7"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/visualization/__pycache__/zigzag_live.cpython-312.pyc": {
+      "bytes": 4269,
+      "sha256": "c53b08b1877d94f0db0d6a4c11865b8fd388c1632ced0aa5d5d8ccc5bb01ce6f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/visualization/assets/style.css": {
+      "bytes": 8980,
+      "sha256": "1965482e700ef1ea27d9a9bea7bd4e1b51b1d1bac40f7a4f0f38a1e355405196"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/visualization/chart_engine.py": {
+      "bytes": 29679,
+      "sha256": "e0d4f3eb239c652361392379b59941ab3d704e0de7186f171a331bf50d450cf3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/visualization/dinapoli_live.py": {
+      "bytes": 4702,
+      "sha256": "1894e9a2e79cb3b9d712e44bae7d08c21ff303d256d185897e31340ec94d34c3"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/visualization/expert_app.py": {
+      "bytes": 42985,
+      "sha256": "c57506c10929cf2e5d7a9c36f7a1ac1d829e0d37e570fd5dafc8a182a3bf018e"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/visualization/trading_run_panel.py": {
+      "bytes": 19653,
+      "sha256": "da3dd8a828d028ca0d1d21dd71ab298e7ea79d69f98b12d5fec49ac83053cf09"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/visualization/zigzag_live.py": {
+      "bytes": 4047,
+      "sha256": "094a51cc1f9f13cde6aa4246089b70dce6c2a0d51984e44ef16186835dbfe368"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/README.md": {
+      "bytes": 1109,
+      "sha256": "5b56d40fcaacc444ef11a789dd0ab7d59f509f787987fc81bcb7b4e579be40fe"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/__init__.py": {
+      "bytes": 525,
+      "sha256": "d734a2588b09f40a0f61f9db3ddee16fd9a8ad27382446a0d5760a6b18aaafd4"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 673,
+      "sha256": "046366310280bd2ed6a4121b9d15eb956a32e4c3fc8389da6d978a6c38a7790d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/__pycache__/compute.cpython-312.pyc": {
+      "bytes": 39082,
+      "sha256": "0c70d561f972856d3e0fcf20f2efbd2f67285b0c6b05ce5895d8e41c1cfe6715"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/__pycache__/guards.cpython-312.pyc": {
+      "bytes": 3240,
+      "sha256": "47104dc8a5e3d03c14404f2145613b4b67680a7de599169d2bd71083fc1e11d4"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/__pycache__/registry.cpython-312.pyc": {
+      "bytes": 9303,
+      "sha256": "51626b28f74c93ad7d9fca36fabce0d0c30ebb67247f0a0b91c1cba689d0e36d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/__pycache__/snapshot.cpython-312.pyc": {
+      "bytes": 2151,
+      "sha256": "c6b0f17f3ad5d487c963c94d7b0cdd4a48ba12185286fae4387c52a0c842fe41"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/__pycache__/streaming.cpython-312.pyc": {
+      "bytes": 2099,
+      "sha256": "3502c69a0dcff219f73dff8253e4cd11de909ed599eeaa549ef45c05201fe564"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/__pycache__/types.cpython-312.pyc": {
+      "bytes": 1772,
+      "sha256": "d5be9cf11bd9b7e520486cf18f8bcb2ca320d151a2fbbec2a532fdb11755b7dd"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/__pycache__/version.cpython-312.pyc": {
+      "bytes": 703,
+      "sha256": "f9953619d0edc3e6890e015c32850f4e5eb8076dc28394c96d278dc053b3bdce"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/compute.py": {
+      "bytes": 31517,
+      "sha256": "ec25c1e2788b32c7e3aa5fe468c7487e07552588892c9da530cc19ab424a7ff5"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/guards.py": {
+      "bytes": 1928,
+      "sha256": "cc30696eeac9a0b3253c9d3d8f0daa4d892d488e97d6aae21ad0cc877ddd8f05"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/registry.py": {
+      "bytes": 13697,
+      "sha256": "dd0d6d473ffb65049d65f1e0c233c6ba6243bdf92275cb69190853a35f773e7d"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/run_validate.py": {
+      "bytes": 6291,
+      "sha256": "bf11946d1bdce9a162ecc133f0bb24225fb4b81244fbc664fd761045f80c0bd5"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/snapshot.py": {
+      "bytes": 1906,
+      "sha256": "d43c8a30d2e63bb84743e080d90bd3953c817eaf4f47bece272cb694f1291f66"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/streaming.py": {
+      "bytes": 1592,
+      "sha256": "c42756fca3e4b2a51218a387e5664c17e48a7f559a3d0ce4b89c5dd38585ea1f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/tests/__init__.py": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/tests/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 217,
+      "sha256": "c9525c0060df8e27730b690472495a8aaffa483a9fcb3eac3c2acd146f880e72"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/tests/__pycache__/test_volume_accumulation.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 31031,
+      "sha256": "2efcf0360f6263c7fffde75b14b7fb6a005f920f100028f3143be3c658f72e5a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/tests/test_volume_accumulation.py": {
+      "bytes": 8722,
+      "sha256": "96f091d0f771f10fca4372a392c65e9079a088250f996996f4cd984891404b50"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/types.py": {
+      "bytes": 813,
+      "sha256": "7dd4098a76ac4bbb86ae0774b05b5e7a4b5ca0d3a3a2f31700e8866e51ae3c35"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/volume_accumulation/version.py": {
+      "bytes": 762,
+      "sha256": "d74eff2e85037da5638c289c9c3ac3a58eafd62cf58618d06a52c409703e4488"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/wave_engine/__init__.py": {
+      "bytes": 340,
+      "sha256": "0acb4396d07dd8c307a30705ed1ebdb3c481a4c95f20a708ec4407bbae1c9754"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/wave_engine/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 502,
+      "sha256": "68f407369ccb23f6c1af03f392ff02637b704ef4516bc0032025a00044aafc5b"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/wave_engine/__pycache__/freeze_dataset.cpython-312.pyc": {
+      "bytes": 26558,
+      "sha256": "262419478950784fe54ed467072c1b65d9edba45ee0b348336b56ce63bb06e1c"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/wave_engine/__pycache__/v1_config.cpython-312.pyc": {
+      "bytes": 2098,
+      "sha256": "67275482e7fa5ad40921e7d390a9c2aeba6022f857a174b86d8e60349ce4b2f8"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/wave_engine/freeze_dataset.py": {
+      "bytes": 21303,
+      "sha256": "734913edca7d740105caa51fc3a055e9b5e279232a3f126c2d3a023a4cfc8479"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/wave_engine/run_freeze.py": {
+      "bytes": 3060,
+      "sha256": "028e60dfb439f19456c44602d594c6397260af0b8da2b08234f54fa1128ebc6f"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/wave_engine/sanity_overlay.py": {
+      "bytes": 3134,
+      "sha256": "07788e1e97de72c19ef2338328f292779dfab66556b420920a53fa6cee8b0fae"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/wave_engine/v1_config.py": {
+      "bytes": 2625,
+      "sha256": "5609e620de404fd066104a7e7d2c086e805110557f034662aa73f9083fe52032"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/zigzag/__init__.py": {
+      "bytes": 568,
+      "sha256": "56cef26a976abb610b2c028eacbb602e416309b3ba963d961bfb51dce92bc4f6"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/zigzag/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 651,
+      "sha256": "13364e0cc62d115f12e7761e04d9d1dd5fd676c4aee1dc2e543f313bf44d5f02"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/zigzag/__pycache__/classic.cpython-312.pyc": {
+      "bytes": 16933,
+      "sha256": "cde0d6ff411deb74364def56911bd5c995dbc6aa63e3f560cd2e26cee6ed84e1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/zigzag/__pycache__/match.cpython-312.pyc": {
+      "bytes": 8997,
+      "sha256": "487b0cb63f1f94c6143c65642ae9929895a88294274d75c5adcdf9208d1be9f2"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/zigzag/classic.py": {
+      "bytes": 19178,
+      "sha256": "363484f95c9bfd11f7267f66bcb884eaafb1747fafbc871a94abb20e1a838c41"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/zigzag/match.py": {
+      "bytes": 7454,
+      "sha256": "4caabb8b7feff107e8a50dd3f5b02ea2f1090178d8b090fb0fa1055464fba67a"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/zigzag/overlay.py": {
+      "bytes": 4719,
+      "sha256": "07f067b9e69e01ef3563e77bbc157f14fedcbe225d5daa8ac3c503b5dc8c21d1"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/zigzag/run.py": {
+      "bytes": 13852,
+      "sha256": "f2c1393bcc1ee0a744068229e704d0bd559c2cf4825b3d8d97bd03f11ba2da27"
+    },
+    "gate1/phase3_staging/crypto_trading_bot/research_v2/zigzag/search.py": {
+      "bytes": 7544,
+      "sha256": "844d5bbbfa3ef4babf660538319c89a5be5aac18a3aafcc1a9642e6672af5473"
+    },
+    "gate1/phase3_staging/tests/capital_growth/__init__.py": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate1/phase3_staging/tests/capital_growth/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 212,
+      "sha256": "ccc2c4b260bd95cbff8c589487f1258ad255c54b561633cec255e42e22ee92a6"
+    },
+    "gate1/phase3_staging/tests/capital_growth/__pycache__/test_accounting_and_risk.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 13939,
+      "sha256": "b5d338c045a4a2d7af789d4555dd722d971cb241bc7dc63d1ac63f19948ea2c5"
+    },
+    "gate1/phase3_staging/tests/capital_growth/__pycache__/test_accounting_and_risk.cpython-312-pytest-9.2.0.pyc": {
+      "bytes": 13970,
+      "sha256": "b699632513c0a03afe5e0ae073647ed9d9b8f84305e632f24717677f838d2a1d"
+    },
+    "gate1/phase3_staging/tests/capital_growth/__pycache__/test_accounting_integrity.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 29556,
+      "sha256": "4c172db86e42f4982b94b28fd07353c402333c166f181cbb1f2660ef195f2ad3"
+    },
+    "gate1/phase3_staging/tests/capital_growth/__pycache__/test_accounting_integrity.cpython-312-pytest-9.2.0.pyc": {
+      "bytes": 29600,
+      "sha256": "9f3701366b69bd75078de8ad27101d8ab4aef6e24a480465abbb04255fffd1d7"
+    },
+    "gate1/phase3_staging/tests/capital_growth/__pycache__/test_accounting_integrity.cpython-312.pyc": {
+      "bytes": 10327,
+      "sha256": "9afb7278e48463c0d2e32dd01ca3438d23ca2d8e71bbbba993105621bee5a334"
+    },
+    "gate1/phase3_staging/tests/capital_growth/__pycache__/test_simulator_and_data.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 17682,
+      "sha256": "8e3ac048e705f05f38afdd7d613ff24e81391fac67458a0bc46b84af14f3ddc7"
+    },
+    "gate1/phase3_staging/tests/capital_growth/__pycache__/test_simulator_and_data.cpython-312-pytest-9.2.0.pyc": {
+      "bytes": 17722,
+      "sha256": "63241143afc22ef1e6f42755bf7d4278ea49dc8c36f8e67d65a6cd73759adcc6"
+    },
+    "gate1/phase3_staging/tests/capital_growth/__pycache__/test_simulator_and_data.cpython-312.pyc": {
+      "bytes": 8743,
+      "sha256": "f0c0920dac473649417c81dbe556fc7bf308353cb4fb6071976eab4a35ab465a"
+    },
+    "gate1/phase3_staging/tests/capital_growth/test_accounting_and_risk.py": {
+      "bytes": 3953,
+      "sha256": "4e1f94db85ee41fa79a09bcdbf62121ca88a856a89aa2174f1b652c067d59a09"
+    },
+    "gate1/phase3_staging/tests/capital_growth/test_accounting_integrity.py": {
+      "bytes": 9133,
+      "sha256": "436c20d37cb95f22c03f6bb7a558a70632da742f4bdb2ce6faff3225a5c4df0c"
+    },
+    "gate1/phase3_staging/tests/capital_growth/test_simulator_and_data.py": {
+      "bytes": 7722,
+      "sha256": "dcfb5eb1ae06c54d5a261a7871d9dbece79bdcc5095f8b6e0410c8185034516d"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__init__.py": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 190,
+      "sha256": "12fe9ec5b141191b7604ad3624b50b9f85a51f5fa424364209486b51c01341c8"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/conftest.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 406,
+      "sha256": "8b716b68118920aec32da8127c5f3b6fa802b8e5b1a9771ae752cfeb14be788f"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_atomic_checkpoint.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 4523,
+      "sha256": "b3aebf9bee93ba95d0186731c12eb42e088a70cf1ee620357a22287ba111bb9b"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_bounded_memory_parity.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 11885,
+      "sha256": "058dd1d8eeafb3084f0994424dce75711e5cf6c7c1d5abd60fa010b272d4ecaa"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_classify_thresholds.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 21054,
+      "sha256": "80276df4d41b76464ec1d306abdae6a8e545e07844d8f79f7fa31ca4c8bb9a08"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_compose_timestamp_subset.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 4647,
+      "sha256": "ed1b85b77c9ca55fc7f5dcdca399db36ac5b0d83d741574d1da403cfebf3d89f"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_context_state.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 11285,
+      "sha256": "42ace62a418b7ba14ad96bc4eb1d8f1dd83492b2e11b3971aae2cc96650d5ad6"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_durability_atomic_io.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 13976,
+      "sha256": "246640fe64150ce2d4935465affd21eb0038d08520b562c14d36755246dc0ff4"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_finalizer_identifier_integrity.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 13219,
+      "sha256": "0f9d4a121a22427899de26d8db6f52db3fcaeceb1d1147d1fc6a870ca710801c"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_oos_guard.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 3854,
+      "sha256": "893a50d93e785acfe6f5b967e47dd4d918ac3c651abdf212a81efd7f6fd10d99"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_repair3_integrity.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 25884,
+      "sha256": "d340908bd2c17e90c50f20d8acb8551b3e6942d8a2f319bbb0c3bf19a4d53b01"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_repair4_finalize.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 11429,
+      "sha256": "53beb76058d1d8b6f5265089ca7360a6469e66643f51714ab327c1c719905673"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_repair5_integrity.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 22615,
+      "sha256": "a522ca76dd6b44e7dbc443e56dd1d217d1bca08dea27bab16f703cd345236b24"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/__pycache__/test_result_parts_and_shards.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 5695,
+      "sha256": "989250613d09cb16417f50218aebdd809651885aa82fba41216d2da6f1fe403d"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/conftest.py": {
+      "bytes": 180,
+      "sha256": "9cfe1243d26692ea3568a658840a15424a96ec1d486a83fe88230bda9f9ca70c"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_atomic_checkpoint.py": {
+      "bytes": 1525,
+      "sha256": "ef46515ee9dc444bd946e11285724cd56f159e76c20c33cdca339dbc1336b3d9"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_bounded_memory_parity.py": {
+      "bytes": 4031,
+      "sha256": "0270d98777c960fb4408b10ffe2e8e31a753ab202105c2b15610fcf183ece556"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_classify_thresholds.py": {
+      "bytes": 4976,
+      "sha256": "816988350bdc0c7497a361bf7e47745250d173c14e2d8efc882ec7efd2a5b113"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_compose_timestamp_subset.py": {
+      "bytes": 2719,
+      "sha256": "3ccc575d7ddd54c6b9106f2b1f3efa27b23b3a54f13098d08ad215854416d8ba"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_context_state.py": {
+      "bytes": 2294,
+      "sha256": "d8639103ebb87cd454646b43244e20a453b9c32ba7ecba3288dc606ca9c0fcca"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_durability_atomic_io.py": {
+      "bytes": 2775,
+      "sha256": "802f12abc188865744b1dd74fbb77837a1c5ef4c6a94c48baa489bc32763e2f2"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_finalizer_identifier_integrity.py": {
+      "bytes": 3623,
+      "sha256": "9bc7a23215bfdc17907d2c6efca366a8ed56faf274d09de3f51686b49bd87ac8"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_oos_guard.py": {
+      "bytes": 1550,
+      "sha256": "d9c22d1a30093d2e05a61bb391ab3908bfbc252a5bbb0d6f8cea88ff27bbd6d5"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_repair3_integrity.py": {
+      "bytes": 9442,
+      "sha256": "e35eb9ef76565347cf896e3224f9cd4e628f22077a04a782f499e5a238438418"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_repair4_finalize.py": {
+      "bytes": 2745,
+      "sha256": "4f9127979c5cfd03f77addbd4e8eb50c67a1051841bc0623964012625c5422e3"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_repair5_integrity.py": {
+      "bytes": 6921,
+      "sha256": "b1149fb400db02655d82071ec8f8457a81c36cf01739b838850eb0ebf7d1f43e"
+    },
+    "gate1/phase3_staging/tests/composite_signal_search/test_result_parts_and_shards.py": {
+      "bytes": 1781,
+      "sha256": "86a8d68dd24e3746459c80683e496abe3494c0138163585a5ce60148b01017a1"
+    },
+    "gate1/phase3_staging/tests/data_integrity/__init__.py": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate1/phase3_staging/tests/data_integrity/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 181,
+      "sha256": "1dc9897a5996df9f11e0e4b1065ab5b83942c97b30580d524af895101298270a"
+    },
+    "gate1/phase3_staging/tests/data_integrity/__pycache__/test_cache_and_gaps.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 12114,
+      "sha256": "8892364203c6c09a97534de4b3abf6277cecfe509b9af8137820d0e11f2a1a2e"
+    },
+    "gate1/phase3_staging/tests/data_integrity/__pycache__/test_imports_and_hygiene.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 10943,
+      "sha256": "7e35aed319de4b3f503a9c22fb8cc61f48e8c51a9b562104bbf6f389e5678055"
+    },
+    "gate1/phase3_staging/tests/data_integrity/__pycache__/test_resampling.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 6327,
+      "sha256": "83f747d30ac9c16240c27dcde978d392f31f396e7abb68499498e33a92821e46"
+    },
+    "gate1/phase3_staging/tests/data_integrity/test_cache_and_gaps.py": {
+      "bytes": 4188,
+      "sha256": "02e0b20092d7e304c6ad90c30d2f1a3a7dab6a38c0de254973ab2a696c710c70"
+    },
+    "gate1/phase3_staging/tests/data_integrity/test_imports_and_hygiene.py": {
+      "bytes": 3789,
+      "sha256": "03efdf4cb8bb8eaf27c5b1dbce3bb649b10f61a26a0e6f62d3e9b730f04e128b"
+    },
+    "gate1/phase3_staging/tests/data_integrity/test_resampling.py": {
+      "bytes": 1720,
+      "sha256": "29c3a54857a71ba8f912680d913b0e739b6a8b3ddca91002dc1a426c802979f6"
+    },
+    "gate1/phase3_staging/tests/independent_oos/__init__.py": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate1/phase3_staging/tests/independent_oos/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 182,
+      "sha256": "c4c9a37f05abe598ba710c9224f4db86a7622859d66036af2c871da394444312"
+    },
+    "gate1/phase3_staging/tests/independent_oos/__pycache__/test_evaluation.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 4163,
+      "sha256": "c03ec66d55eb31f49815d58488a83e3cd05ab6b13c12ad4f3d1162d61bec8c9f"
+    },
+    "gate1/phase3_staging/tests/independent_oos/test_evaluation.py": {
+      "bytes": 1957,
+      "sha256": "9dbf6e27f21df8c166c20f7a4277b581dd45a61c81c6b6692e9a18b8329e7f7a"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/__init__.py": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 193,
+      "sha256": "5426d1ad46a0c53654dddb2065e5511258a32b7c202fadc83b61c508338f39c2"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/__pycache__/test_discovery_isolation.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 19755,
+      "sha256": "d43f33e0b4f5110bc4a0834bb9b97e9981acc72141ada95dfea827584b71dac3"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/__pycache__/test_execution_integrity.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 21121,
+      "sha256": "5804d629c87a2c8dec2a455fb54b7fd14192437b1b0a2e377e67ef9af0470d26"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/__pycache__/test_inverse_batch_execution.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 8211,
+      "sha256": "4a04951c53d6a27c82e21a66bc580943cd6065291c90a1148a4f16fb61fcc3ad"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/__pycache__/test_inverse_trigger_extraction.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 11356,
+      "sha256": "a446feb1e05030f096dab69ebcc951ea16594063ccf0123612648a2c6fd108b0"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/__pycache__/test_pre_validation_review.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 24638,
+      "sha256": "c8a8b290904432ba77321076a94833439fd19b893f17be9dbaec1c1da6683df2"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/__pycache__/test_search_spec_v2_integrity.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 27951,
+      "sha256": "43ae92783c180764ebac9aad3139299fef8bd57317b42eb04340ff57557085e8"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/test_discovery_isolation.py": {
+      "bytes": 9663,
+      "sha256": "7939df8ddbab9a1f1bdf3af1162ff619e68a22a90cb585399ae776778e618c4c"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/test_execution_integrity.py": {
+      "bytes": 5884,
+      "sha256": "8a6b7f498109ab041900a310be4d91f46fe299abf5e5cd336005c1d3e332d295"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/test_inverse_batch_execution.py": {
+      "bytes": 4086,
+      "sha256": "7c40bf080d8d3ecb10a96c41b51a26e133d7a5ba867782e3c64c4e74b8641980"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/test_inverse_trigger_extraction.py": {
+      "bytes": 3454,
+      "sha256": "87aaa19fafb7648cd02eb12927986e78d2182a10d9a0ddcf93a1e62a7541441e"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/test_pre_validation_review.py": {
+      "bytes": 7944,
+      "sha256": "4034cf7f9d96bc1296bb1a6af46cb5de1912520bd5be6d14e757a1a50c875c60"
+    },
+    "gate1/phase3_staging/tests/indicator_parameter_search/test_search_spec_v2_integrity.py": {
+      "bytes": 6143,
+      "sha256": "413f0372c45bfb6b6a8e803b8f6a6bfaf05304b13eea0196936b13fa454dd6ed"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/__init__.py": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 187,
+      "sha256": "84dae333356f4613b639b02639823ccd14ff175ba229e0cbb65b9e4160145bb5"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/__pycache__/test_anti_leakage.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 16499,
+      "sha256": "5de903983382a8fa8385cbff374cb67cc08f7d42f1cf366df8598266b890699b"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/__pycache__/test_feature_bank.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 23825,
+      "sha256": "3e7315c9aec1482493ac36dffa59f6df69e8eae97c8a8deeee88207e269ad544"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/__pycache__/test_final_review_fix.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 50050,
+      "sha256": "8f8b8d7a85e9301a149a1a8fedc9702980fe0f9b5497b95d1046d76cb00c0849"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/__pycache__/test_review_fix_1.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 32389,
+      "sha256": "9c6015674faebbb22dd7827fa86c3b477d274eef58fcac2d021c21e35706694a"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/__pycache__/test_segment_semantics_fix.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 46134,
+      "sha256": "7551bb6f676eb64426e1296cccea5bb690ec0c2a8b2a930dddf52dd9f5604b50"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/test_anti_leakage.py": {
+      "bytes": 6861,
+      "sha256": "e4accd636724309a975cfc4cc73f8c6238f1d8be0e9ebc2f6110a454f092ac35"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/test_feature_bank.py": {
+      "bytes": 4681,
+      "sha256": "d6f1b5dc62cb52a8c87ff98cc215a0f3b81a8c543facda3e4d6a1a725f317d31"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/test_final_review_fix.py": {
+      "bytes": 15539,
+      "sha256": "0e568ae376403433a424e7e1cdba805c208bf5676ff56ccfba18ec8127263b37"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/test_review_fix_1.py": {
+      "bytes": 10221,
+      "sha256": "9eb2e573c6fe6556b4bfa76061cb94c4a4d02669f8b51f57eadf9ec253f683c8"
+    },
+    "gate1/phase3_staging/tests/multitf_feature_bank/test_segment_semantics_fix.py": {
+      "bytes": 14316,
+      "sha256": "4f17ca6ed4b0f8d06a661a6608523a245232b51f5d52f31180c8d3be0c92ffdd"
+    },
+    "gate1/phase3_staging/tests/oscillator_predictor/__init__.py": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate1/phase3_staging/tests/oscillator_predictor/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 187,
+      "sha256": "6ff282ac225d5f8c96c6d947cc9e3ba35b7da8614b5f548e6cd467fa6bad0aa8"
+    },
+    "gate1/phase3_staging/tests/oscillator_predictor/__pycache__/test_reference.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 9503,
+      "sha256": "6074c20c09bd407bfac6a00166f801be91557af468fa1942c9c2fde5bec6a3ff"
+    },
+    "gate1/phase3_staging/tests/oscillator_predictor/test_reference.py": {
+      "bytes": 3237,
+      "sha256": "26447774401b9c854fddc686e30243faf3fe410d260039eb102232efe7ecd859"
+    },
+    "gate1/phase3_staging/tests/policy_research/__init__.py": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate1/phase3_staging/tests/policy_research/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 182,
+      "sha256": "276edc632ddde81059e98c74191d6490faf3fea03101035f0b81ea5927b2bb25"
+    },
+    "gate1/phase3_staging/tests/policy_research/__pycache__/test_evaluation.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 6679,
+      "sha256": "fdbf68e086b2b0b359819344305e466d92658fddfb8f8b09d5e57cd9bc55aae6"
+    },
+    "gate1/phase3_staging/tests/policy_research/test_evaluation.py": {
+      "bytes": 3632,
+      "sha256": "d05718dbe81023adc2389269316eb282fbbf3fec29cf5b27383cb76afb759d14"
+    },
+    "gate1/phase3_staging/tests/provisional_execution/__init__.py": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate1/phase3_staging/tests/provisional_execution/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 188,
+      "sha256": "c36aba346a9184a5518c2ff104c160d2492b39f61b54acd1b674f1f4c7fdecc6"
+    },
+    "gate1/phase3_staging/tests/provisional_execution/__pycache__/test_evaluation.cpython-312-pytest-9.0.3.pyc": {
+      "bytes": 6579,
+      "sha256": "f95b30362ae82bb46c3ed10ccc7f9ae32c9b8041f9a37b4f49cba12297c40274"
+    },
+    "gate1/phase3_staging/tests/provisional_execution/test_evaluation.py": {
+      "bytes": 4348,
+      "sha256": "d446982d13589b02e73ed37d4946d1e6a5e84709125c38c1a59e7a30330bef13"
+    },
+    "gate2/full_v2/dataset_v1/atomic_features_hourly_v1.npz": {
+      "bytes": 485295,
+      "sha256": "0230331dd5545f7b5038c7bbfbc2e323539e4d81f6bc7525ea0d7b593f35a88d"
+    },
+    "gate2/full_v2/dataset_v1/composite_features_hourly_v1.npz": {
+      "bytes": 7825151,
+      "sha256": "621ff00bcd791106f57dd91bd439444248e83ae14b87d0cd2af6e49301f93af7"
+    },
+    "gate2/full_v2/dataset_v1/dataset_integrity_v1.json": {
+      "bytes": 865,
+      "sha256": "63918c550a16c7334d658aaa864d8fe3bebbc94ed357f0d4b5165967222f9558"
+    },
+    "gate2/full_v2/dataset_v1/dataset_manifest_v1.json": {
+      "bytes": 1654,
+      "sha256": "97746e739c2d9ddf01b28c216cf3f31d1bfec6014b7a67f1957e228b33733b5b"
+    },
+    "gate2/full_v2/dataset_v1/feature_registry_v1.json": {
+      "bytes": 731381,
+      "sha256": "a5af735db25afe2684822660b02ead8946a49e0c4c6fb13c0d00e029182d9d04"
+    },
+    "gate2/full_v2/dataset_v1/management_state_samples_v1.parquet": {
+      "bytes": 8931015,
+      "sha256": "79c9456d5783331a519c90f7681cb00ebaf6a5599332511115e086d8ad40396c"
+    },
+    "gate2/full_v2/dataset_v1/market_features_v1.parquet": {
+      "bytes": 28365196,
+      "sha256": "0028f1c48f5cb7990f958f78d3175477af8cdca049c6905328d3ec1a1eed156b"
+    },
+    "gate2/full_v2/dataset_v1/portfolio_state_features_v1.parquet": {
+      "bytes": 5751346,
+      "sha256": "4646c64b776156976959e67a58cb4d398fabdc076f4489210ef6990972679f58"
+    },
+    "gate2/full_v2/dataset_v1/row_index_v1.parquet": {
+      "bytes": 995071,
+      "sha256": "8df1b7fc5e360a026afdd48f398e25ee1af77bf61df2a046f852d3e9194cbe6f"
+    },
+    "gate2/full_v2/dataset_v1/split_manifest_v1.json": {
+      "bytes": 618,
+      "sha256": "a8ad55a4502f2781387ce03581a9d525e8e2b2be581a22eace7094d3b30748f3"
+    },
+    "gate3/entry_direction_gpu_v1.cbm": {
+      "bytes": 219936,
+      "sha256": "df5c3eaefaab1dbdf47441e765886e882e24f2373af6dae2df86977e7b49bc86"
+    },
+    "gate3/entry_predictions_selection_v1.parquet": {
+      "bytes": 185027,
+      "sha256": "7c9e1df58c8bce7c1947f8b35dd555b7ddf6a74bccef50afaad42f2d68a5f206"
+    },
+    "gate3/entry_risk_gpu_v1.cbm": {
+      "bytes": 27264,
+      "sha256": "ab2955f0efd89565d3833402cdb8425c877c8ed4bac9d34246819cbb405fd45d"
+    },
+    "gate3/feature_selection_manifest_v1.json": {
+      "bytes": 78712,
+      "sha256": "9884837655d9de4f836b72dc5607bfebc235e38c1cb31105752e90d8b92dffb5"
+    },
+    "gate3/management_predictions_selection_v1.parquet": {
+      "bytes": 151258,
+      "sha256": "2aa2fa8e4ec693f76d74d38bcef4fa92d9cef90c0ca3f235e2c1c7c981963ffe"
+    },
+    "gate3/position_management_gpu_v1.cbm": {
+      "bytes": 255408,
+      "sha256": "3da5206e4099ae0edec19c0485731c33dc0af20bf1848820e714bce62f9fada0"
+    },
+    "gate3/training_metrics_v1.json": {
+      "bytes": 21401,
+      "sha256": "f8075681bfe5ba00dc2769edc9a8cc6923f3043ebd8f83f608c08286b26ca25c"
+    },
+    "gate4/RUN1_AI_HEDGE_40_HOLD_decisions.csv": {
+      "bytes": 271391,
+      "sha256": "0292871f43395a35b838b08a2bbf30c3c314f03f232f0b8d58f51fdef858525b"
+    },
+    "gate4/RUN1_AI_HEDGE_40_HOLD_equity.parquet": {
+      "bytes": 381212,
+      "sha256": "5727ff93b665688dced43639ed81710814a73a29535b4abb3899f3dc22d3471d"
+    },
+    "gate4/RUN1_AI_HEDGE_40_HOLD_trades.csv": {
+      "bytes": 551377,
+      "sha256": "0a46e53398bc50a28e2c187a6a967d28dfc331c34b444bdae080dec923719ccf"
+    },
+    "gate4/RUN1_AI_HEDGE_40_SWING_decisions.csv": {
+      "bytes": 271397,
+      "sha256": "0a1e0582808d39d09a0f76f170d3fd8a76e5cef48e3f7a7f5feac35b12d72015"
+    },
+    "gate4/RUN1_AI_HEDGE_40_SWING_equity.parquet": {
+      "bytes": 309038,
+      "sha256": "a23e0155ad634f96a55dd2714f60468ac635620a656fd99ddc73fc53e7b0a5de"
+    },
+    "gate4/RUN1_AI_HEDGE_40_SWING_trades.csv": {
+      "bytes": 561827,
+      "sha256": "88d8ade8454f3d6e7ac4a7afe4c33371c857c56698d1a3f75b84a0f570b2d400"
+    },
+    "gate4/RUN1_AI_HEDGE_60_HOLD_decisions.csv": {
+      "bytes": 271281,
+      "sha256": "7f47dd881810b91206ec714bc3f818e782de15d0eaf7f86c22c02a819da17be4"
+    },
+    "gate4/RUN1_AI_HEDGE_60_HOLD_equity.parquet": {
+      "bytes": 366279,
+      "sha256": "efe22ed7e52211e73871c227c0eff93a56de4a95ae9a27bcafad2b5941c422ec"
+    },
+    "gate4/RUN1_AI_HEDGE_60_HOLD_trades.csv": {
+      "bytes": 479312,
+      "sha256": "4a31d34358ce3f4e90467f7be6b9eb634db1afa4eeabd3f2a56f45cd26b90e5a"
+    },
+    "gate4/RUN1_AI_HEDGE_60_SWING_decisions.csv": {
+      "bytes": 303040,
+      "sha256": "b71d41a0c4b48af280893a34f0c61c010bfa8788e121a7c6abce41656f152851"
+    },
+    "gate4/RUN1_AI_HEDGE_60_SWING_equity.parquet": {
+      "bytes": 309244,
+      "sha256": "72b00208905f99b7fc79c264267d8fec8b1ca476c48651bca9eb8b76ce74457b"
+    },
+    "gate4/RUN1_AI_HEDGE_60_SWING_trades.csv": {
+      "bytes": 576619,
+      "sha256": "91d630bdd5d5dc3c578c5a419505cc6f15ea90c7b3c51da5f657ffb3d4dd7a2d"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_40_HOLD_decisions.csv": {
+      "bytes": 382901,
+      "sha256": "a0de567872d5a52b3849dd33a465ef43fc91750f53b5c363f43ea3ce9daa6e69"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_40_HOLD_equity.parquet": {
+      "bytes": 381430,
+      "sha256": "750dd545787f4e5aa42ce5d06e40f63382db5662b296a3647bb6fcc6906806bd"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_40_HOLD_trades.csv": {
+      "bytes": 636484,
+      "sha256": "0628a1ea9fb1fe3a69e70fdeebb8aaaa08be17957d45cb1a3ae801fc85b6e4e1"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_40_SWING_decisions.csv": {
+      "bytes": 380383,
+      "sha256": "554ce101344e1b3996e2767ba23c37984eedeccd087447d34970c000408a54ad"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_40_SWING_equity.parquet": {
+      "bytes": 328096,
+      "sha256": "7fd2b21ea69c3646dd5bd7d61c6ce10abf87a6b997f0a5b373f35e595856c551"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_40_SWING_trades.csv": {
+      "bytes": 716486,
+      "sha256": "6f7bf0a737c549e3b1854a1becdb51136f2ca7c7107875fe2eed7acb4e754573"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_60_HOLD_decisions.csv": {
+      "bytes": 377307,
+      "sha256": "a8a22f4f48328b87ba1b15b3d36460bd78ea19cf28896755e7d3e00caf176546"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_60_HOLD_equity.parquet": {
+      "bytes": 353019,
+      "sha256": "e66bc2814bb93e2100edafa8bf4f60a4ff93a6c29a4dd790e382225efcdc53fd"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_60_HOLD_trades.csv": {
+      "bytes": 517526,
+      "sha256": "b66f30c80da30dabbd233d0c87fd6e83a17f14ddf74e56a2f0a5512e09af0e73"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_60_SWING_decisions.csv": {
+      "bytes": 381549,
+      "sha256": "f91cc404a5dbbae94d4890ec192c53824b8fe1e6fa2c64c5d91a1edc0a3a5287"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_60_SWING_equity.parquet": {
+      "bytes": 300075,
+      "sha256": "11bc64494d401c5262cccf7b800e748e44613d8fdb6dbd933e98879936132eeb"
+    },
+    "gate4/RUN1_AI_HEDGE_AVG_60_SWING_trades.csv": {
+      "bytes": 662034,
+      "sha256": "e42fa6b88f4094f6949a349b4509a2a93eb41b2709c580115c32fee2f4a33a13"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_40_HOLD_decisions.csv": {
+      "bytes": 284508,
+      "sha256": "458ac56e981caa2480bb600d73733a139a1f8b1842a21eeb12aa181b37a28de1"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_40_HOLD_equity.parquet": {
+      "bytes": 381295,
+      "sha256": "9432638241f8d499a4191dea9ee7f8eaa32c32a266b005279f8f75129c8e9248"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_40_HOLD_trades.csv": {
+      "bytes": 541031,
+      "sha256": "80bb0fcbaaf50b1e16835bab3c7ddee84c8022addb589d2760df2eb8a222ffb9"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_40_SWING_decisions.csv": {
+      "bytes": 284609,
+      "sha256": "a77001333d8a0059493b2e7d783776ddcaebdc2771bff88543bdec78bcf555e3"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_40_SWING_equity.parquet": {
+      "bytes": 316232,
+      "sha256": "a57c6832112f0419716cf7991cb73b347f26569969667e9f9fcc236dee540f8a"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_40_SWING_trades.csv": {
+      "bytes": 550110,
+      "sha256": "dde4841c4b57d4b1a943d249aa98fa9e13fc42054ea48588e79218756c908a62"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_60_HOLD_decisions.csv": {
+      "bytes": 284857,
+      "sha256": "a22a403af4e18b3bcdb33bf4719a825e2176d663fa512d2cacc35fcc6674523f"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_60_HOLD_equity.parquet": {
+      "bytes": 366057,
+      "sha256": "b3ba53e3d5f5329ca1173bd44daea24db2052b7412c2079a6ea18d25dc2a5cc8"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_60_HOLD_trades.csv": {
+      "bytes": 473183,
+      "sha256": "85dd44b4461357fb584e30ae65f833b8549fb3c7b71d3d38fb392daa4422898e"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_60_SWING_decisions.csv": {
+      "bytes": 284609,
+      "sha256": "a77001333d8a0059493b2e7d783776ddcaebdc2771bff88543bdec78bcf555e3"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_60_SWING_equity.parquet": {
+      "bytes": 315881,
+      "sha256": "7844255910fda9325fc739899f058daea82e2472ea4a137b66a8e0535c154ad6"
+    },
+    "gate4/RUN1_AI_NO_HEDGE_60_SWING_trades.csv": {
+      "bytes": 548813,
+      "sha256": "5f5b2ff3b8912aff4478d80799ba8f442d8fbebbde92872ade8ba903c991b76f"
+    },
+    "gate4/RUN1_A_HOLD_equity.png": {
+      "bytes": 235598,
+      "sha256": "cdf4ec5c6bcf39eeb8e5adeb29df3bb69187f48b1b77f6bacaaa437983ddbbf4"
+    },
+    "gate4/RUN1_A_SWING_equity.png": {
+      "bytes": 138499,
+      "sha256": "af3770b21711942d43262ccf4a08e612c5d16aa9e602c6d3bfe35d20f18b43b5"
+    },
+    "gate4/RUN1_BUY_HOLD_40_HOLD_decisions.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate4/RUN1_BUY_HOLD_40_HOLD_equity.parquet": {
+      "bytes": 228536,
+      "sha256": "d758aef28cb86742ed2c8248bca7dc1a030b2a971eb83391b4641b734b85dba7"
+    },
+    "gate4/RUN1_BUY_HOLD_40_HOLD_trades.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate4/RUN1_BUY_HOLD_60_HOLD_decisions.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate4/RUN1_BUY_HOLD_60_HOLD_equity.parquet": {
+      "bytes": 228536,
+      "sha256": "9f4dbcf66bc7bea51bae9a5d17302a9b21700db00bb580494fb0dd802b3ad3bd"
+    },
+    "gate4/RUN1_BUY_HOLD_60_HOLD_trades.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate4/RUN1_B_HOLD_equity.png": {
+      "bytes": 276798,
+      "sha256": "8eecb0e11c004f38c2f8a31eababcd5325e9fb44927028bdd0329c88aca3c716"
+    },
+    "gate4/RUN1_B_SWING_equity.png": {
+      "bytes": 156858,
+      "sha256": "054cbca39c29eb006d9a598d438f18e56e64862dd477702a744cf8634b78626a"
+    },
+    "gate4/RUN1_INDICATORS_ONLY_40_HOLD_decisions.csv": {
+      "bytes": 454263,
+      "sha256": "1f94c59e09c7457c61bffd5b72eed166da5e2aae88ce64355f53d38fb9113c6c"
+    },
+    "gate4/RUN1_INDICATORS_ONLY_40_HOLD_equity.parquet": {
+      "bytes": 306478,
+      "sha256": "2bacf9d23589ed19dbd9240800fd5819528ac0a3d6b1c9989c5c3e71df8a6fb1"
+    },
+    "gate4/RUN1_INDICATORS_ONLY_40_HOLD_trades.csv": {
+      "bytes": 320024,
+      "sha256": "0cbb3420845378bc63799c3885068ffd5a570cfb8351114d0059e4a364eae6ef"
+    },
+    "gate4/RUN1_INDICATORS_ONLY_60_HOLD_decisions.csv": {
+      "bytes": 453074,
+      "sha256": "f60b07c84be66b2e32047aa2b14c05cd1cd54297fdc4f9a8eb0695b04ae41110"
+    },
+    "gate4/RUN1_INDICATORS_ONLY_60_HOLD_equity.parquet": {
+      "bytes": 271239,
+      "sha256": "f4c9336c19c1907dbc4327b18625f2224365eefccb8d03da5ae8896a00926785"
+    },
+    "gate4/RUN1_INDICATORS_ONLY_60_HOLD_trades.csv": {
+      "bytes": 168924,
+      "sha256": "3fd3f1869567c5485239f5db6e65131c2b63511b8b7cd14e2670ab40fc92bc62"
+    },
+    "gate4/RUN1_SMA_BASELINE_40_HOLD_decisions.csv": {
+      "bytes": 289342,
+      "sha256": "e419010013c019e836221495c7256dca1cad44a3b224448a6cecc3fa5a6072ff"
+    },
+    "gate4/RUN1_SMA_BASELINE_40_HOLD_equity.parquet": {
+      "bytes": 338247,
+      "sha256": "d5be0a7b851714a20f707fbed4b5d420016f385ca1b31c60a40763fba36642ef"
+    },
+    "gate4/RUN1_SMA_BASELINE_40_HOLD_trades.csv": {
+      "bytes": 390699,
+      "sha256": "85630da2424991cb8fa0acee77835f7968f2d74416f138a5c748bea48c90c667"
+    },
+    "gate4/RUN1_SMA_BASELINE_60_HOLD_decisions.csv": {
+      "bytes": 288296,
+      "sha256": "07751137bd850e9f87e4fa686bd169d25dcc856d2fb2a131cd57cf6465a80f66"
+    },
+    "gate4/RUN1_SMA_BASELINE_60_HOLD_equity.parquet": {
+      "bytes": 309929,
+      "sha256": "bfe2277105db02ec378623d4160e99f4c81a2b97db0f4e032ece1931e1e561cf"
+    },
+    "gate4/RUN1_SMA_BASELINE_60_HOLD_trades.csv": {
+      "bytes": 279294,
+      "sha256": "d762765e0c011935790a03a25fe6d0357b4906636af32a55897e39a207855c2b"
+    },
+    "gate4/RUN2_AI_HEDGE_40_HOLD_decisions.csv": {
+      "bytes": 366618,
+      "sha256": "390dce595ce5725ab0feb425801f88ddec9fe2830fc562034c819fe316933f95"
+    },
+    "gate4/RUN2_AI_HEDGE_40_HOLD_equity.parquet": {
+      "bytes": 284329,
+      "sha256": "171e09ebe03e823816768cf069d255d0e1d6f3598a2609c39354833a86e2e0e5"
+    },
+    "gate4/RUN2_AI_HEDGE_40_HOLD_trades.csv": {
+      "bytes": 171912,
+      "sha256": "1a28324900811fd7538a05e2c645c3a3def0c3a55e0bc2567326bc8440eb93e6"
+    },
+    "gate4/RUN2_AI_HEDGE_40_SWING_decisions.csv": {
+      "bytes": 365697,
+      "sha256": "18d3d6a24731be1dc14aeec63793cf5722124665cc712a565be4f993dd27e71a"
+    },
+    "gate4/RUN2_AI_HEDGE_40_SWING_equity.parquet": {
+      "bytes": 164477,
+      "sha256": "8c4f1b618d5ba250bc2eb1c17a37e7d81698efc9434d26a9a4ce0b3f4c64fcf2"
+    },
+    "gate4/RUN2_AI_HEDGE_40_SWING_trades.csv": {
+      "bytes": 284093,
+      "sha256": "0d41889de9dc337139235e2d6472f96156a4d8af16e110b435bc11f1e5c712e6"
+    },
+    "gate4/RUN2_AI_HEDGE_60_HOLD_decisions.csv": {
+      "bytes": 367044,
+      "sha256": "9bc6282a1f4d135603ee9449a1b5067447a299a5b923e23909c2b0894b95d7d8"
+    },
+    "gate4/RUN2_AI_HEDGE_60_HOLD_equity.parquet": {
+      "bytes": 265392,
+      "sha256": "296efb9622eb443d7f90a30953745bd50a1fc837778ec46915ea9c5ae163eb2b"
+    },
+    "gate4/RUN2_AI_HEDGE_60_HOLD_trades.csv": {
+      "bytes": 82785,
+      "sha256": "e8fb2979e7ca66740383e90afe612cfad0589ae1e0c6934a0fe229443fde1515"
+    },
+    "gate4/RUN2_AI_HEDGE_60_SWING_decisions.csv": {
+      "bytes": 367219,
+      "sha256": "63807aaa720e9b3a32bf2c80f895adb443fa3d06de5d4ac8338efb7377122eb5"
+    },
+    "gate4/RUN2_AI_HEDGE_60_SWING_equity.parquet": {
+      "bytes": 114815,
+      "sha256": "0c58dc158bef0c80a57c8c33f1a68fecd2ee28597d2dfb752506cca20ff80e42"
+    },
+    "gate4/RUN2_AI_HEDGE_60_SWING_trades.csv": {
+      "bytes": 119827,
+      "sha256": "7166994f0819a8efd0c739ec1bdf26ce7eedfe1e21526b8284d1c9d2831c4fa2"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_40_HOLD_decisions.csv": {
+      "bytes": 390658,
+      "sha256": "16281399861641f11f94488b3446e51e1918ea472a49e3af89197c473253f41c"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_40_HOLD_equity.parquet": {
+      "bytes": 284329,
+      "sha256": "171e09ebe03e823816768cf069d255d0e1d6f3598a2609c39354833a86e2e0e5"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_40_HOLD_trades.csv": {
+      "bytes": 171912,
+      "sha256": "1a28324900811fd7538a05e2c645c3a3def0c3a55e0bc2567326bc8440eb93e6"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_40_SWING_decisions.csv": {
+      "bytes": 389861,
+      "sha256": "1aa42998f5da116627c0ec973a8ef74122407d5ed7b4afb2fd82fb8ff5ce6d65"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_40_SWING_equity.parquet": {
+      "bytes": 164477,
+      "sha256": "8c4f1b618d5ba250bc2eb1c17a37e7d81698efc9434d26a9a4ce0b3f4c64fcf2"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_40_SWING_trades.csv": {
+      "bytes": 284093,
+      "sha256": "0d41889de9dc337139235e2d6472f96156a4d8af16e110b435bc11f1e5c712e6"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_60_HOLD_decisions.csv": {
+      "bytes": 390964,
+      "sha256": "1e4df45501331c43d265a0a4c87fadbe7902cf335c619539afdf8ab2a04176ed"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_60_HOLD_equity.parquet": {
+      "bytes": 265392,
+      "sha256": "296efb9622eb443d7f90a30953745bd50a1fc837778ec46915ea9c5ae163eb2b"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_60_HOLD_trades.csv": {
+      "bytes": 82785,
+      "sha256": "e8fb2979e7ca66740383e90afe612cfad0589ae1e0c6934a0fe229443fde1515"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_60_SWING_decisions.csv": {
+      "bytes": 391211,
+      "sha256": "6f32d2efe8083f99f5bf2a36c0ebade3ff7fd6dfb842f3afa38bc31fbbb22a43"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_60_SWING_equity.parquet": {
+      "bytes": 114815,
+      "sha256": "0c58dc158bef0c80a57c8c33f1a68fecd2ee28597d2dfb752506cca20ff80e42"
+    },
+    "gate4/RUN2_AI_HEDGE_AVG_60_SWING_trades.csv": {
+      "bytes": 119827,
+      "sha256": "7166994f0819a8efd0c739ec1bdf26ce7eedfe1e21526b8284d1c9d2831c4fa2"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_40_HOLD_decisions.csv": {
+      "bytes": 384648,
+      "sha256": "8b6cbdf21086ec4b0b0cc4c0748713c6778e28a238f30d63f4cf17c50705d3a5"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_40_HOLD_equity.parquet": {
+      "bytes": 284329,
+      "sha256": "171e09ebe03e823816768cf069d255d0e1d6f3598a2609c39354833a86e2e0e5"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_40_HOLD_trades.csv": {
+      "bytes": 171912,
+      "sha256": "1a28324900811fd7538a05e2c645c3a3def0c3a55e0bc2567326bc8440eb93e6"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_40_SWING_decisions.csv": {
+      "bytes": 383820,
+      "sha256": "a47a1bb8bd7c136970ebceda59993d96d5536d297ffb3d1d9da000e6c44ca431"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_40_SWING_equity.parquet": {
+      "bytes": 164477,
+      "sha256": "8c4f1b618d5ba250bc2eb1c17a37e7d81698efc9434d26a9a4ce0b3f4c64fcf2"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_40_SWING_trades.csv": {
+      "bytes": 284093,
+      "sha256": "0d41889de9dc337139235e2d6472f96156a4d8af16e110b435bc11f1e5c712e6"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_60_HOLD_decisions.csv": {
+      "bytes": 384984,
+      "sha256": "5dce5b5d04a14094ddcc1465bd98f9c22847d807e55a33659bb5da6fd2e76c9d"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_60_HOLD_equity.parquet": {
+      "bytes": 265392,
+      "sha256": "296efb9622eb443d7f90a30953745bd50a1fc837778ec46915ea9c5ae163eb2b"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_60_HOLD_trades.csv": {
+      "bytes": 82785,
+      "sha256": "e8fb2979e7ca66740383e90afe612cfad0589ae1e0c6934a0fe229443fde1515"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_60_SWING_decisions.csv": {
+      "bytes": 385213,
+      "sha256": "80f393d80e95865e7db39bc5aefa823bb3955115572c248193a5d9687ab3a9b8"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_60_SWING_equity.parquet": {
+      "bytes": 114815,
+      "sha256": "0c58dc158bef0c80a57c8c33f1a68fecd2ee28597d2dfb752506cca20ff80e42"
+    },
+    "gate4/RUN2_AI_NO_HEDGE_60_SWING_trades.csv": {
+      "bytes": 119827,
+      "sha256": "7166994f0819a8efd0c739ec1bdf26ce7eedfe1e21526b8284d1c9d2831c4fa2"
+    },
+    "gate4/RUN2_A_HOLD_equity.png": {
+      "bytes": 213362,
+      "sha256": "3686a02d732bcf2ffc912c2075d8ecedf91133e7604060a225b4f45d48160ef1"
+    },
+    "gate4/RUN2_A_SWING_equity.png": {
+      "bytes": 58710,
+      "sha256": "60488b0487c40759b8faf82e628c9f9cb1fccb6c3ff0dc0425858086825c4daa"
+    },
+    "gate4/RUN2_BUY_HOLD_40_HOLD_decisions.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate4/RUN2_BUY_HOLD_40_HOLD_equity.parquet": {
+      "bytes": 248387,
+      "sha256": "30c4925fa8a06f8741e33424c0d044622ae7e5a7066e5f3fca54a798aa5d7977"
+    },
+    "gate4/RUN2_BUY_HOLD_40_HOLD_trades.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate4/RUN2_BUY_HOLD_60_HOLD_decisions.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate4/RUN2_BUY_HOLD_60_HOLD_equity.parquet": {
+      "bytes": 248387,
+      "sha256": "dde391027d3a08335394044a62d750b0d6cace27b1d740cd754b572b5f51b09f"
+    },
+    "gate4/RUN2_BUY_HOLD_60_HOLD_trades.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate4/RUN2_B_HOLD_equity.png": {
+      "bytes": 226477,
+      "sha256": "721bc3bff5d7cead33ae1335d8f00c4d9e494f75ca31e5327a1236070c78000e"
+    },
+    "gate4/RUN2_B_SWING_equity.png": {
+      "bytes": 67373,
+      "sha256": "b2052a8ffa7d526babc0d65b7d8071e2ac77b7bdac59a61249b64df22f35da90"
+    },
+    "gate4/RUN2_INDICATORS_ONLY_40_HOLD_decisions.csv": {
+      "bytes": 478160,
+      "sha256": "df63ebdf0c6d70ee8252c5ae499b4972880dc64d03be11f40a4fc76fd8316b0d"
+    },
+    "gate4/RUN2_INDICATORS_ONLY_40_HOLD_equity.parquet": {
+      "bytes": 309296,
+      "sha256": "ccbc9c23721140d6d6366585d49322ff98ea60f253a29b1a81433cfb3a69eece"
+    },
+    "gate4/RUN2_INDICATORS_ONLY_40_HOLD_trades.csv": {
+      "bytes": 270153,
+      "sha256": "352947f2013f454d4adfee9558b607353c009fd760e649d5ddaba08de277bdb0"
+    },
+    "gate4/RUN2_INDICATORS_ONLY_60_HOLD_decisions.csv": {
+      "bytes": 491213,
+      "sha256": "b48a2333941d81578cf19f8a7213f3dec7223c5e133cdcc5dceb57fd8bbededf"
+    },
+    "gate4/RUN2_INDICATORS_ONLY_60_HOLD_equity.parquet": {
+      "bytes": 273029,
+      "sha256": "31e473036b7414dd5ebf436f1ef98454217ab18d3bf114c63b2e452f17e9a43a"
+    },
+    "gate4/RUN2_INDICATORS_ONLY_60_HOLD_trades.csv": {
+      "bytes": 116905,
+      "sha256": "f8f8ca12fc21875ffa3b44e43ab930e885aa75f28f9289a7c7fbecfe46df6229"
+    },
+    "gate4/RUN2_SMA_BASELINE_40_HOLD_decisions.csv": {
+      "bytes": 341710,
+      "sha256": "97e9e0e180d6681b22725b61770f1961ec4cbb2836eec317271cee9482f91f3e"
+    },
+    "gate4/RUN2_SMA_BASELINE_40_HOLD_equity.parquet": {
+      "bytes": 300234,
+      "sha256": "6d3c0dc8bf3d3d5c910e0d3017279549731db5becc5efecef31fbc041cdb95a6"
+    },
+    "gate4/RUN2_SMA_BASELINE_40_HOLD_trades.csv": {
+      "bytes": 232911,
+      "sha256": "79dd101b5a194df669b50d19e5e9d26beca6636e44bfe1df1feb5f3f265af3e0"
+    },
+    "gate4/RUN2_SMA_BASELINE_60_HOLD_decisions.csv": {
+      "bytes": 340564,
+      "sha256": "059bc7f47579106f615b4dc77ea04b9943dd12a6058ea300be7822bb5b757aee"
+    },
+    "gate4/RUN2_SMA_BASELINE_60_HOLD_equity.parquet": {
+      "bytes": 279369,
+      "sha256": "6c75611b7b857afb79a016da698e9b28532b75b3203dd2ebcef45f4068005d81"
+    },
+    "gate4/RUN2_SMA_BASELINE_60_HOLD_trades.csv": {
+      "bytes": 138538,
+      "sha256": "7479dd5c92e5e55aa6ca0d928b0a0b44634a663b00a61863677c1fa5d0205e82"
+    },
+    "gate4/backtest_summary_v1.json": {
+      "bytes": 22762,
+      "sha256": "64d4d7d7e3b70bdb4d93d154309cf206a09909f5004f771b4341a4c0fdadff1e"
+    },
+    "gate4/impact_summary_v1.json": {
+      "bytes": 4551,
+      "sha256": "76444a0dd64812f49183c1d0d2da73b528b7e7af67b9df15a929e819c8f9fc72"
+    },
+    "gate4/policy_manifest_v1.json": {
+      "bytes": 653,
+      "sha256": "807fc7c267460e57b23739bb8dc10c1e4f46876ca5412e70ea712c023c27d710"
+    },
+    "gate4/portfolio_metrics_v1.csv": {
+      "bytes": 6752,
+      "sha256": "fd2b008dff772254f7c4fce93eedca4781101d0b8122dfb8fe8d08dfbb281c79"
+    }
+  },
+  "count": 679,
+  "total_bytes": 92056733
+}

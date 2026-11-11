@@ -1,0 +1,143 @@
+{
+  "status": "PASS",
+  "development_only": true,
+  "independent_oos": "NO",
+  "impacts": [
+    {
+      "split": "RUN1",
+      "spot_fraction": 0.6,
+      "spot_mode": "HOLD",
+      "indicators_final_equity": 342.3080286048482,
+      "ai_no_hedge_final_equity": 342.3030318227903,
+      "ai_hedge_final_equity": 342.357539399599,
+      "ai_hedge_avg_final_equity": 342.3451918095448,
+      "ai_added_value": -0.004996782057901328,
+      "hedge_added_value": 0.054507576808703107,
+      "averaging_added_value": -0.012347590054162083,
+      "ai_liquidations": 1,
+      "hedge_liquidations": 1,
+      "avg_liquidations": 1
+    },
+    {
+      "split": "RUN1",
+      "spot_fraction": 0.6,
+      "spot_mode": "SWING",
+      "indicators_final_equity": 342.3080286048482,
+      "ai_no_hedge_final_equity": 116.40847168456314,
+      "ai_hedge_final_equity": 97.79765992944314,
+      "ai_hedge_avg_final_equity": 43.30037363743585,
+      "ai_added_value": -225.89955692028502,
+      "hedge_added_value": -18.610811755119997,
+      "averaging_added_value": -54.497286292007296,
+      "ai_liquidations": 1,
+      "hedge_liquidations": 2,
+      "avg_liquidations": 1
+    },
+    {
+      "split": "RUN1",
+      "spot_fraction": 0.4,
+      "spot_mode": "HOLD",
+      "indicators_final_equity": 227.9048030592085,
+      "ai_no_hedge_final_equity": 228.37052289474715,
+      "ai_hedge_final_equity": 228.3831915837968,
+      "ai_hedge_avg_final_equity": 228.40574632228584,
+      "ai_added_value": 0.46571983553866403,
+      "hedge_added_value": 0.01266868904963303,
+      "averaging_added_value": 0.022554738489048987,
+      "ai_liquidations": 1,
+      "hedge_liquidations": 1,
+      "avg_liquidations": 1
+    },
+    {
+      "split": "RUN1",
+      "spot_fraction": 0.4,
+      "spot_mode": "SWING",
+      "indicators_final_equity": 227.9048030592085,
+      "ai_no_hedge_final_equity": 92.88124273389752,
+      "ai_hedge_final_equity": 105.80386756954616,
+      "ai_hedge_avg_final_equity": 61.38630365496634,
+      "ai_added_value": -135.02356032531097,
+      "hedge_added_value": 12.922624835648634,
+      "averaging_added_value": -44.417563914579816,
+      "ai_liquidations": 1,
+      "hedge_liquidations": 1,
+      "avg_liquidations": 1
+    },
+    {
+      "split": "RUN2",
+      "spot_fraction": 0.6,
+      "spot_mode": "HOLD",
+      "indicators_final_equity": 299.74584508955445,
+      "ai_no_hedge_final_equity": 299.81393171716275,
+      "ai_hedge_final_equity": 299.81393171716275,
+      "ai_hedge_avg_final_equity": 299.81393171716275,
+      "ai_added_value": 0.0680866276082952,
+      "hedge_added_value": 0.0,
+      "averaging_added_value": 0.0,
+      "ai_liquidations": 1,
+      "hedge_liquidations": 1,
+      "avg_liquidations": 1
+    },
+    {
+      "split": "RUN2",
+      "spot_fraction": 0.6,
+      "spot_mode": "SWING",
+      "indicators_final_equity": 299.74584508955445,
+      "ai_no_hedge_final_equity": 60.46008842863863,
+      "ai_hedge_final_equity": 60.46008842863863,
+      "ai_hedge_avg_final_equity": 60.46008842863863,
+      "ai_added_value": -239.2857566609158,
+      "hedge_added_value": 0.0,
+      "averaging_added_value": 0.0,
+      "ai_liquidations": 1,
+      "hedge_liquidations": 1,
+      "avg_liquidations": 1
+    },
+    {
+      "split": "RUN2",
+      "spot_fraction": 0.4,
+      "spot_mode": "HOLD",
+      "indicators_final_equity": 199.8892984034688,
+      "ai_no_hedge_final_equity": 200.01394189177253,
+      "ai_hedge_final_equity": 200.01394189177253,
+      "ai_hedge_avg_final_equity": 200.01394189177253,
+      "ai_added_value": 0.12464348830371819,
+      "hedge_added_value": 0.0,
+      "averaging_added_value": 0.0,
+      "ai_liquidations": 1,
+      "hedge_liquidations": 1,
+      "avg_liquidations": 1
+    },
+    {
+      "split": "RUN2",
+      "spot_fraction": 0.4,
+      "spot_mode": "SWING",
+      "indicators_final_equity": 199.8892984034688,
+      "ai_no_hedge_final_equity": 40.480021578296025,
+      "ai_hedge_final_equity": 40.480021578296025,
+      "ai_hedge_avg_final_equity": 40.480021578296025,
+      "ai_added_value": -159.40927682517278,
+      "hedge_added_value": 0.0,
+      "averaging_added_value": 0.0,
+      "ai_liquidations": 1,
+      "hedge_liquidations": 1,
+      "avg_liquidations": 1
+    }
+  ],
+  "best_ai_by_split": {
+    "RUN1": {
+      "final_equity": 342.357539399599
+    },
+    "RUN2": {
+      "final_equity": 299.81393171716275
+    }
+  },
+  "best_buy_hold_by_split": {
+    "RUN1": {
+      "final_equity": 381.8572045888128
+    },
+    "RUN2": {
+      "final_equity": 339.3121170176763
+    }
+  }
+}

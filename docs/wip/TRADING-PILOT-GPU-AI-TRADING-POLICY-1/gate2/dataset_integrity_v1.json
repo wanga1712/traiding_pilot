@@ -1,0 +1,40 @@
+{
+  "rows": 17514,
+  "first_decision_at": "2020-01-01 00:59:59.999999+00:00",
+  "last_decision_at": "2021-12-31 23:59:59.999999+00:00",
+  "dense_feature_count": 453,
+  "atomic_feature_count": 284,
+  "composite_feature_count": 5478,
+  "target_horizons_hours": [
+    24,
+    72,
+    168
+  ],
+  "target_parity": "PASS",
+  "target_counters": {
+    "complete": 48240,
+    "censored_gap": 4038,
+    "censored_boundary": 264
+  },
+  "state_audit": {
+    "rows": 17514,
+    "management_state_rows": 69716,
+    "variants": [
+      "A_HOLD",
+      "A_SWING",
+      "B_HOLD",
+      "B_SWING"
+    ]
+  },
+  "oos_rows_materialized": 0,
+  "duplicate_decision_times": 0,
+  "feature_available_after_decision": 0,
+  "feature_null_fill": "NONE",
+  "status": "PASS",
+  "training_allowed_rows": 8411,
+  "split_counts": {
+    "LOCKED": 8747,
+    "SELECTION": 4411,
+    "TRAIN": 4356
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "dataset_version": "GPU_AI_POLICY_DATASET_V1",
+  "decision_timeframe": "1H",
+  "rows": 17514,
+  "dense_feature_count": 453,
+  "atomic_feature_count": 284,
+  "composite_feature_count": 5478,
+  "feature_count_total": 6215,
+  "target_horizons_hours": [
+    24,
+    72,
+    168
+  ],
+  "files": {
+    "atomic_features_hourly_v1.npz": {
+      "bytes": 485295,
+      "sha256": "0230331dd5545f7b5038c7bbfbc2e323539e4d81f6bc7525ea0d7b593f35a88d"
+    },
+    "composite_features_hourly_v1.npz": {
+      "bytes": 7825151,
+      "sha256": "621ff00bcd791106f57dd91bd439444248e83ae14b87d0cd2af6e49301f93af7"
+    },
+    "dataset_integrity_v1.json": {
+      "bytes": 865,
+      "sha256": "63918c550a16c7334d658aaa864d8fe3bebbc94ed357f0d4b5165967222f9558"
+    },
+    "feature_registry_v1.json": {
+      "bytes": 731381,
+      "sha256": "a5af735db25afe2684822660b02ead8946a49e0c4c6fb13c0d00e029182d9d04"
+    },
+    "management_state_samples_v1.parquet": {
+      "bytes": 8931015,
+      "sha256": "79c9456d5783331a519c90f7681cb00ebaf6a5599332511115e086d8ad40396c"
+    },
+    "market_features_v1.parquet": {
+      "bytes": 28365196,
+      "sha256": "0028f1c48f5cb7990f958f78d3175477af8cdca049c6905328d3ec1a1eed156b"
+    },
+    "portfolio_state_features_v1.parquet": {
+      "bytes": 5751346,
+      "sha256": "4646c64b776156976959e67a58cb4d398fabdc076f4489210ef6990972679f58"
+    },
+    "row_index_v1.parquet": {
+      "bytes": 995071,
+      "sha256": "8df1b7fc5e360a026afdd48f398e25ee1af77bf61df2a046f852d3e9194cbe6f"
+    },
+    "split_manifest_v1.json": {
+      "bytes": 618,
+      "sha256": "a8ad55a4502f2781387ce03581a9d525e8e2b2be581a22eace7094d3b30748f3"
+    }
+  }
+}

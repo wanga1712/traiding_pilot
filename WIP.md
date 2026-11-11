@@ -1,69 +1,89 @@
 # WIP - TRADING-PILOT-GPU-AI-TRADING-POLICY-1
 
-STATUS=ACTIVE
-PHASE=GATE_2_DATASET
+STATUS=REVIEW
+PHASE=REVIEW
 STARTED_AT=2026-11-11
+REVIEWED_AT=2026-11-11
 MODE=REPAIR -> DATASET -> GPU TRAINING -> BACKTEST
-MODEL=NEW_TRAIN_FROM_SCRATCH
 INITIAL_CAPITAL=100 USDT
 ASSET=ETHUSDT
 LEVERAGE=10X_ISOLATED
 HEDGE_MODE=ENABLED_IN_SIMULATOR
 LIVE_TRADING=DISABLED
 
-## Authorization and governance
+## Outcome
 
-- `USER_AUTHORIZATION=YES`
-- S13 training and isolated research mutation are authorized.
-- S7 remains read-only.
-- OOS and confirmation remain locked.
-- Frozen models and research artifacts remain immutable.
-- `TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1` remains `REVIEW`.
-- No other primary WIP was `ACTIVE` at activation.
+All gates completed without opening OOS or changing frozen research artifacts.
 
-## Current phase
+- CatBoost 1.2.10 trained on the S13 GTX 1660 SUPER with `task_type="GPU"`.
+- Peak VRAM observed: 5,473 MiB of 6,144 MiB.
+- Simulator repair passed 22 tests locally and 22 on S13.
+- New dataset: 17,514 causal 1H decisions and 6,215 features.
+- Entry model accuracy: 49.91%; management accuracy: 45.89%.
+- All AI variants lost to the matching Buy & Hold baseline.
+- AI added value over indicators-only is mixed and at most +0.47 USDT.
+- Hedge and averaging added value is negligible or negative.
+- Best AI drawdown: 38.06% in RUN 1 and 60.06% in RUN 2.
 
-GATE 0 and GATE 1 passed. CatBoost trained on CUDA and the repaired simulator
-passed 19 deterministic tests locally and on S13. GATE 2 now builds the causal
-DEVELOPMENT dataset.
+The correct conclusion is `NO_MATERIAL_VALIDATED_EDGE`. The negative result is
+preserved.
 
-## Immutable negative baseline
+## Important data limitation
 
-`TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1` remains unchanged at evidence
-commit `4b15f3d7cb678a5d349d744584cd80c47b4a2c21` and handoff commit
-`e044daaa470dabfbb6102232e2cb5a8866d90039`. Its SMA20/SMA50 policy and
-negative result must not be overwritten or presented as the new AI strategy.
+Available futures/mark/funding and 1m execution data end at `2022-01-01`
+exclusive. RUN 2 is therefore 2021 chronological DEVELOPMENT validation, not
+independent OOS. Extending into 2022 requires a separately authorized
+futures/mark/funding ingestion WIP through the canonical data route.
 
-## Required gates
+## Safety
 
-- GATE 0: genuine CUDA training.
-- GATE 1: accounting, margin, liquidation, risk, and causality tests.
-- GATE 2: leakage-free reproducible DEVELOPMENT dataset.
-- GATE 3: reproducible GPU ENTRY and POSITION_MANAGEMENT models.
-- GATE 4: constrained AI policy.
-- GATE 5: frozen RUN 1 and chronological RUN 2.
+- No live orders, API trading keys, deployment, or service restart.
+- No S7 mutation.
+- S13 mutation stayed in the isolated experiment workspace.
+- OOS and confirmation remained closed.
+- Frozen CatBoost models and research artifacts were not changed.
+- Previous capital-growth WIP remains `REVIEW`.
+- No next WIP was activated automatically.
+
+## Evidence
+
+- `docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1/gate0/`
+- `docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1/gate1/`
+- `docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1/gate2/`
+- `docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1/gate3/`
+- `docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1/gate4/`
+- `docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1/runtime_manifest_v1.json`
+- Full runtime: `S13:/var/tmp/traiding_pilot_ui_workspace/gpu_ai_trading_policy_v1/`
 
 ## RETURN
 
 ```text
 WIP=TRADING-PILOT-GPU-AI-TRADING-POLICY-1
-STATUS=ACTIVE
-PHASE=GATE_2_DATASET
+STATUS=REVIEW
 LOCAL_BRANCH=wip/trading-pilot-gpu-ai-trading-policy-1
 BASE_MAIN=e044daaa470dabfbb6102232e2cb5a8866d90039
-INITIAL_CAPITAL=100
-LEVERAGE=10
-HEDGE_MODE=ENABLED_IN_SIMULATOR
 GPU_NAME=NVIDIA_GTX_1660_SUPER
 CUDA_AVAILABLE=YES_DRIVER_13.2
-GPU_TRAINING_CONFIRMED=YES_CATBOOST_1.2.10
+GPU_TRAINING_CONFIRMED=YES
 GPU_VRAM_USED=MAX_5473_MIB
 SIMULATOR_ACCOUNTING=PASS
-DATASET_ROWS=pending
-ENTRY_MODEL_TRAINED=pending
-MANAGEMENT_MODEL_TRAINED=pending
-RUN1=pending
-RUN2=pending
+DATASET_ROWS=17514
+FEATURE_COUNT=6215
+ENTRY_MODEL_TRAINED=YES
+MANAGEMENT_MODEL_TRAINED=YES
+RUN1=2020
+RUN2=2021_DEVELOPMENT_ONLY
+POLICY_SHA256=d296c8107bef0c68fe06b92532026e485b08b194e10ec89a5f3e1b6ab179434c
+BUY_HOLD_FINAL_EQUITY=RUN1_381.86;RUN2_339.31
+SMA_FINAL_EQUITY=RUN1_342.35;RUN2_299.81
+INDICATORS_FINAL_EQUITY=RUN1_342.31;RUN2_299.75
+AI_NO_HEDGE_FINAL_EQUITY=RUN1_342.30;RUN2_299.81
+AI_HEDGE_FINAL_EQUITY=RUN1_342.36;RUN2_299.81
+AI_HEDGE_AVG_FINAL_EQUITY=RUN1_342.35;RUN2_299.81
+AI_ADDED_VALUE=MIXED_NOT_MATERIAL
+HEDGE_ADDED_VALUE=NO_MATERIAL_EDGE
+AVERAGING_ADDED_VALUE=NEGATIVE_OR_NONE
+BEATS_BUY_AND_HOLD=NO
 OOS_OPENED=NO
 LIVE_TRADING=NO
 NEXT_WIP=none

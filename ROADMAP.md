@@ -16,13 +16,17 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | Field | Value |
 |---|---|
 | **WIP** | `TRADING-PILOT-GPU-AI-TRADING-POLICY-1` |
-| **STATUS** | ACTIVE |
-| **PHASE** | GATE 2 causal dataset |
+| **STATUS** | REVIEW |
+| **PHASE** | REVIEW - no material validated edge |
 | **MODE** | Repair -> dataset -> GPU training -> backtest |
 | **AUTHORIZATION** | User approved 2026-11-11 |
 | **MODEL** | New CatBoost models trained from scratch on CUDA |
 | **GATE 0** | PASS - CatBoost GPU training and reload confirmed |
 | **GATE 1** | PASS - accounting, liquidation, margin, risk, and causality |
+| **GATE 2** | PASS - 17,514 causal 1H rows, 6,215 features |
+| **GATE 3** | PASS - entry, risk, and management GPU models |
+| **GATE 4/5** | PASS - frozen policy and 2020/2021 DEVELOPMENT comparison |
+| **RESULT** | AI did not beat Buy & Hold; added value immaterial |
 | **REPORT** | [`docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1.md`](docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1.md) |
 | **LIVE TRADING** | DISABLED |
 
@@ -1623,7 +1627,7 @@ none (end of planned chain)
 | TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1 | CLOSED | Frozen-registry diagnostic |
 | MARKET-SENTIMENT-AND-NEWS-DATASET-1 | PLANNED | Research data |
 | TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1 | REVIEW | Historical simulation |
-| TRADING-PILOT-GPU-AI-TRADING-POLICY-1 | ACTIVE | GPU AI policy |
+| TRADING-PILOT-GPU-AI-TRADING-POLICY-1 | REVIEW | GPU AI policy |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
