@@ -1,7 +1,7 @@
 # WIP=TRADING-PILOT-GPU-AI-TRADING-POLICY-1
 
 STATUS=ACTIVE
-PHASE=GATE_0_GPU_PREFLIGHT
+PHASE=GATE_1_SIMULATOR_REPAIR
 STARTED_AT=2026-11-11
 MODE=REPAIR -> DATASET -> GPU TRAINING -> BACKTEST
 MODEL=NEW_TRAIN_FROM_SCRATCH
@@ -44,6 +44,32 @@ The prior SMA20/SMA50 strategy is not a substitute for the AI model.
 
 Stop with `GPU_BLOCKED` if CUDA training is not genuinely available. CPU
 substitution requires separate user approval.
+
+#### GATE 0 result: PASS
+
+| Field | Value |
+|---|---|
+| Host | `sergey-System-Product-Name` |
+| User | `sergey` |
+| GPU | NVIDIA GeForce GTX 1660 SUPER |
+| Compute capability | 7.5 |
+| VRAM | 6,144 MiB |
+| Driver | 595.99.02 |
+| Driver-reported CUDA | 13.2 |
+| Python | 3.12.3 |
+| CatBoost | 1.2.10 |
+| Training mode | `task_type="GPU"`, `devices="0"` |
+| Smoke dataset | 64,000 train / 16,000 validation rows, 24 features |
+| Iterations | 120 |
+| Validation AUC | 0.87871 |
+| Peak observed VRAM | 5,473 MiB |
+| Peak observed GPU utilization | 33% |
+| Training time | 1.33 seconds |
+| Reload | PASS |
+| Smoke model SHA256 | `032d8b8c93288242a782544ca70fee43d2dea22b0c017add8b9495afa508e824` |
+
+Evidence is committed under `gate0/`. The smoke model is synthetic and is not
+a trading model.
 
 ### GATE 1 - Simulator repair
 
@@ -129,9 +155,10 @@ Both 60/40 and 40/60 capital allocations are required.
 WIP=TRADING-PILOT-GPU-AI-TRADING-POLICY-1
 STATUS=REVIEW
 GPU_NAME=
-CUDA_AVAILABLE=
-GPU_TRAINING_CONFIRMED=
-GPU_VRAM_USED=
+GPU_NAME=NVIDIA_GTX_1660_SUPER
+CUDA_AVAILABLE=YES_DRIVER_13.2
+GPU_TRAINING_CONFIRMED=YES_CATBOOST_1.2.10
+GPU_VRAM_USED=MAX_5473_MIB
 SIMULATOR_ACCOUNTING=
 DATASET_ROWS=
 FEATURE_COUNT=

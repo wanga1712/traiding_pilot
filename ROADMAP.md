@@ -17,10 +17,11 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 |---|---|
 | **WIP** | `TRADING-PILOT-GPU-AI-TRADING-POLICY-1` |
 | **STATUS** | ACTIVE |
-| **PHASE** | GATE 0 GPU preflight |
+| **PHASE** | GATE 1 simulator repair |
 | **MODE** | Repair -> dataset -> GPU training -> backtest |
 | **AUTHORIZATION** | User approved 2026-11-11 |
 | **MODEL** | New CatBoost models trained from scratch on CUDA |
+| **GATE 0** | PASS - CatBoost GPU training and reload confirmed |
 | **REPORT** | [`docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1.md`](docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1.md) |
 | **LIVE TRADING** | DISABLED |
 
