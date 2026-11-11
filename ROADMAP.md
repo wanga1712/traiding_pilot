@@ -15,13 +15,17 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `PROBABILITY-TRADING-POLICY-RESEARCH-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | Development OOF probability-to-trading-policy research |
-| **MODEL AUTHORITY** | `860c4683bd93593e204656a903c29776b0e75225` |
-| **PARENT RESULT** | `90570dbfe41abcdbbf0a2b6beafdc738148b6176` |
-| **RESULT COMMIT** | `e6d3d093214074d255c6625d116b7825dbf5d855` |
-| **Note** | `NO_VALIDATED_POLICY`: 100/1728 discovery candidates eligible; 20 retained; 0/20 validation candidates eligible. Confirmation untouched. |
+| **WIP** | `TRADING-PILOT-GPU-AI-TRADING-POLICY-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | GATE 0 GPU preflight |
+| **MODE** | Repair -> dataset -> GPU training -> backtest |
+| **AUTHORIZATION** | User approved 2026-11-11 |
+| **MODEL** | New CatBoost models trained from scratch on CUDA |
+| **REPORT** | [`docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1.md`](docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1.md) |
+| **LIVE TRADING** | DISABLED |
+
+Previous research review remains unchanged:
+`PROBABILITY-TRADING-POLICY-RESEARCH-1` (REVIEW), `NO_VALIDATED_POLICY`.
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
@@ -1617,6 +1621,7 @@ none (end of planned chain)
 | TRADING-PILOT-FROZEN-REGISTRY-RECONCILIATION-1 | CLOSED | Frozen-registry diagnostic |
 | MARKET-SENTIMENT-AND-NEWS-DATASET-1 | PLANNED | Research data |
 | TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1 | REVIEW | Historical simulation |
+| TRADING-PILOT-GPU-AI-TRADING-POLICY-1 | ACTIVE | GPU AI policy |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
