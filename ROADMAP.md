@@ -15,25 +15,16 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `TRADING-PILOT-GPU-AI-TRADING-POLICY-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | REVIEW - Qwen validator added no material value |
-| **MODE** | Repair -> dataset -> GPU training -> backtest |
-| **AUTHORIZATION** | User approved 2026-11-11 |
-| **MODEL** | New CatBoost models trained from scratch on CUDA |
-| **GATE 0** | PASS - CatBoost GPU training and reload confirmed |
-| **GATE 1** | PASS - accounting, liquidation, margin, risk, and causality |
-| **GATE 2** | PASS - 17,514 causal 1H rows, 6,215 features |
-| **GATE 3** | PASS - entry, risk, and management GPU models |
-| **GATE 4/5** | PASS - frozen policy and 2020/2021 DEVELOPMENT comparison |
-| **RESULT** | AI did not beat Buy & Hold; added value immaterial |
-| **ADDENDUM** | 2026-11-12 local Qwen comparison authorized |
-| **QWEN** | `qwen2.5:7b`; 104 decisions; 0 action changes; +0.00 USDT |
-| **REPORT** | [`docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1.md`](docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1.md) |
+| **WIP** | `TRADING-PILOT-ACTION-LEARNING-AUDIT-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | Action and label audit |
+| **MODE** | Audit / read-only / no training |
+| **AUTHORIZATION** | User approved 2026-11-12 |
+| **REPORT** | [`docs/wip/TRADING-PILOT-ACTION-LEARNING-AUDIT-1.md`](docs/wip/TRADING-PILOT-ACTION-LEARNING-AUDIT-1.md) |
 | **LIVE TRADING** | DISABLED |
 
-Previous research review remains unchanged:
-`PROBABILITY-TRADING-POLICY-RESEARCH-1` (REVIEW), `NO_VALIDATED_POLICY`.
+Previous GPU policy remains unchanged in `REVIEW`: no material validated edge,
+and Qwen validator added `0.00 USDT`.
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
@@ -1630,6 +1621,7 @@ none (end of planned chain)
 | MARKET-SENTIMENT-AND-NEWS-DATASET-1 | PLANNED | Research data |
 | TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1 | REVIEW | Historical simulation |
 | TRADING-PILOT-GPU-AI-TRADING-POLICY-1 | REVIEW | GPU AI policy |
+| TRADING-PILOT-ACTION-LEARNING-AUDIT-1 | ACTIVE | Action and label audit |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
