@@ -1,79 +1,78 @@
-# WIP - TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1
+# WIP - TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1
 
-STATUS=REVIEW
-PHASE=REVIEW
+STATUS=ACTIVE
+PHASE=TRACE_AND_DIAGNOSIS
 STARTED_AT=2026-11-12
-MODE=EVENT-DRIVEN HISTORICAL SIMULATION
+BASE_COMMIT=218390d02019e71bda21122aef56b599d2429ff0
+MODE=AUDIT -> REPAIR -> TEST -> HISTORICAL REGRESSION
+LIVE_TRADING=DISABLED
 MODEL_RETRAINING=NO
 QWEN_FINE_TUNING=NO
-LIVE_TRADING=DISABLED
 OOS_OPENED=NO
 
-## Frozen event policy
+## Scope
 
-- Qwen is triggered by significant events, not a calendar interval.
-- No annual call limit.
-- Noncritical cooldown: 4 hours.
-- Dedup window: 24 hours.
-- Primary adverse: 1 ATR; rearm at 0.5 ATR.
-- Averaging events: 2 and 4 ATR.
-- Strong-entry event: 0.80 CatBoost probability.
-- Probability shift: 0.30.
-- Margin shift: 20 percentage points.
-- Liquidation-distance shift: 3 percentage points.
-- Risk warning/emergency: 3% / 5%.
-- Liquidation warning/emergency: 5% / 3%.
-- Qwen timeout: 30 seconds; safe fallback is the CatBoost action.
-- Risk-emergency events bypass Qwen and execute through the Risk Engine.
+Trace every potential action through market event, CatBoost, Qwen, policy,
+Risk Engine, virtual order, fill/rejection, and final position state.
 
-Minute mark/futures extremes are used inside each closed 1H decision interval.
-Higher-timeframe features remain causal.
+Investigate:
 
-## Compared policies
+- Why HEDGE was never filled.
+- Whether Qwen received correct PRIMARY/HEDGE state.
+- Why Qwen proposed CLOSE_HEDGE without an open hedge.
+- Hedge signal/proposal/approval/rejection/fill counter integrity.
+- Trade churn, fees, slippage, cycles, averaging limits, and turnover.
+- Decision/execution timestamps and minute-event causality.
 
-- `CATBOOST_ONLY`
-- `CATBOOST_QWEN_336H`
-- `CATBOOST_QWEN_EVENT_DRIVEN`
+## Hard limits
 
-Both 60/40 and 40/60 are required. OOS stays locked and 2020-2021 remain
-DEVELOPMENT/regression only.
+- No threshold optimization.
+- No CatBoost retraining.
+- No Qwen fine-tuning or LoRA/QLoRA.
+- No changes to frozen models or prior results.
+- No OOS, confirmation, S7 mutation, deployment, or live trading.
 
-## Result
+## Historical regression
 
-- 4,123 significant events triggered; 3,871 suppressed.
-- 329 Qwen-eligible events produced 275 actual calls.
-- Qwen changed six actions, all `SKIP -> REDUCE_POSITION` in RUN 2.
-- Hedge opens/closes executed: 0/0.
-- Fallbacks: 22.
-- Event-driven Qwen added value: `-0.0616 USDT`.
-- Event-driven final equity: RUN 1 `342.3394/228.3672`; RUN 2
-  `299.7707/199.9955`.
-- Maximum drawdown: 60.07%.
-- Liquidations across four event portfolios: 6.
+After proven fixes and passing tests, rerun 2020-2021 for 60/40 and 40/60 and
+compare `CATBOOST_ONLY`, `QWEN_EVENT_DRIVEN_BEFORE_FIX`, and
+`QWEN_EVENT_DRIVEN_AFTER_FIX`.
 
 ## RETURN
 
 ```text
-WIP=TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1
-STATUS=REVIEW
-PHASE=REVIEW
-LOCAL_BRANCH=wip/trading-pilot-event-driven-qwen-policy-1
-MARKET_EVENTS_DETECTED=4123;SUPPRESSED_3871;QWEN_ELIGIBLE_329
-QWEN_CALLS=275
-QWEN_ACTION_CHANGES=6
-HEDGE_OPEN_EVENTS=0
-HEDGE_CLOSE_EVENTS=0
-RISK_EVENTS=6
-FALLBACKS=22
-MEDIAN_LATENCY=12.84_SECONDS
-P90_LATENCY=17.03_SECONDS
-CATBOOST_ONLY_EQUITY=RUN1_60_342.3394;RUN1_40_228.3672;RUN2_60_299.8139;RUN2_40_200.0139
-QWEN_336H_EQUITY=RUN1_60_342.3452;RUN1_40_228.4057;RUN2_60_299.8139;RUN2_40_200.0139
-QWEN_EVENT_DRIVEN_EQUITY=RUN1_60_342.3394;RUN1_40_228.3672;RUN2_60_299.7707;RUN2_40_199.9955
-QWEN_ADDED_VALUE=-0.0616_TOTAL
-LIQUIDATIONS=6
-MAX_DRAWDOWN=60.07%
+WIP=TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1
+STATUS=ACTIVE
+PHASE=TRACE_AND_DIAGNOSIS
+BASE_COMMIT=218390d
+ROOT_CAUSES=pending
+DEFECTS_CONFIRMED=pending
+DEFECTS_FIXED=pending
+HEDGE_SIGNAL_COUNT=pending
+HEDGE_PROPOSED_COUNT=pending
+HEDGE_APPROVED_COUNT=pending
+HEDGE_REJECTED_COUNT=pending
+HEDGE_FILLED_COUNT=pending
+HEDGE_CLOSED_COUNT=pending
+HEDGE_REJECTION_REASONS=pending
+SYNTHETIC_HEDGE_TESTS=pending
+PRIMARY_TRADES=pending
+HEDGE_TRADES=pending
+TOTAL_EXECUTED_ORDERS=pending
+COMPLETED_TRADE_CYCLES=pending
+TOTAL_NOTIONAL_TURNOVER=pending
+TOTAL_FEES=pending
+TOTAL_SLIPPAGE=pending
+AVERAGING_LIMIT_TEST=pending
+CAUSALITY_TESTS=pending
+ACCOUNTING_TESTS=pending
+CATBOOST_ONLY_EQUITY=pending
+QWEN_BEFORE_FIX_EQUITY=pending
+QWEN_AFTER_FIX_EQUITY=pending
+MAX_DRAWDOWN=pending
+LIQUIDATIONS=pending
 OOS_OPENED=NO
+MODEL_RETRAINING=NO
 LIVE_TRADING=NO
 NEXT_WIP=none
 ```

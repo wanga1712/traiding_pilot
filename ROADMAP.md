@@ -15,17 +15,16 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | REVIEW - event-driven Qwen policy tested |
-| **MODE** | Event-driven historical simulation |
-| **AUTHORIZATION** | User approved 2026-11-12 |
-| **RESULT** | 275 calls, 6 action changes, negative added value -0.0616 USDT |
-| **REPORT** | [`docs/wip/TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1.md`](docs/wip/TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1.md) |
+| **WIP** | `TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | Trace and diagnosis |
+| **MODE** | Audit -> repair -> test -> historical regression |
+| **BASE COMMIT** | `218390d02019e71bda21122aef56b599d2429ff0` |
+| **REPORT** | [`docs/wip/TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1.md`](docs/wip/TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1.md) |
 | **LIVE TRADING** | DISABLED |
 
-Previous action-learning audit remains unchanged in `REVIEW`: CLOSE_HEDGE is
-present, REDUCE_POSITION is absent, and management action coverage collapsed.
+Previous event-driven Qwen policy remains unchanged in `REVIEW`: 275 calls,
+6 action changes, and negative added value.
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
@@ -1624,6 +1623,7 @@ none (end of planned chain)
 | TRADING-PILOT-GPU-AI-TRADING-POLICY-1 | REVIEW | GPU AI policy |
 | TRADING-PILOT-ACTION-LEARNING-AUDIT-1 | REVIEW | Action and label audit |
 | TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1 | REVIEW | Event-driven Qwen policy |
+| TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1 | ACTIVE | Execution and hedge audit |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
