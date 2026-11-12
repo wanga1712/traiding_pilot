@@ -16,10 +16,11 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | Field | Value |
 |---|---|
 | **WIP** | `TRADING-PILOT-ACTION-LEARNING-AUDIT-1` |
-| **STATUS** | ACTIVE |
-| **PHASE** | Action and label audit |
+| **STATUS** | REVIEW |
+| **PHASE** | REVIEW - action learning audit complete |
 | **MODE** | Audit / read-only / no training |
 | **AUTHORIZATION** | User approved 2026-11-12 |
+| **RESULT** | CLOSE_HEDGE present; REDUCE absent; management action collapse; no validated entry edge |
 | **REPORT** | [`docs/wip/TRADING-PILOT-ACTION-LEARNING-AUDIT-1.md`](docs/wip/TRADING-PILOT-ACTION-LEARNING-AUDIT-1.md) |
 | **LIVE TRADING** | DISABLED |
 
@@ -1621,7 +1622,7 @@ none (end of planned chain)
 | MARKET-SENTIMENT-AND-NEWS-DATASET-1 | PLANNED | Research data |
 | TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1 | REVIEW | Historical simulation |
 | TRADING-PILOT-GPU-AI-TRADING-POLICY-1 | REVIEW | GPU AI policy |
-| TRADING-PILOT-ACTION-LEARNING-AUDIT-1 | ACTIVE | Action and label audit |
+| TRADING-PILOT-ACTION-LEARNING-AUDIT-1 | REVIEW | Action and label audit |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |

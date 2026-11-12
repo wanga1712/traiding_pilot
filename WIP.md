@@ -1,55 +1,61 @@
 # WIP - TRADING-PILOT-ACTION-LEARNING-AUDIT-1
 
-STATUS=ACTIVE
-PHASE=ACTION_AND_LABEL_AUDIT
+STATUS=REVIEW
+PHASE=REVIEW
 STARTED_AT=2026-11-12
+REVIEWED_AT=2026-11-12
 MODE=AUDIT / READ-ONLY / NO TRAINING
 MODEL_RETRAINING=NO
 QWEN_FINE_TUNING=NO
 LIVE_TRADING=DISABLED
 
-## Scope
+## Outcome
 
-Audit the completed GPU policy's action coverage, target quality, feature
-evidence, and Qwen decision boundary. Determine whether the position model
-learned counterfactual action consequences or merely imitated the prior
-algorithm.
+The audit corrected the action-coverage diagnosis and identified why the
+position-management model does not genuinely optimize actions.
 
-## Hard limits
+- CLOSE_HEDGE is present: 716 TRAIN and 1,005 SELECTION examples.
+- The missing action is REDUCE_POSITION.
+- Management predicts CLOSE_HEDGE zero times; recall is 0%.
+- Entry model logloss 0.9218 is worse than class prior 0.8714.
+- Risk model improvement over train-mean MAE is negligible.
+- Qwen saw 103/104 FLAT states and never received an open hedge.
+- Existing labels compare simplified terminal outcomes, not same-state
+  counterfactual action simulations.
 
-- No new threshold-search run.
+## Constraints preserved
+
 - No CatBoost training.
-- No LoRA/QLoRA or other Qwen training.
-- No changes to the prior REVIEW artifacts, frozen models, Qwen logs, OOS, or
-  confirmation data.
-- No S7 mutation.
+- No Qwen inference or fine-tuning during this audit.
+- No threshold search.
+- No frozen model, dataset, Qwen log, OOS, confirmation, or S7 changes.
 - No live orders or deployment.
 
-## Evidence inputs
+The prior GPU-policy WIP remains `REVIEW` and is not rewritten.
 
-- `docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1/`
-- `phase3_staging/crypto_trading_bot/research_v2/gpu_ai_policy/`
-- Existing S13 dataset, predictions, model feature manifest, and Qwen logs.
+## Evidence
+
+- `docs/wip/TRADING-PILOT-ACTION-LEARNING-AUDIT-1.md`
+- `docs/wip/TRADING-PILOT-ACTION-LEARNING-AUDIT-1/evidence/action_learning_audit_v1.json`
+- `phase3_staging/crypto_trading_bot/research_v2/gpu_ai_policy/action_audit.py`
 
 ## RETURN
 
 ```text
 WIP=TRADING-PILOT-ACTION-LEARNING-AUDIT-1
-STATUS=ACTIVE
-PHASE=ACTION_AND_LABEL_AUDIT
-LOCAL_BRANCH=wip/trading-pilot-action-learning-audit-1
-ACTIONS_OBSERVED=pending
-CLOSE_HEDGE_COUNT=pending
-CLOSE_HEDGE_CAUSE=pending
-ENTRY_LABEL_QUALITY=pending
-HOLD_LABEL_QUALITY=pending
-AVERAGE_LABEL_QUALITY=pending
-EXIT_LABEL_QUALITY=pending
-FEATURE_ADVANTAGE=pending
-QWEN_INPUT_CAUSALITY=pending
-QWEN_ALLOWED_ACTIONS=pending
-QWEN_ACTUAL_ACTIONS=pending
-RECOMMENDED_ACTION_SCHEMA=pending
+STATUS=REVIEW
+ACTIONS_OBSERVED=HOLD_6320;OPEN_HEDGE_210;CLOSE_HEDGE_4273;AVERAGE_1891;REDUCE_0;EXIT_4318
+CLOSE_HEDGE_COUNT=4273_TOTAL;716_TRAIN;1005_SELECTION
+CLOSE_HEDGE_CAUSE=PRESENT_IN_DATA;MANAGEMENT_RECALL_0;QWEN_NEVER_SAW_HEDGE_OPEN
+ENTRY_LABEL_QUALITY=ACCURACY_49.91%;LOGLOSS_0.9218_WORSE_THAN_PRIOR_0.8714;SKIP_RECALL_0
+HOLD_LABEL_QUALITY=MODEL_RECALL_78.25%;MEDIAN_UTILITY_MARGIN_4.66
+AVERAGE_LABEL_QUALITY=MODEL_RECALL_68.57%;MEDIAN_UTILITY_MARGIN_1.68
+EXIT_LABEL_QUALITY=MODEL_RECALL_33.58%;MEDIAN_UTILITY_MARGIN_7.98
+FEATURE_ADVANTAGE=ENTRY_NONE;RISK_IMMATERIAL;MANAGEMENT_LOGLOSS_IMPROVES_BUT_ACTIONS_COLLAPSE
+QWEN_INPUT_CAUSALITY=PASS;LATE_STATE_COVERAGE_MISSING
+QWEN_ALLOWED_ACTIONS=9_ADAPTER_ACTIONS;STATE_MASKED_BY_POLICY
+QWEN_ACTUAL_ACTIONS=85_OPEN_SHORT;17_OPEN_LONG;1_HOLD
+RECOMMENDED_ACTION_SCHEMA=STATE_ACTION_OUTCOME_TRIPLETS;COUNTERFACTUAL_BRANCHES;RANK_UTILITY;RISK_ENGINE_VETO
 MODIFICATIONS_TO_FROZEN=NO
 TRAINING_RUN=NO
 QWEN_FINE_TUNING=NO

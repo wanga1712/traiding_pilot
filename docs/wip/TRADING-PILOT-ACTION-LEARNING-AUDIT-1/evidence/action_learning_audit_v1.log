@@ -1,0 +1,940 @@
+{
+  "status": "PASS",
+  "actions": {
+    "sampled_rows": 17012,
+    "action_counts": {
+      "HOLD": 6320,
+      "OPEN_HEDGE": 210,
+      "CLOSE_HEDGE": 4273,
+      "AVERAGE_PRIMARY": 1891,
+      "REDUCE_POSITION": 0,
+      "EXIT": 4318
+    },
+    "action_counts_by_split": {
+      "RUN2": {
+        "HOLD": 3892,
+        "CLOSE_HEDGE": 2552,
+        "EXIT": 2132
+      },
+      "SELECTION": {
+        "HOLD": 1315,
+        "EXIT": 1099,
+        "CLOSE_HEDGE": 1005,
+        "AVERAGE_PRIMARY": 840,
+        "OPEN_HEDGE": 45
+      },
+      "TRAIN": {
+        "HOLD": 1113,
+        "EXIT": 1087,
+        "AVERAGE_PRIMARY": 1051,
+        "CLOSE_HEDGE": 716,
+        "OPEN_HEDGE": 165
+      }
+    },
+    "allowed_counts": {
+      "HOLD": 17012,
+      "OPEN_HEDGE": 8356,
+      "CLOSE_HEDGE": 8656,
+      "AVERAGE_PRIMARY": 3857,
+      "REDUCE_POSITION": 17012,
+      "EXIT": 17012
+    },
+    "missing_actions": [
+      "REDUCE_POSITION"
+    ],
+    "hedge_state_rows": 8656,
+    "hedge_best_actions": {
+      "CLOSE_HEDGE": 4273,
+      "HOLD": 3667,
+      "AVERAGE_PRIMARY": 716
+    },
+    "allowed_close_hedge_rows": 8656,
+    "close_hedge_label_rows": 4273,
+    "close_hedge_utility": {
+      "non_null": 8656,
+      "positive": 0,
+      "median": -0.06609929713314894
+    },
+    "label_margin": {
+      "HOLD": {
+        "support": 6320,
+        "median_margin": 4.657261939344025,
+        "share_margin_le_0_01": 0.007594936708860759,
+        "share_margin_le_0_05": 0.04430379746835443
+      },
+      "OPEN_HEDGE": {
+        "support": 210,
+        "median_margin": 0.015106283686780464,
+        "share_margin_le_0_01": 0.38571428571428573,
+        "share_margin_le_0_05": 0.7714285714285715
+      },
+      "CLOSE_HEDGE": {
+        "support": 4273,
+        "median_margin": 0.9533859520796968,
+        "share_margin_le_0_01": 0.005382635150947812,
+        "share_margin_le_0_05": 0.0446992745143927
+      },
+      "AVERAGE_PRIMARY": {
+        "support": 1891,
+        "median_margin": 1.6777835794566913,
+        "share_margin_le_0_01": 0.007932310946589107,
+        "share_margin_le_0_05": 0.01956636700158646
+      },
+      "REDUCE_POSITION": {
+        "support": 0,
+        "median_margin": null,
+        "share_margin_le_0_01": null,
+        "share_margin_le_0_05": null
+      },
+      "EXIT": {
+        "support": 4318,
+        "median_margin": 7.981024498618243,
+        "share_margin_le_0_01": 0.02779064381658175,
+        "share_margin_le_0_05": 0.06368689207966652
+      }
+    },
+    "recomputed_best_mismatch": 0
+  },
+  "entry": {
+    "rows": 4220,
+    "class_distribution": {
+      "SKIP": 255,
+      "LONG": 2241,
+      "SHORT": 1724
+    },
+    "prior_logloss": 0.8713922438279654,
+    "model_logloss": 0.921801669806218,
+    "classification": {
+      "accuracy": 0.4990521327014218,
+      "per_class": {
+        "SKIP": {
+          "support": 255,
+          "recall": 0.0
+        },
+        "LONG": {
+          "support": 2241,
+          "recall": 0.4484605087014726
+        },
+        "SHORT": {
+          "support": 1724,
+          "recall": 0.638631090487239
+        }
+      },
+      "confusion_matrix": [
+        [
+          0,
+          117,
+          138
+        ],
+        [
+          0,
+          1005,
+          1236
+        ],
+        [
+          0,
+          623,
+          1101
+        ]
+      ],
+      "labels": [
+        "SKIP",
+        "LONG",
+        "SHORT"
+      ]
+    }
+  },
+  "management": {
+    "rows": 4304,
+    "label_distribution": {
+      "HOLD": 1315,
+      "EXIT": 1099,
+      "CLOSE_HEDGE": 1005,
+      "AVERAGE_PRIMARY": 840,
+      "OPEN_HEDGE": 45
+    },
+    "prediction_distribution": {
+      "HOLD": 2303,
+      "OPEN_HEDGE": 4,
+      "CLOSE_HEDGE": 0,
+      "AVERAGE_PRIMARY": 1146,
+      "REDUCE_POSITION": 0,
+      "EXIT": 851
+    },
+    "prior_logloss": 1.4170615477447637,
+    "model_logloss": 1.1043964665213521,
+    "classification": {
+      "accuracy": 0.45887546468401486,
+      "per_class": {
+        "HOLD": {
+          "support": 1315,
+          "recall": 0.782509505703422
+        },
+        "OPEN_HEDGE": {
+          "support": 45,
+          "recall": 0.022222222222222223
+        },
+        "CLOSE_HEDGE": {
+          "support": 1005,
+          "recall": 0.0
+        },
+        "AVERAGE_PRIMARY": {
+          "support": 840,
+          "recall": 0.6857142857142857
+        },
+        "REDUCE_POSITION": {
+          "support": 0,
+          "recall": null
+        },
+        "EXIT": {
+          "support": 1099,
+          "recall": 0.33575978161965425
+        }
+      },
+      "confusion_matrix": [
+        [
+          1029,
+          0,
+          0,
+          69,
+          0,
+          217
+        ],
+        [
+          0,
+          1,
+          0,
+          44,
+          0,
+          0
+        ],
+        [
+          800,
+          0,
+          0,
+          204,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          576,
+          0,
+          264
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          474,
+          3,
+          0,
+          253,
+          0,
+          369
+        ]
+      ],
+      "labels": [
+        "HOLD",
+        "OPEN_HEDGE",
+        "CLOSE_HEDGE",
+        "AVERAGE_PRIMARY",
+        "REDUCE_POSITION",
+        "EXIT"
+      ]
+    }
+  },
+  "risk_benchmark": {
+    "selection_rows": 4125,
+    "per_output": {
+      "mfe_down_24h": {
+        "model_mae": 0.024274177981601096,
+        "zero_mae": 0.029337645278949838,
+        "train_mean_mae": 0.02426086343086496,
+        "model_improvement_vs_zero": 0.005063467297348741,
+        "model_improvement_vs_train_mean": -1.3314550736137631e-05
+      },
+      "mfe_up_24h": {
+        "model_mae": 0.023097371925908054,
+        "zero_mae": 0.031242745028400225,
+        "train_mean_mae": 0.02348962374935359,
+        "model_improvement_vs_zero": 0.008145373102492172,
+        "model_improvement_vs_train_mean": 0.00039225182344553716
+      }
+    },
+    "overall_model_mae": 0.023685774953754575,
+    "overall_zero_mae": 0.030290195153675033,
+    "overall_train_mean_mae": 0.02387524359010927
+  },
+  "feature_importance": {
+    "entry": {
+      "top_features": [
+        {
+          "feature": "1D.DNO_REF.DNO_ABS",
+          "family": "dno",
+          "importance": 5.972787147223578
+        },
+        {
+          "feature": "1H.BOLLINGER_20_2_V1.pct_b",
+          "family": "trend_volatility",
+          "importance": 5.539930376695707
+        },
+        {
+          "feature": "1D.CANDLE_STRUCTURE_V1.gap",
+          "family": "volume_structure",
+          "importance": 4.787793538033269
+        },
+        {
+          "feature": "1D.BOLLINGER_20_2_V1.width",
+          "family": "trend_volatility",
+          "importance": 4.502800087527382
+        },
+        {
+          "feature": "1D.VOLUME_BASIC_20_V1.obv",
+          "family": "volume_structure",
+          "importance": 4.483562911637249
+        },
+        {
+          "feature": "4H.REALIZED_VOL_20_V1.realized_vol",
+          "family": "trend_volatility",
+          "importance": 4.137808367493596
+        },
+        {
+          "feature": "1D.MACD_12_26_9_V1.histogram",
+          "family": "macd",
+          "importance": 3.5328064062671296
+        },
+        {
+          "feature": "1D.DMA_25X5_V1.dma",
+          "family": "dma",
+          "importance": 3.413946320860725
+        },
+        {
+          "feature": "1D.CANDLE_STRUCTURE_V1.successive_higher_low_count",
+          "family": "volume_structure",
+          "importance": 2.8590199389834057
+        },
+        {
+          "feature": "1D.DNO_REF.DNO_SLOPE_1",
+          "family": "dno",
+          "importance": 2.804130378859374
+        },
+        {
+          "feature": "1D.CANDLE_STRUCTURE_V1.range_pct",
+          "family": "volume_structure",
+          "importance": 2.7159790808321707
+        },
+        {
+          "feature": "4H.BOLLINGER_20_2_V1.width",
+          "family": "trend_volatility",
+          "importance": 2.7080447811875534
+        },
+        {
+          "feature": "1D.BOLLINGER_20_2_V1.mid",
+          "family": "trend_volatility",
+          "importance": 2.3434075425518737
+        },
+        {
+          "feature": "state_A_SWING_primary_margin_fraction",
+          "family": "portfolio_state",
+          "importance": 2.2473303820038724
+        },
+        {
+          "feature": "state_A_SWING_net_exposure_fraction",
+          "family": "portfolio_state",
+          "importance": 1.8426592655841396
+        },
+        {
+          "feature": "1D.VOLUME_BASIC_20_V1.volume",
+          "family": "volume_structure",
+          "importance": 1.7991274523157512
+        },
+        {
+          "feature": "4H.ATR_14_V1.atr",
+          "family": "trend_volatility",
+          "importance": 1.7030426662556968
+        },
+        {
+          "feature": "1D.MACD_12_26_9_V1.macd",
+          "family": "macd",
+          "importance": 1.4514627297177323
+        },
+        {
+          "feature": "4H.MACD_12_26_9_V1.signal",
+          "family": "macd",
+          "importance": 1.27002781233862
+        },
+        {
+          "feature": "1H.VOLUME_BASIC_20_V1.rolling_mean_volume",
+          "family": "volume_structure",
+          "importance": 1.1858591436596397
+        },
+        {
+          "feature": "state_A_SWING_spot_exposure_fraction",
+          "family": "portfolio_state",
+          "importance": 1.1465026988493687
+        },
+        {
+          "feature": "1H.ZIGZAG.age_low_hours",
+          "family": "zigzag_confirmed",
+          "importance": 1.119020758036109
+        },
+        {
+          "feature": "1H.STOCH_14_3_3_V1.DISTANCE_TO_OVERSOLD",
+          "family": "stochastic",
+          "importance": 1.088736453463273
+        },
+        {
+          "feature": "state_A_HOLD_primary_quantity_fraction",
+          "family": "portfolio_state",
+          "importance": 1.033220826996237
+        },
+        {
+          "feature": "state_A_SWING_primary_unrealized_fraction",
+          "family": "portfolio_state",
+          "importance": 1.023670151158176
+        }
+      ],
+      "zero_importance_features": 97,
+      "family_importance": [
+        {
+          "family": "trend_volatility",
+          "importance": 25.343350081529326
+        },
+        {
+          "family": "portfolio_state",
+          "importance": 25.044428429288313
+        },
+        {
+          "family": "volume_structure",
+          "importance": 20.706723402820085
+        },
+        {
+          "family": "dno",
+          "importance": 8.851444967894935
+        },
+        {
+          "family": "dma",
+          "importance": 7.550232263505251
+        },
+        {
+          "family": "macd",
+          "importance": 7.166035013317093
+        },
+        {
+          "family": "stochastic",
+          "importance": 2.934280939724786
+        },
+        {
+          "family": "zigzag_confirmed",
+          "importance": 1.4479958496838885
+        },
+        {
+          "family": "other",
+          "importance": 0.6035960901290518
+        },
+        {
+          "family": "base_15m",
+          "importance": 0.19466729022937226
+        },
+        {
+          "family": "composite_signal",
+          "importance": 0.15724567187788852
+        },
+        {
+          "family": "inverse_predictor",
+          "importance": 0.0
+        },
+        {
+          "family": "oscillator_predictor",
+          "importance": 0.0
+        }
+      ],
+      "model_classes": [
+        0,
+        1,
+        2
+      ]
+    },
+    "management": {
+      "top_features": [
+        {
+          "feature": "state_B_SWING_hedge_margin_fraction",
+          "family": "portfolio_state",
+          "importance": 28.63846956652545
+        },
+        {
+          "feature": "averaging_count",
+          "family": "other",
+          "importance": 10.376391401422849
+        },
+        {
+          "feature": "state_A_SWING_hedge_quantity_fraction",
+          "family": "portfolio_state",
+          "importance": 8.672329145330291
+        },
+        {
+          "feature": "state_B_HOLD_primary_quantity_fraction",
+          "family": "portfolio_state",
+          "importance": 4.360524136741806
+        },
+        {
+          "feature": "1D.RSI_14_V1.rsi",
+          "family": "other",
+          "importance": 2.391616230618464
+        },
+        {
+          "feature": "state_B_HOLD_hedge_margin_fraction",
+          "family": "portfolio_state",
+          "importance": 2.1742043346817836
+        },
+        {
+          "feature": "state_B_HOLD_hedge_quantity_fraction",
+          "family": "portfolio_state",
+          "importance": 2.0298201122076422
+        },
+        {
+          "feature": "state_B_HOLD_free_margin_fraction",
+          "family": "portfolio_state",
+          "importance": 1.9205600901630233
+        },
+        {
+          "feature": "1D.RSI_14_V1.RSI_SLOPE",
+          "family": "other",
+          "importance": 1.8316615098068785
+        },
+        {
+          "feature": "1D.DNO_REF.DNO_SLOPE_1",
+          "family": "dno",
+          "importance": 1.684420335277684
+        },
+        {
+          "feature": "state_B_SWING_hedge_quantity_fraction",
+          "family": "portfolio_state",
+          "importance": 1.6200063611799398
+        },
+        {
+          "feature": "1D.CANDLE_STRUCTURE_V1.successive_higher_high_count",
+          "family": "volume_structure",
+          "importance": 1.3595269413989162
+        },
+        {
+          "feature": "1D.DMA_3X3_V1.DISTANCE_PRICE_DMA_ATR",
+          "family": "dma",
+          "importance": 1.3183232328166328
+        },
+        {
+          "feature": "state_A_SWING_hedge_margin_fraction",
+          "family": "portfolio_state",
+          "importance": 1.3137214812891398
+        },
+        {
+          "feature": "state_A_SWING_spot_exposure_fraction",
+          "family": "portfolio_state",
+          "importance": 1.293411684557182
+        },
+        {
+          "feature": "primary_quantity_fraction",
+          "family": "other",
+          "importance": 1.2326559202269716
+        },
+        {
+          "feature": "4H.STOCH_14_3_3_V1.d",
+          "family": "stochastic",
+          "importance": 1.2138134841887336
+        },
+        {
+          "feature": "state_B_HOLD_gross_exposure_fraction",
+          "family": "portfolio_state",
+          "importance": 1.0722618535707569
+        },
+        {
+          "feature": "1D.MACD_12_26_9_V1.signal",
+          "family": "macd",
+          "importance": 0.9962733633399878
+        },
+        {
+          "feature": "low",
+          "family": "other",
+          "importance": 0.9719394555157945
+        },
+        {
+          "feature": "state_A_HOLD_funding_cumulative",
+          "family": "portfolio_state",
+          "importance": 0.9454294427082608
+        },
+        {
+          "feature": "hedge_quantity_fraction",
+          "family": "other",
+          "importance": 0.9294966054502599
+        },
+        {
+          "feature": "1H.VOLUME_BASIC_20_V1.obv",
+          "family": "volume_structure",
+          "importance": 0.8805856025312214
+        },
+        {
+          "feature": "state_B_HOLD_primary_margin_fraction",
+          "family": "portfolio_state",
+          "importance": 0.8220426674451538
+        },
+        {
+          "feature": "sma50",
+          "family": "other",
+          "importance": 0.7937390655420177
+        }
+      ],
+      "zero_importance_features": 95,
+      "family_importance": [
+        {
+          "family": "portfolio_state",
+          "importance": 63.99175298742201
+        },
+        {
+          "family": "other",
+          "importance": 20.050572177115033
+        },
+        {
+          "family": "dma",
+          "importance": 3.5066410516521103
+        },
+        {
+          "family": "trend_volatility",
+          "importance": 2.868633716410815
+        },
+        {
+          "family": "volume_structure",
+          "importance": 2.8359806448794806
+        },
+        {
+          "family": "macd",
+          "importance": 1.751072395606158
+        },
+        {
+          "family": "dno",
+          "importance": 1.684420335277684
+        },
+        {
+          "family": "stochastic",
+          "importance": 1.5593811968472433
+        },
+        {
+          "family": "zigzag_confirmed",
+          "importance": 0.8609825150041737
+        },
+        {
+          "family": "composite_signal",
+          "importance": 0.6908483584281349
+        },
+        {
+          "family": "base_15m",
+          "importance": 0.10742763779360208
+        },
+        {
+          "family": "oscillator_predictor",
+          "importance": 0.09228698356360061
+        },
+        {
+          "family": "inverse_predictor",
+          "importance": 0.0
+        }
+      ],
+      "model_classes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "risk": {
+      "top_features": [
+        {
+          "feature": "state_A_SWING_holding_hours",
+          "family": "portfolio_state",
+          "importance": 28.01129012214792
+        },
+        {
+          "feature": "state_B_HOLD_holding_hours",
+          "family": "portfolio_state",
+          "importance": 23.857735344375747
+        },
+        {
+          "feature": "1D.DMA_25X5_V1.DISTANCE_PRICE_DMA_ATR",
+          "family": "dma",
+          "importance": 14.431596525140625
+        },
+        {
+          "feature": "state_B_HOLD_funding_cumulative",
+          "family": "portfolio_state",
+          "importance": 12.864780123068439
+        },
+        {
+          "feature": "1D.DMA_3X3_V1.PRICE_ABOVE_DMA",
+          "family": "dma",
+          "importance": 4.206142603567449
+        },
+        {
+          "feature": "4H.BOLLINGER_20_2_V1.width",
+          "family": "trend_volatility",
+          "importance": 4.1551582459125225
+        },
+        {
+          "feature": "1D.CANDLE_STRUCTURE_V1.range_pct",
+          "family": "volume_structure",
+          "importance": 3.452134473229444
+        },
+        {
+          "feature": "state_B_HOLD_liquidation_distance_pct",
+          "family": "portfolio_state",
+          "importance": 3.106380590118246
+        },
+        {
+          "feature": "1D.ATR_14_V1.atr_norm",
+          "family": "trend_volatility",
+          "importance": 3.075179308010923
+        },
+        {
+          "feature": "state_A_SWING_free_margin_fraction",
+          "family": "portfolio_state",
+          "importance": 2.83960266442871
+        },
+        {
+          "feature": "1D.CANDLE_STRUCTURE_V1.gap",
+          "family": "volume_structure",
+          "importance": 0.0
+        },
+        {
+          "feature": "1D.CANDLE_STRUCTURE_V1.successive_higher_low_count",
+          "family": "volume_structure",
+          "importance": 0.0
+        },
+        {
+          "feature": "1D.RSI_14_V1.OVERBOUGHT",
+          "family": "other",
+          "importance": 0.0
+        },
+        {
+          "feature": "4H.VOLUME_BASIC_20_V1.rolling_mean_volume",
+          "family": "volume_structure",
+          "importance": 0.0
+        },
+        {
+          "feature": "1D.ATR_14_V1.atr",
+          "family": "trend_volatility",
+          "importance": 0.0
+        },
+        {
+          "feature": "state_A_HOLD_funding_cumulative",
+          "family": "portfolio_state",
+          "importance": 0.0
+        },
+        {
+          "feature": "state_B_SWING_funding_cumulative",
+          "family": "portfolio_state",
+          "importance": 0.0
+        },
+        {
+          "feature": "state_A_SWING_funding_cumulative",
+          "family": "portfolio_state",
+          "importance": 0.0
+        },
+        {
+          "feature": "1D.BOLLINGER_20_2_V1.upper",
+          "family": "trend_volatility",
+          "importance": 0.0
+        },
+        {
+          "feature": "4H.REALIZED_VOL_20_V1.realized_vol",
+          "family": "trend_volatility",
+          "importance": 0.0
+        },
+        {
+          "feature": "1D.DNO_REF.DNO_ABS",
+          "family": "dno",
+          "importance": 0.0
+        },
+        {
+          "feature": "1D.DNO_REF.DNO_DISTANCE_FROM_ZERO",
+          "family": "dno",
+          "importance": 0.0
+        },
+        {
+          "feature": "1D.DMA_25X5_V1.dma",
+          "family": "dma",
+          "importance": 0.0
+        },
+        {
+          "feature": "1D.CANDLE_STRUCTURE_V1.engulfing_bull",
+          "family": "volume_structure",
+          "importance": 0.0
+        },
+        {
+          "feature": "1D.ADX_14_V1.minus_di",
+          "family": "trend_volatility",
+          "importance": 0.0
+        }
+      ],
+      "zero_importance_features": 190,
+      "family_importance": [
+        {
+          "family": "portfolio_state",
+          "importance": 70.67978884413907
+        },
+        {
+          "family": "dma",
+          "importance": 18.637739128708073
+        },
+        {
+          "family": "trend_volatility",
+          "importance": 7.230337553923445
+        },
+        {
+          "family": "volume_structure",
+          "importance": 3.452134473229444
+        },
+        {
+          "family": "base_15m",
+          "importance": 0.0
+        },
+        {
+          "family": "composite_signal",
+          "importance": 0.0
+        },
+        {
+          "family": "dno",
+          "importance": 0.0
+        },
+        {
+          "family": "inverse_predictor",
+          "importance": 0.0
+        },
+        {
+          "family": "macd",
+          "importance": 0.0
+        },
+        {
+          "family": "oscillator_predictor",
+          "importance": 0.0
+        },
+        {
+          "family": "other",
+          "importance": 0.0
+        },
+        {
+          "family": "stochastic",
+          "importance": 0.0
+        },
+        {
+          "family": "zigzag_confirmed",
+          "importance": 0.0
+        }
+      ],
+      "model_classes": []
+    }
+  },
+  "qwen": {
+    "records": 104,
+    "inference_requests": 104,
+    "cached_replays": 26,
+    "forbidden_future_fields": 0,
+    "valid_json": 103,
+    "actual_actions": {
+      "OPEN_SHORT": 85,
+      "OPEN_LONG": 17,
+      "HOLD": 1
+    },
+    "portfolio_position_states": {
+      "FLAT": 103,
+      "PRIMARY_OPEN": 1
+    },
+    "hedge_open_requests": 0,
+    "latency_seconds": {
+      "median": 10.492377396003576,
+      "p90": 39.997162357490744,
+      "max": 71.68735374097014
+    },
+    "adapter_allowed_actions": [
+      "OPEN_LONG",
+      "OPEN_SHORT",
+      "HOLD",
+      "OPEN_HEDGE",
+      "CLOSE_HEDGE",
+      "AVERAGE_PRIMARY",
+      "REDUCE_POSITION",
+      "EXIT",
+      "SKIP"
+    ],
+    "policy_permissions": {
+      "FLAT": [
+        "OPEN_LONG",
+        "OPEN_SHORT",
+        "HOLD",
+        "SKIP"
+      ],
+      "PRIMARY_OPEN_NO_HEDGE": [
+        "HOLD",
+        "OPEN_HEDGE",
+        "REDUCE_POSITION",
+        "EXIT",
+        "AVERAGE_PRIMARY_IF_LT_2"
+      ],
+      "PRIMARY_OPEN_WITH_HEDGE": [
+        "HOLD",
+        "CLOSE_HEDGE",
+        "REDUCE_POSITION",
+        "EXIT",
+        "AVERAGE_PRIMARY_IF_LT_2"
+      ]
+    }
+  },
+  "corrections_to_prior_report": {
+    "close_hedge_absent": false,
+    "actually_missing_training_action": [
+      "REDUCE_POSITION"
+    ],
+    "note": "The five-class CatBoost warning was caused by missing REDUCE_POSITION, not CLOSE_HEDGE. The prior REVIEW text incorrectly attributed it to CLOSE_HEDGE."
+  },
+  "recommended_schema": {
+    "unit": "state-action-outcome triplet",
+    "state_id": "causal market snapshot + portfolio snapshot + risk snapshot",
+    "actions": [
+      "HOLD",
+      "OPEN_HEDGE",
+      "CLOSE_HEDGE",
+      "AVERAGE_PRIMARY",
+      "REDUCE_POSITION",
+      "EXIT"
+    ],
+    "feasibility_mask": "explicit per state and per capital/margin rule",
+    "counterfactual_engine": "for every feasible action, branch from the same state and run the fixed execution/risk simulator over the same forward horizons",
+    "outcomes": [
+      "net_pnl",
+      "max_drawdown",
+      "MFE",
+      "MAE",
+      "liquidation_probability",
+      "risk_limit_hit",
+      "costs",
+      "time_to_exit",
+      "recovery_time",
+      "terminal_equity"
+    ],
+    "model_target": "predict action utility/rank rather than imitate best_action from the prior path",
+    "policy": "mask infeasible actions, rank feasible utilities, then Risk Engine veto",
+    "horizons_hours": [
+      24,
+      72,
+      168
+    ],
+    "split_requirements": "chronological train/validation with purge and embargo"
+  }
+}
