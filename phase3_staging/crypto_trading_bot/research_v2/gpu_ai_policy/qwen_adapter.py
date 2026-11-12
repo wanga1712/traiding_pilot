@@ -259,6 +259,7 @@ class QwenPolicyAdapter:
             "You are a constrained trading-policy validator. Use only the supplied "
             "causal facts. Do not infer or invent future prices, targets, fills, or "
             "portfolio state. Return exactly one JSON object matching the schema. "
+            "Choose only an action listed in allowed_actions. "
             "confidence is an integer from 0 to 100. Keep reason and "
             "risk_assessment to at most 12 words each."
         )
@@ -283,8 +284,19 @@ class QwenPolicyAdapter:
         risk: dict[str, Any],
         fallback_action: str,
         market_events: list[dict[str, Any]] | None = None,
+        allowed_actions: list[str] | None = None,
     ) -> QwenDecision:
         identity = self.runtime_identity()
+        normalized_allowed = (
+            list(QWEN_ACTIONS)
+            if allowed_actions is None
+            else list(dict.fromkeys(str(action) for action in allowed_actions))
+        )
+        invalid_actions = sorted(set(normalized_allowed) - set(QWEN_ACTIONS))
+        if invalid_actions:
+            raise QwenContractError(
+                f"unknown allowed actions: {invalid_actions}"
+            )
         request = {
             "decision_at": str(decision_at),
             "market_features": market_features,
@@ -293,6 +305,7 @@ class QwenPolicyAdapter:
             "risk": risk,
             "fallback_action": fallback_action,
             "market_events": market_events or [],
+            "allowed_actions": normalized_allowed,
         }
         _assert_causal(request)
         request_hash = _sha256_json(request)
@@ -304,20 +317,21 @@ class QwenPolicyAdapter:
                 and cached_identity.get("digest") == identity.get("digest")
             ):
                 cached_decision = dict(cached_record["decision"])
-                cached_decision["latency_seconds"] = 0.0
-                cached_decision["cached"] = True
-                decision = QwenDecision(**cached_decision)
-                self._append_log(
-                    {
-                        "request_id": request_hash,
-                        "decision_at": decision_at,
-                        "model_identity": identity,
-                        "request": request,
-                        "cache_replay": True,
-                        "decision": asdict(decision),
-                    }
-                )
-                return decision
+                if cached_decision.get("action") in normalized_allowed:
+                    cached_decision["latency_seconds"] = 0.0
+                    cached_decision["cached"] = True
+                    decision = QwenDecision(**cached_decision)
+                    self._append_log(
+                        {
+                            "request_id": request_hash,
+                            "decision_at": decision_at,
+                            "model_identity": identity,
+                            "request": request,
+                            "cache_replay": True,
+                            "decision": asdict(decision),
+                        }
+                    )
+                    return decision
         system, prompt = self._prompt(request)
         raw_responses: list[str] = []
         errors: list[str] = []
@@ -348,7 +362,12 @@ class QwenPolicyAdapter:
             raw = body.get("response", "")
             raw_responses.append(raw)
             try:
-                parsed = validate_qwen_response(json.loads(raw))
+                candidate = validate_qwen_response(json.loads(raw))
+                if candidate[0] not in normalized_allowed:
+                    raise QwenContractError(
+                        f"action {candidate[0]!r} is not allowed in current state"
+                    )
+                parsed = candidate
                 break
             except Exception as exc:  # noqa: BLE001
                 errors.append(str(exc))

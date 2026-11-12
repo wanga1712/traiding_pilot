@@ -28,9 +28,11 @@ def _load_minute_hour_features(path: Path) -> pd.DataFrame:
         path,
         columns=[
             "open_time",
+            "futures_open",
             "futures_high",
             "futures_low",
             "futures_close",
+            "mark_open",
             "mark_high",
             "mark_low",
             "mark_close",
@@ -41,9 +43,11 @@ def _load_minute_hour_features(path: Path) -> pd.DataFrame:
     grouped = (
         minute.groupby("hour", sort=True)
         .agg(
+            futures_open=("futures_open", "first"),
             minute_high=("mark_high", "max"),
             minute_low=("mark_low", "min"),
             minute_close=("mark_close", "last"),
+            mark_open=("mark_open", "first"),
             futures_high=("futures_high", "max"),
             futures_low=("futures_low", "min"),
             futures_close=("futures_close", "last"),
@@ -119,8 +123,10 @@ def _context(
         how="left",
         validate="one_to_one",
     ).drop(columns=["hour"])
+    frame["open"] = frame["futures_open"].fillna(frame["open"])
     frame["high"] = frame["minute_high"]
     frame["low"] = frame["minute_low"]
+    frame["close"] = frame["minute_close"].fillna(frame["close"])
     funding = pd.read_parquet(funding_path)
     funding["funding_time"] = pd.to_datetime(funding["funding_time"], utc=True)
     funding_by_time = {
@@ -244,6 +250,14 @@ def run_event_policy(
                 output_root / f"{safe}_market_events.csv",
                 index=False,
             )
+            result.order_trace.to_csv(
+                output_root / f"{safe}_order_trace.csv",
+                index=False,
+            )
+            result.action_trace.to_csv(
+                output_root / f"{safe}_action_trace.csv",
+                index=False,
+            )
     metrics_frame = pd.DataFrame([result.metrics for result in results])
     metrics_frame.to_csv(output_root / "policy_metrics_v1.csv", index=False)
     all_events = pd.concat(
@@ -295,10 +309,51 @@ def run_event_policy(
         ),
         "fallbacks": int(sum(result.metrics["qwen_fallbacks"] for result in results)),
         "hedge_open_events": int(
-            sum(result.metrics["hedges"] for result in results)
+            sum(result.metrics["hedge_signal_count"] for result in results)
+        ),
+        "hedge_proposed_count": int(
+            sum(result.metrics["hedge_proposed_count"] for result in results)
+        ),
+        "hedge_approved_count": int(
+            sum(result.metrics["hedge_approved_count"] for result in results)
+        ),
+        "hedge_rejected_count": int(
+            sum(result.metrics["hedge_rejected_count"] for result in results)
+        ),
+        "hedge_filled_count": int(
+            sum(result.metrics["hedge_filled_count"] for result in results)
         ),
         "hedge_close_events": int(
             sum(result.metrics["hedge_close_events"] for result in results)
+        ),
+        "hedge_closed_count": int(
+            sum(result.metrics["hedge_closed_count"] for result in results)
+        ),
+        "hedge_rejection_reasons": {
+            reason: int(
+                sum(
+                    result.metrics["hedge_rejection_reasons"].get(reason, 0)
+                    for result in results
+                )
+            )
+            for reason in {
+                reason
+                for result in results
+                for reason in result.metrics["hedge_rejection_reasons"]
+            }
+        },
+        "executed_order_count": int(
+            sum(result.metrics["executed_order_count"] for result in results)
+        ),
+        "completed_trade_cycles": int(
+            sum(result.metrics["completed_trade_cycles"] for result in results)
+        ),
+        "total_notional_turnover": float(
+            sum(result.metrics["total_notional_turnover"] for result in results)
+        ),
+        "total_fees": float(sum(result.metrics["fees"] for result in results)),
+        "total_slippage": float(
+            sum(result.metrics["slippage"] for result in results)
         ),
         "risk_events": int(
             sum(result.metrics["risk_events"] for result in results)

@@ -16,12 +16,13 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | Field | Value |
 |---|---|
 | **WIP** | `TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1` |
-| **STATUS** | ACTIVE |
-| **PHASE** | Trace and diagnosis |
+| **STATUS** | REVIEW |
+| **PHASE** | Audit, repair, tests, and CatBoost-only regression complete |
 | **MODE** | Audit -> repair -> test -> historical regression |
 | **BASE COMMIT** | `218390d02019e71bda21122aef56b599d2429ff0` |
 | **REPORT** | [`docs/wip/TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1.md`](docs/wip/TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1.md) |
 | **LIVE TRADING** | DISABLED |
+| **RESULT** | 9 confirmed defects; 8 fixed; 52 after-fix HEDGE fills/closes; Qwen after-fix full PnL blocked by event volume |
 
 Previous event-driven Qwen policy remains unchanged in `REVIEW`: 275 calls,
 6 action changes, and negative added value.
@@ -1623,7 +1624,7 @@ none (end of planned chain)
 | TRADING-PILOT-GPU-AI-TRADING-POLICY-1 | REVIEW | GPU AI policy |
 | TRADING-PILOT-ACTION-LEARNING-AUDIT-1 | REVIEW | Action and label audit |
 | TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1 | REVIEW | Event-driven Qwen policy |
-| TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1 | ACTIVE | Execution and hedge audit |
+| TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1 | REVIEW | Execution and hedge audit |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |

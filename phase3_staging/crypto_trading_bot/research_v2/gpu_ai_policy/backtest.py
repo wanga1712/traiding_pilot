@@ -11,6 +11,14 @@ import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
 
 from crypto_trading_bot.research_v2.capital_growth.accounting import FuturesAccount, SpotAccount
+from crypto_trading_bot.research_v2.capital_growth.config import (
+    ExecutionConfig as RiskExecutionConfig,
+    RiskConfig as PolicyRiskConfig,
+)
+from crypto_trading_bot.research_v2.capital_growth.risk import (
+    maximum_margin_for_limit,
+    risk_report,
+)
 
 from .config import (
     AI_VARIANTS,
@@ -45,6 +53,8 @@ class PolicyResult:
     metrics: dict[str, Any]
     qwen_events: pd.DataFrame = field(default_factory=pd.DataFrame)
     market_events: pd.DataFrame = field(default_factory=pd.DataFrame)
+    order_trace: pd.DataFrame = field(default_factory=pd.DataFrame)
+    action_trace: pd.DataFrame = field(default_factory=pd.DataFrame)
 
 
 @dataclass
@@ -57,6 +67,17 @@ class PolicyAccount:
     liquidation_count: int = 0
     averaging_count: int = 0
     hedge_count: int = 0
+    hedge_signal_count: int = 0
+    hedge_proposed_count: int = 0
+    hedge_approved_count: int = 0
+    hedge_rejected_count: int = 0
+    hedge_filled_count: int = 0
+    hedge_closed_count: int = 0
+    primary_cycle_count: int = 0
+    executed_order_count: int = 0
+    total_notional_turnover: float = 0.0
+    order_rejections: list[dict[str, Any]] = field(default_factory=list)
+    order_trace: list[dict[str, Any]] = field(default_factory=list)
     spot_slippage: float = 0.0
     spot_trade_count: int = 0
     trades: list[dict[str, Any]] = field(default_factory=list)
@@ -64,6 +85,7 @@ class PolicyAccount:
     equity_rows: list[dict[str, Any]] = field(default_factory=list)
     qwen_events: list[dict[str, Any]] = field(default_factory=list)
     market_events: list[dict[str, Any]] = field(default_factory=list)
+    action_trace: list[dict[str, Any]] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.spot = SpotAccount(cash=INITIAL_CAPITAL * self.spot_fraction)
@@ -74,6 +96,56 @@ class PolicyAccount:
 
     def equity(self, mark: float) -> float:
         return float(self.spot.equity(mark) + self.futures.equity(mark))
+
+    def position_state(self) -> str:
+        if self.futures.primary is None:
+            if self.futures.hedge is not None:
+                return "HEDGE_ONLY"
+            return "FLAT"
+        if self.futures.hedge is not None:
+            return "HEDGED"
+        return "PRIMARY_OPEN"
+
+    def state_snapshot(self, mark: float, time: pd.Timestamp) -> dict[str, Any]:
+        primary = self.futures.primary
+        hedge = self.futures.hedge
+
+        def position_payload(position: Any) -> dict[str, Any] | None:
+            if position is None:
+                return None
+            liquidation_price = position.liquidation_price(
+                MAINTENANCE_MARGIN_RATE,
+                TAKER_FEE_PER_SIDE,
+            )
+            return {
+                "side": int(position.side),
+                "quantity": float(position.quantity),
+                "margin": float(position.margin),
+                "average_entry": float(position.average_entry),
+                "unrealized_pnl": float(position.unrealized(mark)),
+                "notional": float(position.notional(mark)),
+                "liquidation_price": float(liquidation_price),
+                "liquidation_distance_pct": float(
+                    abs(mark - liquidation_price) / max(mark, 1e-9)
+                ),
+                "additions": int(position.additions),
+                "holding_hours": float(
+                    (time - position.entry_time).total_seconds() / 3600.0
+                ),
+            }
+
+        return {
+            "state": self.position_state(),
+            "mark": float(mark),
+            "equity": self.equity(mark),
+            "spot_exposure": float(self.spot.eth * mark),
+            "free_collateral": float(self.futures.free_collateral),
+            "used_margin": float(self.futures.margin_used()),
+            "gross_notional": float(self.futures.gross_notional(mark)),
+            "net_notional": float(self.futures.net_notional(mark)),
+            "primary": position_payload(primary),
+            "hedge": position_payload(hedge),
+        }
 
     def state_features(self, mark: float, time: pd.Timestamp) -> dict[str, float]:
         primary = self.futures.primary
@@ -125,11 +197,88 @@ class PolicyAccount:
             "remaining_thesis_risk_fraction": remaining,
         }
 
+    @staticmethod
+    def _risk_execution_config() -> RiskExecutionConfig:
+        return RiskExecutionConfig(
+            leverage=LEVERAGE,
+            taker_fee_per_side=TAKER_FEE_PER_SIDE,
+            slippage_per_side=SLIPPAGE_PER_SIDE,
+            maintenance_margin_rate=MAINTENANCE_MARGIN_RATE,
+            liquidation_fee_rate=LIQUIDATION_FEE_RATE,
+        )
+
+    @staticmethod
+    def _risk_config() -> PolicyRiskConfig:
+        return PolicyRiskConfig(
+            max_loss_fraction_total_equity=MAX_THESIS_LOSS_FRACTION
+        )
+
+    def _risk_sized_margin(
+        self,
+        side: int,
+        desired_margin: float,
+        mark: float,
+    ) -> tuple[float, dict[str, Any]]:
+        return maximum_margin_for_limit(
+            self.futures,
+            self.spot,
+            price=mark,
+            side=side,
+            desired_margin=desired_margin,
+            execution=self._risk_execution_config(),
+            risk=self._risk_config(),
+        )
+
+    def current_risk(self, mark: float) -> dict[str, Any]:
+        return risk_report(
+            self.futures,
+            self.spot,
+            price=mark,
+            execution=self._risk_execution_config(),
+            risk=self._risk_config(),
+        )
+
+    def _record_order(
+        self,
+        *,
+        time: pd.Timestamp,
+        role: str,
+        action: str,
+        executed: bool,
+        reason: str,
+        margin: float = 0.0,
+        quantity: float = 0.0,
+        notional: float = 0.0,
+        fee: float = 0.0,
+        context: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        row = {
+            "time": pd.Timestamp(time).isoformat(),
+            "role": role,
+            "action": action,
+            "executed": int(executed),
+            "reason": reason,
+            "margin": margin,
+            "quantity": quantity,
+            "notional": notional,
+            "fee": fee,
+            "state_after": self.position_state(),
+            **(context or {}),
+        }
+        self.order_trace.append(row)
+        if executed:
+            self.executed_order_count += 1
+            self.total_notional_turnover += float(notional)
+        else:
+            self.order_rejections.append(row)
+        return row
+
     def _spot_swing(self, time: pd.Timestamp, mark: float, direction: int) -> None:
         if self.spot_mode != "SWING":
             return
         target = self.equity(mark) * self.spot_fraction if direction > 0 else 0.0
         if target > self.spot.equity(mark):
+            fees_before = self.spot.fees_paid
             spent = self.spot.buy_to_target(
                 mark,
                 target,
@@ -138,7 +287,18 @@ class PolicyAccount:
             )
             self.spot_slippage += spent * SLIPPAGE_PER_SIDE
             self.spot_trade_count += int(spent > 0)
+            if spent > 0:
+                self._record_order(
+                    time=time,
+                    role="SPOT",
+                    action="SPOT_BUY",
+                    executed=True,
+                    reason="TARGET_REBALANCE",
+                    notional=spent,
+                    fee=self.spot.fees_paid - fees_before,
+                )
         elif target < self.spot.equity(mark):
+            fees_before = self.spot.fees_paid
             proceeds = self.spot.sell_to_target(
                 mark,
                 target,
@@ -147,40 +307,149 @@ class PolicyAccount:
             )
             self.spot_slippage += proceeds * SLIPPAGE_PER_SIDE
             self.spot_trade_count += int(proceeds > 0)
+            if proceeds > 0:
+                self._record_order(
+                    time=time,
+                    role="SPOT",
+                    action="SPOT_SELL",
+                    executed=True,
+                    reason="TARGET_REBALANCE",
+                    notional=proceeds,
+                    fee=self.spot.fees_paid - fees_before,
+                )
 
-    def _open(self, side: int, time: pd.Timestamp, mark: float, volume: float) -> None:
+    def _open(
+        self,
+        side: int,
+        time: pd.Timestamp,
+        mark: float,
+        volume: float,
+    ) -> list[dict[str, Any]]:
         if self.futures.primary is not None:
-            return
+            return [
+                self._record_order(
+                    time=time,
+                    role="PRIMARY",
+                    action="OPEN",
+                    executed=False,
+                    reason="PRIMARY_ALREADY_OPEN",
+                )
+            ]
         total = self.equity(mark)
-        risk_cap = total * MAX_THESIS_LOSS_FRACTION / (0.15 * LEVERAGE)
         budget = INITIAL_CAPITAL * (1.0 - self.spot_fraction) * 0.40
-        margin = min(
-            risk_cap,
-            budget,
-            self.futures.free_collateral / (1.0 + LEVERAGE * TAKER_FEE_PER_SIDE),
+        affordable = self.futures.free_collateral / (
+            1.0 + LEVERAGE * TAKER_FEE_PER_SIDE
         )
+        desired = min(
+            budget,
+            affordable,
+        )
+        sized, report = self._risk_sized_margin(side, desired, mark)
         capacity = min(1_000.0, max(0.0, volume) * mark * 0.001)
-        if margin * LEVERAGE < 5.0 or capacity < 5.0:
-            return
-        self.futures.open_position(
-            "PRIMARY",
-            side=side,
+        margin = min(sized, max(0.0, capacity) / LEVERAGE)
+        context = {
+            "risk_approved": bool(report.get("passes")),
+            "risk": report,
+            "desired_margin": desired,
+            "risk_sized_margin": sized,
+            "capacity_notional": capacity,
+            "total_equity_before": total,
+        }
+        if desired <= 1e-12:
+            return [
+                self._record_order(
+                    time=time,
+                    role="PRIMARY",
+                    action="OPEN",
+                    executed=False,
+                    reason="FREE_MARGIN",
+                    context=context,
+                )
+            ]
+        if sized <= 1e-12 or not report.get("passes", False):
+            return [
+                self._record_order(
+                    time=time,
+                    role="PRIMARY",
+                    action="OPEN",
+                    executed=False,
+                    reason="RISK_LIMIT",
+                    context=context,
+                )
+            ]
+        if capacity < 5.0:
+            return [
+                self._record_order(
+                    time=time,
+                    role="PRIMARY",
+                    action="OPEN",
+                    executed=False,
+                    reason="LIQUIDITY_CAPACITY",
+                    context=context,
+                )
+            ]
+        if margin * LEVERAGE < 5.0:
+            return [
+                self._record_order(
+                    time=time,
+                    role="PRIMARY",
+                    action="OPEN",
+                    executed=False,
+                    reason="MIN_NOTIONAL",
+                    context=context,
+                )
+            ]
+        try:
+            position = self.futures.open_position(
+                "PRIMARY",
+                side=side,
+                time=time,
+                price=mark,
+                margin=margin,
+                slippage=SLIPPAGE_PER_SIDE,
+                fee_rate=TAKER_FEE_PER_SIDE,
+                leverage=LEVERAGE,
+                max_notional=capacity,
+                min_notional=5.0,
+            )
+        except ValueError as exc:
+            return [
+                self._record_order(
+                    time=time,
+                    role="PRIMARY",
+                    action="OPEN",
+                    executed=False,
+                    reason=f"ORDER_REJECTED:{exc}",
+                    margin=margin,
+                    context=context,
+                )
+            ]
+        order = self._record_order(
             time=time,
-            price=mark,
-            margin=margin,
-            slippage=SLIPPAGE_PER_SIDE,
-            fee_rate=TAKER_FEE_PER_SIDE,
-            leverage=LEVERAGE,
-            max_notional=capacity,
-            min_notional=5.0,
+            role="PRIMARY",
+            action="OPEN",
+            executed=True,
+            reason="FILLED",
+            margin=position.margin,
+            quantity=position.quantity,
+            notional=position.metadata["filled_notional"],
+            fee=position.entry_fees,
+            context=context,
         )
         self._spot_swing(time, mark, side)
+        return [order]
 
-    def _close(self, role: str, time: pd.Timestamp, mark: float, reason: str) -> None:
+    def _close(
+        self,
+        role: str,
+        time: pd.Timestamp,
+        mark: float,
+        reason: str,
+    ) -> dict[str, Any] | None:
         if (role == "PRIMARY" and self.futures.primary is None) or (
             role == "HEDGE" and self.futures.hedge is None
         ):
-            return
+            return None
         trade = self.futures.close_position(
             role,
             time=time,
@@ -190,8 +459,24 @@ class PolicyAccount:
             reason=reason,
         )
         self.trades.append(trade)
+        self._record_order(
+            time=time,
+            role=role,
+            action="EXIT",
+            executed=True,
+            reason=reason,
+            margin=float(trade["margin"]),
+            quantity=float(trade["quantity"]),
+            notional=float(trade["quantity"]) * float(trade["exit_fill"]),
+            fee=float(trade["exit_fee"]),
+        )
+        if role == "HEDGE":
+            self.hedge_closed_count += 1
+        else:
+            self.primary_cycle_count += 1
         if role == "PRIMARY":
             self._spot_swing(time, mark, 0)
+        return trade
 
     def execute(
         self,
@@ -200,72 +485,312 @@ class PolicyAccount:
         time: pd.Timestamp,
         mark: float,
         volume: float,
-    ) -> None:
+    ) -> list[dict[str, Any]]:
         if action == "OPEN_LONG":
-            self._open(1, time, mark, volume)
+            return self._open(1, time, mark, volume)
         elif action == "OPEN_SHORT":
-            self._open(-1, time, mark, volume)
-        elif action == "OPEN_HEDGE" and self.futures.primary is not None:
-            if self.futures.hedge is None:
-                side = -self.futures.primary.side
-                margin = min(
-                    INITIAL_CAPITAL * (1.0 - self.spot_fraction) * 0.20,
-                    self.futures.primary.margin,
-                    self.futures.free_collateral
-                    / (1.0 + LEVERAGE * TAKER_FEE_PER_SIDE),
-                )
-                if margin * LEVERAGE >= 5.0:
-                    self.futures.open_position(
-                        "HEDGE",
-                        side=side,
+            return self._open(-1, time, mark, volume)
+        elif action == "OPEN_HEDGE":
+            if self.futures.primary is None:
+                self.hedge_rejected_count += 1
+                return [
+                    self._record_order(
                         time=time,
-                        price=mark,
-                        margin=margin,
-                        slippage=SLIPPAGE_PER_SIDE,
-                        fee_rate=TAKER_FEE_PER_SIDE,
-                        leverage=LEVERAGE,
+                        role="HEDGE",
+                        action="OPEN_HEDGE",
+                        executed=False,
+                        reason="NO_PRIMARY",
                     )
-                    self.hedge_count += 1
-        elif action == "CLOSE_HEDGE":
-            self._close("HEDGE", time, mark, "AI_CLOSE_HEDGE")
-        elif action == "AVERAGE_PRIMARY" and self.futures.primary is not None:
-            if self.futures.primary.additions < 2:
-                margin = min(
-                    INITIAL_CAPITAL * (1.0 - self.spot_fraction) * 0.20,
-                    self.futures.free_collateral
-                    / (1.0 + LEVERAGE * TAKER_FEE_PER_SIDE),
-                )
-                if margin * LEVERAGE >= 5.0:
-                    self.futures.average_primary(
+                ]
+            if self.futures.hedge is not None:
+                self.hedge_rejected_count += 1
+                return [
+                    self._record_order(
                         time=time,
-                        price=mark,
-                        margin=margin,
-                        slippage=SLIPPAGE_PER_SIDE,
-                        fee_rate=TAKER_FEE_PER_SIDE,
-                        leverage=LEVERAGE,
+                        role="HEDGE",
+                        action="OPEN_HEDGE",
+                        executed=False,
+                        reason="HEDGE_ALREADY_OPEN",
                     )
-                    self.averaging_count += 1
-        elif action == "REDUCE_POSITION":
-            if self.futures.primary is not None:
-                trade = self.futures.reduce_position(
-                    "PRIMARY",
+                ]
+            side = -self.futures.primary.side
+            affordable = self.futures.free_collateral / (
+                1.0 + LEVERAGE * TAKER_FEE_PER_SIDE
+            )
+            desired = min(
+                INITIAL_CAPITAL * (1.0 - self.spot_fraction) * 0.20,
+                self.futures.primary.margin,
+                affordable,
+            )
+            sized, report = self._risk_sized_margin(side, desired, mark)
+            capacity = min(1_000.0, max(0.0, volume) * mark * 0.001)
+            margin = min(sized, max(0.0, capacity) / LEVERAGE)
+            context = {
+                "risk_approved": bool(report.get("passes")),
+                "risk": report,
+                "desired_margin": desired,
+                "risk_sized_margin": sized,
+                "capacity_notional": capacity,
+            }
+            reason = None
+            if desired <= 1e-12:
+                reason = "FREE_MARGIN"
+            elif sized <= 1e-12 or not report.get("passes", False):
+                reason = "RISK_LIMIT"
+            elif capacity < 5.0:
+                reason = "LIQUIDITY_CAPACITY"
+            elif margin * LEVERAGE < 5.0:
+                reason = "MIN_NOTIONAL"
+            if reason is not None:
+                self.hedge_rejected_count += 1
+                return [
+                    self._record_order(
+                        time=time,
+                        role="HEDGE",
+                        action="OPEN_HEDGE",
+                        executed=False,
+                        reason=reason,
+                        margin=margin,
+                        context=context,
+                    )
+                ]
+            self.hedge_approved_count += 1
+            try:
+                position = self.futures.open_position(
+                    "HEDGE",
+                    side=side,
                     time=time,
                     price=mark,
-                    fraction=0.5,
+                    margin=margin,
                     slippage=SLIPPAGE_PER_SIDE,
                     fee_rate=TAKER_FEE_PER_SIDE,
-                    reason="AI_REDUCE",
+                    leverage=LEVERAGE,
+                    max_notional=capacity,
+                    min_notional=5.0,
                 )
-                self.trades.append(trade)
+            except ValueError as exc:
+                self.hedge_rejected_count += 1
+                return [
+                    self._record_order(
+                        time=time,
+                        role="HEDGE",
+                        action="OPEN_HEDGE",
+                        executed=False,
+                        reason=f"ORDER_REJECTED:{exc}",
+                        margin=margin,
+                        context=context,
+                    )
+                ]
+            self.hedge_count += 1
+            self.hedge_filled_count += 1
+            return [
+                self._record_order(
+                    time=time,
+                    role="HEDGE",
+                    action="OPEN_HEDGE",
+                    executed=True,
+                    reason="FILLED",
+                    margin=position.margin,
+                    quantity=position.quantity,
+                    notional=position.metadata["filled_notional"],
+                    fee=position.entry_fees,
+                    context=context,
+                )
+            ]
+        elif action == "CLOSE_HEDGE":
+            if self.futures.hedge is None:
+                return [
+                    self._record_order(
+                        time=time,
+                        role="HEDGE",
+                        action="CLOSE_HEDGE",
+                        executed=False,
+                        reason="NO_HEDGE",
+                    )
+                ]
+            before = len(self.order_trace)
+            self._close("HEDGE", time, mark, "AI_CLOSE_HEDGE")
+            return self.order_trace[before:]
+        elif action == "AVERAGE_PRIMARY":
+            if self.futures.primary is None:
+                return [
+                    self._record_order(
+                        time=time,
+                        role="PRIMARY",
+                        action="AVERAGE_PRIMARY",
+                        executed=False,
+                        reason="NO_PRIMARY",
+                    )
+                ]
+            if self.futures.primary.additions >= 2:
+                return [
+                    self._record_order(
+                        time=time,
+                        role="PRIMARY",
+                        action="AVERAGE_PRIMARY",
+                        executed=False,
+                        reason="AVERAGING_LIMIT",
+                    )
+                ]
+            affordable = self.futures.free_collateral / (
+                1.0 + LEVERAGE * TAKER_FEE_PER_SIDE
+            )
+            desired = min(
+                INITIAL_CAPITAL * (1.0 - self.spot_fraction) * 0.20,
+                affordable,
+            )
+            sized, report = self._risk_sized_margin(
+                self.futures.primary.side,
+                desired,
+                mark,
+            )
+            capacity = min(1_000.0, max(0.0, volume) * mark * 0.001)
+            margin = min(sized, max(0.0, capacity) / LEVERAGE)
+            context = {
+                "risk_approved": bool(report.get("passes")),
+                "risk": report,
+                "desired_margin": desired,
+                "risk_sized_margin": sized,
+                "capacity_notional": capacity,
+            }
+            reason = None
+            if desired <= 1e-12:
+                reason = "FREE_MARGIN"
+            elif sized <= 1e-12 or not report.get("passes", False):
+                reason = "RISK_LIMIT"
+            elif capacity < 5.0:
+                reason = "LIQUIDITY_CAPACITY"
+            elif margin * LEVERAGE < 5.0:
+                reason = "MIN_NOTIONAL"
+            if reason is not None:
+                return [
+                    self._record_order(
+                        time=time,
+                        role="PRIMARY",
+                        action="AVERAGE_PRIMARY",
+                        executed=False,
+                        reason=reason,
+                        margin=margin,
+                        context=context,
+                    )
+                ]
+            try:
+                self.futures.average_primary(
+                    time=time,
+                    price=mark,
+                    margin=margin,
+                    slippage=SLIPPAGE_PER_SIDE,
+                    fee_rate=TAKER_FEE_PER_SIDE,
+                    leverage=LEVERAGE,
+                    max_notional=capacity,
+                    min_notional=5.0,
+                )
+            except ValueError as exc:
+                return [
+                    self._record_order(
+                        time=time,
+                        role="PRIMARY",
+                        action="AVERAGE_PRIMARY",
+                        executed=False,
+                        reason=f"ORDER_REJECTED:{exc}",
+                        margin=margin,
+                        context=context,
+                    )
+                ]
+            self.averaging_count += 1
+            child = self.futures.primary.metadata["children"][-1]
+            return [
+                self._record_order(
+                    time=time,
+                    role="PRIMARY",
+                    action="AVERAGE_PRIMARY",
+                    executed=True,
+                    reason="FILLED",
+                    margin=margin,
+                    quantity=child["filled_notional"] / mark,
+                    notional=child["filled_notional"],
+                    fee=child["filled_notional"] * TAKER_FEE_PER_SIDE,
+                    context=context,
+                )
+            ]
+        elif action == "REDUCE_POSITION":
+            if self.futures.primary is None:
+                return [
+                    self._record_order(
+                        time=time,
+                        role="PRIMARY",
+                        action="REDUCE_POSITION",
+                        executed=False,
+                        reason="NO_PRIMARY",
+                    )
+                ]
+            position = self.futures.primary
+            remaining_notional = position.quantity * mark * 0.5
+            fraction = 1.0 if remaining_notional < 5.0 else 0.5
+            trade = self.futures.reduce_position(
+                "PRIMARY",
+                time=time,
+                price=mark,
+                fraction=fraction,
+                slippage=SLIPPAGE_PER_SIDE,
+                fee_rate=TAKER_FEE_PER_SIDE,
+                reason="AI_REDUCE",
+            )
+            self.trades.append(trade)
+            if self.futures.primary is None:
+                self.primary_cycle_count += 1
+                self._spot_swing(time, mark, 0)
+            return [
+                self._record_order(
+                    time=time,
+                    role="PRIMARY",
+                    action="REDUCE_POSITION",
+                    executed=True,
+                    reason="FILLED",
+                    margin=float(trade["margin"]),
+                    quantity=float(trade["quantity"]),
+                    notional=float(trade["quantity"]) * float(trade["exit_fill"]),
+                    fee=float(trade["exit_fee"]),
+                )
+            ]
         elif action == "EXIT":
+            before = len(self.order_trace)
             self._close("HEDGE", time, mark, "AI_EXIT_HEDGE")
             self._close("PRIMARY", time, mark, "AI_EXIT")
+            if len(self.order_trace) == before:
+                return [
+                    self._record_order(
+                        time=time,
+                        role="ALL",
+                        action="EXIT",
+                        executed=False,
+                        reason="NO_POSITION",
+                    )
+                ]
+            return self.order_trace[before:]
+        elif action in {"SKIP", "HOLD"}:
+            return []
+        return [
+            self._record_order(
+                time=time,
+                role="ALL",
+                action=action,
+                executed=False,
+                reason="UNKNOWN_ACTION",
+            )
+        ]
 
     def apply_funding(self, mark: float, rate: float) -> None:
         if self.futures.primary is not None or self.futures.hedge is not None:
             self.futures.apply_funding(mark, rate)
 
-    def enforce_liquidation(self, time: pd.Timestamp, high: float, low: float, close: float) -> None:
+    def enforce_liquidation(
+        self,
+        time: pd.Timestamp,
+        high: float,
+        low: float,
+        close: float,
+    ) -> list[str]:
         roles: list[str] = []
         for role in ("PRIMARY", "HEDGE"):
             position = self.futures.primary if role == "PRIMARY" else self.futures.hedge
@@ -287,18 +812,28 @@ class PolicyAccount:
                 MAINTENANCE_MARGIN_RATE,
                 TAKER_FEE_PER_SIDE,
             )
-            self.trades.append(
-                self.futures.liquidate(
-                    role,
-                    time=time,
-                    liquidation_price=liquidation_price,
-                    liquidation_fee_rate=LIQUIDATION_FEE_RATE,
-                )
+            trade = self.futures.liquidate(
+                role,
+                time=time,
+                liquidation_price=liquidation_price,
+                liquidation_fee_rate=LIQUIDATION_FEE_RATE,
             )
+            self.trades.append(trade)
+            self._record_order(
+                time=time,
+                role=role,
+                action="LIQUIDATE",
+                executed=True,
+                reason="LIQUIDATED",
+                margin=float(trade["margin"]),
+                quantity=float(trade["quantity"]),
+                notional=float(trade["quantity"]) * float(trade["exit_fill"]),
+                fee=float(trade["exit_fee"]),
+            )
+            if role == "PRIMARY":
+                self.primary_cycle_count += 1
             self.liquidation_count += 1
-        if roles:
-            self._close("HEDGE", time, close, "PRIMARY_LIQUIDATION_EXIT")
-            self._close("PRIMARY", time, close, "HEDGE_LIQUIDATION_EXIT")
+        return roles
 
     def record_equity(self, time: pd.Timestamp, mark: float) -> None:
         self.futures_peak = max(
@@ -347,6 +882,33 @@ def _max_drawdown(equity: pd.Series) -> float:
     return float(drawdown.max()) if drawdown.notna().any() else 0.0
 
 
+def _allowed_actions(account: PolicyAccount) -> list[str]:
+    primary = account.futures.primary
+    hedge = account.futures.hedge
+    if primary is None:
+        return ["OPEN_LONG", "OPEN_SHORT", "HOLD", "SKIP"]
+    actions = ["HOLD", "REDUCE_POSITION", "EXIT"]
+    actions.append("OPEN_HEDGE" if hedge is None else "CLOSE_HEDGE")
+    if primary.additions < 2:
+        actions.append("AVERAGE_PRIMARY")
+    return actions
+
+
+def _compact_market_event(event: MarketEvent) -> dict[str, Any]:
+    return {
+        "time": event.time,
+        "event_type": event.event_type,
+        "priority": event.priority,
+        "status": event.status,
+        "crossed_level": event.crossed_level,
+        "position_state": event.position_state,
+        "features": event.features,
+        "signature": event.signature,
+        "requires_qwen": event.requires_qwen,
+        "suppression_reason": event.suppression_reason,
+    }
+
+
 def _run_policy(
     *,
     name: str,
@@ -370,6 +932,7 @@ def _run_policy(
     account = PolicyAccount(spot_fraction, spot_mode)
     first = frame.iloc[0]
     if spot_mode == "HOLD":
+        fees_before = account.spot.fees_paid
         spent = account.spot.buy_to_target(
             float(first["open"]),
             account.spot.cash,
@@ -378,57 +941,138 @@ def _run_policy(
         )
         account.spot_slippage += spent * SLIPPAGE_PER_SIDE
         account.spot_trade_count += int(spent > 0)
+        if spent > 0:
+            account._record_order(
+                time=pd.Timestamp(first["open_time"]),
+                role="SPOT",
+                action="SPOT_BUY",
+                executed=True,
+                reason="INITIAL_HOLD",
+                notional=spent,
+                fee=account.spot.fees_paid - fees_before,
+            )
     pending_action = "SKIP"
+    pending_decision_at: pd.Timestamp | None = None
+    pending_decision_price: float | None = None
+    pending_trace_index: int | None = None
     last_qwen_at: pd.Timestamp | None = None
     qwen_request_count = 0
     qwen_valid_count = 0
     qwen_fallback_count = 0
     qwen_action_changes = 0
     for index, row in frame.reset_index(drop=True).iterrows():
-        time = pd.Timestamp(row["open_time"])
+        execution_time = pd.Timestamp(row["open_time"])
+        decision_at = pd.Timestamp(row["decision_at"])
         open_price = float(row["open"])
         close_price = float(row["close"])
         if pending_action != "SKIP":
-            account.execute(
+            before_execution = account.state_snapshot(open_price, execution_time)
+            orders = account.execute(
                 pending_action,
-                time=time,
+                time=execution_time,
                 mark=open_price,
                 volume=float(row["volume"]),
             )
+            after_execution = account.state_snapshot(open_price, execution_time)
             account.decisions.append(
                 {
-                    "time": time,
+                    "time": execution_time,
+                    "decision_time": pending_decision_at,
+                    "execution_time": execution_time,
                     "action": pending_action,
-                    "decision_price": close_price,
+                    "decision_price": pending_decision_price,
                     "execution_price": open_price,
+                    "executed": int(any(order["executed"] for order in orders)),
+                    "order_reasons": ";".join(
+                        str(order["reason"]) for order in orders
+                    ),
+                    "state_before": before_execution["state"],
+                    "state_after": after_execution["state"],
                     "strategy": name,
                 }
             )
-        funding = funding_by_time.get(time)
+            if pending_trace_index is not None:
+                account.action_trace[pending_trace_index].update(
+                    {
+                        "execution_time": execution_time.isoformat(),
+                        "execution_price": open_price,
+                        "state_before_execution": before_execution,
+                        "state_after_execution": after_execution,
+                        "orders": orders,
+                        "order_reasons": [
+                            str(order["reason"]) for order in orders
+                        ],
+                    }
+                )
+            pending_action = "SKIP"
+            pending_decision_at = None
+            pending_decision_price = None
+            pending_trace_index = None
+        funding = funding_by_time.get(execution_time)
         if funding is not None:
             account.apply_funding(open_price, funding)
-        account.enforce_liquidation(
-            time,
+        liquidated_roles = account.enforce_liquidation(
+            decision_at,
             float(row["high"]),
             float(row["low"]),
             close_price,
         )
-        account.record_equity(time, close_price)
 
-        state = account.state_features(close_price, time)
+        state = account.state_features(close_price, decision_at)
         futures_drawdown = max(
             0.0,
             account.peak_futures_equity - account.futures.equity(close_price),
         ) / max(account.equity(close_price), 1e-9)
-        if (
+        trace_index = len(account.action_trace)
+        hard_risk_reason: str | None = (
+            "LIQUIDATION_EVENT"
+            if liquidated_roles
+            and (
+                account.futures.primary is not None
+                or account.futures.hedge is not None
+            )
+            else None
+        )
+        if hard_risk_reason is None and (
             account.futures.primary is not None
             and (
                 futures_drawdown > MAX_THESIS_LOSS_FRACTION
                 or state["liquidation_distance_pct"] < 0.02
             )
         ):
-            pending_action = "EXIT"
-            continue
+            hard_risk_reason = (
+                "RISK_DRAWDOWN_LIMIT"
+                if futures_drawdown > MAX_THESIS_LOSS_FRACTION
+                else "LIQUIDATION_BUFFER_LIMIT"
+            )
+        account.action_trace.append(
+            {
+                "decision_time": decision_at.isoformat(),
+                "strategy": name,
+                "state_at_decision": account.state_snapshot(
+                    close_price,
+                    decision_at,
+                ),
+                "futures_drawdown_fraction": futures_drawdown,
+                "hard_risk_reason": hard_risk_reason,
+                "catboost_action": None,
+                "catboost_probabilities": None,
+                "qwen_action": None,
+                "qwen_valid": None,
+                "qwen_confidence": None,
+                "qwen_error": None,
+                "allowed_actions": None,
+                "applied_action": None,
+                "selection_source": None,
+                "market_event_types": [],
+                "execution_time": None,
+                "execution_price": None,
+                "state_before_execution": None,
+                "state_after_execution": None,
+                "orders": None,
+                "order_reasons": None,
+            }
+        )
 
         catboost_payload: dict[str, Any] = {
             "predicted_downside_24h": (
@@ -442,7 +1086,11 @@ def _run_policy(
                 else None
             ),
         }
-        if name == "SMA_BASELINE":
+        catboost_action = "SKIP"
+        catboost_probabilities: dict[str, float] | None = None
+        if hard_risk_reason is not None:
+            catboost_action = "RISK_EXIT"
+        elif name == "SMA_BASELINE":
             direction = 0
             if pd.notna(row.get("sma20")) and pd.notna(row.get("sma50")):
                 if close_price > row["sma20"] > row["sma50"]:
@@ -455,6 +1103,7 @@ def _run_policy(
                 pending_action = "EXIT"
             else:
                 pending_action = "SKIP"
+            catboost_action = pending_action
         elif name == "INDICATORS_ONLY":
             score = _indicator_score(row)
             if account.futures.primary is None:
@@ -471,6 +1120,7 @@ def _run_policy(
                     if score * account.futures.primary.side < -0.35
                     else "SKIP"
                 )
+            catboost_action = pending_action
         elif entry_probabilities is not None and account.futures.primary is None:
             long_probability = float(entry_probabilities[index, 1])
             short_probability = float(entry_probabilities[index, 2])
@@ -488,6 +1138,7 @@ def _run_policy(
                 pending_action = "OPEN_SHORT"
             else:
                 pending_action = "SKIP"
+            catboost_action = pending_action
         elif management_model is not None and account.futures.primary is not None:
             state_vector = np.array(
                 [state[column] for column in management_state_columns],
@@ -498,6 +1149,9 @@ def _run_policy(
             ).reshape(1, -1)
             probabilities = management_model.predict_proba(model_input)[0]
             probability_by_action = dict(zip(ACTION_NAMES, probabilities))
+            catboost_probabilities = {
+                key: float(value) for key, value in probability_by_action.items()
+            }
             catboost_payload["management_probabilities"] = probability_by_action
             allowed = {"HOLD", "REDUCE_POSITION", "EXIT"}
             if account.futures.primary is not None and account.futures.primary.additions < 2:
@@ -519,21 +1173,30 @@ def _run_policy(
                 "REDUCE_POSITION": "REDUCE_POSITION",
                 "EXIT": "EXIT",
             }[action]
+            catboost_action = pending_action
         else:
             pending_action = "SKIP"
+            catboost_action = pending_action
+
+        if (
+            catboost_action == "OPEN_HEDGE"
+            and account.futures.primary is not None
+            and account.futures.hedge is None
+        ):
+            account.hedge_signal_count += 1
+        account.action_trace[trace_index]["catboost_action"] = catboost_action
+        account.action_trace[trace_index]["catboost_probabilities"] = (
+            catboost_probabilities
+        )
+        catboost_payload["selected_action"] = catboost_action
 
         qwen_trigger_events: list[MarketEvent] = []
         should_call_qwen = False
+        risk_preempted = hard_risk_reason is not None
         if event_monitor is not None:
-            position_state = (
-                "FLAT"
-                if account.futures.primary is None
-                else "HEDGED"
-                if account.futures.hedge is not None
-                else "PRIMARY_OPEN"
-            )
+            position_state = account.position_state()
             observed_events = event_monitor.observe(
-                time=time,
+                time=decision_at,
                 row=row,
                 position_state=position_state,
                 primary_side=(
@@ -570,25 +1233,16 @@ def _run_policy(
                 futures_drawdown_fraction=futures_drawdown,
             )
             account.market_events.extend(event.to_dict() for event in observed_events)
+            account.action_trace[trace_index]["market_event_types"] = [
+                event.event_type
+                for event in observed_events
+                if event.status == "TRIGGERED"
+            ]
             emergency_events = EventMonitor.emergency(observed_events)
             if emergency_events:
-                account.execute(
-                    "EXIT",
-                    time=time,
-                    mark=close_price,
-                    volume=float(row["volume"]),
-                )
-                account.decisions.append(
-                    {
-                        "time": time,
-                        "action": "RISK_EVENT_EXIT",
-                        "decision_price": close_price,
-                        "execution_price": close_price,
-                        "strategy": name,
-                    }
-                )
-                account.record_equity(time, close_price)
-                pending_action = "SKIP"
+                pending_action = "EXIT"
+                catboost_action = "RISK_EXIT"
+                risk_preempted = True
                 should_call_qwen = False
             elif qwen_adapter is not None:
                 qwen_trigger_events = EventMonitor.triggered_for_qwen(observed_events)
@@ -598,14 +1252,28 @@ def _run_policy(
             and qwen_request_count < qwen_max_requests
             and (
                 last_qwen_at is None
-                or time - last_qwen_at
+                or decision_at - last_qwen_at
                 >= pd.Timedelta(hours=qwen_interval_hours)
             )
             and (account.futures.primary is not None or pending_action != "SKIP")
         ):
             should_call_qwen = True
 
-        if should_call_qwen and qwen_adapter is not None:
+        if risk_preempted:
+            pending_action = "EXIT"
+            should_call_qwen = False
+            account.action_trace[trace_index].update(
+                {
+                    "applied_action": "EXIT",
+                    "selection_source": "RISK_ENGINE",
+                    "allowed_actions": [],
+                    "qwen_action": None,
+                    "qwen_valid": None,
+                    "qwen_confidence": None,
+                    "qwen_error": "QWEN_BYPASSED_RISK_ENGINE",
+                }
+            )
+        elif should_call_qwen and qwen_adapter is not None:
             market_features = {
                 key: float(row[key])
                 for key in (
@@ -620,20 +1288,40 @@ def _run_policy(
                     "4H.STOCH_14_3_3_V1.k",
                     "4H.STOCH_14_3_3_V1.d",
                     "1H.ADX_14_V1.adx",
+                    "1H.ATR_14_V1.atr",
+                    "1H.ATR_14_V1.atr_norm",
                 )
                 if key in row and pd.notna(row[key])
             }
+            current_risk = account.current_risk(close_price)
+            positions_payload = account.state_snapshot(close_price, decision_at)
             portfolio_payload = {
-                **state,
                 **(qwen_context or {}),
-                "position_state": (
-                    "FLAT" if account.futures.primary is None else "PRIMARY_OPEN"
-                ),
+                "position_state": account.position_state(),
                 "hedge_open": account.futures.hedge is not None,
+                "current_price": close_price,
+                "spot": {
+                    "fraction": state["spot_fraction"],
+                    "exposure_fraction": state["spot_exposure_fraction"],
+                },
+                "primary": positions_payload["primary"],
+                "hedge": positions_payload["hedge"],
+                "gross_exposure_fraction": state["gross_exposure_fraction"],
+                "net_exposure_fraction": state["net_exposure_fraction"],
+                "free_margin_fraction": state["free_margin_fraction"],
+                "used_margin": positions_payload["used_margin"],
+                "liquidation_distance_pct": state["liquidation_distance_pct"],
+                "averaging_count": state["averaging_count"],
+                "holding_hours": state["holding_hours"],
+                "fees_cumulative": state["fees_cumulative"],
+                "funding_cumulative": state["funding_cumulative"],
+                "remaining_thesis_risk_fraction": state[
+                    "remaining_thesis_risk_fraction"
+                ],
             }
-            catboost_action = pending_action
+            allowed_actions = _allowed_actions(account)
             decision = qwen_adapter.decide(
-                decision_at=time.isoformat(),
+                decision_at=decision_at.isoformat(),
                 market_features=market_features,
                 catboost=catboost_payload,
                 portfolio_state=portfolio_payload,
@@ -642,34 +1330,32 @@ def _run_policy(
                     "futures_drawdown_fraction": futures_drawdown,
                     "liquidation_distance_pct": state["liquidation_distance_pct"],
                     "free_margin_fraction": state["free_margin_fraction"],
+                    "remaining_thesis_risk_fraction": state[
+                        "remaining_thesis_risk_fraction"
+                    ],
+                    "current_worst_loss_fraction": current_risk[
+                        "worst_loss_fraction"
+                    ],
+                    "current_total_portfolio_loss_fraction": current_risk[
+                        "worst_total_portfolio_loss_fraction"
+                    ],
+                    "current_total_portfolio_passes": current_risk[
+                        "total_portfolio_passes"
+                    ],
                 },
                 fallback_action=pending_action,
                 market_events=[
-                    event.to_dict() for event in qwen_trigger_events
+                    _compact_market_event(event)
+                    for event in qwen_trigger_events
                 ],
+                allowed_actions=allowed_actions,
             )
             qwen_request_count += 1
-            last_qwen_at = time
+            last_qwen_at = decision_at
             applied_action = pending_action
             reason = None
             if decision.valid and decision.confidence >= 0.55:
-                if account.futures.primary is None:
-                    allowed = {"OPEN_LONG", "OPEN_SHORT", "HOLD", "SKIP"}
-                else:
-                    allowed = {
-                        "HOLD",
-                        "REDUCE_POSITION",
-                        "EXIT",
-                    }
-                    if account.futures.hedge is None:
-                        allowed.add("OPEN_HEDGE")
-                    else:
-                        allowed.add("CLOSE_HEDGE")
-                    if (
-                        account.futures.primary is not None
-                        and account.futures.primary.additions < 2
-                    ):
-                        allowed.add("AVERAGE_PRIMARY")
+                allowed = set(allowed_actions)
                 if decision.action in allowed:
                     applied_action = (
                         "SKIP" if decision.action in {"HOLD", "SKIP"} else decision.action
@@ -690,7 +1376,8 @@ def _run_policy(
             pending_action = applied_action
             account.qwen_events.append(
                 {
-                    "time": time,
+                    "time": decision_at,
+                    "decision_time": decision_at,
                     "request_id": decision.request_hash,
                     "qwen_action": decision.action,
                     "qwen_direction": decision.direction,
@@ -699,17 +1386,60 @@ def _run_policy(
                     "fallback_used": decision.fallback_used,
                     "validation_error": decision.validation_error,
                     "catboost_action": catboost_action,
+                    "allowed_actions": allowed_actions,
                     "applied_action": applied_action,
                     "application_reason": reason,
                     "latency_seconds": decision.latency_seconds,
                 }
             )
+            account.action_trace[trace_index].update(
+                {
+                    "qwen_action": decision.action,
+                    "qwen_valid": decision.valid,
+                    "qwen_confidence": decision.confidence,
+                    "qwen_error": decision.validation_error,
+                    "allowed_actions": allowed_actions,
+                    "applied_action": applied_action,
+                    "selection_source": (
+                        "QWEN"
+                        if applied_action != catboost_action
+                        else "CATBOOST"
+                    ),
+                }
+            )
+        elif not risk_preempted:
+            account.action_trace[trace_index].update(
+                {
+                    "applied_action": pending_action,
+                    "selection_source": "POLICY",
+                    "allowed_actions": _allowed_actions(account),
+                }
+            )
+        if pending_action != "SKIP":
+            pending_decision_at = decision_at
+            pending_decision_price = close_price
+            pending_trace_index = trace_index
+            account.action_trace[trace_index]["selected_execution_time"] = (
+                pd.Timestamp(frame.iloc[index + 1]["open_time"]).isoformat()
+                if index + 1 < len(frame)
+                else None
+            )
+            if pending_action == "OPEN_HEDGE":
+                account.hedge_proposed_count += 1
+        account.record_equity(decision_at, close_price)
 
     last = frame.iloc[-1]
     final_time = pd.Timestamp(last["open_time"])
     final_mark = float(last["close"])
     account._close("HEDGE", final_time, final_mark, "RUN_END")
     account._close("PRIMARY", final_time, final_mark, "RUN_END")
+    if pending_trace_index is not None:
+        account.action_trace[pending_trace_index].update(
+            {
+                "execution_time": None,
+                "order_reasons": ["PENDING_AT_RUN_END"],
+            }
+        )
     account.record_equity(final_time, final_mark)
     equity = (
         pd.DataFrame(account.equity_rows)
@@ -720,7 +1450,57 @@ def _run_policy(
     decisions = pd.DataFrame(account.decisions)
     qwen_events = pd.DataFrame(account.qwen_events)
     market_events = pd.DataFrame(account.market_events)
+    order_trace = pd.DataFrame(account.order_trace)
+    action_trace = pd.DataFrame(account.action_trace)
     final_equity = float(equity.iloc[-1]["equity"])
+    executed_orders = (
+        order_trace.loc[order_trace["executed"] == 1].copy()
+        if not order_trace.empty
+        else pd.DataFrame()
+    )
+    operation_counts = (
+        executed_orders.groupby(["role", "action"]).size().to_dict()
+        if not executed_orders.empty
+        else {}
+    )
+    operation_counts = {
+        f"{role}:{action}": int(count)
+        for (role, action), count in operation_counts.items()
+    }
+    turnover_by_operation = (
+        executed_orders.groupby(["role", "action"])["notional"].sum().to_dict()
+        if not executed_orders.empty
+        else {}
+    )
+    turnover_by_operation = {
+        f"{role}:{action}": float(value)
+        for (role, action), value in turnover_by_operation.items()
+    }
+    fees_by_operation = (
+        executed_orders.groupby(["role", "action"])["fee"].sum().to_dict()
+        if not executed_orders.empty
+        else {}
+    )
+    fees_by_operation = {
+        f"{role}:{action}": float(value)
+        for (role, action), value in fees_by_operation.items()
+    }
+    hedge_rejections = (
+        order_trace.loc[
+            (order_trace["role"] == "HEDGE")
+            & (order_trace["action"] == "OPEN_HEDGE")
+            & (order_trace["executed"] == 0),
+            "reason",
+        ]
+        .value_counts()
+        .to_dict()
+        if not order_trace.empty
+        else {}
+    )
+    hedge_rejection_reasons = {
+        str(reason): int(count)
+        for reason, count in hedge_rejections.items()
+    }
     metrics = {
         "strategy": name,
         "split": split_name,
@@ -734,6 +1514,41 @@ def _run_policy(
         "hedges": account.hedge_count,
         "averaging_count": account.averaging_count,
         "trade_count": len(trades) + account.spot_trade_count,
+        "primary_executed_orders": int(
+            (
+                (executed_orders["role"] == "PRIMARY")
+                if not executed_orders.empty
+                else pd.Series(dtype=bool)
+            ).sum()
+        ),
+        "hedge_executed_orders": int(
+            (
+                (executed_orders["role"] == "HEDGE")
+                if not executed_orders.empty
+                else pd.Series(dtype=bool)
+            ).sum()
+        ),
+        "spot_executed_orders": int(
+            (
+                (executed_orders["role"] == "SPOT")
+                if not executed_orders.empty
+                else pd.Series(dtype=bool)
+            ).sum()
+        ),
+        "executed_order_count": account.executed_order_count,
+        "completed_trade_cycles": account.primary_cycle_count,
+        "total_notional_turnover": account.total_notional_turnover,
+        "operation_counts": operation_counts,
+        "turnover_by_operation": turnover_by_operation,
+        "fees_by_operation": fees_by_operation,
+        "hedge_signal_count": account.hedge_signal_count,
+        "hedge_proposed_count": account.hedge_proposed_count,
+        "hedge_approved_count": account.hedge_approved_count,
+        "hedge_rejected_count": account.hedge_rejected_count,
+        "hedge_filled_count": account.hedge_filled_count,
+        "hedge_closed_count": account.hedge_closed_count,
+        "hedge_rejection_reasons": hedge_rejection_reasons,
+        "order_rejection_count": len(account.order_rejections),
         "spot_trade_count": account.spot_trade_count,
         "decision_count": len(decisions),
         "fees": (
@@ -766,18 +1581,7 @@ def _run_policy(
         )
         if not market_events.empty
         else 0,
-        "hedge_open_events": int(
-            (
-                (market_events["event_type"] == "CATBOOST_ACTION_CHANGE")
-                & (
-                    market_events["catboost"]
-                    .astype(str)
-                    .str.contains("OPEN_HEDGE")
-                )
-            ).sum()
-        )
-        if not market_events.empty
-        else 0,
+        "hedge_open_events": account.hedge_signal_count,
         "hedge_close_events": int(
             (market_events["event_type"] == "HEDGE_CLOSE_FAVORABLE").sum()
         )
@@ -795,6 +1599,8 @@ def _run_policy(
         metrics=metrics,
         qwen_events=qwen_events,
         market_events=market_events,
+        order_trace=order_trace,
+        action_trace=action_trace,
     )
 
 
@@ -1058,6 +1864,14 @@ def run_backtests(
         result.equity.to_parquet(output_root / f"{safe}_equity.parquet", index=False)
         result.trades.to_csv(output_root / f"{safe}_trades.csv", index=False)
         result.decisions.to_csv(output_root / f"{safe}_decisions.csv", index=False)
+        result.order_trace.to_csv(
+            output_root / f"{safe}_order_trace.csv",
+            index=False,
+        )
+        result.action_trace.to_csv(
+            output_root / f"{safe}_action_trace.csv",
+            index=False,
+        )
         if not result.qwen_events.empty:
             result.qwen_events.to_csv(
                 output_root / f"{safe}_qwen_events.csv",

@@ -186,3 +186,45 @@ def test_request_hash_cache_replays_without_inference() -> None:
         assert replay.cached
         assert replay.latency_seconds == 0
         assert second_client.generate_calls == 0
+
+
+def test_qwen_action_outside_current_state_falls_back_safely() -> None:
+    with _adapter_context(
+        {
+            "action": "CLOSE_HEDGE",
+            "direction": "NONE",
+            "confidence": 90,
+            "reason": "Close a hedge.",
+            "risk_assessment": "No hedge exists.",
+        }
+    ) as (adapter, root):
+        decision = adapter.decide(
+            decision_at="2020-01-01T00:00:00Z",
+            market_features={"rsi14": 50.0},
+            catboost={"management_probabilities": {"OPEN_HEDGE": 0.2}},
+            portfolio_state={
+                "position_state": "PRIMARY_OPEN",
+                "hedge_open": False,
+            },
+            risk={"risk_limit_fraction": 0.05},
+            fallback_action="HOLD",
+            allowed_actions=[
+                "HOLD",
+                "OPEN_HEDGE",
+                "AVERAGE_PRIMARY",
+                "REDUCE_POSITION",
+                "EXIT",
+            ],
+        )
+        assert not decision.valid
+        assert decision.fallback_used
+        assert decision.action == "HOLD"
+        assert "not allowed" in (decision.validation_error or "")
+        record = json.loads((root / "qwen.jsonl").read_text().splitlines()[-1])
+        assert record["request"]["allowed_actions"] == [
+            "HOLD",
+            "OPEN_HEDGE",
+            "AVERAGE_PRIMARY",
+            "REDUCE_POSITION",
+            "EXIT",
+        ]
