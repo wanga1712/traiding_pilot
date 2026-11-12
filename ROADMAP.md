@@ -20,6 +20,7 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | **PHASE** | Audit, repair, tests, and CatBoost-only regression complete |
 | **MODE** | Audit -> repair -> test -> historical regression |
 | **BASE COMMIT** | `218390d02019e71bda21122aef56b599d2429ff0` |
+| **GIT COMMIT** | `ee620a1cdeee78d129ffac56eff4647161b0a1b5` |
 | **REPORT** | [`docs/wip/TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1.md`](docs/wip/TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1.md) |
 | **LIVE TRADING** | DISABLED |
 | **RESULT** | 9 confirmed defects; 8 fixed; 52 after-fix HEDGE fills/closes; Qwen after-fix full PnL blocked by event volume |
