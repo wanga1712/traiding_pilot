@@ -1,64 +1,65 @@
-# WIP - TRADING-PILOT-ACTION-LEARNING-AUDIT-1
+# WIP - TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1
 
-STATUS=REVIEW
-PHASE=REVIEW
+STATUS=ACTIVE
+PHASE=EVENT_DRIVEN_RUN
 STARTED_AT=2026-11-12
-REVIEWED_AT=2026-11-12
-MODE=AUDIT / READ-ONLY / NO TRAINING
+MODE=EVENT-DRIVEN HISTORICAL SIMULATION
 MODEL_RETRAINING=NO
 QWEN_FINE_TUNING=NO
 LIVE_TRADING=DISABLED
+OOS_OPENED=NO
 
-## Outcome
+## Frozen event policy
 
-The audit corrected the action-coverage diagnosis and identified why the
-position-management model does not genuinely optimize actions.
+- Qwen is triggered by significant events, not a calendar interval.
+- No annual call limit.
+- Noncritical cooldown: 4 hours.
+- Dedup window: 24 hours.
+- Primary adverse: 1 ATR; rearm at 0.5 ATR.
+- Averaging events: 2 and 4 ATR.
+- Strong-entry event: 0.80 CatBoost probability.
+- Probability shift: 0.30.
+- Margin shift: 20 percentage points.
+- Liquidation-distance shift: 3 percentage points.
+- Risk warning/emergency: 3% / 5%.
+- Liquidation warning/emergency: 5% / 3%.
+- Qwen timeout: 30 seconds; safe fallback is the CatBoost action.
+- Risk-emergency events bypass Qwen and execute through the Risk Engine.
 
-- CLOSE_HEDGE is present: 716 TRAIN and 1,005 SELECTION examples.
-- The missing action is REDUCE_POSITION.
-- Management predicts CLOSE_HEDGE zero times; recall is 0%.
-- Entry model logloss 0.9218 is worse than class prior 0.8714.
-- Risk model improvement over train-mean MAE is negligible.
-- Qwen saw 103/104 FLAT states and never received an open hedge.
-- Existing labels compare simplified terminal outcomes, not same-state
-  counterfactual action simulations.
+Minute mark/futures extremes are used inside each closed 1H decision interval.
+Higher-timeframe features remain causal.
 
-## Constraints preserved
+## Compared policies
 
-- No CatBoost training.
-- No Qwen inference or fine-tuning during this audit.
-- No threshold search.
-- No frozen model, dataset, Qwen log, OOS, confirmation, or S7 changes.
-- No live orders or deployment.
+- `CATBOOST_ONLY`
+- `CATBOOST_QWEN_336H`
+- `CATBOOST_QWEN_EVENT_DRIVEN`
 
-The prior GPU-policy WIP remains `REVIEW` and is not rewritten.
-
-## Evidence
-
-- `docs/wip/TRADING-PILOT-ACTION-LEARNING-AUDIT-1.md`
-- `docs/wip/TRADING-PILOT-ACTION-LEARNING-AUDIT-1/evidence/action_learning_audit_v1.json`
-- `phase3_staging/crypto_trading_bot/research_v2/gpu_ai_policy/action_audit.py`
+Both 60/40 and 40/60 are required. OOS stays locked and 2020-2021 remain
+DEVELOPMENT/regression only.
 
 ## RETURN
 
 ```text
-WIP=TRADING-PILOT-ACTION-LEARNING-AUDIT-1
-STATUS=REVIEW
-ACTIONS_OBSERVED=HOLD_6320;OPEN_HEDGE_210;CLOSE_HEDGE_4273;AVERAGE_1891;REDUCE_0;EXIT_4318
-CLOSE_HEDGE_COUNT=4273_TOTAL;716_TRAIN;1005_SELECTION
-CLOSE_HEDGE_CAUSE=PRESENT_IN_DATA;MANAGEMENT_RECALL_0;QWEN_NEVER_SAW_HEDGE_OPEN
-ENTRY_LABEL_QUALITY=ACCURACY_49.91%;LOGLOSS_0.9218_WORSE_THAN_PRIOR_0.8714;SKIP_RECALL_0
-HOLD_LABEL_QUALITY=MODEL_RECALL_78.25%;MEDIAN_UTILITY_MARGIN_4.66
-AVERAGE_LABEL_QUALITY=MODEL_RECALL_68.57%;MEDIAN_UTILITY_MARGIN_1.68
-EXIT_LABEL_QUALITY=MODEL_RECALL_33.58%;MEDIAN_UTILITY_MARGIN_7.98
-FEATURE_ADVANTAGE=ENTRY_NONE;RISK_IMMATERIAL;MANAGEMENT_LOGLOSS_IMPROVES_BUT_ACTIONS_COLLAPSE
-QWEN_INPUT_CAUSALITY=PASS;LATE_STATE_COVERAGE_MISSING
-QWEN_ALLOWED_ACTIONS=9_ADAPTER_ACTIONS;STATE_MASKED_BY_POLICY
-QWEN_ACTUAL_ACTIONS=85_OPEN_SHORT;17_OPEN_LONG;1_HOLD
-RECOMMENDED_ACTION_SCHEMA=STATE_ACTION_OUTCOME_TRIPLETS;COUNTERFACTUAL_BRANCHES;RANK_UTILITY;RISK_ENGINE_VETO
-MODIFICATIONS_TO_FROZEN=NO
-TRAINING_RUN=NO
-QWEN_FINE_TUNING=NO
+WIP=TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1
+STATUS=ACTIVE
+PHASE=EVENT_DRIVEN_RUN
+LOCAL_BRANCH=wip/trading-pilot-event-driven-qwen-policy-1
+MARKET_EVENTS_DETECTED=pending
+QWEN_CALLS=pending
+QWEN_ACTION_CHANGES=pending
+HEDGE_OPEN_EVENTS=pending
+HEDGE_CLOSE_EVENTS=pending
+RISK_EVENTS=pending
+FALLBACKS=pending
+MEDIAN_LATENCY=pending
+P90_LATENCY=pending
+CATBOOST_ONLY_EQUITY=pending
+QWEN_336H_EQUITY=pending
+QWEN_EVENT_DRIVEN_EQUITY=pending
+QWEN_ADDED_VALUE=pending
+LIQUIDATIONS=pending
+MAX_DRAWDOWN=pending
 OOS_OPENED=NO
 LIVE_TRADING=NO
 NEXT_WIP=none

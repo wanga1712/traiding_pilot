@@ -15,17 +15,16 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `TRADING-PILOT-ACTION-LEARNING-AUDIT-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | REVIEW - action learning audit complete |
-| **MODE** | Audit / read-only / no training |
+| **WIP** | `TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | Event-driven historical run |
+| **MODE** | Event-driven historical simulation |
 | **AUTHORIZATION** | User approved 2026-11-12 |
-| **RESULT** | CLOSE_HEDGE present; REDUCE absent; management action collapse; no validated entry edge |
-| **REPORT** | [`docs/wip/TRADING-PILOT-ACTION-LEARNING-AUDIT-1.md`](docs/wip/TRADING-PILOT-ACTION-LEARNING-AUDIT-1.md) |
+| **REPORT** | [`docs/wip/TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1.md`](docs/wip/TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1.md) |
 | **LIVE TRADING** | DISABLED |
 
-Previous GPU policy remains unchanged in `REVIEW`: no material validated edge,
-and Qwen validator added `0.00 USDT`.
+Previous action-learning audit remains unchanged in `REVIEW`: CLOSE_HEDGE is
+present, REDUCE_POSITION is absent, and management action coverage collapsed.
 
 **Immediate sequence (user-authorized order; do not activate without acceptance):**  
 `MULTITF-INDICATOR-PARAMETER-SEARCH-1` → `MULTITF-COMPOSITE-SIGNAL-SEARCH-1` → `PROVISIONAL-FUTURES-EXECUTION-SIMULATOR-1`
@@ -1623,6 +1622,7 @@ none (end of planned chain)
 | TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1 | REVIEW | Historical simulation |
 | TRADING-PILOT-GPU-AI-TRADING-POLICY-1 | REVIEW | GPU AI policy |
 | TRADING-PILOT-ACTION-LEARNING-AUDIT-1 | REVIEW | Action and label audit |
+| TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1 | ACTIVE | Event-driven Qwen policy |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
