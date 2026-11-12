@@ -1,8 +1,9 @@
 # WIP=TRADING-PILOT-GPU-AI-TRADING-POLICY-1
 
-STATUS=REVIEW
-PHASE=REVIEW
+STATUS=ACTIVE
+PHASE=QWEN_POLICY_ADAPTER_PREFLIGHT
 STARTED_AT=2026-11-11
+ADDENDUM_AUTHORIZED_AT=2026-11-12
 MODE=REPAIR -> DATASET -> GPU TRAINING -> BACKTEST
 MODEL=NEW_TRAIN_FROM_SCRATCH
 COMPUTE=S13_CUDA_REQUIRED
@@ -22,6 +23,8 @@ OOS_OPENED=NO
 - The completed `TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1` remains
   `REVIEW`; its results are an immutable negative baseline.
 - No real trading, deployment, service restart, or automatic follow-up WIP.
+- The 2026-11-12 Qwen addendum authorizes local inference and comparison only.
+  CatBoost retraining and frozen research changes remain out of scope.
 
 ## Goal
 

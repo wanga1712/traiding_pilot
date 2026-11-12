@@ -16,8 +16,8 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | Field | Value |
 |---|---|
 | **WIP** | `TRADING-PILOT-GPU-AI-TRADING-POLICY-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | REVIEW - no material validated edge |
+| **STATUS** | ACTIVE |
+| **PHASE** | Qwen policy adapter preflight |
 | **MODE** | Repair -> dataset -> GPU training -> backtest |
 | **AUTHORIZATION** | User approved 2026-11-11 |
 | **MODEL** | New CatBoost models trained from scratch on CUDA |
@@ -27,6 +27,7 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | **GATE 3** | PASS - entry, risk, and management GPU models |
 | **GATE 4/5** | PASS - frozen policy and 2020/2021 DEVELOPMENT comparison |
 | **RESULT** | AI did not beat Buy & Hold; added value immaterial |
+| **ADDENDUM** | 2026-11-12 local Qwen comparison authorized |
 | **REPORT** | [`docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1.md`](docs/wip/TRADING-PILOT-GPU-AI-TRADING-POLICY-1.md) |
 | **LIVE TRADING** | DISABLED |
 
