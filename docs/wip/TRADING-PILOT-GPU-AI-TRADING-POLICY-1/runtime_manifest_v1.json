@@ -2716,8 +2716,592 @@
     "gate4/portfolio_metrics_v1.csv": {
       "bytes": 6752,
       "sha256": "fd2b008dff772254f7c4fce93eedca4781101d0b8122dfb8fe8d08dfbb281c79"
+    },
+    "qwen_preflight_v2/qwen_contract_preflight_v1.json": {
+      "bytes": 3307,
+      "sha256": "9aaef4be5ab6ef55d6951008b1a35fe89734625aada59a57a9736f570766ecfb"
+    },
+    "qwen_preflight_v2/qwen_contract_test_v1.jsonl": {
+      "bytes": 9234,
+      "sha256": "7076b9dd383c687c751ee4e89663981bfb681a9a68f6a4adabd92955f319bec8"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_40_HOLD_decisions.csv": {
+      "bytes": 271391,
+      "sha256": "0292871f43395a35b838b08a2bbf30c3c314f03f232f0b8d58f51fdef858525b"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_40_HOLD_equity.parquet": {
+      "bytes": 381212,
+      "sha256": "5727ff93b665688dced43639ed81710814a73a29535b4abb3899f3dc22d3471d"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_40_HOLD_trades.csv": {
+      "bytes": 551377,
+      "sha256": "0a46e53398bc50a28e2c187a6a967d28dfc331c34b444bdae080dec923719ccf"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_40_SWING_decisions.csv": {
+      "bytes": 271397,
+      "sha256": "0a1e0582808d39d09a0f76f170d3fd8a76e5cef48e3f7a7f5feac35b12d72015"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_40_SWING_equity.parquet": {
+      "bytes": 309038,
+      "sha256": "a23e0155ad634f96a55dd2714f60468ac635620a656fd99ddc73fc53e7b0a5de"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_40_SWING_trades.csv": {
+      "bytes": 561827,
+      "sha256": "88d8ade8454f3d6e7ac4a7afe4c33371c857c56698d1a3f75b84a0f570b2d400"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_60_HOLD_decisions.csv": {
+      "bytes": 271281,
+      "sha256": "7f47dd881810b91206ec714bc3f818e782de15d0eaf7f86c22c02a819da17be4"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_60_HOLD_equity.parquet": {
+      "bytes": 366279,
+      "sha256": "efe22ed7e52211e73871c227c0eff93a56de4a95ae9a27bcafad2b5941c422ec"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_60_HOLD_trades.csv": {
+      "bytes": 479312,
+      "sha256": "4a31d34358ce3f4e90467f7be6b9eb634db1afa4eeabd3f2a56f45cd26b90e5a"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_60_SWING_decisions.csv": {
+      "bytes": 303040,
+      "sha256": "b71d41a0c4b48af280893a34f0c61c010bfa8788e121a7c6abce41656f152851"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_60_SWING_equity.parquet": {
+      "bytes": 309244,
+      "sha256": "72b00208905f99b7fc79c264267d8fec8b1ca476c48651bca9eb8b76ce74457b"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_60_SWING_trades.csv": {
+      "bytes": 576619,
+      "sha256": "91d630bdd5d5dc3c578c5a419505cc6f15ea90c7b3c51da5f657ffb3d4dd7a2d"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_40_HOLD_decisions.csv": {
+      "bytes": 382901,
+      "sha256": "a0de567872d5a52b3849dd33a465ef43fc91750f53b5c363f43ea3ce9daa6e69"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_40_HOLD_equity.parquet": {
+      "bytes": 381430,
+      "sha256": "750dd545787f4e5aa42ce5d06e40f63382db5662b296a3647bb6fcc6906806bd"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_40_HOLD_trades.csv": {
+      "bytes": 636484,
+      "sha256": "0628a1ea9fb1fe3a69e70fdeebb8aaaa08be17957d45cb1a3ae801fc85b6e4e1"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_40_SWING_decisions.csv": {
+      "bytes": 380383,
+      "sha256": "554ce101344e1b3996e2767ba23c37984eedeccd087447d34970c000408a54ad"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_40_SWING_equity.parquet": {
+      "bytes": 328096,
+      "sha256": "7fd2b21ea69c3646dd5bd7d61c6ce10abf87a6b997f0a5b373f35e595856c551"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_40_SWING_trades.csv": {
+      "bytes": 716486,
+      "sha256": "6f7bf0a737c549e3b1854a1becdb51136f2ca7c7107875fe2eed7acb4e754573"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_60_HOLD_decisions.csv": {
+      "bytes": 377307,
+      "sha256": "a8a22f4f48328b87ba1b15b3d36460bd78ea19cf28896755e7d3e00caf176546"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_60_HOLD_equity.parquet": {
+      "bytes": 353019,
+      "sha256": "e66bc2814bb93e2100edafa8bf4f60a4ff93a6c29a4dd790e382225efcdc53fd"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_60_HOLD_trades.csv": {
+      "bytes": 517526,
+      "sha256": "b66f30c80da30dabbd233d0c87fd6e83a17f14ddf74e56a2f0a5512e09af0e73"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_60_SWING_decisions.csv": {
+      "bytes": 381549,
+      "sha256": "f91cc404a5dbbae94d4890ec192c53824b8fe1e6fa2c64c5d91a1edc0a3a5287"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_60_SWING_equity.parquet": {
+      "bytes": 300075,
+      "sha256": "11bc64494d401c5262cccf7b800e748e44613d8fdb6dbd933e98879936132eeb"
+    },
+    "gate6_qwen_v2/RUN1_AI_HEDGE_AVG_60_SWING_trades.csv": {
+      "bytes": 662034,
+      "sha256": "e42fa6b88f4094f6949a349b4509a2a93eb41b2709c580115c32fee2f4a33a13"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_40_HOLD_decisions.csv": {
+      "bytes": 284508,
+      "sha256": "458ac56e981caa2480bb600d73733a139a1f8b1842a21eeb12aa181b37a28de1"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_40_HOLD_equity.parquet": {
+      "bytes": 381295,
+      "sha256": "9432638241f8d499a4191dea9ee7f8eaa32c32a266b005279f8f75129c8e9248"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_40_HOLD_trades.csv": {
+      "bytes": 541031,
+      "sha256": "80bb0fcbaaf50b1e16835bab3c7ddee84c8022addb589d2760df2eb8a222ffb9"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_40_SWING_decisions.csv": {
+      "bytes": 284609,
+      "sha256": "a77001333d8a0059493b2e7d783776ddcaebdc2771bff88543bdec78bcf555e3"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_40_SWING_equity.parquet": {
+      "bytes": 316232,
+      "sha256": "a57c6832112f0419716cf7991cb73b347f26569969667e9f9fcc236dee540f8a"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_40_SWING_trades.csv": {
+      "bytes": 550110,
+      "sha256": "dde4841c4b57d4b1a943d249aa98fa9e13fc42054ea48588e79218756c908a62"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_60_HOLD_decisions.csv": {
+      "bytes": 284857,
+      "sha256": "a22a403af4e18b3bcdb33bf4719a825e2176d663fa512d2cacc35fcc6674523f"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_60_HOLD_equity.parquet": {
+      "bytes": 366057,
+      "sha256": "b3ba53e3d5f5329ca1173bd44daea24db2052b7412c2079a6ea18d25dc2a5cc8"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_60_HOLD_trades.csv": {
+      "bytes": 473183,
+      "sha256": "85dd44b4461357fb584e30ae65f833b8549fb3c7b71d3d38fb392daa4422898e"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_60_SWING_decisions.csv": {
+      "bytes": 284609,
+      "sha256": "a77001333d8a0059493b2e7d783776ddcaebdc2771bff88543bdec78bcf555e3"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_60_SWING_equity.parquet": {
+      "bytes": 315881,
+      "sha256": "7844255910fda9325fc739899f058daea82e2472ea4a137b66a8e0535c154ad6"
+    },
+    "gate6_qwen_v2/RUN1_AI_NO_HEDGE_60_SWING_trades.csv": {
+      "bytes": 548813,
+      "sha256": "5f5b2ff3b8912aff4478d80799ba8f442d8fbebbde92872ade8ba903c991b76f"
+    },
+    "gate6_qwen_v2/RUN1_BUY_HOLD_40_HOLD_decisions.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate6_qwen_v2/RUN1_BUY_HOLD_40_HOLD_equity.parquet": {
+      "bytes": 228536,
+      "sha256": "d758aef28cb86742ed2c8248bca7dc1a030b2a971eb83391b4641b734b85dba7"
+    },
+    "gate6_qwen_v2/RUN1_BUY_HOLD_40_HOLD_trades.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate6_qwen_v2/RUN1_BUY_HOLD_60_HOLD_decisions.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate6_qwen_v2/RUN1_BUY_HOLD_60_HOLD_equity.parquet": {
+      "bytes": 228536,
+      "sha256": "9f4dbcf66bc7bea51bae9a5d17302a9b21700db00bb580494fb0dd802b3ad3bd"
+    },
+    "gate6_qwen_v2/RUN1_BUY_HOLD_60_HOLD_trades.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_ONLY_40_HOLD_decisions.csv": {
+      "bytes": 389189,
+      "sha256": "7497d96de14edaf8a523151c2d0fb4df58c0fa71d28f11ebbb6616fab2adaa5f"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_ONLY_40_HOLD_equity.parquet": {
+      "bytes": 381430,
+      "sha256": "750dd545787f4e5aa42ce5d06e40f63382db5662b296a3647bb6fcc6906806bd"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_ONLY_40_HOLD_trades.csv": {
+      "bytes": 636484,
+      "sha256": "0628a1ea9fb1fe3a69e70fdeebb8aaaa08be17957d45cb1a3ae801fc85b6e4e1"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_ONLY_60_HOLD_decisions.csv": {
+      "bytes": 383460,
+      "sha256": "193482d6607be50c5f5c6fb77d0c7c90724a3568164a861567553869d8bb0223"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_ONLY_60_HOLD_equity.parquet": {
+      "bytes": 353019,
+      "sha256": "e66bc2814bb93e2100edafa8bf4f60a4ff93a6c29a4dd790e382225efcdc53fd"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_ONLY_60_HOLD_trades.csv": {
+      "bytes": 517526,
+      "sha256": "b66f30c80da30dabbd233d0c87fd6e83a17f14ddf74e56a2f0a5512e09af0e73"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_PLUS_QWEN_40_HOLD_decisions.csv": {
+      "bytes": 420629,
+      "sha256": "69992d0a09cf3f2a9d87d16b02212db3e5b4b5beb645d2e5a7367ba689a25362"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_PLUS_QWEN_40_HOLD_equity.parquet": {
+      "bytes": 381430,
+      "sha256": "750dd545787f4e5aa42ce5d06e40f63382db5662b296a3647bb6fcc6906806bd"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_PLUS_QWEN_40_HOLD_qwen_events.csv": {
+      "bytes": 4449,
+      "sha256": "004b8c69f20a292e4f18279aba86fbd132d539172edf9e0da743b760ccf2ccee"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_PLUS_QWEN_40_HOLD_trades.csv": {
+      "bytes": 636484,
+      "sha256": "0628a1ea9fb1fe3a69e70fdeebb8aaaa08be17957d45cb1a3ae801fc85b6e4e1"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_PLUS_QWEN_60_HOLD_decisions.csv": {
+      "bytes": 414225,
+      "sha256": "2ad8dd12705337f6c7304534405a6fb891c1af6aad400ea785dd1689c4da0a5b"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_PLUS_QWEN_60_HOLD_equity.parquet": {
+      "bytes": 353019,
+      "sha256": "e66bc2814bb93e2100edafa8bf4f60a4ff93a6c29a4dd790e382225efcdc53fd"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_PLUS_QWEN_60_HOLD_qwen_events.csv": {
+      "bytes": 4334,
+      "sha256": "318034075ab2bea0fc003787ffda4ca78b93d76ef491b210f56c9b10e302da9a"
+    },
+    "gate6_qwen_v2/RUN1_CATBOOST_PLUS_QWEN_60_HOLD_trades.csv": {
+      "bytes": 517526,
+      "sha256": "b66f30c80da30dabbd233d0c87fd6e83a17f14ddf74e56a2f0a5512e09af0e73"
+    },
+    "gate6_qwen_v2/RUN1_INDICATORS_ONLY_40_HOLD_decisions.csv": {
+      "bytes": 454263,
+      "sha256": "1f94c59e09c7457c61bffd5b72eed166da5e2aae88ce64355f53d38fb9113c6c"
+    },
+    "gate6_qwen_v2/RUN1_INDICATORS_ONLY_40_HOLD_equity.parquet": {
+      "bytes": 306478,
+      "sha256": "2bacf9d23589ed19dbd9240800fd5819528ac0a3d6b1c9989c5c3e71df8a6fb1"
+    },
+    "gate6_qwen_v2/RUN1_INDICATORS_ONLY_40_HOLD_trades.csv": {
+      "bytes": 320024,
+      "sha256": "0cbb3420845378bc63799c3885068ffd5a570cfb8351114d0059e4a364eae6ef"
+    },
+    "gate6_qwen_v2/RUN1_INDICATORS_ONLY_60_HOLD_decisions.csv": {
+      "bytes": 453074,
+      "sha256": "f60b07c84be66b2e32047aa2b14c05cd1cd54297fdc4f9a8eb0695b04ae41110"
+    },
+    "gate6_qwen_v2/RUN1_INDICATORS_ONLY_60_HOLD_equity.parquet": {
+      "bytes": 271239,
+      "sha256": "f4c9336c19c1907dbc4327b18625f2224365eefccb8d03da5ae8896a00926785"
+    },
+    "gate6_qwen_v2/RUN1_INDICATORS_ONLY_60_HOLD_trades.csv": {
+      "bytes": 168924,
+      "sha256": "3fd3f1869567c5485239f5db6e65131c2b63511b8b7cd14e2670ab40fc92bc62"
+    },
+    "gate6_qwen_v2/RUN1_SMA_BASELINE_40_HOLD_decisions.csv": {
+      "bytes": 289342,
+      "sha256": "e419010013c019e836221495c7256dca1cad44a3b224448a6cecc3fa5a6072ff"
+    },
+    "gate6_qwen_v2/RUN1_SMA_BASELINE_40_HOLD_equity.parquet": {
+      "bytes": 338247,
+      "sha256": "d5be0a7b851714a20f707fbed4b5d420016f385ca1b31c60a40763fba36642ef"
+    },
+    "gate6_qwen_v2/RUN1_SMA_BASELINE_40_HOLD_trades.csv": {
+      "bytes": 390699,
+      "sha256": "85630da2424991cb8fa0acee77835f7968f2d74416f138a5c748bea48c90c667"
+    },
+    "gate6_qwen_v2/RUN1_SMA_BASELINE_60_HOLD_decisions.csv": {
+      "bytes": 288296,
+      "sha256": "07751137bd850e9f87e4fa686bd169d25dcc856d2fb2a131cd57cf6465a80f66"
+    },
+    "gate6_qwen_v2/RUN1_SMA_BASELINE_60_HOLD_equity.parquet": {
+      "bytes": 309929,
+      "sha256": "bfe2277105db02ec378623d4160e99f4c81a2b97db0f4e032ece1931e1e561cf"
+    },
+    "gate6_qwen_v2/RUN1_SMA_BASELINE_60_HOLD_trades.csv": {
+      "bytes": 279294,
+      "sha256": "d762765e0c011935790a03a25fe6d0357b4906636af32a55897e39a207855c2b"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_40_HOLD_decisions.csv": {
+      "bytes": 366618,
+      "sha256": "390dce595ce5725ab0feb425801f88ddec9fe2830fc562034c819fe316933f95"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_40_HOLD_equity.parquet": {
+      "bytes": 284329,
+      "sha256": "171e09ebe03e823816768cf069d255d0e1d6f3598a2609c39354833a86e2e0e5"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_40_HOLD_trades.csv": {
+      "bytes": 171912,
+      "sha256": "1a28324900811fd7538a05e2c645c3a3def0c3a55e0bc2567326bc8440eb93e6"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_40_SWING_decisions.csv": {
+      "bytes": 365697,
+      "sha256": "18d3d6a24731be1dc14aeec63793cf5722124665cc712a565be4f993dd27e71a"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_40_SWING_equity.parquet": {
+      "bytes": 164477,
+      "sha256": "8c4f1b618d5ba250bc2eb1c17a37e7d81698efc9434d26a9a4ce0b3f4c64fcf2"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_40_SWING_trades.csv": {
+      "bytes": 284093,
+      "sha256": "0d41889de9dc337139235e2d6472f96156a4d8af16e110b435bc11f1e5c712e6"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_60_HOLD_decisions.csv": {
+      "bytes": 367044,
+      "sha256": "9bc6282a1f4d135603ee9449a1b5067447a299a5b923e23909c2b0894b95d7d8"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_60_HOLD_equity.parquet": {
+      "bytes": 265392,
+      "sha256": "296efb9622eb443d7f90a30953745bd50a1fc837778ec46915ea9c5ae163eb2b"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_60_HOLD_trades.csv": {
+      "bytes": 82785,
+      "sha256": "e8fb2979e7ca66740383e90afe612cfad0589ae1e0c6934a0fe229443fde1515"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_60_SWING_decisions.csv": {
+      "bytes": 367219,
+      "sha256": "63807aaa720e9b3a32bf2c80f895adb443fa3d06de5d4ac8338efb7377122eb5"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_60_SWING_equity.parquet": {
+      "bytes": 114815,
+      "sha256": "0c58dc158bef0c80a57c8c33f1a68fecd2ee28597d2dfb752506cca20ff80e42"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_60_SWING_trades.csv": {
+      "bytes": 119827,
+      "sha256": "7166994f0819a8efd0c739ec1bdf26ce7eedfe1e21526b8284d1c9d2831c4fa2"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_40_HOLD_decisions.csv": {
+      "bytes": 390658,
+      "sha256": "16281399861641f11f94488b3446e51e1918ea472a49e3af89197c473253f41c"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_40_HOLD_equity.parquet": {
+      "bytes": 284329,
+      "sha256": "171e09ebe03e823816768cf069d255d0e1d6f3598a2609c39354833a86e2e0e5"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_40_HOLD_trades.csv": {
+      "bytes": 171912,
+      "sha256": "1a28324900811fd7538a05e2c645c3a3def0c3a55e0bc2567326bc8440eb93e6"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_40_SWING_decisions.csv": {
+      "bytes": 389861,
+      "sha256": "1aa42998f5da116627c0ec973a8ef74122407d5ed7b4afb2fd82fb8ff5ce6d65"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_40_SWING_equity.parquet": {
+      "bytes": 164477,
+      "sha256": "8c4f1b618d5ba250bc2eb1c17a37e7d81698efc9434d26a9a4ce0b3f4c64fcf2"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_40_SWING_trades.csv": {
+      "bytes": 284093,
+      "sha256": "0d41889de9dc337139235e2d6472f96156a4d8af16e110b435bc11f1e5c712e6"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_60_HOLD_decisions.csv": {
+      "bytes": 390964,
+      "sha256": "1e4df45501331c43d265a0a4c87fadbe7902cf335c619539afdf8ab2a04176ed"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_60_HOLD_equity.parquet": {
+      "bytes": 265392,
+      "sha256": "296efb9622eb443d7f90a30953745bd50a1fc837778ec46915ea9c5ae163eb2b"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_60_HOLD_trades.csv": {
+      "bytes": 82785,
+      "sha256": "e8fb2979e7ca66740383e90afe612cfad0589ae1e0c6934a0fe229443fde1515"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_60_SWING_decisions.csv": {
+      "bytes": 391211,
+      "sha256": "6f32d2efe8083f99f5bf2a36c0ebade3ff7fd6dfb842f3afa38bc31fbbb22a43"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_60_SWING_equity.parquet": {
+      "bytes": 114815,
+      "sha256": "0c58dc158bef0c80a57c8c33f1a68fecd2ee28597d2dfb752506cca20ff80e42"
+    },
+    "gate6_qwen_v2/RUN2_AI_HEDGE_AVG_60_SWING_trades.csv": {
+      "bytes": 119827,
+      "sha256": "7166994f0819a8efd0c739ec1bdf26ce7eedfe1e21526b8284d1c9d2831c4fa2"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_40_HOLD_decisions.csv": {
+      "bytes": 384648,
+      "sha256": "8b6cbdf21086ec4b0b0cc4c0748713c6778e28a238f30d63f4cf17c50705d3a5"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_40_HOLD_equity.parquet": {
+      "bytes": 284329,
+      "sha256": "171e09ebe03e823816768cf069d255d0e1d6f3598a2609c39354833a86e2e0e5"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_40_HOLD_trades.csv": {
+      "bytes": 171912,
+      "sha256": "1a28324900811fd7538a05e2c645c3a3def0c3a55e0bc2567326bc8440eb93e6"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_40_SWING_decisions.csv": {
+      "bytes": 383820,
+      "sha256": "a47a1bb8bd7c136970ebceda59993d96d5536d297ffb3d1d9da000e6c44ca431"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_40_SWING_equity.parquet": {
+      "bytes": 164477,
+      "sha256": "8c4f1b618d5ba250bc2eb1c17a37e7d81698efc9434d26a9a4ce0b3f4c64fcf2"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_40_SWING_trades.csv": {
+      "bytes": 284093,
+      "sha256": "0d41889de9dc337139235e2d6472f96156a4d8af16e110b435bc11f1e5c712e6"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_60_HOLD_decisions.csv": {
+      "bytes": 384984,
+      "sha256": "5dce5b5d04a14094ddcc1465bd98f9c22847d807e55a33659bb5da6fd2e76c9d"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_60_HOLD_equity.parquet": {
+      "bytes": 265392,
+      "sha256": "296efb9622eb443d7f90a30953745bd50a1fc837778ec46915ea9c5ae163eb2b"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_60_HOLD_trades.csv": {
+      "bytes": 82785,
+      "sha256": "e8fb2979e7ca66740383e90afe612cfad0589ae1e0c6934a0fe229443fde1515"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_60_SWING_decisions.csv": {
+      "bytes": 385213,
+      "sha256": "80f393d80e95865e7db39bc5aefa823bb3955115572c248193a5d9687ab3a9b8"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_60_SWING_equity.parquet": {
+      "bytes": 114815,
+      "sha256": "0c58dc158bef0c80a57c8c33f1a68fecd2ee28597d2dfb752506cca20ff80e42"
+    },
+    "gate6_qwen_v2/RUN2_AI_NO_HEDGE_60_SWING_trades.csv": {
+      "bytes": 119827,
+      "sha256": "7166994f0819a8efd0c739ec1bdf26ce7eedfe1e21526b8284d1c9d2831c4fa2"
+    },
+    "gate6_qwen_v2/RUN2_BUY_HOLD_40_HOLD_decisions.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate6_qwen_v2/RUN2_BUY_HOLD_40_HOLD_equity.parquet": {
+      "bytes": 248387,
+      "sha256": "30c4925fa8a06f8741e33424c0d044622ae7e5a7066e5f3fca54a798aa5d7977"
+    },
+    "gate6_qwen_v2/RUN2_BUY_HOLD_40_HOLD_trades.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate6_qwen_v2/RUN2_BUY_HOLD_60_HOLD_decisions.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate6_qwen_v2/RUN2_BUY_HOLD_60_HOLD_equity.parquet": {
+      "bytes": 248387,
+      "sha256": "dde391027d3a08335394044a62d750b0d6cace27b1d740cd754b572b5f51b09f"
+    },
+    "gate6_qwen_v2/RUN2_BUY_HOLD_60_HOLD_trades.csv": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_ONLY_40_HOLD_decisions.csv": {
+      "bytes": 396668,
+      "sha256": "f0f1cd007946076ba39ff1eff5b34adf3139334b5b76572947538df3b6e4b2e5"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_ONLY_40_HOLD_equity.parquet": {
+      "bytes": 284329,
+      "sha256": "171e09ebe03e823816768cf069d255d0e1d6f3598a2609c39354833a86e2e0e5"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_ONLY_40_HOLD_trades.csv": {
+      "bytes": 171912,
+      "sha256": "1a28324900811fd7538a05e2c645c3a3def0c3a55e0bc2567326bc8440eb93e6"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_ONLY_60_HOLD_decisions.csv": {
+      "bytes": 396944,
+      "sha256": "16eb98bcc4e8eac304eb4e5c2006e270b5c68c7dcd9fab93bba8da9adcf3f21e"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_ONLY_60_HOLD_equity.parquet": {
+      "bytes": 265392,
+      "sha256": "296efb9622eb443d7f90a30953745bd50a1fc837778ec46915ea9c5ae163eb2b"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_ONLY_60_HOLD_trades.csv": {
+      "bytes": 82785,
+      "sha256": "e8fb2979e7ca66740383e90afe612cfad0589ae1e0c6934a0fe229443fde1515"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_PLUS_QWEN_40_HOLD_decisions.csv": {
+      "bytes": 426718,
+      "sha256": "c96f7869da771aaf2896fbdd30b8524960b260e64bf9beb02edebb0d11bc2f63"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_PLUS_QWEN_40_HOLD_equity.parquet": {
+      "bytes": 284329,
+      "sha256": "171e09ebe03e823816768cf069d255d0e1d6f3598a2609c39354833a86e2e0e5"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_PLUS_QWEN_40_HOLD_qwen_events.csv": {
+      "bytes": 4559,
+      "sha256": "d679e1f75303c9cfd7a59892ea1ebabbf32189a0f36fd3f9846dcd34946b4299"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_PLUS_QWEN_40_HOLD_trades.csv": {
+      "bytes": 171912,
+      "sha256": "1a28324900811fd7538a05e2c645c3a3def0c3a55e0bc2567326bc8440eb93e6"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_PLUS_QWEN_60_HOLD_decisions.csv": {
+      "bytes": 426844,
+      "sha256": "c1fdcb12da7b2fde4812193b48f6d9bb5f79989a4427ef3857641ae067d5494a"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_PLUS_QWEN_60_HOLD_equity.parquet": {
+      "bytes": 265392,
+      "sha256": "296efb9622eb443d7f90a30953745bd50a1fc837778ec46915ea9c5ae163eb2b"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_PLUS_QWEN_60_HOLD_qwen_events.csv": {
+      "bytes": 4618,
+      "sha256": "7381b8c2fc9a1326ec9f01a97a9a4560c40ad3814d676d562087d4615518f8f3"
+    },
+    "gate6_qwen_v2/RUN2_CATBOOST_PLUS_QWEN_60_HOLD_trades.csv": {
+      "bytes": 82785,
+      "sha256": "e8fb2979e7ca66740383e90afe612cfad0589ae1e0c6934a0fe229443fde1515"
+    },
+    "gate6_qwen_v2/RUN2_INDICATORS_ONLY_40_HOLD_decisions.csv": {
+      "bytes": 478160,
+      "sha256": "df63ebdf0c6d70ee8252c5ae499b4972880dc64d03be11f40a4fc76fd8316b0d"
+    },
+    "gate6_qwen_v2/RUN2_INDICATORS_ONLY_40_HOLD_equity.parquet": {
+      "bytes": 309296,
+      "sha256": "ccbc9c23721140d6d6366585d49322ff98ea60f253a29b1a81433cfb3a69eece"
+    },
+    "gate6_qwen_v2/RUN2_INDICATORS_ONLY_40_HOLD_trades.csv": {
+      "bytes": 270153,
+      "sha256": "352947f2013f454d4adfee9558b607353c009fd760e649d5ddaba08de277bdb0"
+    },
+    "gate6_qwen_v2/RUN2_INDICATORS_ONLY_60_HOLD_decisions.csv": {
+      "bytes": 491213,
+      "sha256": "b48a2333941d81578cf19f8a7213f3dec7223c5e133cdcc5dceb57fd8bbededf"
+    },
+    "gate6_qwen_v2/RUN2_INDICATORS_ONLY_60_HOLD_equity.parquet": {
+      "bytes": 273029,
+      "sha256": "31e473036b7414dd5ebf436f1ef98454217ab18d3bf114c63b2e452f17e9a43a"
+    },
+    "gate6_qwen_v2/RUN2_INDICATORS_ONLY_60_HOLD_trades.csv": {
+      "bytes": 116905,
+      "sha256": "f8f8ca12fc21875ffa3b44e43ab930e885aa75f28f9289a7c7fbecfe46df6229"
+    },
+    "gate6_qwen_v2/RUN2_SMA_BASELINE_40_HOLD_decisions.csv": {
+      "bytes": 341710,
+      "sha256": "97e9e0e180d6681b22725b61770f1961ec4cbb2836eec317271cee9482f91f3e"
+    },
+    "gate6_qwen_v2/RUN2_SMA_BASELINE_40_HOLD_equity.parquet": {
+      "bytes": 300234,
+      "sha256": "6d3c0dc8bf3d3d5c910e0d3017279549731db5becc5efecef31fbc041cdb95a6"
+    },
+    "gate6_qwen_v2/RUN2_SMA_BASELINE_40_HOLD_trades.csv": {
+      "bytes": 232911,
+      "sha256": "79dd101b5a194df669b50d19e5e9d26beca6636e44bfe1df1feb5f3f265af3e0"
+    },
+    "gate6_qwen_v2/RUN2_SMA_BASELINE_60_HOLD_decisions.csv": {
+      "bytes": 340564,
+      "sha256": "059bc7f47579106f615b4dc77ea04b9943dd12a6058ea300be7822bb5b757aee"
+    },
+    "gate6_qwen_v2/RUN2_SMA_BASELINE_60_HOLD_equity.parquet": {
+      "bytes": 279369,
+      "sha256": "6c75611b7b857afb79a016da698e9b28532b75b3203dd2ebcef45f4068005d81"
+    },
+    "gate6_qwen_v2/RUN2_SMA_BASELINE_60_HOLD_trades.csv": {
+      "bytes": 138538,
+      "sha256": "7479dd5c92e5e55aa6ca0d928b0a0b44634a663b00a61863677c1fa5d0205e82"
+    },
+    "gate6_qwen_v2/backtest_summary_v1.json": {
+      "bytes": 33453,
+      "sha256": "44531be8e32ac59bb2f305ab2146926c169e9c23c5725086d80617dfed4fae09"
+    },
+    "gate6_qwen_v2/policy_manifest_v1.json": {
+      "bytes": 885,
+      "sha256": "a947f9fe4272fe4d104d1bae34cead98c2c0e190bc3dcf33868cf40df456bcf7"
+    },
+    "gate6_qwen_v2/portfolio_metrics_v1.csv": {
+      "bytes": 8708,
+      "sha256": "35e6337a40f2a16e89f53206db4bed3b7e8ba297364111896f3fb15479fc6470"
+    },
+    "gate6_qwen_v2/qwen_requests_RUN1_40_HOLD.jsonl": {
+      "bytes": 99509,
+      "sha256": "7573df6462da28b439f5c01ea0268841abad1dde2021f40825f24f4b7c2fdf82"
+    },
+    "gate6_qwen_v2/qwen_requests_RUN1_60_HOLD.jsonl": {
+      "bytes": 207349,
+      "sha256": "cf5cd43bcb77984bba54fd33535106fb7690886c3d1ded9a685318171715da73"
+    },
+    "gate6_qwen_v2/qwen_requests_RUN2_40_HOLD.jsonl": {
+      "bytes": 99739,
+      "sha256": "8c5de27a937263341c112c45d6e3df09b9348eaec12f0d1721a708d3af4670b1"
+    },
+    "gate6_qwen_v2/qwen_requests_RUN2_60_HOLD.jsonl": {
+      "bytes": 100261,
+      "sha256": "81e9b428cc0f81370f67d749ae9db5b240d847fbfc3b327ff42d37ec861bed8c"
+    },
+    "gate6_qwen_v2/qwen_runtime_identity_v1.json": {
+      "bytes": 954,
+      "sha256": "99336eb2c6b6a274e49cd504c2950c1a69c5a1de78a7b3f0dca62f238e112472"
     }
   },
-  "count": 679,
-  "total_bytes": 92056733
+  "count": 825,
+  "total_bytes": 133405587
 }

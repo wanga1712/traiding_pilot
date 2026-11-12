@@ -1,0 +1,76 @@
+{
+  "status": "PASS",
+  "model_identity": {
+    "runtime": "OLLAMA_LOCAL_HTTP",
+    "model_id": "qwen2.5:7b",
+    "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+    "size_bytes": 4683087332,
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen2",
+      "families": [
+        "qwen2"
+      ],
+      "parameter_size": "7.6B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 32768,
+      "embedding_length": 3584
+    },
+    "loaded": true,
+    "loaded_details": {
+      "name": "qwen2.5:7b",
+      "model": "qwen2.5:7b",
+      "size": 4748056984,
+      "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "qwen2",
+        "families": [
+          "qwen2"
+        ],
+        "parameter_size": "7.6B",
+        "quantization_level": "Q4_K_M"
+      },
+      "expires_at": "2026-11-12T14:05:32.218232851+03:00",
+      "size_vram": 4748056984,
+      "context_length": 4096
+    }
+  },
+  "requests": 3,
+  "action_deterministic": true,
+  "confidence_deterministic": true,
+  "full_text_deterministic": true,
+  "all_valid": true,
+  "latency_seconds": [
+    5.878759018029086,
+    38.8148793480359,
+    4.597503654949833
+  ],
+  "median_latency_seconds": 5.878759018029086,
+  "decisions": [
+    {
+      "action": "SKIP",
+      "direction": "NONE",
+      "confidence": 0.85,
+      "reason": "Given the low probability of both long and short positions (61% for long, 18% for short) and the high skip probability (21%), combined with a net exposure fraction of 0.0 indicating no current position, the risk engine's recommendation to skip aligns with the current market conditions as per the provided features and portfolio state. The remaining thesis risk is also within acceptable limits, supporting this decision.",
+      "risk_assessment": "The action does not exceed the risk limit."
+    },
+    {
+      "action": "SKIP",
+      "direction": "NONE",
+      "confidence": 0.85,
+      "reason": "Given the low probability of both long and short positions (61% for long, 18% for short) and the high skip probability (21%), combined with a net exposure fraction of 0.0 indicating no current position, the risk engine's recommendation to skip aligns with the current market conditions as per the provided features and portfolio state. The remaining thesis risk is also within acceptable limits, supporting this decision.",
+      "risk_assessment": "The action does not exceed the risk limit."
+    },
+    {
+      "action": "SKIP",
+      "direction": "NONE",
+      "confidence": 0.85,
+      "reason": "Given the low probability of both long and short positions (61% for long, 18% for short) and the high skip probability (21%), combined with a net exposure fraction of 0.0 indicating no current position, the risk engine's recommendation to skip aligns with the current market conditions as per the provided features and portfolio state. The remaining thesis risk is also within acceptable limits, supporting this decision.",
+      "risk_assessment": "The action does not exceed the risk limit."
+    }
+  ],
+  "request_log": "/var/tmp/traiding_pilot_ui_workspace/gpu_ai_trading_policy_v1/qwen_preflight_v2/qwen_contract_test_v1.jsonl"
+}

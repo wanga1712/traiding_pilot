@@ -1,9 +1,10 @@
 # WIP=TRADING-PILOT-GPU-AI-TRADING-POLICY-1
 
-STATUS=ACTIVE
-PHASE=QWEN_POLICY_ADAPTER_PREFLIGHT
+STATUS=REVIEW
+PHASE=REVIEW
 STARTED_AT=2026-11-11
 ADDENDUM_AUTHORIZED_AT=2026-11-12
+REVIEWED_AT=2026-11-12
 MODE=REPAIR -> DATASET -> GPU TRAINING -> BACKTEST
 MODEL=NEW_TRAIN_FROM_SCRATCH
 COMPUTE=S13_CUDA_REQUIRED
@@ -200,8 +201,48 @@ Policy SHA256:
 
 Evidence is committed under `gate2/`, `gate3/`, and `gate4/`; full datasets,
 all policy variants, and runtime tables remain on S13.
-`runtime_manifest_v1.json` inventories 679 final runtime files totaling
-92,056,733 bytes.
+`runtime_manifest_v1.json` inventories 825 final runtime files totaling
+133,405,587 bytes.
+
+### Qwen addendum - PASS with zero added value
+
+| Field | Value |
+|---|---|
+| Runtime | Ollama local HTTP |
+| Model ID | `qwen2.5:7b` |
+| Parameters | 7.6B |
+| Quantization | Q4_K_M |
+| Digest | `845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e` |
+| Loaded context | 4,096 |
+| VRAM | 4,748,056,984 bytes |
+| Contract preflight | 3/3 valid and deterministic |
+| Qwen inference decisions | 104 |
+| Policy-accepted decisions | 94 |
+| Fallbacks | 10 |
+| Action changes | 0 |
+| Qwen added value | 0.00 USDT |
+| Final combined test suite | 27/27 local and 27/27 S13 |
+
+| Run | Allocation | CATBOOST_ONLY | CATBOOST_PLUS_QWEN |
+|---|---|---:|---:|
+| RUN 1 | 60/40 | 342.3452 | 342.3452 |
+| RUN 1 | 40/60 | 228.4057 | 228.4057 |
+| RUN 2 | 60/40 | 299.8139 | 299.8139 |
+| RUN 2 | 40/60 | 200.0139 | 200.0139 |
+
+The adapter validates exact JSON keys, action/direction compatibility,
+confidence, non-empty explanations, and rejects future target fields. Invalid
+or low-confidence output falls back to CatBoost. All requests and responses are
+logged.
+
+An earlier partial `gate6_qwen` run was stopped and is not accepted as evidence.
+The final result is `gate6_qwen_v2`, which uses request-hash replay caching for
+identical states.
+
+LoRA/QLoRA was not attempted. Qwen occupies about 4.7 GB of the 6.1 GB GPU,
+while CatBoost training previously peaked at 5.47 GB; the models must run
+serially. No prompt, interval, threshold, or action mapping was tuned after RUN
+2.
 
 ## Comparisons
 
@@ -234,6 +275,13 @@ GPU_NAME=NVIDIA_GTX_1660_SUPER
 CUDA_AVAILABLE=YES_DRIVER_13.2
 GPU_TRAINING_CONFIRMED=YES_CATBOOST_1.2.10
 GPU_VRAM_USED=MAX_5473_MIB
+CATBOOST_GPU_TRAINED=YES
+QWEN_MODEL_ID=qwen2.5:7b
+QWEN_PARAMETER_COUNT=7.6B
+QWEN_RUNTIME=OLLAMA_LOCAL_HTTP
+QWEN_GPU_VRAM=4748056984_BYTES
+QWEN_POLICY_USED=YES
+QWEN_DECISIONS_COUNT=104
 SIMULATOR_ACCOUNTING=PASS
 DATASET_ROWS=17514
 FEATURE_COUNT=6215_TOTAL;ENTRY_SELECTED_200;MANAGEMENT_SELECTED_201
@@ -244,13 +292,17 @@ RISK_MODEL_TRAINED=YES
 MODEL_SHA256=ENTRY=df5c3eaefaab1dbdf47441e765886e882e24f2373af6dae2df86977e7b49bc86;RISK=ab2955f0efd89565d3833402cdb8425c877c8ed4bac9d34246819cbb405fd45d;MANAGEMENT=3da5206e4099ae0edec19c0485731c33dc0af20bf1848820e714bce62f9fada0
 RUN1=2020-01-01..2021-01-01
 RUN2=2021-01-01..2022-01-01_DEVELOPMENT_ONLY_NOT_OOS
-POLICY_SHA256=d296c8107bef0c68fe06b92532026e485b08b194e10ec89a5f3e1b6ab179434c
+POLICY_SHA256=9891c1dad6ff49a316f66c07a63c8f9740dbc4532c12bdb43ab373a6e5cecaec
+CATBOOST_POLICY_SHA256=d296c8107bef0c68fe06b92532026e485b08b194e10ec89a5f3e1b6ab179434c
 BUY_HOLD_FINAL_EQUITY=RUN1_381.86;RUN2_339.31
 SMA_FINAL_EQUITY=RUN1_342.35;RUN2_299.81
 INDICATORS_FINAL_EQUITY=RUN1_342.31;RUN2_299.75
 AI_NO_HEDGE_FINAL_EQUITY=RUN1_342.30;RUN2_299.81
 AI_HEDGE_FINAL_EQUITY=RUN1_342.36;RUN2_299.81
 AI_HEDGE_AVG_FINAL_EQUITY=RUN1_342.35;RUN2_299.81
+CATBOOST_ONLY_FINAL_EQUITY=RUN1_60_342.3452;RUN1_40_228.4057;RUN2_60_299.8139;RUN2_40_200.0139
+CATBOOST_PLUS_QWEN_FINAL_EQUITY=RUN1_60_342.3452;RUN1_40_228.4057;RUN2_60_299.8139;RUN2_40_200.0139
+QWEN_ADDED_VALUE=0.00
 AI_ADDED_VALUE=MIXED_-0.005_TO_+0.466_RUN1;+0.068_TO_+0.125_RUN2_HOLD
 HEDGE_ADDED_VALUE=MAX_+0.055_RUN1;0_RUN2
 AVERAGING_ADDED_VALUE=MIXED_-54.50_TO_+0.023_RUN1;0_RUN2

@@ -28,6 +28,7 @@ from .config import (
     SPOT_MODES,
     TAKER_FEE_PER_SIDE,
 )
+from .qwen_adapter import QwenConfig, QwenPolicyAdapter
 from .train import ACTION_NAMES, DatasetBundle, build_matrix, load_bundle
 
 
@@ -41,6 +42,7 @@ class PolicyResult:
     trades: pd.DataFrame
     decisions: pd.DataFrame
     metrics: dict[str, Any]
+    qwen_events: pd.DataFrame = field(default_factory=pd.DataFrame)
 
 
 @dataclass
@@ -58,6 +60,7 @@ class PolicyAccount:
     trades: list[dict[str, Any]] = field(default_factory=list)
     decisions: list[dict[str, Any]] = field(default_factory=list)
     equity_rows: list[dict[str, Any]] = field(default_factory=list)
+    qwen_events: list[dict[str, Any]] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.spot = SpotAccount(cash=INITIAL_CAPITAL * self.spot_fraction)
@@ -355,6 +358,10 @@ def _run_policy(
     management_model: CatBoostClassifier | None,
     management_feature_names: list[str] | None,
     management_state_columns: list[str] | None,
+    qwen_adapter: Any | None = None,
+    qwen_interval_hours: int = 168,
+    qwen_max_requests: int = 64,
+    qwen_context: dict[str, Any] | None = None,
 ) -> PolicyResult:
     account = PolicyAccount(spot_fraction, spot_mode)
     first = frame.iloc[0]
@@ -368,6 +375,11 @@ def _run_policy(
         account.spot_slippage += spent * SLIPPAGE_PER_SIDE
         account.spot_trade_count += int(spent > 0)
     pending_action = "SKIP"
+    last_qwen_at: pd.Timestamp | None = None
+    qwen_request_count = 0
+    qwen_valid_count = 0
+    qwen_fallback_count = 0
+    qwen_action_changes = 0
     for index, row in frame.reset_index(drop=True).iterrows():
         time = pd.Timestamp(row["open_time"])
         open_price = float(row["open"])
@@ -414,6 +426,18 @@ def _run_policy(
             pending_action = "EXIT"
             continue
 
+        catboost_payload: dict[str, Any] = {
+            "predicted_downside_24h": (
+                float(risk_predictions[index, 0])
+                if risk_predictions is not None
+                else None
+            ),
+            "predicted_upside_24h": (
+                float(risk_predictions[index, 1])
+                if risk_predictions is not None
+                else None
+            ),
+        }
         if name == "SMA_BASELINE":
             direction = 0
             if pd.notna(row.get("sma20")) and pd.notna(row.get("sma50")):
@@ -446,6 +470,13 @@ def _run_policy(
         elif entry_probabilities is not None and account.futures.primary is None:
             long_probability = float(entry_probabilities[index, 1])
             short_probability = float(entry_probabilities[index, 2])
+            catboost_payload.update(
+                {
+                    "long_probability": long_probability,
+                    "short_probability": short_probability,
+                    "skip_probability": float(entry_probabilities[index, 0]),
+                }
+            )
             downside, upside = risk_predictions[index]
             if long_probability > 0.55 and downside > -0.08:
                 pending_action = "OPEN_LONG"
@@ -463,6 +494,7 @@ def _run_policy(
             ).reshape(1, -1)
             probabilities = management_model.predict_proba(model_input)[0]
             probability_by_action = dict(zip(ACTION_NAMES, probabilities))
+            catboost_payload["management_probabilities"] = probability_by_action
             allowed = {"HOLD", "REDUCE_POSITION", "EXIT"}
             if account.futures.primary is not None and account.futures.primary.additions < 2:
                 allowed.add("AVERAGE_PRIMARY")
@@ -486,6 +518,108 @@ def _run_policy(
         else:
             pending_action = "SKIP"
 
+        if (
+            qwen_adapter is not None
+            and qwen_request_count < qwen_max_requests
+            and (last_qwen_at is None or time - last_qwen_at >= pd.Timedelta(hours=qwen_interval_hours))
+            and (account.futures.primary is not None or pending_action != "SKIP")
+        ):
+            market_features = {
+                key: float(row[key])
+                for key in (
+                    "sma20",
+                    "sma50",
+                    "1H.DMA_3X3_V1.DISTANCE_PRICE_DMA_PCT",
+                    "4H.DMA_3X3_V1.DISTANCE_PRICE_DMA_PCT",
+                    "1H.MACD_12_26_9_V1.histogram",
+                    "4H.MACD_12_26_9_V1.histogram",
+                    "1H.STOCH_14_3_3_V1.k",
+                    "1H.STOCH_14_3_3_V1.d",
+                    "4H.STOCH_14_3_3_V1.k",
+                    "4H.STOCH_14_3_3_V1.d",
+                    "1H.ADX_14_V1.adx",
+                )
+                if key in row and pd.notna(row[key])
+            }
+            portfolio_payload = {
+                **state,
+                **(qwen_context or {}),
+                "position_state": (
+                    "FLAT" if account.futures.primary is None else "PRIMARY_OPEN"
+                ),
+                "hedge_open": account.futures.hedge is not None,
+            }
+            catboost_action = pending_action
+            decision = qwen_adapter.decide(
+                decision_at=time.isoformat(),
+                market_features=market_features,
+                catboost=catboost_payload,
+                portfolio_state=portfolio_payload,
+                risk={
+                    "risk_limit_fraction": MAX_THESIS_LOSS_FRACTION,
+                    "futures_drawdown_fraction": futures_drawdown,
+                    "liquidation_distance_pct": state["liquidation_distance_pct"],
+                    "free_margin_fraction": state["free_margin_fraction"],
+                },
+                fallback_action=pending_action,
+            )
+            qwen_request_count += 1
+            last_qwen_at = time
+            applied_action = pending_action
+            reason = None
+            if decision.valid and decision.confidence >= 0.55:
+                if account.futures.primary is None:
+                    allowed = {"OPEN_LONG", "OPEN_SHORT", "HOLD", "SKIP"}
+                else:
+                    allowed = {
+                        "HOLD",
+                        "REDUCE_POSITION",
+                        "EXIT",
+                    }
+                    if account.futures.hedge is None:
+                        allowed.add("OPEN_HEDGE")
+                    else:
+                        allowed.add("CLOSE_HEDGE")
+                    if (
+                        account.futures.primary is not None
+                        and account.futures.primary.additions < 2
+                    ):
+                        allowed.add("AVERAGE_PRIMARY")
+                if decision.action in allowed:
+                    applied_action = (
+                        "SKIP" if decision.action in {"HOLD", "SKIP"} else decision.action
+                    )
+                    qwen_valid_count += 1
+                else:
+                    reason = "QWEN_ACTION_INAPPLICABLE_TO_STATE"
+                    qwen_fallback_count += 1
+            else:
+                reason = (
+                    decision.validation_error
+                    if not decision.valid
+                    else "QWEN_CONFIDENCE_BELOW_0.55"
+                )
+                qwen_fallback_count += 1
+            if applied_action != pending_action:
+                qwen_action_changes += 1
+            pending_action = applied_action
+            account.qwen_events.append(
+                {
+                    "time": time,
+                    "request_id": decision.request_hash,
+                    "qwen_action": decision.action,
+                    "qwen_direction": decision.direction,
+                    "qwen_confidence": decision.confidence,
+                    "qwen_valid": decision.valid,
+                    "fallback_used": decision.fallback_used,
+                    "validation_error": decision.validation_error,
+                    "catboost_action": catboost_action,
+                    "applied_action": applied_action,
+                    "application_reason": reason,
+                    "latency_seconds": decision.latency_seconds,
+                }
+            )
+
     last = frame.iloc[-1]
     final_time = pd.Timestamp(last["open_time"])
     final_mark = float(last["close"])
@@ -495,6 +629,7 @@ def _run_policy(
     equity = pd.DataFrame(account.equity_rows).drop_duplicates("time").sort_values("time")
     trades = pd.DataFrame(account.trades)
     decisions = pd.DataFrame(account.decisions)
+    qwen_events = pd.DataFrame(account.qwen_events)
     final_equity = float(equity.iloc[-1]["equity"])
     metrics = {
         "strategy": name,
@@ -520,6 +655,10 @@ def _run_policy(
         "slippage": account.futures.slippage_costs + account.spot_slippage,
         "realized_primary": account.futures.realized_primary,
         "realized_hedge": account.futures.realized_hedge,
+        "qwen_requests": qwen_request_count,
+        "qwen_valid": qwen_valid_count,
+        "qwen_fallbacks": qwen_fallback_count,
+        "qwen_action_changes": qwen_action_changes,
     }
     return PolicyResult(
         name=name,
@@ -530,10 +669,19 @@ def _run_policy(
         trades=trades,
         decisions=decisions,
         metrics=metrics,
+        qwen_events=qwen_events,
     )
 
 
-def run_backtests(dataset_root: Path, training_root: Path, output_root: Path) -> dict[str, Any]:
+def run_backtests(
+    dataset_root: Path,
+    training_root: Path,
+    output_root: Path,
+    *,
+    enable_qwen: bool = False,
+    qwen_interval_hours: int = 168,
+    qwen_max_requests: int = 64,
+) -> dict[str, Any]:
     output_root.mkdir(parents=True, exist_ok=True)
     bundle = load_bundle(dataset_root)
     metrics = json.loads((training_root / "training_metrics_v1.json").read_text())
@@ -704,6 +852,80 @@ def run_backtests(dataset_root: Path, training_root: Path, output_root: Path) ->
                             management_state_columns=management_state_columns,
                         )
                     )
+            if enable_qwen:
+                qwen_log = (
+                    output_root
+                    / f"qwen_requests_{split_name}_{int(spot_fraction * 100)}_HOLD.jsonl"
+                )
+                qwen_adapter = QwenPolicyAdapter(
+                    config=QwenConfig(model_id="qwen2.5:7b"),
+                    log_path=qwen_log,
+                )
+                qwen_context = {
+                    "run": split_name,
+                    "spot_fraction": spot_fraction,
+                    "spot_mode": "HOLD",
+                }
+                common = {
+                    "split_name": split_name,
+                    "frame": split_frame,
+                    "spot_fraction": spot_fraction,
+                    "spot_mode": "HOLD",
+                    "funding_by_time": funding_by_time,
+                    "entry_probabilities": split_entry,
+                    "risk_predictions": split_risk,
+                    "management_general": split_management,
+                    "management_model": management_model,
+                    "management_feature_names": management_features,
+                    "management_state_columns": management_state_columns,
+                }
+                results.append(
+                    _run_policy(
+                        name="CATBOOST_ONLY",
+                        qwen_adapter=None,
+                        qwen_interval_hours=qwen_interval_hours,
+                        qwen_max_requests=qwen_max_requests,
+                        qwen_context=qwen_context,
+                        **common,
+                    )
+                )
+                results.append(
+                    _run_policy(
+                        name="CATBOOST_PLUS_QWEN",
+                        qwen_adapter=qwen_adapter,
+                        qwen_interval_hours=qwen_interval_hours,
+                        qwen_max_requests=qwen_max_requests,
+                        qwen_context=qwen_context,
+                        **common,
+                    )
+                )
+    if enable_qwen:
+        identity_adapter = QwenPolicyAdapter(
+            config=QwenConfig(model_id="qwen2.5:7b"),
+            log_path=output_root / "qwen_identity_probe.jsonl",
+        )
+        qwen_identity = identity_adapter.runtime_identity()
+        (output_root / "qwen_runtime_identity_v1.json").write_text(
+            json.dumps(qwen_identity, indent=2),
+            encoding="utf-8",
+        )
+        policy_descriptor.update(
+            {
+                "qwen_model_id": qwen_identity["model_id"],
+                "qwen_model_digest": qwen_identity["digest"],
+                "qwen_runtime": qwen_identity["runtime"],
+                "qwen_interval_hours": qwen_interval_hours,
+                "qwen_max_requests_per_variant": qwen_max_requests,
+            }
+        )
+        policy_sha = hashlib.sha256(
+            json.dumps(policy_descriptor, sort_keys=True).encode("utf-8")
+        ).hexdigest()
+        policy_descriptor["policy_sha256"] = policy_sha
+        (output_root / "policy_manifest_v1.json").write_text(
+            json.dumps(policy_descriptor, indent=2),
+            encoding="utf-8",
+        )
     metrics_frame = pd.DataFrame([result.metrics for result in results])
     metrics_frame.to_csv(output_root / "portfolio_metrics_v1.csv", index=False)
     for result in results:
@@ -711,6 +933,11 @@ def run_backtests(dataset_root: Path, training_root: Path, output_root: Path) ->
         result.equity.to_parquet(output_root / f"{safe}_equity.parquet", index=False)
         result.trades.to_csv(output_root / f"{safe}_trades.csv", index=False)
         result.decisions.to_csv(output_root / f"{safe}_decisions.csv", index=False)
+        if not result.qwen_events.empty:
+            result.qwen_events.to_csv(
+                output_root / f"{safe}_qwen_events.csv",
+                index=False,
+            )
     summary = {
         "status": "PASS",
         "policy_sha256": policy_sha,
@@ -718,6 +945,20 @@ def run_backtests(dataset_root: Path, training_root: Path, output_root: Path) ->
         "run1_interval": [str(RUN1_START), str(RUN1_END)],
         "run2_interval": [str(RUN2_START), str(RUN2_END)],
         "results": metrics_frame.to_dict(orient="records"),
+        "qwen_models": metrics_frame.loc[
+            metrics_frame["strategy"] == "CATBOOST_PLUS_QWEN",
+            [
+                "split",
+                "spot_fraction",
+                "final_equity",
+                "qwen_requests",
+                "qwen_valid",
+                "qwen_fallbacks",
+                "qwen_action_changes",
+            ],
+        ].to_dict(orient="records")
+        if enable_qwen
+        else [],
         "oos_opened": "NO",
         "live_trading": "NO",
     }
@@ -735,10 +976,20 @@ if __name__ == "__main__":
     parser.add_argument("--dataset-root", type=Path, required=True)
     parser.add_argument("--training-root", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--enable-qwen", action="store_true")
+    parser.add_argument("--qwen-interval-hours", type=int, default=168)
+    parser.add_argument("--qwen-max-requests", type=int, default=64)
     args = parser.parse_args()
     print(
         json.dumps(
-            run_backtests(args.dataset_root, args.training_root, args.output_root),
+            run_backtests(
+                args.dataset_root,
+                args.training_root,
+                args.output_root,
+                enable_qwen=args.enable_qwen,
+                qwen_interval_hours=args.qwen_interval_hours,
+                qwen_max_requests=args.qwen_max_requests,
+            ),
             indent=2,
         )
     )

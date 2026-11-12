@@ -1,0 +1,24 @@
+{
+  "entry_model_sha256": "df5c3eaefaab1dbdf47441e765886e882e24f2373af6dae2df86977e7b49bc86",
+  "risk_model_sha256": "ab2955f0efd89565d3833402cdb8425c877c8ed4bac9d34246819cbb405fd45d",
+  "management_model_sha256": "3da5206e4099ae0edec19c0485731c33dc0af20bf1848820e714bce62f9fada0",
+  "entry_probability_threshold": 0.55,
+  "max_thesis_loss_fraction": 0.05,
+  "leverage": 10.0,
+  "taker_fee_per_side": 0.0005,
+  "slippage_per_side": 0.0002,
+  "actions": [
+    "HOLD",
+    "OPEN_HEDGE",
+    "CLOSE_HEDGE",
+    "AVERAGE_PRIMARY",
+    "REDUCE_POSITION",
+    "EXIT"
+  ],
+  "policy_sha256": "9891c1dad6ff49a316f66c07a63c8f9740dbc4532c12bdb43ab373a6e5cecaec",
+  "qwen_model_id": "qwen2.5:7b",
+  "qwen_model_digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+  "qwen_runtime": "OLLAMA_LOCAL_HTTP",
+  "qwen_interval_hours": 336,
+  "qwen_max_requests_per_variant": 26
+}
