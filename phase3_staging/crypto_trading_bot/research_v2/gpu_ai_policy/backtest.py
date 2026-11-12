@@ -28,6 +28,7 @@ from .config import (
     SPOT_MODES,
     TAKER_FEE_PER_SIDE,
 )
+from .event_monitor import EventMonitor, MarketEvent
 from .qwen_adapter import QwenConfig, QwenPolicyAdapter
 from .train import ACTION_NAMES, DatasetBundle, build_matrix, load_bundle
 
@@ -43,6 +44,7 @@ class PolicyResult:
     decisions: pd.DataFrame
     metrics: dict[str, Any]
     qwen_events: pd.DataFrame = field(default_factory=pd.DataFrame)
+    market_events: pd.DataFrame = field(default_factory=pd.DataFrame)
 
 
 @dataclass
@@ -61,6 +63,7 @@ class PolicyAccount:
     decisions: list[dict[str, Any]] = field(default_factory=list)
     equity_rows: list[dict[str, Any]] = field(default_factory=list)
     qwen_events: list[dict[str, Any]] = field(default_factory=list)
+    market_events: list[dict[str, Any]] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.spot = SpotAccount(cash=INITIAL_CAPITAL * self.spot_fraction)
@@ -362,6 +365,7 @@ def _run_policy(
     qwen_interval_hours: int = 168,
     qwen_max_requests: int = 64,
     qwen_context: dict[str, Any] | None = None,
+    event_monitor: EventMonitor | None = None,
 ) -> PolicyResult:
     account = PolicyAccount(spot_fraction, spot_mode)
     first = frame.iloc[0]
@@ -518,12 +522,90 @@ def _run_policy(
         else:
             pending_action = "SKIP"
 
-        if (
+        qwen_trigger_events: list[MarketEvent] = []
+        should_call_qwen = False
+        if event_monitor is not None:
+            position_state = (
+                "FLAT"
+                if account.futures.primary is None
+                else "HEDGED"
+                if account.futures.hedge is not None
+                else "PRIMARY_OPEN"
+            )
+            observed_events = event_monitor.observe(
+                time=time,
+                row=row,
+                position_state=position_state,
+                primary_side=(
+                    account.futures.primary.side
+                    if account.futures.primary is not None
+                    else 0
+                ),
+                primary_entry=(
+                    account.futures.primary.average_entry
+                    if account.futures.primary is not None
+                    else None
+                ),
+                primary_unrealized_fraction=state["primary_unrealized_fraction"],
+                averaging_count=(
+                    account.futures.primary.additions
+                    if account.futures.primary is not None
+                    else 0
+                ),
+                hedge_side=(
+                    account.futures.hedge.side
+                    if account.futures.hedge is not None
+                    else 0
+                ),
+                hedge_unrealized_fraction=state["hedge_unrealized_fraction"],
+                pending_action=pending_action,
+                catboost=catboost_payload,
+                risk={
+                    "risk_limit_fraction": MAX_THESIS_LOSS_FRACTION,
+                    "liquidation_distance_pct": state["liquidation_distance_pct"],
+                    "free_margin_fraction": state["free_margin_fraction"],
+                },
+                free_margin_fraction=state["free_margin_fraction"],
+                liquidation_distance_fraction=state["liquidation_distance_pct"],
+                futures_drawdown_fraction=futures_drawdown,
+            )
+            account.market_events.extend(event.to_dict() for event in observed_events)
+            emergency_events = EventMonitor.emergency(observed_events)
+            if emergency_events:
+                account.execute(
+                    "EXIT",
+                    time=time,
+                    mark=close_price,
+                    volume=float(row["volume"]),
+                )
+                account.decisions.append(
+                    {
+                        "time": time,
+                        "action": "RISK_EVENT_EXIT",
+                        "decision_price": close_price,
+                        "execution_price": close_price,
+                        "strategy": name,
+                    }
+                )
+                account.record_equity(time, close_price)
+                pending_action = "SKIP"
+                should_call_qwen = False
+            elif qwen_adapter is not None:
+                qwen_trigger_events = EventMonitor.triggered_for_qwen(observed_events)
+                should_call_qwen = bool(qwen_trigger_events)
+        elif (
             qwen_adapter is not None
             and qwen_request_count < qwen_max_requests
-            and (last_qwen_at is None or time - last_qwen_at >= pd.Timedelta(hours=qwen_interval_hours))
+            and (
+                last_qwen_at is None
+                or time - last_qwen_at
+                >= pd.Timedelta(hours=qwen_interval_hours)
+            )
             and (account.futures.primary is not None or pending_action != "SKIP")
         ):
+            should_call_qwen = True
+
+        if should_call_qwen and qwen_adapter is not None:
             market_features = {
                 key: float(row[key])
                 for key in (
@@ -562,6 +644,9 @@ def _run_policy(
                     "free_margin_fraction": state["free_margin_fraction"],
                 },
                 fallback_action=pending_action,
+                market_events=[
+                    event.to_dict() for event in qwen_trigger_events
+                ],
             )
             qwen_request_count += 1
             last_qwen_at = time
@@ -626,10 +711,15 @@ def _run_policy(
     account._close("HEDGE", final_time, final_mark, "RUN_END")
     account._close("PRIMARY", final_time, final_mark, "RUN_END")
     account.record_equity(final_time, final_mark)
-    equity = pd.DataFrame(account.equity_rows).drop_duplicates("time").sort_values("time")
+    equity = (
+        pd.DataFrame(account.equity_rows)
+        .drop_duplicates("time", keep="last")
+        .sort_values("time")
+    )
     trades = pd.DataFrame(account.trades)
     decisions = pd.DataFrame(account.decisions)
     qwen_events = pd.DataFrame(account.qwen_events)
+    market_events = pd.DataFrame(account.market_events)
     final_equity = float(equity.iloc[-1]["equity"])
     metrics = {
         "strategy": name,
@@ -659,6 +749,40 @@ def _run_policy(
         "qwen_valid": qwen_valid_count,
         "qwen_fallbacks": qwen_fallback_count,
         "qwen_action_changes": qwen_action_changes,
+        "market_events_detected": int(
+            (market_events["status"] == "TRIGGERED").sum()
+        )
+        if not market_events.empty
+        else 0,
+        "market_events_suppressed": int(
+            (market_events["status"] == "SUPPRESSED").sum()
+        )
+        if not market_events.empty
+        else 0,
+        "risk_events": int(
+            market_events["event_type"]
+            .str.startswith(("RISK_", "LIQUIDATION_"))
+            .sum()
+        )
+        if not market_events.empty
+        else 0,
+        "hedge_open_events": int(
+            (
+                (market_events["event_type"] == "CATBOOST_ACTION_CHANGE")
+                & (
+                    market_events["catboost"]
+                    .astype(str)
+                    .str.contains("OPEN_HEDGE")
+                )
+            ).sum()
+        )
+        if not market_events.empty
+        else 0,
+        "hedge_close_events": int(
+            (market_events["event_type"] == "HEDGE_CLOSE_FAVORABLE").sum()
+        )
+        if not market_events.empty
+        else 0,
     }
     return PolicyResult(
         name=name,
@@ -670,6 +794,7 @@ def _run_policy(
         decisions=decisions,
         metrics=metrics,
         qwen_events=qwen_events,
+        market_events=market_events,
     )
 
 
@@ -936,6 +1061,11 @@ def run_backtests(
         if not result.qwen_events.empty:
             result.qwen_events.to_csv(
                 output_root / f"{safe}_qwen_events.csv",
+                index=False,
+            )
+        if not result.market_events.empty:
+            result.market_events.to_csv(
+                output_root / f"{safe}_market_events.csv",
                 index=False,
             )
     summary = {

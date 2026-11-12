@@ -260,7 +260,7 @@ class QwenPolicyAdapter:
             "causal facts. Do not infer or invent future prices, targets, fills, or "
             "portfolio state. Return exactly one JSON object matching the schema. "
             "confidence is an integer from 0 to 100. Keep reason and "
-            "risk_assessment to one concise sentence each."
+            "risk_assessment to at most 12 words each."
         )
         prompt = (
             "Validate the next action. Risk Engine remains authoritative and may "
@@ -282,6 +282,7 @@ class QwenPolicyAdapter:
         portfolio_state: dict[str, Any],
         risk: dict[str, Any],
         fallback_action: str,
+        market_events: list[dict[str, Any]] | None = None,
     ) -> QwenDecision:
         identity = self.runtime_identity()
         request = {
@@ -291,6 +292,7 @@ class QwenPolicyAdapter:
             "portfolio_state": portfolio_state,
             "risk": risk,
             "fallback_action": fallback_action,
+            "market_events": market_events or [],
         }
         _assert_causal(request)
         request_hash = _sha256_json(request)

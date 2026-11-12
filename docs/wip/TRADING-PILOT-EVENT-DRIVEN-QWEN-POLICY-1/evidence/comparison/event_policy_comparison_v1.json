@@ -1,0 +1,69 @@
+{
+  "status": "PASS",
+  "comparisons": [
+    {
+      "split": "RUN1",
+      "spot_fraction": 0.6,
+      "catboost_only_equity": 342.339430933988,
+      "qwen_336h_equity": 342.3451918095448,
+      "qwen_event_equity": 342.339430933988,
+      "qwen_336h_added_value": 0.005760875556802603,
+      "qwen_event_added_value": 0.0,
+      "event_qwen_calls": 111,
+      "event_action_changes": 0,
+      "event_fallbacks": 5,
+      "event_liquidations": 1,
+      "event_max_drawdown": 0.5273268345855175,
+      "event_hedges": 0
+    },
+    {
+      "split": "RUN1",
+      "spot_fraction": 0.4,
+      "catboost_only_equity": 228.3672470996726,
+      "qwen_336h_equity": 228.40574632228584,
+      "qwen_event_equity": 228.3672470996726,
+      "qwen_336h_added_value": 0.03849922261323968,
+      "qwen_event_added_value": 0.0,
+      "event_qwen_calls": 137,
+      "event_action_changes": 0,
+      "event_fallbacks": 4,
+      "event_liquidations": 1,
+      "event_max_drawdown": 0.4037212094720845,
+      "event_hedges": 0
+    },
+    {
+      "split": "RUN2",
+      "spot_fraction": 0.6,
+      "catboost_only_equity": 299.81393171716275,
+      "qwen_336h_equity": 299.81393171716275,
+      "qwen_event_equity": 299.7707238789036,
+      "qwen_336h_added_value": 0.0,
+      "qwen_event_added_value": -0.04320783825914987,
+      "event_qwen_calls": 13,
+      "event_action_changes": 1,
+      "event_fallbacks": 8,
+      "event_liquidations": 2,
+      "event_max_drawdown": 0.6007155475529706,
+      "event_hedges": 0
+    },
+    {
+      "split": "RUN2",
+      "spot_fraction": 0.4,
+      "catboost_only_equity": 200.01394189177253,
+      "qwen_336h_equity": 200.01394189177253,
+      "qwen_event_equity": 199.99554024632408,
+      "qwen_336h_added_value": 0.0,
+      "qwen_event_added_value": -0.018401645448449244,
+      "event_qwen_calls": 14,
+      "event_action_changes": 5,
+      "event_fallbacks": 5,
+      "event_liquidations": 2,
+      "event_max_drawdown": 0.6003372455874293,
+      "event_hedges": 0
+    }
+  ],
+  "total_event_qwen_added_value": -0.06160948370759911,
+  "total_336h_qwen_added_value": 0.044260098170042284,
+  "oos_opened": "NO",
+  "live_trading": "NO"
+}

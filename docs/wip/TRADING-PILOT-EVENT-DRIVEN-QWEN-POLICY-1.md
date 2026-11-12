@@ -1,7 +1,7 @@
 # WIP=TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1
 
-STATUS=ACTIVE
-PHASE=EVENT_DRIVEN_RUN
+STATUS=REVIEW
+PHASE=REVIEW
 STARTED_AT=2026-11-12
 MODE=EVENT-DRIVEN HISTORICAL SIMULATION
 GPU=S13_QWEN_2_5_7B_AND_CATBOOST
@@ -72,28 +72,58 @@ DEVELOPMENT/regression data, not independent OOS. Locked OOS remains untouched.
 - No frozen-artifact or previous-result mutation.
 - No live orders, deployment, S7 mutation, or service restart.
 
+## Result
+
+- Triggered market/position/risk events: 4,123.
+- Suppressed by hysteresis, dedup, or cooldown: 3,871.
+- Qwen-eligible events: 329.
+- Actual Qwen calls after grouping/cache: 275.
+- Qwen action changes: 6.
+- Fallbacks: 22.
+- Actual hedge opens: 0.
+- Hedge-close events: 0.
+- Risk events: 6.
+- Median Qwen latency: 12.84 seconds; P90: 17.03 seconds.
+
+| Run | Allocation | CatBoost only | Qwen 336h | Qwen event-driven | Added value |
+|---|---|---:|---:|---:|---:|
+| RUN 1 | 60/40 | 342.3394 | 342.3452 | 342.3394 | 0.0000 |
+| RUN 1 | 40/60 | 228.3672 | 228.4057 | 228.3672 | 0.0000 |
+| RUN 2 | 60/40 | 299.8139 | 299.8139 | 299.7707 | -0.0432 |
+| RUN 2 | 40/60 | 200.0139 | 200.0139 | 199.9955 | -0.0184 |
+
+All six Qwen action changes were `SKIP -> REDUCE_POSITION` in RUN 2. This
+proves the adapter can alter real allowed decisions, but total event-driven
+added value is negative: `-0.0616 USDT`.
+
+No hedge was actually opened. Qwen CLOSE_HEDGE proposals were therefore
+inapplicable to the state and were rejected by policy. REDUCE_POSITION has no
+training examples, so its successful execution is a policy capability, not
+validated learned support.
+
+Worst drawdown: 60.07%. Liquidations across the four event portfolios: 6.
+
 ## RETURN
 
 ```text
 WIP=TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1
 STATUS=REVIEW
-MARKET_EVENTS_DETECTED=
-QWEN_CALLS=
-QWEN_ACTION_CHANGES=
-HEDGE_OPEN_EVENTS=
-HEDGE_CLOSE_EVENTS=
-RISK_EVENTS=
-FALLBACKS=
-MEDIAN_LATENCY=
-P90_LATENCY=
-CATBOOST_ONLY_EQUITY=
-QWEN_336H_EQUITY=
-QWEN_EVENT_DRIVEN_EQUITY=
-QWEN_ADDED_VALUE=
-LIQUIDATIONS=
-MAX_DRAWDOWN=
+MARKET_EVENTS_DETECTED=4123;SUPPRESSED_3871;QWEN_ELIGIBLE_329
+QWEN_CALLS=275
+QWEN_ACTION_CHANGES=6
+HEDGE_OPEN_EVENTS=0
+HEDGE_CLOSE_EVENTS=0
+RISK_EVENTS=6
+FALLBACKS=22
+MEDIAN_LATENCY=12.84_SECONDS
+P90_LATENCY=17.03_SECONDS
+CATBOOST_ONLY_EQUITY=RUN1_60_342.3394;RUN1_40_228.3672;RUN2_60_299.8139;RUN2_40_200.0139
+QWEN_336H_EQUITY=RUN1_60_342.3452;RUN1_40_228.4057;RUN2_60_299.8139;RUN2_40_200.0139
+QWEN_EVENT_DRIVEN_EQUITY=RUN1_60_342.3394;RUN1_40_228.3672;RUN2_60_299.7707;RUN2_40_199.9955
+QWEN_ADDED_VALUE=-0.0616_TOTAL;NO_MATERIAL_ADVANTAGE
+LIQUIDATIONS=6
+MAX_DRAWDOWN=60.07%
 OOS_OPENED=NO
 LIVE_TRADING=NO
 NEXT_WIP=none
 ```
-

@@ -16,10 +16,11 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | Field | Value |
 |---|---|
 | **WIP** | `TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1` |
-| **STATUS** | ACTIVE |
-| **PHASE** | Event-driven historical run |
+| **STATUS** | REVIEW |
+| **PHASE** | REVIEW - event-driven Qwen policy tested |
 | **MODE** | Event-driven historical simulation |
 | **AUTHORIZATION** | User approved 2026-11-12 |
+| **RESULT** | 275 calls, 6 action changes, negative added value -0.0616 USDT |
 | **REPORT** | [`docs/wip/TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1.md`](docs/wip/TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1.md) |
 | **LIVE TRADING** | DISABLED |
 
@@ -1622,7 +1623,7 @@ none (end of planned chain)
 | TRADING-PILOT-CAPITAL-GROWTH-EXPERIMENT-1 | REVIEW | Historical simulation |
 | TRADING-PILOT-GPU-AI-TRADING-POLICY-1 | REVIEW | GPU AI policy |
 | TRADING-PILOT-ACTION-LEARNING-AUDIT-1 | REVIEW | Action and label audit |
-| TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1 | ACTIVE | Event-driven Qwen policy |
+| TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1 | REVIEW | Event-driven Qwen policy |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
