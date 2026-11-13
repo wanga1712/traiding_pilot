@@ -1,15 +1,12 @@
-# WIP - TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1
+# WIP - TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1
 
-STATUS=REVIEW
-PHASE=CONTROLLED_BACKTEST_AND_ATTRIBUTION_COMPLETE
+STATUS=ACTIVE
+PHASE=DIAGNOSIS_AND_STATE_REPAIR
 STARTED_AT=2026-11-13
-BASE_COMMIT=f5a8ff750cee65554951cc8e9d911e6ab4b1c700
-GIT_COMMIT=c44f40d980a742b529a6e22134fff7b43c03bbc4
-MODE=DIAGNOSTICS -> CONTROLLED_BACKTEST -> ATTRIBUTION -> REVIEW
+BASE_COMMIT=071fd1df98298940d4d7d05e93850fc500552bbd
+MODE=DIAGNOSE -> REPAIR -> TEST -> HISTORICAL_REGRESSION -> REVIEW
 HOST=S13
 ASSET=ETHUSDT
-INITIAL_CAPITAL=100
-LEVERAGE=10
 LIVE_TRADING=NO
 MODEL_RETRAINING=NO
 QWEN_FULL_RUN=NO
@@ -17,56 +14,43 @@ OOS_OPENED=NO
 
 ## Scope
 
-Attribute the economics of all 52 HEDGE cycles, compare hedged and unhedged
-CatBoost policies, explain the one-hour PRIMARY churn, and determine why RUN2
-has no HEDGE signals. Use the simulator and model artifacts from
-`TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1` without changing signals or
-tuning thresholds.
+Repair proven Risk Engine state and trade-lifecycle defects exposed by
+`TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1`:
+
+- retain risk/drawdown state only for the active trading hypothesis;
+- reset risk state when the account returns to FLAT;
+- represent FLAT, PRIMARY_OPEN, HEDGED, HEDGE_CLOSED, EXITED, RISK_EXIT, and
+  LIQUIDATED explicitly;
+- bind orders, fills, and risk decisions to one lifecycle/cycle ID;
+- prevent stale risk state or pending orders from leaking into the next cycle;
+- verify immediate re-entry and exit tracing without changing CatBoost,
+  thresholds, leverage, costs, frozen research, or prior artifacts.
 
 ## Hard limits
 
-- No CatBoost retraining, Qwen inference, LoRA/QLoRA, or threshold search.
-- No frozen research, locked OOS, confirmation, S7, or live-trading changes.
-- Do not overwrite prior WIP artifacts.
-- Do not close prior REVIEW WIPs.
-- Repair only proven accounting or execution defects, with regression tests.
+- No model retraining, Qwen inference, parameter search, or live trading.
+- No locked OOS/confirmation, S7 mutation, deploy, migration, or restart.
+- Only proven accounting/execution/state defects may be changed.
+- Preserve all prior REVIEW results and artifacts.
 
 ## RETURN
 
 ```text
-WIP=TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1
-STATUS=REVIEW
-BASE_COMMIT=f5a8ff7
-HEDGE_OPENED=52
-HEDGE_CLOSED=52
-HEDGE_GROSS_PNL=5.3819
-HEDGE_NET_PNL=1.8414
-HEDGE_EFFECT_ON_TOTAL_EQUITY=0.1317
-HEDGE_EFFECT_ON_DRAWDOWN=UNCHANGED;RUN1_40_WORSE_BY_0.5228_PP
-LIQUIDATIONS_PREVENTED=0
-RUN1_60_HEDGED=342.3584
-RUN1_60_UNHEDGED=342.2531
-RUN1_40_HEDGED=228.3915
-RUN1_40_UNHEDGED=228.3650
-RUN2_60_HEDGED=299.7419
-RUN2_60_UNHEDGED=299.7419
-RUN2_40_HEDGED=200.0258
-RUN2_40_UNHEDGED=200.0258
-PRIMARY_CYCLES=4753
-MEDIAN_HOLDING_TIME=1H
-AI_EXIT_COUNT=4749
-REENTRY_WITHIN_1H=4033
-TOTAL_TURNOVER=495424.3885
-TOTAL_FEES=247.6257
-TOTAL_SLIPPAGE=99.0495
-PROFITABLE_BEFORE_COSTS=2365
-PROFITABLE_AFTER_COSTS=2070
-RUN2_HEDGE_SIGNAL_DIAGNOSIS=OPEN_HEDGE_RANK_4_TO_5;MEDIAN_PROBABILITY_0.0426;FREE_MARGIN_AVAILABLE;RISK_ENGINE_CLOSED_PRIMARY_FIRST
-CHURN_ROOT_CAUSE=MULTIPLE_CAUSES
-HEDGE_EFFECT=IMMATERIAL
-MODEL_MANAGEMENT_QUALITY=WEAK
-ACCOUNTING_PARITY=PASS
-TESTS_PASS=45_LOCAL;45_S13
+WIP=TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1
+STATUS=ACTIVE
+BASE_COMMIT=071fd1d
+DEFECTS_CONFIRMED=pending
+DEFECTS_FIXED=pending
+RISK_STATE_ISOLATION=pending
+LIFECYCLE_STATES=pending
+STALE_STATE_LEAKS=pending
+PENDING_ORDER_LEAKS=pending
+RISK_EXIT_COUNT_BEFORE=pending
+RISK_EXIT_COUNT_AFTER=pending
+REENTRY_WITHIN_1H_BEFORE=4033
+REENTRY_WITHIN_1H_AFTER=pending
+ACCOUNTING_PARITY=pending
+TESTS_PASS=pending
 MODEL_RETRAINING=NO
 QWEN_FULL_RUN=NO
 OOS_OPENED=NO

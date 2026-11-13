@@ -15,19 +15,17 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | Controlled backtest and attribution complete |
-| **MODE** | Diagnostics -> controlled backtest -> attribution -> review |
-| **BASE COMMIT** | `f5a8ff750cee65554951cc8e9d911e6ab4b1c700` |
-| **GIT COMMIT** | `c44f40d980a742b529a6e22134fff7b43c03bbc4` |
-| **REPORT** | [`docs/wip/TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1.md`](docs/wip/TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1.md) |
+| **WIP** | `TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | Risk-state diagnosis and lifecycle repair |
+| **MODE** | Diagnose -> repair -> test -> historical regression -> review |
+| **BASE COMMIT** | `071fd1df98298940d4d7d05e93850fc500552bbd` |
+| **REPORT** | [`docs/wip/TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1.md`](docs/wip/TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1.md) |
 | **LIVE TRADING** | DISABLED |
-| **RESULT** | HEDGE effect IMMATERIAL; 52 cycles explained; churn MULTIPLE_CAUSES; management quality WEAK |
+| **RESULT** | PENDING |
 
-The preceding execution/hedge audit remains in `REVIEW` at implementation
-commit `ee620a1cdeee78d129ffac56eff4647161b0a1b5` and must not be closed
-automatically.
+The preceding hedge-effect audit remains in `REVIEW` at commit
+`071fd1df98298940d4d7d05e93850fc500552bbd` and must not be closed automatically.
 
 Previous event-driven Qwen policy remains unchanged in `REVIEW`: 275 calls,
 6 action changes, and negative added value.
@@ -1631,6 +1629,7 @@ none (end of planned chain)
 | TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1 | REVIEW | Event-driven Qwen policy |
 | TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1 | REVIEW | Execution and hedge audit |
 | TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1 | REVIEW | Hedge effect and churn attribution |
+| TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1 | ACTIVE | Risk state and trade lifecycle |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
