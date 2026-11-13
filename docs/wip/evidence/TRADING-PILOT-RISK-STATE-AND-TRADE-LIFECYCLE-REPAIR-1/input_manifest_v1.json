@@ -1,0 +1,17 @@
+{
+  "base_commit": "071fd1df98298940d4d7d05e93850fc500552bbd",
+  "source_sha256": {
+    "backtest.py": "8548e9e2e50cbac6398585154c0fb06472570f1963422d71c406b04459d70976",
+    "event_backtest.py": "bc45f96f91190d6cd031009e1f78394c98242e26c42d4ee405c0be1867d2bb1d",
+    "lifecycle_audit.py": "5b22bfc9fc044947892e3eedfac417456cb6fbcd322f335eeaa13cbc3bb60f66"
+  },
+  "model_sha256": {
+    "entry_direction_gpu_v1.cbm": "df5c3eaefaab1dbdf47441e765886e882e24f2373af6dae2df86977e7b49bc86",
+    "entry_risk_gpu_v1.cbm": "ab2955f0efd89565d3833402cdb8425c877c8ed4bac9d34246819cbb405fd45d",
+    "position_management_gpu_v1.cbm": "3da5206e4099ae0edec19c0485731c33dc0af20bf1848820e714bce62f9fada0"
+  },
+  "result_sha256": {
+    "lifecycle_audit_final_v3.json": "a6fa53e1600f6c26000a3e10d940b0e52e64ade5406ed18dcea225f24388c0a7",
+    "event_policy_summary_v1.json": "3fc03b07bcdbaae5561131acb403de82dd88e5b37b1e54784d9224fa02766c4d"
+  }
+}

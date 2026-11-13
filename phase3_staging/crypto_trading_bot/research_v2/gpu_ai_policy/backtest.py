@@ -55,6 +55,7 @@ class PolicyResult:
     market_events: pd.DataFrame = field(default_factory=pd.DataFrame)
     order_trace: pd.DataFrame = field(default_factory=pd.DataFrame)
     action_trace: pd.DataFrame = field(default_factory=pd.DataFrame)
+    lifecycle_events: pd.DataFrame = field(default_factory=pd.DataFrame)
 
 
 @dataclass
@@ -78,6 +79,7 @@ class PolicyAccount:
     total_notional_turnover: float = 0.0
     order_rejections: list[dict[str, Any]] = field(default_factory=list)
     order_trace: list[dict[str, Any]] = field(default_factory=list)
+    lifecycle_events: list[dict[str, Any]] = field(default_factory=list)
     spot_slippage: float = 0.0
     spot_trade_count: int = 0
     trades: list[dict[str, Any]] = field(default_factory=list)
@@ -86,6 +88,12 @@ class PolicyAccount:
     qwen_events: list[dict[str, Any]] = field(default_factory=list)
     market_events: list[dict[str, Any]] = field(default_factory=list)
     action_trace: list[dict[str, Any]] = field(default_factory=list)
+    lifecycle_state: str = "FLAT"
+    cycle_id: int = 0
+    risk_cycle_id: int | None = None
+    risk_baseline_equity: float | None = None
+    risk_peak_futures_equity: float | None = None
+    risk_cycle_started_at: pd.Timestamp | None = None
 
     def __post_init__(self) -> None:
         self.spot = SpotAccount(cash=INITIAL_CAPITAL * self.spot_fraction)
@@ -106,6 +114,96 @@ class PolicyAccount:
         if self.futures.hedge is not None:
             return "HEDGED"
         return "PRIMARY_OPEN"
+
+    def _transition(
+        self,
+        time: pd.Timestamp,
+        state: str,
+        reason: str,
+    ) -> None:
+        self.lifecycle_state = state
+        self.lifecycle_events.append(
+            {
+                "time": pd.Timestamp(time),
+                "cycle_id": self.cycle_id,
+                "state": state,
+                "reason": reason,
+                "position_state": self.position_state(),
+            }
+        )
+
+    def begin_risk_cycle(
+        self,
+        time: pd.Timestamp,
+        mark: float,
+        spot_mark: float | None = None,
+    ) -> None:
+        spot_price = float(mark if spot_mark is None else spot_mark)
+        self.cycle_id += 1
+        self.risk_cycle_id = self.cycle_id
+        self.risk_baseline_equity = self.equity(mark, spot_price)
+        self.risk_peak_futures_equity = self.futures.equity(mark)
+        self.risk_cycle_started_at = pd.Timestamp(time)
+        self._transition(time, "PRIMARY_OPEN", "PRIMARY_OPENED")
+
+    def clear_risk_cycle(
+        self,
+        time: pd.Timestamp,
+        state: str,
+        reason: str,
+    ) -> None:
+        self._transition(time, state, reason)
+        if self.risk_cycle_id is not None:
+            self.lifecycle_events.append(
+                {
+                    "time": pd.Timestamp(time),
+                    "cycle_id": self.cycle_id,
+                    "state": "FLAT",
+                    "reason": reason,
+                    "position_state": self.position_state(),
+                }
+            )
+        self.risk_cycle_id = None
+        self.risk_baseline_equity = None
+        self.risk_peak_futures_equity = None
+        self.risk_cycle_started_at = None
+
+    def risk_metrics(
+        self,
+        mark: float,
+        spot_mark: float | None = None,
+    ) -> dict[str, float]:
+        spot_price = float(mark if spot_mark is None else spot_mark)
+        current_futures = self.futures.equity(mark)
+        if (
+            self.futures.primary is None
+            or self.risk_cycle_id is None
+            or self.risk_baseline_equity is None
+            or self.risk_peak_futures_equity is None
+        ):
+            return {
+                "futures_drawdown_fraction": 0.0,
+                "remaining_thesis_risk_fraction": MAX_THESIS_LOSS_FRACTION,
+                "risk_baseline_equity": float("nan"),
+                "risk_peak_futures_equity": float("nan"),
+            }
+        self.risk_peak_futures_equity = max(
+            self.risk_peak_futures_equity,
+            current_futures,
+        )
+        drawdown = max(
+            0.0,
+            self.risk_peak_futures_equity - current_futures,
+        ) / max(self.risk_baseline_equity, 1e-9)
+        return {
+            "futures_drawdown_fraction": drawdown,
+            "remaining_thesis_risk_fraction": max(
+                0.0,
+                MAX_THESIS_LOSS_FRACTION - drawdown,
+            ),
+            "risk_baseline_equity": self.risk_baseline_equity,
+            "risk_peak_futures_equity": self.risk_peak_futures_equity,
+        }
 
     def state_snapshot(
         self,
@@ -143,6 +241,11 @@ class PolicyAccount:
 
         return {
             "state": self.position_state(),
+            "lifecycle_state": self.lifecycle_state,
+            "cycle_id": self.cycle_id,
+            "risk_cycle_id": self.risk_cycle_id,
+            "risk_baseline_equity": self.risk_baseline_equity,
+            "risk_peak_futures_equity": self.risk_peak_futures_equity,
             "mark": float(mark),
             "equity": self.equity(mark, spot_price),
             "spot_exposure": float(self.spot.eth * spot_price),
@@ -175,14 +278,8 @@ class PolicyAccount:
                     TAKER_FEE_PER_SIDE,
                 )
             ) / mark
-        futures_drawdown = max(
-            0.0,
-            self.peak_futures_equity - self.futures.equity(mark),
-        )
-        remaining = max(
-            0.0,
-            MAX_THESIS_LOSS_FRACTION - futures_drawdown / max(equity, 1e-9),
-        )
+        risk_state = self.risk_metrics(mark, spot_price)
+        remaining = risk_state["remaining_thesis_risk_fraction"]
         return {
             "spot_fraction": self.spot_fraction,
             "spot_mode_code": 1.0 if self.spot_mode == "HOLD" else 0.0,
@@ -208,6 +305,9 @@ class PolicyAccount:
             "fees_cumulative": self.futures.entry_fees + self.futures.exit_fees,
             "funding_cumulative": self.futures.funding_costs,
             "remaining_thesis_risk_fraction": remaining,
+            "risk_cycle_id": float(self.risk_cycle_id or 0),
+            "risk_baseline_equity": risk_state["risk_baseline_equity"],
+            "risk_peak_futures_equity": risk_state["risk_peak_futures_equity"],
         }
 
     @staticmethod
@@ -276,6 +376,7 @@ class PolicyAccount:
             "notional": notional,
             "fee": fee,
             "state_after": self.position_state(),
+            "cycle_id": self.cycle_id,
             **(context or {}),
         }
         self.order_trace.append(row)
@@ -453,6 +554,10 @@ class PolicyAccount:
                     context=context,
                 )
             ]
+        self.begin_risk_cycle(time, mark, spot_price)
+        self._spot_swing(time, mark, spot_price, side)
+        self.risk_baseline_equity = self.equity(mark, spot_price)
+        self.risk_peak_futures_equity = self.futures.equity(mark)
         order = self._record_order(
             time=time,
             role="PRIMARY",
@@ -465,7 +570,6 @@ class PolicyAccount:
             fee=position.entry_fees,
             context=context,
         )
-        self._spot_swing(time, mark, spot_price, side)
         return [order]
 
     def _close(
@@ -489,6 +593,7 @@ class PolicyAccount:
             fee_rate=TAKER_FEE_PER_SIDE,
             reason=reason,
         )
+        trade["cycle_id"] = self.cycle_id
         self.trades.append(trade)
         self._record_order(
             time=time,
@@ -503,8 +608,10 @@ class PolicyAccount:
         )
         if role == "HEDGE":
             self.hedge_closed_count += 1
+            self._transition(time, "HEDGE_CLOSED", reason)
         else:
             self.primary_cycle_count += 1
+            self.clear_risk_cycle(time, "EXITED", reason)
         if role == "PRIMARY":
             self._spot_swing(time, mark, spot_price, 0)
         return trade
@@ -517,6 +624,7 @@ class PolicyAccount:
         mark: float,
         volume: float,
         spot_mark: float | None = None,
+        execution_reason: str | None = None,
     ) -> list[dict[str, Any]]:
         spot_price = float(mark if spot_mark is None else spot_mark)
         if action == "OPEN_LONG":
@@ -616,6 +724,7 @@ class PolicyAccount:
                 ]
             self.hedge_count += 1
             self.hedge_filled_count += 1
+            self._transition(time, "HEDGED", "HEDGE_OPENED")
             return [
                 self._record_order(
                     time=time,
@@ -731,6 +840,9 @@ class PolicyAccount:
                     )
                 ]
             self.averaging_count += 1
+            self._transition(time, "PRIMARY_AVERAGED", "AVERAGE_FILLED")
+            if self.futures.hedge is not None:
+                self._transition(time, "HEDGED", "AVERAGE_WITH_HEDGE")
             child = self.futures.primary.metadata["children"][-1]
             return [
                 self._record_order(
@@ -772,6 +884,7 @@ class PolicyAccount:
             self.trades.append(trade)
             if self.futures.primary is None:
                 self.primary_cycle_count += 1
+                self.clear_risk_cycle(time, "EXITED", "AI_REDUCE")
                 self._spot_swing(time, mark, spot_price, 0)
             return [
                 self._record_order(
@@ -788,8 +901,20 @@ class PolicyAccount:
             ]
         elif action == "EXIT":
             before = len(self.order_trace)
-            self._close("HEDGE", time, mark, "AI_EXIT_HEDGE", spot_price)
-            self._close("PRIMARY", time, mark, "AI_EXIT", spot_price)
+            exit_reason = execution_reason or "AI_EXIT"
+            if (
+                exit_reason.startswith("RISK_")
+                and self.lifecycle_state != "RISK_EXIT"
+            ):
+                self._transition(time, "RISK_EXIT", exit_reason)
+            self._close(
+                "HEDGE",
+                time,
+                mark,
+                f"{exit_reason}_HEDGE",
+                spot_price,
+            )
+            self._close("PRIMARY", time, mark, exit_reason, spot_price)
             if len(self.order_trace) == before:
                 return [
                     self._record_order(
@@ -851,6 +976,7 @@ class PolicyAccount:
                 liquidation_price=liquidation_price,
                 liquidation_fee_rate=LIQUIDATION_FEE_RATE,
             )
+            trade["cycle_id"] = self.cycle_id
             self.trades.append(trade)
             self._record_order(
                 time=time,
@@ -865,6 +991,9 @@ class PolicyAccount:
             )
             if role == "PRIMARY":
                 self.primary_cycle_count += 1
+                self.clear_risk_cycle(time, "LIQUIDATED", "LIQUIDATED")
+            elif self.futures.primary is not None:
+                self._transition(time, "PRIMARY_OPEN", "HEDGE_LIQUIDATED")
             self.liquidation_count += 1
         return roles
 
@@ -1004,6 +1133,7 @@ def _run_policy(
                 fee=account.spot.fees_paid - fees_before,
             )
     pending_action = "SKIP"
+    pending_action_reason = "AI_EXIT"
     pending_decision_at: pd.Timestamp | None = None
     pending_decision_price: float | None = None
     pending_trace_index: int | None = None
@@ -1039,6 +1169,7 @@ def _run_policy(
                 mark=open_price,
                 volume=float(row["volume"]),
                 spot_mark=spot_open_price,
+                execution_reason=pending_action_reason,
             )
             after_execution = account.state_snapshot(
                 open_price,
@@ -1059,6 +1190,9 @@ def _run_policy(
                     ),
                     "state_before": before_execution["state"],
                     "state_after": after_execution["state"],
+                    "cycle_id": account.cycle_id,
+                    "lifecycle_state": account.lifecycle_state,
+                    "execution_reason": pending_action_reason,
                     "strategy": name,
                 }
             )
@@ -1069,6 +1203,8 @@ def _run_policy(
                         "execution_price": open_price,
                         "state_before_execution": before_execution,
                         "state_after_execution": after_execution,
+                        "cycle_id": account.cycle_id,
+                        "lifecycle_state": account.lifecycle_state,
                         "orders": orders,
                         "order_reasons": [
                             str(order["reason"]) for order in orders
@@ -1079,6 +1215,7 @@ def _run_policy(
             pending_decision_at = None
             pending_decision_price = None
             pending_trace_index = None
+            pending_action_reason = "AI_EXIT"
         funding = funding_by_time.get(execution_time)
         if funding is not None:
             account.apply_funding(open_price, funding)
@@ -1094,10 +1231,8 @@ def _run_policy(
             decision_at,
             spot_close_price,
         )
-        futures_drawdown = max(
-            0.0,
-            account.peak_futures_equity - account.futures.equity(close_price),
-        ) / max(account.equity(close_price, spot_close_price), 1e-9)
+        risk_metrics = account.risk_metrics(close_price, spot_close_price)
+        futures_drawdown = risk_metrics["futures_drawdown_fraction"]
         trace_index = len(account.action_trace)
         hard_risk_reason: str | None = (
             "LIQUIDATION_EVENT"
@@ -1130,6 +1265,11 @@ def _run_policy(
                     spot_close_price,
                 ),
                 "futures_drawdown_fraction": futures_drawdown,
+                "risk_cycle_id": account.risk_cycle_id,
+                "risk_baseline_equity": risk_metrics["risk_baseline_equity"],
+                "risk_peak_futures_equity": risk_metrics[
+                    "risk_peak_futures_equity"
+                ],
                 "hard_risk_reason": hard_risk_reason,
                 "catboost_action": None,
                 "catboost_probabilities": None,
@@ -1319,6 +1459,7 @@ def _run_policy(
             if emergency_events:
                 pending_action = "EXIT"
                 catboost_action = "RISK_EXIT"
+                hard_risk_reason = emergency_events[0].event_type
                 risk_preempted = True
                 should_call_qwen = False
             elif qwen_adapter is not None:
@@ -1338,6 +1479,12 @@ def _run_policy(
 
         if risk_preempted:
             pending_action = "EXIT"
+            pending_action_reason = hard_risk_reason or "RISK_EXIT"
+            account._transition(
+                decision_at,
+                "RISK_EXIT",
+                pending_action_reason,
+            )
             should_call_qwen = False
             account.action_trace[trace_index].update(
                 {
@@ -1458,6 +1605,11 @@ def _run_policy(
             if applied_action != pending_action:
                 qwen_action_changes += 1
             pending_action = applied_action
+            pending_action_reason = (
+                f"QWEN_{decision.action}"
+                if applied_action != catboost_action
+                else f"CATBOOST_{catboost_action}"
+            )
             account.qwen_events.append(
                 {
                     "time": decision_at,
@@ -1492,6 +1644,7 @@ def _run_policy(
                 }
             )
         elif not risk_preempted:
+            pending_action_reason = f"CATBOOST_{catboost_action}"
             account.action_trace[trace_index].update(
                 {
                     "applied_action": pending_action,
@@ -1513,6 +1666,9 @@ def _run_policy(
             )
             if pending_action == "OPEN_HEDGE":
                 account.hedge_proposed_count += 1
+            account.action_trace[trace_index]["execution_reason"] = (
+                pending_action_reason
+            )
         account.record_equity(
             decision_at,
             close_price,
@@ -1520,7 +1676,7 @@ def _run_policy(
         )
 
     last = frame.iloc[-1]
-    final_time = pd.Timestamp(last["open_time"])
+    final_time = pd.Timestamp(last["decision_at"])
     final_mark = float(last["close"])
     final_spot_mark = (
         float(last["spot_close"])
@@ -1548,6 +1704,7 @@ def _run_policy(
     market_events = pd.DataFrame(account.market_events)
     order_trace = pd.DataFrame(account.order_trace)
     action_trace = pd.DataFrame(account.action_trace)
+    lifecycle_events = pd.DataFrame(account.lifecycle_events)
     final_equity = float(equity.iloc[-1]["equity"])
     executed_orders = (
         order_trace.loc[order_trace["executed"] == 1].copy()
@@ -1608,6 +1765,23 @@ def _run_policy(
         "return_percent": (final_equity / INITIAL_CAPITAL - 1.0) * 100.0,
         "max_drawdown": _max_drawdown(equity["equity"]),
         "liquidations": account.liquidation_count,
+        "risk_exit_count": int(
+            (
+                (
+                    (trades["role"] == "PRIMARY")
+                    & trades["reason"]
+                    .astype(str)
+                    .str.startswith(("RISK_", "LIQUIDATION_BUFFER"))
+                )
+            ).sum()
+        )
+        if not trades.empty
+        else 0,
+        "lifecycle_transition_counts": (
+            lifecycle_events["state"].value_counts().to_dict()
+            if not lifecycle_events.empty
+            else {}
+        ),
         "hedges": account.hedge_count,
         "averaging_count": account.averaging_count,
         "trade_count": len(trades) + account.spot_trade_count,
@@ -1698,6 +1872,7 @@ def _run_policy(
         market_events=market_events,
         order_trace=order_trace,
         action_trace=action_trace,
+        lifecycle_events=lifecycle_events,
     )
 
 
@@ -1967,6 +2142,10 @@ def run_backtests(
         )
         result.action_trace.to_csv(
             output_root / f"{safe}_action_trace.csv",
+            index=False,
+        )
+        result.lifecycle_events.to_csv(
+            output_root / f"{safe}_lifecycle_events.csv",
             index=False,
         )
         if not result.qwen_events.empty:

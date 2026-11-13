@@ -43,6 +43,7 @@ def test_primary_long_hedge_short_reaches_hedged_and_hedge_closed() -> None:
         volume=50_000.0,
     )[0]["executed"]
     assert account.position_state() == "HEDGED"
+    assert account.lifecycle_state == "HEDGED"
     assert account.futures.primary is not None
     assert account.futures.hedge is not None
 
@@ -54,6 +55,7 @@ def test_primary_long_hedge_short_reaches_hedged_and_hedge_closed() -> None:
     )
     assert closed[0]["executed"]
     assert account.position_state() == "PRIMARY_OPEN"
+    assert account.lifecycle_state == "HEDGE_CLOSED"
     assert account.futures.primary is not None
     assert account.futures.hedge is None
     assert account.hedge_filled_count == 1
@@ -67,6 +69,7 @@ def test_primary_long_hedge_short_reaches_hedged_and_hedge_closed() -> None:
         volume=50_000.0,
     )[0]["executed"]
     assert account.position_state() == "FLAT"
+    assert account.lifecycle_state == "EXITED"
     assert account.primary_cycle_count == 1
 
 
@@ -109,6 +112,57 @@ def test_unhedged_control_removes_hedge_actions_without_changing_primary() -> No
     assert "OPEN_HEDGE" not in unhedged_actions
     assert "CLOSE_HEDGE" not in unhedged_actions
     assert account.futures.primary is primary
+
+
+def test_risk_state_is_scoped_to_one_trade_cycle_and_resets() -> None:
+    account = PolicyAccount(0.60, "HOLD")
+    assert account.execute("OPEN_LONG", time=_time(0), mark=100.0, volume=50_000.0)[
+        0
+    ]["executed"]
+    first_cycle = account.cycle_id
+    account.futures.free_collateral -= 6.0
+    stressed = account.risk_metrics(100.0, 100.0)
+    assert stressed["futures_drawdown_fraction"] > 0.05
+
+    assert account.execute(
+        "EXIT",
+        time=_time(1),
+        mark=100.0,
+        volume=50_000.0,
+        execution_reason="RISK_DRAWDOWN_LIMIT",
+    )[0]["executed"]
+    assert account.risk_cycle_id is None
+    assert account.risk_metrics(100.0, 100.0)["futures_drawdown_fraction"] == 0.0
+
+    assert account.execute("OPEN_SHORT", time=_time(2), mark=100.0, volume=50_000.0)[
+        0
+    ]["executed"]
+    assert account.cycle_id == first_cycle + 1
+    assert account.risk_metrics(100.0, 100.0)["futures_drawdown_fraction"] == 0.0
+    states = [event["state"] for event in account.lifecycle_events]
+    assert states[:5] == [
+        "PRIMARY_OPEN",
+        "RISK_EXIT",
+        "EXITED",
+        "FLAT",
+        "PRIMARY_OPEN",
+    ]
+
+
+def test_risk_exit_reason_is_preserved_in_trade_and_order_trace() -> None:
+    account = PolicyAccount(0.60, "HOLD")
+    opened = account.execute("OPEN_LONG", time=_time(0), mark=100.0, volume=50_000.0)
+    assert opened[0]["cycle_id"] == account.cycle_id
+    exited = account.execute(
+        "EXIT",
+        time=_time(1),
+        mark=100.0,
+        volume=50_000.0,
+        execution_reason="RISK_DRAWDOWN_LIMIT",
+    )
+    assert exited[0]["reason"] == "RISK_DRAWDOWN_LIMIT"
+    assert account.trades[-1]["reason"] == "RISK_DRAWDOWN_LIMIT"
+    assert account.trades[-1]["cycle_id"] == account.cycle_id
 
 
 def test_hedge_is_rejected_without_free_margin() -> None:
@@ -320,6 +374,7 @@ def test_decision_executes_only_at_next_available_bar_open() -> None:
     first = result.decisions.iloc[0]
     assert first["decision_price"] == pytest.approx(101.0)
     assert first["execution_price"] == pytest.approx(101.0)
+    assert result.equity.iloc[-1]["used_margin"] == pytest.approx(0.0)
 
 
 def test_qwen_receives_atr_and_state_specific_action_contract() -> None:

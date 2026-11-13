@@ -16,13 +16,13 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | Field | Value |
 |---|---|
 | **WIP** | `TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1` |
-| **STATUS** | ACTIVE |
-| **PHASE** | Risk-state diagnosis and lifecycle repair |
+| **STATUS** | REVIEW |
+| **PHASE** | Repair and regression complete |
 | **MODE** | Diagnose -> repair -> test -> historical regression -> review |
 | **BASE COMMIT** | `071fd1df98298940d4d7d05e93850fc500552bbd` |
 | **REPORT** | [`docs/wip/TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1.md`](docs/wip/TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1.md) |
 | **LIVE TRADING** | DISABLED |
-| **RESULT** | PENDING |
+| **RESULT** | 5 defects fixed; stale risk exits 3594→76; lifecycle integrity PASS; liquidations 4→18 |
 
 The preceding hedge-effect audit remains in `REVIEW` at commit
 `071fd1df98298940d4d7d05e93850fc500552bbd` and must not be closed automatically.
@@ -1629,7 +1629,7 @@ none (end of planned chain)
 | TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1 | REVIEW | Event-driven Qwen policy |
 | TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1 | REVIEW | Execution and hedge audit |
 | TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1 | REVIEW | Hedge effect and churn attribution |
-| TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1 | ACTIVE | Risk state and trade lifecycle |
+| TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1 | REVIEW | Risk state and trade lifecycle |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |

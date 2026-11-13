@@ -276,6 +276,10 @@ def run_event_policy(
                 output_root / f"{safe}_action_trace.csv",
                 index=False,
             )
+            result.lifecycle_events.to_csv(
+                output_root / f"{safe}_lifecycle_events.csv",
+                index=False,
+            )
     metrics_frame = pd.DataFrame([result.metrics for result in results])
     metrics_frame.to_csv(output_root / "policy_metrics_v1.csv", index=False)
     all_events = pd.concat(

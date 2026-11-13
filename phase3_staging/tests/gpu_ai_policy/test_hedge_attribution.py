@@ -14,6 +14,9 @@ from crypto_trading_bot.research_v2.gpu_ai_policy.hedge_attribution import (
     _position_pnl,
     _training_labels,
 )
+from crypto_trading_bot.research_v2.gpu_ai_policy.lifecycle_audit import (
+    _cycle_integrity,
+)
 
 
 def test_position_pnl_uses_side_quantity_and_entry() -> None:
@@ -215,3 +218,46 @@ def test_training_label_counts_are_reproducible() -> None:
         result = _training_labels(path)
         assert result["best_action_counts"] == {"HOLD": 2, "OPEN_HEDGE": 1}
         assert json.dumps(result)
+
+
+def test_lifecycle_integrity_detects_orders_after_terminal_state() -> None:
+    lifecycle = pd.DataFrame(
+        [
+            {
+                "time": "2024-01-01T00:00:00Z",
+                "cycle_id": 1,
+                "state": "PRIMARY_OPEN",
+            },
+            {
+                "time": "2024-01-01T02:00:00Z",
+                "cycle_id": 1,
+                "state": "EXITED",
+            },
+            {
+                "time": "2024-01-01T02:00:00Z",
+                "cycle_id": 1,
+                "state": "FLAT",
+            },
+        ]
+    )
+    orders = pd.DataFrame(
+        [
+            {
+                "time": "2024-01-01T00:00:00Z",
+                "cycle_id": 1,
+                "role": "PRIMARY",
+                "executed": 1,
+            },
+            {
+                "time": "2024-01-01T03:00:00Z",
+                "cycle_id": 1,
+                "role": "PRIMARY",
+                "executed": 1,
+            },
+        ]
+    )
+    result = _cycle_integrity(lifecycle, orders)
+    assert result["cycles"] == 1
+    assert result["completed_cycles"] == 1
+    assert result["executed_orders_after_terminal_state"] == 1
+    assert result["executed_orders_missing_cycle_id"] == 0
