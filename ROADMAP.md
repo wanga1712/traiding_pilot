@@ -20,6 +20,7 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | **PHASE** | Controlled backtest and attribution complete |
 | **MODE** | Diagnostics -> controlled backtest -> attribution -> review |
 | **BASE COMMIT** | `f5a8ff750cee65554951cc8e9d911e6ab4b1c700` |
+| **GIT COMMIT** | `c44f40d980a742b529a6e22134fff7b43c03bbc4` |
 | **REPORT** | [`docs/wip/TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1.md`](docs/wip/TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1.md) |
 | **LIVE TRADING** | DISABLED |
 | **RESULT** | HEDGE effect IMMATERIAL; 52 cycles explained; churn MULTIPLE_CAUSES; management quality WEAK |
