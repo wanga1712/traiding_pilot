@@ -20,6 +20,7 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | **PHASE** | Repair and regression complete |
 | **MODE** | Diagnose -> repair -> test -> historical regression -> review |
 | **BASE COMMIT** | `071fd1df98298940d4d7d05e93850fc500552bbd` |
+| **GIT COMMIT** | `21a8cdd40b57ee7bfc31d26489ae6b62e9d1c944` |
 | **REPORT** | [`docs/wip/TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1.md`](docs/wip/TRADING-PILOT-RISK-STATE-AND-TRADE-LIFECYCLE-REPAIR-1.md) |
 | **LIVE TRADING** | DISABLED |
 | **RESULT** | 5 defects fixed; stale risk exits 3594→76; lifecycle integrity PASS; liquidations 4→18 |
