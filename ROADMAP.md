@@ -15,15 +15,18 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 
 | Field | Value |
 |---|---|
-| **WIP** | `TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1` |
-| **STATUS** | REVIEW |
-| **PHASE** | Audit, repair, tests, and CatBoost-only regression complete |
-| **MODE** | Audit -> repair -> test -> historical regression |
-| **BASE COMMIT** | `218390d02019e71bda21122aef56b599d2429ff0` |
-| **GIT COMMIT** | `ee620a1cdeee78d129ffac56eff4647161b0a1b5` |
-| **REPORT** | [`docs/wip/TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1.md`](docs/wip/TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1.md) |
+| **WIP** | `TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1` |
+| **STATUS** | ACTIVE |
+| **PHASE** | Input freeze and hedge/churn attribution |
+| **MODE** | Diagnostics -> controlled backtest -> attribution -> review |
+| **BASE COMMIT** | `f5a8ff750cee65554951cc8e9d911e6ab4b1c700` |
+| **REPORT** | [`docs/wip/TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1.md`](docs/wip/TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1.md) |
 | **LIVE TRADING** | DISABLED |
-| **RESULT** | 9 confirmed defects; 8 fixed; 52 after-fix HEDGE fills/closes; Qwen after-fix full PnL blocked by event volume |
+| **RESULT** | PENDING |
+
+The preceding execution/hedge audit remains in `REVIEW` at implementation
+commit `ee620a1cdeee78d129ffac56eff4647161b0a1b5` and must not be closed
+automatically.
 
 Previous event-driven Qwen policy remains unchanged in `REVIEW`: 275 calls,
 6 action changes, and negative added value.
@@ -1626,6 +1629,7 @@ none (end of planned chain)
 | TRADING-PILOT-ACTION-LEARNING-AUDIT-1 | REVIEW | Action and label audit |
 | TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1 | REVIEW | Event-driven Qwen policy |
 | TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1 | REVIEW | Execution and hedge audit |
+| TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1 | ACTIVE | Hedge effect and churn attribution |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |
