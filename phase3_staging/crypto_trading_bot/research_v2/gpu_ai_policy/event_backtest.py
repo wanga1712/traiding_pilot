@@ -28,6 +28,10 @@ def _load_minute_hour_features(path: Path) -> pd.DataFrame:
         path,
         columns=[
             "open_time",
+            "open",
+            "high",
+            "low",
+            "close",
             "futures_open",
             "futures_high",
             "futures_low",
@@ -43,6 +47,10 @@ def _load_minute_hour_features(path: Path) -> pd.DataFrame:
     grouped = (
         minute.groupby("hour", sort=True)
         .agg(
+            spot_open=("open", "first"),
+            spot_high=("high", "max"),
+            spot_low=("low", "min"),
+            spot_close=("close", "last"),
             futures_open=("futures_open", "first"),
             minute_high=("mark_high", "max"),
             minute_low=("mark_low", "min"),
@@ -123,6 +131,10 @@ def _context(
         how="left",
         validate="one_to_one",
     ).drop(columns=["hour"])
+    frame["spot_open"] = frame["spot_open"].fillna(frame["open"])
+    frame["spot_high"] = frame["spot_high"].fillna(frame["high"])
+    frame["spot_low"] = frame["spot_low"].fillna(frame["low"])
+    frame["spot_close"] = frame["spot_close"].fillna(frame["close"])
     frame["open"] = frame["futures_open"].fillna(frame["open"])
     frame["high"] = frame["minute_high"]
     frame["low"] = frame["minute_low"]
@@ -154,6 +166,7 @@ def run_event_policy(
     training_root: Path,
     output_root: Path,
     dry_run: bool = False,
+    hedge_enabled: bool = True,
 ) -> dict[str, Any]:
     context = _context(
         dataset_root,
@@ -203,7 +216,11 @@ def run_event_policy(
             monitor = EventMonitor(event_config)
             result = _run_policy(
                 name=(
-                    "CATBOOST_EVENT_DRY_RUN"
+                    (
+                        "CATBOOST_EVENT_DRY_RUN_HEDGED"
+                        if hedge_enabled
+                        else "CATBOOST_EVENT_DRY_RUN_UNHEDGED"
+                    )
                     if dry_run
                     else "CATBOOST_QWEN_EVENT_DRIVEN"
                 ),
@@ -230,6 +247,7 @@ def run_event_policy(
                     ),
                 },
                 event_monitor=monitor,
+                hedge_enabled=hedge_enabled,
             )
             results.append(result)
             safe = f"{split_name}_{int(spot_fraction * 100)}"
@@ -284,6 +302,7 @@ def run_event_policy(
     summary = {
         "status": "PASS",
         "mode": "DRY_RUN" if dry_run else "EVENT_DRIVEN",
+        "hedge_enabled": hedge_enabled,
         "event_config": event_config.__dict__,
         "metrics": metrics_frame.to_dict(orient="records"),
         "market_events_detected": int(
@@ -382,6 +401,11 @@ if __name__ == "__main__":
     parser.add_argument("--training-root", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--hedge-mode",
+        choices=("hedged", "unhedged"),
+        default="hedged",
+    )
     args = parser.parse_args()
     print(
         json.dumps(
@@ -390,6 +414,7 @@ if __name__ == "__main__":
                 training_root=args.training_root,
                 output_root=args.output_root,
                 dry_run=args.dry_run,
+                hedge_enabled=args.hedge_mode == "hedged",
             ),
             indent=2,
             default=str,

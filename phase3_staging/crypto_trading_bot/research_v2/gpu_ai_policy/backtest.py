@@ -94,8 +94,9 @@ class PolicyAccount:
         )
         self.peak_futures_equity = self.futures.free_collateral
 
-    def equity(self, mark: float) -> float:
-        return float(self.spot.equity(mark) + self.futures.equity(mark))
+    def equity(self, mark: float, spot_mark: float | None = None) -> float:
+        spot_price = float(mark if spot_mark is None else spot_mark)
+        return float(self.spot.equity(spot_price) + self.futures.equity(mark))
 
     def position_state(self) -> str:
         if self.futures.primary is None:
@@ -106,9 +107,15 @@ class PolicyAccount:
             return "HEDGED"
         return "PRIMARY_OPEN"
 
-    def state_snapshot(self, mark: float, time: pd.Timestamp) -> dict[str, Any]:
+    def state_snapshot(
+        self,
+        mark: float,
+        time: pd.Timestamp,
+        spot_mark: float | None = None,
+    ) -> dict[str, Any]:
         primary = self.futures.primary
         hedge = self.futures.hedge
+        spot_price = float(mark if spot_mark is None else spot_mark)
 
         def position_payload(position: Any) -> dict[str, Any] | None:
             if position is None:
@@ -137,8 +144,8 @@ class PolicyAccount:
         return {
             "state": self.position_state(),
             "mark": float(mark),
-            "equity": self.equity(mark),
-            "spot_exposure": float(self.spot.eth * mark),
+            "equity": self.equity(mark, spot_price),
+            "spot_exposure": float(self.spot.eth * spot_price),
             "free_collateral": float(self.futures.free_collateral),
             "used_margin": float(self.futures.margin_used()),
             "gross_notional": float(self.futures.gross_notional(mark)),
@@ -147,10 +154,16 @@ class PolicyAccount:
             "hedge": position_payload(hedge),
         }
 
-    def state_features(self, mark: float, time: pd.Timestamp) -> dict[str, float]:
+    def state_features(
+        self,
+        mark: float,
+        time: pd.Timestamp,
+        spot_mark: float | None = None,
+    ) -> dict[str, float]:
         primary = self.futures.primary
         hedge = self.futures.hedge
-        equity = self.equity(mark)
+        spot_price = float(mark if spot_mark is None else spot_mark)
+        equity = self.equity(mark, spot_price)
         gross = self.futures.gross_notional(mark)
         net = self.futures.net_notional(mark)
         liquidation_distance = 0.0
@@ -173,7 +186,7 @@ class PolicyAccount:
         return {
             "spot_fraction": self.spot_fraction,
             "spot_mode_code": 1.0 if self.spot_mode == "HOLD" else 0.0,
-            "spot_exposure_fraction": self.spot.eth * mark / max(equity, 1e-9),
+            "spot_exposure_fraction": self.spot.eth * spot_price / max(equity, 1e-9),
             "primary_side": float(primary.side) if primary is not None else 0.0,
             "primary_margin_fraction": primary.margin / max(equity, 1e-9) if primary else 0.0,
             "primary_quantity_fraction": primary.quantity * mark / max(equity, 1e-9) if primary else 0.0,
@@ -273,14 +286,25 @@ class PolicyAccount:
             self.order_rejections.append(row)
         return row
 
-    def _spot_swing(self, time: pd.Timestamp, mark: float, direction: int) -> None:
+    def _spot_swing(
+        self,
+        time: pd.Timestamp,
+        futures_mark: float,
+        spot_mark: float,
+        direction: int,
+    ) -> None:
         if self.spot_mode != "SWING":
             return
-        target = self.equity(mark) * self.spot_fraction if direction > 0 else 0.0
-        if target > self.spot.equity(mark):
+        target = (
+            self.equity(futures_mark, spot_mark) * self.spot_fraction
+            if direction > 0
+            else 0.0
+        )
+        if target > self.spot.equity(spot_mark):
             fees_before = self.spot.fees_paid
+            eth_before = self.spot.eth
             spent = self.spot.buy_to_target(
-                mark,
+                spot_mark,
                 target,
                 fee_rate=TAKER_FEE_PER_SIDE,
                 slippage=SLIPPAGE_PER_SIDE,
@@ -294,13 +318,15 @@ class PolicyAccount:
                     action="SPOT_BUY",
                     executed=True,
                     reason="TARGET_REBALANCE",
+                    quantity=self.spot.eth - eth_before,
                     notional=spent,
                     fee=self.spot.fees_paid - fees_before,
                 )
-        elif target < self.spot.equity(mark):
+        elif target < self.spot.equity(spot_mark):
             fees_before = self.spot.fees_paid
+            eth_before = self.spot.eth
             proceeds = self.spot.sell_to_target(
-                mark,
+                spot_mark,
                 target,
                 fee_rate=TAKER_FEE_PER_SIDE,
                 slippage=SLIPPAGE_PER_SIDE,
@@ -314,6 +340,7 @@ class PolicyAccount:
                     action="SPOT_SELL",
                     executed=True,
                     reason="TARGET_REBALANCE",
+                    quantity=eth_before - self.spot.eth,
                     notional=proceeds,
                     fee=self.spot.fees_paid - fees_before,
                 )
@@ -324,7 +351,9 @@ class PolicyAccount:
         time: pd.Timestamp,
         mark: float,
         volume: float,
+        spot_mark: float | None = None,
     ) -> list[dict[str, Any]]:
+        spot_price = float(mark if spot_mark is None else spot_mark)
         if self.futures.primary is not None:
             return [
                 self._record_order(
@@ -436,7 +465,7 @@ class PolicyAccount:
             fee=position.entry_fees,
             context=context,
         )
-        self._spot_swing(time, mark, side)
+        self._spot_swing(time, mark, spot_price, side)
         return [order]
 
     def _close(
@@ -445,7 +474,9 @@ class PolicyAccount:
         time: pd.Timestamp,
         mark: float,
         reason: str,
+        spot_mark: float | None = None,
     ) -> dict[str, Any] | None:
+        spot_price = float(mark if spot_mark is None else spot_mark)
         if (role == "PRIMARY" and self.futures.primary is None) or (
             role == "HEDGE" and self.futures.hedge is None
         ):
@@ -475,7 +506,7 @@ class PolicyAccount:
         else:
             self.primary_cycle_count += 1
         if role == "PRIMARY":
-            self._spot_swing(time, mark, 0)
+            self._spot_swing(time, mark, spot_price, 0)
         return trade
 
     def execute(
@@ -485,11 +516,13 @@ class PolicyAccount:
         time: pd.Timestamp,
         mark: float,
         volume: float,
+        spot_mark: float | None = None,
     ) -> list[dict[str, Any]]:
+        spot_price = float(mark if spot_mark is None else spot_mark)
         if action == "OPEN_LONG":
-            return self._open(1, time, mark, volume)
+            return self._open(1, time, mark, volume, spot_price)
         elif action == "OPEN_SHORT":
-            return self._open(-1, time, mark, volume)
+            return self._open(-1, time, mark, volume, spot_price)
         elif action == "OPEN_HEDGE":
             if self.futures.primary is None:
                 self.hedge_rejected_count += 1
@@ -609,7 +642,7 @@ class PolicyAccount:
                     )
                 ]
             before = len(self.order_trace)
-            self._close("HEDGE", time, mark, "AI_CLOSE_HEDGE")
+            self._close("HEDGE", time, mark, "AI_CLOSE_HEDGE", spot_price)
             return self.order_trace[before:]
         elif action == "AVERAGE_PRIMARY":
             if self.futures.primary is None:
@@ -739,7 +772,7 @@ class PolicyAccount:
             self.trades.append(trade)
             if self.futures.primary is None:
                 self.primary_cycle_count += 1
-                self._spot_swing(time, mark, 0)
+                self._spot_swing(time, mark, spot_price, 0)
             return [
                 self._record_order(
                     time=time,
@@ -755,8 +788,8 @@ class PolicyAccount:
             ]
         elif action == "EXIT":
             before = len(self.order_trace)
-            self._close("HEDGE", time, mark, "AI_EXIT_HEDGE")
-            self._close("PRIMARY", time, mark, "AI_EXIT")
+            self._close("HEDGE", time, mark, "AI_EXIT_HEDGE", spot_price)
+            self._close("PRIMARY", time, mark, "AI_EXIT", spot_price)
             if len(self.order_trace) == before:
                 return [
                     self._record_order(
@@ -835,7 +868,13 @@ class PolicyAccount:
             self.liquidation_count += 1
         return roles
 
-    def record_equity(self, time: pd.Timestamp, mark: float) -> None:
+    def record_equity(
+        self,
+        time: pd.Timestamp,
+        mark: float,
+        spot_mark: float | None = None,
+    ) -> None:
+        spot_price = float(mark if spot_mark is None else spot_mark)
         self.futures_peak = max(
             self.peak_futures_equity,
             self.futures.equity(mark),
@@ -844,8 +883,8 @@ class PolicyAccount:
         self.equity_rows.append(
             {
                 "time": time,
-                "equity": self.equity(mark),
-                "spot_equity": self.spot.equity(mark),
+                "equity": self.equity(mark, spot_price),
+                "spot_equity": self.spot.equity(spot_price),
                 "futures_equity": self.futures.equity(mark),
                 "free_collateral": self.futures.free_collateral,
                 "used_margin": self.futures.margin_used(),
@@ -882,13 +921,18 @@ def _max_drawdown(equity: pd.Series) -> float:
     return float(drawdown.max()) if drawdown.notna().any() else 0.0
 
 
-def _allowed_actions(account: PolicyAccount) -> list[str]:
+def _allowed_actions(
+    account: PolicyAccount,
+    *,
+    hedge_enabled: bool = True,
+) -> list[str]:
     primary = account.futures.primary
     hedge = account.futures.hedge
     if primary is None:
         return ["OPEN_LONG", "OPEN_SHORT", "HOLD", "SKIP"]
     actions = ["HOLD", "REDUCE_POSITION", "EXIT"]
-    actions.append("OPEN_HEDGE" if hedge is None else "CLOSE_HEDGE")
+    if hedge_enabled:
+        actions.append("OPEN_HEDGE" if hedge is None else "CLOSE_HEDGE")
     if primary.additions < 2:
         actions.append("AVERAGE_PRIMARY")
     return actions
@@ -928,13 +972,20 @@ def _run_policy(
     qwen_max_requests: int = 64,
     qwen_context: dict[str, Any] | None = None,
     event_monitor: EventMonitor | None = None,
+    hedge_enabled: bool = True,
 ) -> PolicyResult:
     account = PolicyAccount(spot_fraction, spot_mode)
     first = frame.iloc[0]
+    first_spot_open = (
+        float(first["spot_open"])
+        if "spot_open" in first and pd.notna(first["spot_open"])
+        else float(first["open"])
+    )
     if spot_mode == "HOLD":
         fees_before = account.spot.fees_paid
+        eth_before = account.spot.eth
         spent = account.spot.buy_to_target(
-            float(first["open"]),
+            first_spot_open,
             account.spot.cash,
             fee_rate=TAKER_FEE_PER_SIDE,
             slippage=SLIPPAGE_PER_SIDE,
@@ -948,6 +999,7 @@ def _run_policy(
                 action="SPOT_BUY",
                 executed=True,
                 reason="INITIAL_HOLD",
+                quantity=account.spot.eth - eth_before,
                 notional=spent,
                 fee=account.spot.fees_paid - fees_before,
             )
@@ -965,15 +1017,34 @@ def _run_policy(
         decision_at = pd.Timestamp(row["decision_at"])
         open_price = float(row["open"])
         close_price = float(row["close"])
+        spot_open_price = (
+            float(row["spot_open"])
+            if "spot_open" in row and pd.notna(row["spot_open"])
+            else open_price
+        )
+        spot_close_price = (
+            float(row["spot_close"])
+            if "spot_close" in row and pd.notna(row["spot_close"])
+            else close_price
+        )
         if pending_action != "SKIP":
-            before_execution = account.state_snapshot(open_price, execution_time)
+            before_execution = account.state_snapshot(
+                open_price,
+                execution_time,
+                spot_open_price,
+            )
             orders = account.execute(
                 pending_action,
                 time=execution_time,
                 mark=open_price,
                 volume=float(row["volume"]),
+                spot_mark=spot_open_price,
             )
-            after_execution = account.state_snapshot(open_price, execution_time)
+            after_execution = account.state_snapshot(
+                open_price,
+                execution_time,
+                spot_open_price,
+            )
             account.decisions.append(
                 {
                     "time": execution_time,
@@ -1018,11 +1089,15 @@ def _run_policy(
             close_price,
         )
 
-        state = account.state_features(close_price, decision_at)
+        state = account.state_features(
+            close_price,
+            decision_at,
+            spot_close_price,
+        )
         futures_drawdown = max(
             0.0,
             account.peak_futures_equity - account.futures.equity(close_price),
-        ) / max(account.equity(close_price), 1e-9)
+        ) / max(account.equity(close_price, spot_close_price), 1e-9)
         trace_index = len(account.action_trace)
         hard_risk_reason: str | None = (
             "LIQUIDATION_EVENT"
@@ -1052,6 +1127,7 @@ def _run_policy(
                 "state_at_decision": account.state_snapshot(
                     close_price,
                     decision_at,
+                    spot_close_price,
                 ),
                 "futures_drawdown_fraction": futures_drawdown,
                 "hard_risk_reason": hard_risk_reason,
@@ -1156,10 +1232,11 @@ def _run_policy(
             allowed = {"HOLD", "REDUCE_POSITION", "EXIT"}
             if account.futures.primary is not None and account.futures.primary.additions < 2:
                 allowed.add("AVERAGE_PRIMARY")
-            if account.futures.hedge is None:
-                allowed.add("OPEN_HEDGE")
-            else:
-                allowed.add("CLOSE_HEDGE")
+            if hedge_enabled:
+                if account.futures.hedge is None:
+                    allowed.add("OPEN_HEDGE")
+                else:
+                    allowed.add("CLOSE_HEDGE")
             if name == "AI_NO_HEDGE":
                 allowed -= {"OPEN_HEDGE", "CLOSE_HEDGE", "AVERAGE_PRIMARY"}
             elif name == "AI_HEDGE":
@@ -1294,7 +1371,11 @@ def _run_policy(
                 if key in row and pd.notna(row[key])
             }
             current_risk = account.current_risk(close_price)
-            positions_payload = account.state_snapshot(close_price, decision_at)
+            positions_payload = account.state_snapshot(
+                close_price,
+                decision_at,
+                spot_close_price,
+            )
             portfolio_payload = {
                 **(qwen_context or {}),
                 "position_state": account.position_state(),
@@ -1319,7 +1400,10 @@ def _run_policy(
                     "remaining_thesis_risk_fraction"
                 ],
             }
-            allowed_actions = _allowed_actions(account)
+            allowed_actions = _allowed_actions(
+                account,
+                hedge_enabled=hedge_enabled,
+            )
             decision = qwen_adapter.decide(
                 decision_at=decision_at.isoformat(),
                 market_features=market_features,
@@ -1412,7 +1496,10 @@ def _run_policy(
                 {
                     "applied_action": pending_action,
                     "selection_source": "POLICY",
-                    "allowed_actions": _allowed_actions(account),
+                    "allowed_actions": _allowed_actions(
+                        account,
+                        hedge_enabled=hedge_enabled,
+                    ),
                 }
             )
         if pending_action != "SKIP":
@@ -1426,13 +1513,22 @@ def _run_policy(
             )
             if pending_action == "OPEN_HEDGE":
                 account.hedge_proposed_count += 1
-        account.record_equity(decision_at, close_price)
+        account.record_equity(
+            decision_at,
+            close_price,
+            spot_close_price,
+        )
 
     last = frame.iloc[-1]
     final_time = pd.Timestamp(last["open_time"])
     final_mark = float(last["close"])
-    account._close("HEDGE", final_time, final_mark, "RUN_END")
-    account._close("PRIMARY", final_time, final_mark, "RUN_END")
+    final_spot_mark = (
+        float(last["spot_close"])
+        if "spot_close" in last and pd.notna(last["spot_close"])
+        else final_mark
+    )
+    account._close("HEDGE", final_time, final_mark, "RUN_END", final_spot_mark)
+    account._close("PRIMARY", final_time, final_mark, "RUN_END", final_spot_mark)
     if pending_trace_index is not None:
         account.action_trace[pending_trace_index].update(
             {
@@ -1440,7 +1536,7 @@ def _run_policy(
                 "order_reasons": ["PENDING_AT_RUN_END"],
             }
         )
-    account.record_equity(final_time, final_mark)
+    account.record_equity(final_time, final_mark, final_spot_mark)
     equity = (
         pd.DataFrame(account.equity_rows)
         .drop_duplicates("time", keep="last")
@@ -1503,6 +1599,7 @@ def _run_policy(
     }
     metrics = {
         "strategy": name,
+        "hedge_enabled": hedge_enabled,
         "split": split_name,
         "spot_fraction": spot_fraction,
         "spot_mode": spot_mode,

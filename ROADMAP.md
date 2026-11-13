@@ -16,13 +16,13 @@ Template: [`docs/wip/WIP_TEMPLATE.md`](docs/wip/WIP_TEMPLATE.md)
 | Field | Value |
 |---|---|
 | **WIP** | `TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1` |
-| **STATUS** | ACTIVE |
-| **PHASE** | Input freeze and hedge/churn attribution |
+| **STATUS** | REVIEW |
+| **PHASE** | Controlled backtest and attribution complete |
 | **MODE** | Diagnostics -> controlled backtest -> attribution -> review |
 | **BASE COMMIT** | `f5a8ff750cee65554951cc8e9d911e6ab4b1c700` |
 | **REPORT** | [`docs/wip/TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1.md`](docs/wip/TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1.md) |
 | **LIVE TRADING** | DISABLED |
-| **RESULT** | PENDING |
+| **RESULT** | HEDGE effect IMMATERIAL; 52 cycles explained; churn MULTIPLE_CAUSES; management quality WEAK |
 
 The preceding execution/hedge audit remains in `REVIEW` at implementation
 commit `ee620a1cdeee78d129ffac56eff4647161b0a1b5` and must not be closed
@@ -1629,7 +1629,7 @@ none (end of planned chain)
 | TRADING-PILOT-ACTION-LEARNING-AUDIT-1 | REVIEW | Action and label audit |
 | TRADING-PILOT-EVENT-DRIVEN-QWEN-POLICY-1 | REVIEW | Event-driven Qwen policy |
 | TRADING-PILOT-POLICY-EXECUTION-AND-HEDGE-AUDIT-1 | REVIEW | Execution and hedge audit |
-| TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1 | ACTIVE | Hedge effect and churn attribution |
+| TRADING-PILOT-HEDGE-EFFECT-AND-CHURN-ATTRIBUTION-1 | REVIEW | Hedge effect and churn attribution |
 | ZIGZAG-NORMALIZATION-AND-DINAPOLI-RETEST-1 | CLOSED | 0 |
 | WAVE-DATASET-FREEZE-1 | CLOSED | 1 |
 | REVERSAL-EVENT-DATASET-1 | CLOSED | 2 |

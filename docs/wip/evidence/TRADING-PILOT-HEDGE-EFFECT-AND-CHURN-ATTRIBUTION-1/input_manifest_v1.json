@@ -1,0 +1,30 @@
+{
+  "base_commit": "f5a8ff750cee65554951cc8e9d911e6ab4b1c700",
+  "source_sha256": {
+    "backtest.py": "0b5ce7e7b8284f09864733872d94ad63e269d26fa4d226c43c46183b4826749d",
+    "event_backtest.py": "fd6732ee16db8846f43092757e21931b8be7b512a94dae9853b3baae61245310",
+    "hedge_attribution.py": "d62a976051b31ede89ddef75ec205f158cbf0ff2d64f8f3cf6714ead876eed4a"
+  },
+  "model_sha256": {
+    "entry_direction_gpu_v1.cbm": "df5c3eaefaab1dbdf47441e765886e882e24f2373af6dae2df86977e7b49bc86",
+    "entry_risk_gpu_v1.cbm": "ab2955f0efd89565d3833402cdb8425c877c8ed4bac9d34246819cbb405fd45d",
+    "position_management_gpu_v1.cbm": "3da5206e4099ae0edec19c0485731c33dc0af20bf1848820e714bce62f9fada0"
+  },
+  "manifest_sha256": {
+    "training_metrics_v1.json": "f8075681bfe5ba00dc2769edc9a8cc6923f3043ebd8f83f608c08286b26ca25c",
+    "feature_selection_manifest_v1.json": "9884837655d9de4f836b72dc5607bfebc235e38c1cb31105752e90d8b92dffb5",
+    "dataset_manifest_v1.json": "97746e739c2d9ddf01b28c216cf3f31d1bfec6014b7a67f1957e228b33733b5b",
+    "split_manifest_v1.json": "a8ad55a4502f2781387ce03581a9d525e8e2b2be581a22eace7094d3b30748f3"
+  },
+  "data_sha256": {
+    "ETHUSDT_1m_combined.parquet": "7ce4044ff159c87251650a98925ee4519dfc06745a9e2810b39e86bcc8f9f3c0",
+    "funding_ETHUSDT.parquet": "d40566ab8331ef9756d08a6c1ed67f880da02550b226c8e18083f4b9d46e8654",
+    "market_features_v1.parquet": "0028f1c48f5cb7990f958f78d3175477af8cdca049c6905328d3ec1a1eed156b",
+    "portfolio_state_features_v1.parquet": "4646c64b776156976959e67a58cb4d398fabdc076f4489210ef6990972679f58",
+    "management_state_samples_v1.parquet": "79c9456d5783331a519c90f7681cb00ebaf6a5599332511115e086d8ad40396c"
+  },
+  "result_sha256": {
+    "hedge_attribution_v1.json": "256a677a32eaba2cc48e35f59d9b4a6642c67821298ea7d9c9b1d1d962711bd5",
+    "hedge_cycles_v1.csv": "af5135df412742c230af3de72863055f7ab42da163ca159956fa70e67daec8bd"
+  }
+}

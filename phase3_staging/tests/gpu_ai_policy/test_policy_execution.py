@@ -8,6 +8,7 @@ import pytest
 
 from crypto_trading_bot.research_v2.gpu_ai_policy.backtest import (
     PolicyAccount,
+    _allowed_actions,
     _run_policy,
 )
 from crypto_trading_bot.research_v2.gpu_ai_policy.event_monitor import (
@@ -93,6 +94,21 @@ def test_primary_short_hedge_long_is_mirror_reachable() -> None:
     )[0]["executed"]
     assert account.position_state() == "PRIMARY_OPEN"
     assert account.futures.realized_hedge > 0
+
+
+def test_unhedged_control_removes_hedge_actions_without_changing_primary() -> None:
+    account = PolicyAccount(0.60, "HOLD")
+    assert account.execute("OPEN_LONG", time=_time(0), mark=100.0, volume=50_000.0)[
+        0
+    ]["executed"]
+    primary = account.futures.primary
+
+    hedged_actions = _allowed_actions(account, hedge_enabled=True)
+    unhedged_actions = _allowed_actions(account, hedge_enabled=False)
+    assert "OPEN_HEDGE" in hedged_actions
+    assert "OPEN_HEDGE" not in unhedged_actions
+    assert "CLOSE_HEDGE" not in unhedged_actions
+    assert account.futures.primary is primary
 
 
 def test_hedge_is_rejected_without_free_margin() -> None:
@@ -234,6 +250,21 @@ def test_fee_funding_and_slippage_are_conserved() -> None:
     )
     assert total_costs > 0
     _assert_no_capital_creation(account, 100.0 - total_costs)
+
+
+def test_spot_swing_uses_spot_price_not_futures_execution_price() -> None:
+    account = PolicyAccount(0.60, "SWING")
+    account.spot.cash = 50.0
+    account.futures.free_collateral = 50.0
+    account._spot_swing(
+        _time(0),
+        futures_mark=200.0,
+        spot_mark=50.0,
+        direction=1,
+    )
+    assert account.spot.eth > 0.99
+    assert account.spot.eth < 1.01
+    assert account.spot.equity(50.0) == pytest.approx(50.0, abs=0.05)
 
 
 def test_decision_executes_only_at_next_available_bar_open() -> None:
@@ -388,6 +419,10 @@ def test_minute_aggregation_uses_futures_open_and_mark_extrema() -> None:
                     ],
                     utc=True,
                 ),
+                "open": [90.0, 90.5, 95.0],
+                "high": [91.0, 92.0, 96.0],
+                "low": [89.0, 90.0, 94.0],
+                "close": [90.5, 91.5, 95.5],
                 "futures_open": [101.0, 102.0, 110.0],
                 "futures_high": [103.0, 104.0, 111.0],
                 "futures_low": [99.0, 100.0, 109.0],
@@ -400,6 +435,8 @@ def test_minute_aggregation_uses_futures_open_and_mark_extrema() -> None:
         ).to_parquet(path, index=False)
 
         hourly = _load_minute_hour_features(path)
+        assert hourly.loc[0, "spot_open"] == pytest.approx(90.0)
+        assert hourly.loc[0, "spot_close"] == pytest.approx(91.5)
         assert hourly.loc[0, "futures_open"] == pytest.approx(101.0)
         assert hourly.loc[0, "minute_high"] == pytest.approx(103.5)
         assert hourly.loc[0, "minute_low"] == pytest.approx(98.5)
